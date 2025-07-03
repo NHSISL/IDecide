@@ -416,3 +416,7 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+/LondonDataServices.IDecide.Manage.Server/appsettings.Development.json
+/LondonDataServices.IDecide.Portal.Server/appsettings.Development.json
+/LondonDataServices.IDecide.Portal.Tests.Integration/appsettings.Development.json
+/LondonDataServices.IDecide.Manage.Server.Tests.Integration/appsettings.Development.json

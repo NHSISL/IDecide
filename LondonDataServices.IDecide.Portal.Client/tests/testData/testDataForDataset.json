@@ -1,0 +1,7 @@
+[
+  {
+    "recipientEmail": "david.hayes17@nhs.net",
+    "invalidRecipientEmail": "christo",
+    "reason": "This is an example reason from Playwright"
+  }
+]
