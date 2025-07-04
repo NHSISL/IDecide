@@ -50,54 +50,10 @@ namespace LondonDataServices.IDecide.Portal.Server
                 .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
 
-            // Add services to the container.
-            var azureAdOptions = builder.Configuration.GetSection("AzureAd");
-
-            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddMicrosoftIdentityWebApi(azureAdOptions);
-
-            var instance = builder.Configuration["AzureAd:Instance"];
-            var tenantId = builder.Configuration["AzureAd:TenantId"];
-            var scopes = builder.Configuration["AzureAd:Scopes"];
-            var clientId = builder.Configuration["AzureAd:ClientId"];
-
-            if (string.IsNullOrEmpty(instance) || string.IsNullOrEmpty(tenantId) || string.IsNullOrEmpty(scopes) || string.IsNullOrEmpty(clientId))
-            {
-                throw new InvalidOperationException("AzureAd configuration is incomplete. Please check appsettings.json.");
-            }
 
             builder.Services.AddSwaggerGen(configuration =>
             {
                 // Add an OAuth2 security definition for Azure AD
-                configuration.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
-                {
-                    Type = SecuritySchemeType.OAuth2,
-                    Flows = new OpenApiOAuthFlows
-                    {
-                        AuthorizationCode = new OpenApiOAuthFlow
-                        {
-                            AuthorizationUrl = new Uri($"{instance}{tenantId}/oauth2/v2.0/authorize"),
-                            TokenUrl = new Uri($"{instance}{tenantId}/oauth2/v2.0/token"),
-                            Scopes = scopes.Split(' ').ToDictionary(scope => scope, scope => "Access API as user")
-                        }
-                    }
-                });
-
-                // Add a global security requirement
-                configuration.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference
-                            {
-                                Type = ReferenceType.SecurityScheme,
-                                Id = "oauth2"
-                            }
-                        },
-                        scopes.Split(' ')
-                    }
-                });
             });
 
             builder.Services.AddSingleton(invisibleApiKey);
@@ -109,12 +65,12 @@ namespace LondonDataServices.IDecide.Portal.Server
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddControllers();
-            AddProviders(builder.Services, builder.Configuration);
-            AddBrokers(builder.Services, builder.Configuration);
-            AddFoundationServices(builder.Services);
-            AddProcessingServices(builder.Services);
-            AddOrchestrationServices(builder.Services, builder.Configuration);
-            AddCoordinationServices(builder.Services, builder.Configuration);
+     //     AddProviders(builder.Services, builder.Configuration);
+     //     AddBrokers(builder.Services, builder.Configuration);
+     //     AddFoundationServices(builder.Services);
+     //     AddProcessingServices(builder.Services);
+     //     AddOrchestrationServices(builder.Services, builder.Configuration);
+     //     AddCoordinationServices(builder.Services, builder.Configuration);
 
             // Register IConfiguration to be available for dependency injection
             builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
