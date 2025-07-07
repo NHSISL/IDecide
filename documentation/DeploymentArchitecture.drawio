@@ -4,7 +4,7 @@
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="kHEFJbHKmHTi1QgoeD7e-12" value="" style="endArrow=none;dashed=1;html=1;dashPattern=1 3;strokeWidth=2;rounded=0;" edge="1" parent="1">
+        <mxCell id="kHEFJbHKmHTi1QgoeD7e-12" value="" style="endArrow=none;dashed=1;html=1;dashPattern=1 3;strokeWidth=2;rounded=0;" edge="1" parent="1" source="kHEFJbHKmHTi1QgoeD7e-5">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="450" y="750" as="sourcePoint" />
             <mxPoint x="450" y="80" as="targetPoint" />
@@ -49,43 +49,50 @@
           <mxGeometry x="690" y="80" width="40" height="40" as="geometry" />
         </mxCell>
         <mxCell id="kHEFJbHKmHTi1QgoeD7e-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="kHEFJbHKmHTi1QgoeD7e-5" target="kHEFJbHKmHTi1QgoeD7e-3">
-          <mxGeometry relative="1" as="geometry" />
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="520" y="436" />
+              <mxPoint x="520" y="230" />
+            </Array>
+          </mxGeometry>
         </mxCell>
         <mxCell id="kHEFJbHKmHTi1QgoeD7e-25" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="kHEFJbHKmHTi1QgoeD7e-5" target="kHEFJbHKmHTi1QgoeD7e-17">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="520" y="230" />
+              <mxPoint x="520" y="436" />
               <mxPoint x="520" y="565" />
             </Array>
           </mxGeometry>
         </mxCell>
         <mxCell id="kHEFJbHKmHTi1QgoeD7e-27" value="NEL Traffic Only" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="kHEFJbHKmHTi1QgoeD7e-25">
           <mxGeometry x="-0.1786" y="-2" relative="1" as="geometry">
-            <mxPoint as="offset" />
+            <mxPoint x="22" y="24" as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="kHEFJbHKmHTi1QgoeD7e-5" value="WAF" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/networking/Web_Application_Firewall_Policies_WAF.svg;" vertex="1" parent="1">
-          <mxGeometry x="410" y="196" width="68" height="68" as="geometry" />
-        </mxCell>
         <mxCell id="kHEFJbHKmHTi1QgoeD7e-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="kHEFJbHKmHTi1QgoeD7e-6" target="kHEFJbHKmHTi1QgoeD7e-5">
-          <mxGeometry relative="1" as="geometry" />
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="370" y="230" />
+              <mxPoint x="370" y="410" />
+            </Array>
+          </mxGeometry>
         </mxCell>
         <mxCell id="kHEFJbHKmHTi1QgoeD7e-8" value="Optout.dataservice.london.nhs.uk" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="kHEFJbHKmHTi1QgoeD7e-7">
           <mxGeometry x="-0.0952" y="-1" relative="1" as="geometry">
-            <mxPoint as="offset" />
+            <mxPoint x="-62" y="-5" as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="kHEFJbHKmHTi1QgoeD7e-6" value="Patient" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="1">
           <mxGeometry x="30" y="200" width="30" height="60" as="geometry" />
         </mxCell>
         <mxCell id="kHEFJbHKmHTi1QgoeD7e-9" value="HTTPS" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
-          <mxGeometry x="360" y="196" width="60" height="30" as="geometry" />
+          <mxGeometry x="365" y="440" width="60" height="30" as="geometry" />
         </mxCell>
         <mxCell id="kHEFJbHKmHTi1QgoeD7e-11" value="Azure" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
           <mxGeometry x="500" y="80" width="60" height="30" as="geometry" />
         </mxCell>
         <mxCell id="kHEFJbHKmHTi1QgoeD7e-13" value="Internet" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
-          <mxGeometry x="345" y="80" width="60" height="30" as="geometry" />
+          <mxGeometry x="70" y="85" width="60" height="30" as="geometry" />
         </mxCell>
         <mxCell id="kHEFJbHKmHTi1QgoeD7e-14" value="HTTPS" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
           <mxGeometry x="620" y="196" width="60" height="30" as="geometry" />
@@ -124,20 +131,20 @@
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="370" y="565" />
-              <mxPoint x="370" y="230" />
+              <mxPoint x="370" y="470" />
             </Array>
           </mxGeometry>
         </mxCell>
         <mxCell id="kHEFJbHKmHTi1QgoeD7e-22" value="Optout-manage.dataservice.london.nhs.uk" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="kHEFJbHKmHTi1QgoeD7e-21">
           <mxGeometry x="-0.1724" y="4" relative="1" as="geometry">
-            <mxPoint x="-109" y="4" as="offset" />
+            <mxPoint x="-65" y="4" as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="kHEFJbHKmHTi1QgoeD7e-20" value="Patient" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="1">
           <mxGeometry x="40" y="535" width="30" height="60" as="geometry" />
         </mxCell>
         <mxCell id="kHEFJbHKmHTi1QgoeD7e-23" value="NEL" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
-          <mxGeometry x="365" y="440" width="50" height="30" as="geometry" />
+          <mxGeometry x="60" y="440" width="50" height="30" as="geometry" />
         </mxCell>
         <mxCell id="kHEFJbHKmHTi1QgoeD7e-26" value="HTTPS" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
           <mxGeometry x="625" y="535" width="60" height="30" as="geometry" />
@@ -207,7 +214,7 @@
           <mxGeometry x="640" y="760" width="50" height="30" as="geometry" />
         </mxCell>
         <mxCell id="kHEFJbHKmHTi1QgoeD7e-52" value="Entra App" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/identity/Enterprise_Applications.svg;" vertex="1" parent="1">
-          <mxGeometry x="600" y="580" width="33" height="33" as="geometry" />
+          <mxGeometry x="620" y="580" width="33" height="33" as="geometry" />
         </mxCell>
         <mxCell id="kHEFJbHKmHTi1QgoeD7e-53" value="" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/identity/Entra_Managed_Identities.svg;" vertex="1" parent="1">
           <mxGeometry x="720" y="785" width="39.38" height="35" as="geometry" />
@@ -220,6 +227,15 @@
         </mxCell>
         <mxCell id="kHEFJbHKmHTi1QgoeD7e-55" value="re-capta" style="sketch=0;verticalLabelPosition=bottom;sketch=0;aspect=fixed;html=1;verticalAlign=top;strokeColor=none;fillColor=#000000;align=center;outlineConnect=0;pointerEvents=1;shape=mxgraph.citrix2.authentication_google;" vertex="1" parent="1">
           <mxGeometry x="759.38" y="30" width="45" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="kHEFJbHKmHTi1QgoeD7e-59" value="" style="endArrow=none;dashed=1;html=1;dashPattern=1 3;strokeWidth=2;rounded=0;" edge="1" parent="1" target="kHEFJbHKmHTi1QgoeD7e-5">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="450" y="750" as="sourcePoint" />
+            <mxPoint x="450" y="80" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="kHEFJbHKmHTi1QgoeD7e-5" value="WAF" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/networking/Web_Application_Firewall_Policies_WAF.svg;" vertex="1" parent="1">
+          <mxGeometry x="415" y="402" width="68" height="68" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
