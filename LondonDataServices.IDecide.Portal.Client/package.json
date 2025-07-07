@@ -17,17 +17,19 @@
     "@tanstack/react-query-devtools": "^5.54.1",
     "axios": "^1.7.7",
     "bootstrap": "^5.3.3",
+    "lodash": "^4.17.21",
     "LondonDataServices.IDecide.frontend.client": "file:",
     "LondonDataServices.IDecide.portal.client": "file:",
-    "lodash": "^4.17.21",
     "moment": "2.30.1",
-    "nhsuk-react-components": "4.1.3",
+    "nhsuk-frontend": "^9.3.0",
+    "nhsuk-react-components": "^5.0.0",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.4",
     "react-dom": "^18.3.1",
     "react-infinite-scroll-hook": "^4.0.4",
     "react-router-dom": "^6.2.1",
-    "react-toastify": "11.0.3"
+    "react-toastify": "11.0.3",
+    "sass": "^1.89.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
