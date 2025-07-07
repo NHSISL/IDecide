@@ -34,6 +34,14 @@
         <mxCell id="kHEFJbHKmHTi1QgoeD7e-56" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="kHEFJbHKmHTi1QgoeD7e-3" target="kHEFJbHKmHTi1QgoeD7e-55">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
+        <mxCell id="kHEFJbHKmHTi1QgoeD7e-57" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="kHEFJbHKmHTi1QgoeD7e-3" target="kHEFJbHKmHTi1QgoeD7e-29">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="880" y="230" />
+              <mxPoint x="880" y="670" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
         <mxCell id="kHEFJbHKmHTi1QgoeD7e-3" value="Frontend/Backend&lt;div&gt;App Public Service&lt;/div&gt;" style="image;sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/mscae/App_Services.svg;" vertex="1" parent="1">
           <mxGeometry x="685" y="205" width="50" height="50" as="geometry" />
         </mxCell>
@@ -95,6 +103,13 @@
         </mxCell>
         <mxCell id="kHEFJbHKmHTi1QgoeD7e-42" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="kHEFJbHKmHTi1QgoeD7e-17" target="kHEFJbHKmHTi1QgoeD7e-41">
           <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="kHEFJbHKmHTi1QgoeD7e-58" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="kHEFJbHKmHTi1QgoeD7e-17" target="kHEFJbHKmHTi1QgoeD7e-29">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="710" y="670" />
+            </Array>
+          </mxGeometry>
         </mxCell>
         <mxCell id="kHEFJbHKmHTi1QgoeD7e-17" value="Frontend/Backend&lt;div&gt;App Manage Service&lt;/div&gt;" style="image;sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/mscae/App_Services.svg;" vertex="1" parent="1">
           <mxGeometry x="685" y="540" width="50" height="50" as="geometry" />
