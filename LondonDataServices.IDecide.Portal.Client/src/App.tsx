@@ -3,24 +3,45 @@ import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
 import './App.css';
 import Root from './components/root';
 import ErrorPage from './errors/error';
-import { Home } from './pages/home';
+import { HomePage } from './pages/homePage';
+import { ConfirmNhsNumber } from './pages/confirmNhsNumberPage';
+import { StepProvider } from './components/context/stepContext';
+import { ConfirmDetailsPage } from './pages/confirmDetailsPage';
+import { PositiveConfirmationPage } from './pages/positiveConfirmationPage';
 
 function App() {
 
     const router = createBrowserRouter([
         {
             path: "/",
-            element: <Root />,
+            element: (
+                <StepProvider>
+                    <Root />
+                </StepProvider>
+            ),
             errorElement: <ErrorPage />,
             children: [
                 {
                     path: "home",
-                    element: <Home />
+                    element: <HomePage />
+                },
+                {
+                    path: "optOut",
+                    element: <ConfirmNhsNumber />
+                },
+                {
+                    path: "confirmDetails",
+                    element: <ConfirmDetailsPage />
+                },
+                {
+                    path: "positiveConfirmation",
+                    element: <PositiveConfirmationPage />
                 },
                 {
                     index: true,
                     element: <Navigate to="/home" />
                 }
+
             ]
         },
     ]);

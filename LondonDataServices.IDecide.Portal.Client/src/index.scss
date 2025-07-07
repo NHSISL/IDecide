@@ -1,1 +1,50 @@
 @forward "nhsuk-frontend/dist/nhsuk";
+
+body{background: white !important;}
+
+.container-fluid {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.row {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.row > * {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.nhsuk-breadcrumb{
+    padding-top: 0 !important;
+   
+    background: #fff;
+    border: none;
+}
+
+.leftProgressPadding{padding:50px;}
+
+
+.completed-radio input[type="radio"] + label::before {
+    border-color: #007f3b;
+    background-color: #007f3b;
+}
+
+.completed-radio input[type="radio"]:checked + label::after {
+    background: none;
+    box-shadow: none;
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.tick {
+    color: #007f3b;
+    font-weight: bold;
+    margin-left: 10px;
+}
