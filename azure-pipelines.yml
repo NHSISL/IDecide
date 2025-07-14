@@ -1,0 +1,116 @@
+# ASP.NET Core (.NET Framework)
+# Build and test ASP.NET Core projects targeting the full .NET Framework.
+# Add steps that publish symbols, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+trigger:
+  tags:
+    include:
+    - 'v*'
+  branches:
+    include:
+    - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+
+steps:
+- bash: |
+    echo "Build $(Build.SourceBranch)"
+    RELEASE_REGEX="v[0-9](.[0-9]+){3}"
+    tagName=${BUILD_SOURCEBRANCH#refs/tags/}
+    if [[ "$(Build.SourceBranch)" =~ $RELEASE_REGEX ]] 
+    then
+     echo "##vso[build.updatebuildnumber]$tagName"
+     echo "##vso[build.addbuildtag]$tagName"
+     echo "##vso[build.addbuildtag]Release"
+    fi
+  displayName: Tag Releases
+- task: qetza.replacetokens.replacetokens-task.replacetokens@6
+  displayName: 'Replace tokens in **/appsettings.json'
+  inputs:
+    sources: '**/appsettings.json'
+
+- task: UseDotNet@2
+  displayName: "Install .NET Core SDK"
+  inputs:
+    version: 9.x
+    performMultiLevelLookup: true
+    includePreviewVersions: true # Required for preview versions
+
+- task: NodeTool@0
+  displayName: 'Install Node.js'
+  inputs:
+    versionSpec: '16.x'
+
+- task: DotNetCoreCLI@2
+  displayName: "Dotnet Restore"
+  inputs:
+    command: "restore"
+    feedsToUse: "select"
+    projects: "**/*.csproj"
+    includeNuGetOrg: true
+
+- task: Npm@1
+  displayName: 'Install client dependencies (patient portal)'
+  inputs:
+    command: 'install'
+    workingDir: 'LondonDataServices.IDecide.Portal.Client'
+
+- task: Npm@1
+  displayName: 'Install client dependencies (back office portal)'
+  inputs:
+    command: 'install'
+    workingDir: 'LondonDataServices.IDecide.Manage.Client'
+
+- task: DotNetCoreCLI@2
+  displayName: "Dotnet Publish Patient Portal"
+  inputs:
+    command: "publish"
+    publishWebProjects: false
+    projects: "**/LondonDataServices.IDecide.Portal.Server.csproj"
+    arguments: "-o $(Build.ArtifactStagingDirectory)/$(Build.BuildId)_publish_output_website_patient_portal"
+    zipAfterPublish: true
+    modifyOutputPath: false
+
+#- script: |
+#    echo "Removing existing artifact..."
+#    rm -rf $(Build.ArtifactStagingDirectory)/drop-frontend-portal
+#  displayName: "Remove Existing Artifact"
+#  condition: always()
+
+- publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)_publish_output_website_patient_portal
+  displayName: 'Publish Artifact - Patient Portal'
+  artifact: drop-patient-portal
+
+#- task: Npm@1
+#  displayName: 'Install client dependencies (Call Centre Client)'
+#  inputs:
+#    command: 'install'
+#    workingDir: 'ISL.ReIdentification.WebApps.Configurations/ISL.ReIdentification.Configurations.Client'
+
+#- task: Npm@1
+#  displayName: 'Build Configurations Client'
+#  inputs:
+#    command: 'custom'
+#    customCommand: 'run build'
+#    workingDir: 'ISL.ReIdentification.Configurations.Client'
+
+- task: DotNetCoreCLI@2
+  displayName: "Dotnet Publish Back Office Portal"
+  inputs:
+    command: "publish"
+    publishWebProjects: false
+    projects: "**/LondonDataServices.IDecide.Manage.Server.csproj"
+    arguments: "-o $(Build.ArtifactStagingDirectory)/$(Build.BuildId)_publish_output_website_backend_portal"
+    zipAfterPublish: true
+    modifyOutputPath: false
+
+- publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)_publish_publish_output_website_backend_portal
+  displayName: 'Publish Artifact - Configuration'
+  artifact: drop-backoffice-portal
