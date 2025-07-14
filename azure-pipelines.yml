@@ -111,6 +111,6 @@ steps:
     zipAfterPublish: true
     modifyOutputPath: false
 
-- publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)_publish_publish_output_website_backend_portal
-  displayName: 'Publish Artifact - Configuration'
+- publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)_publish_output_website_backend_portal
+  displayName: 'Publish Artifact - Back Office'
   artifact: drop-backoffice-portal
