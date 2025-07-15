@@ -1,19 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
 import { useStep } from "./context/stepContext";
+import { ConfirmDetailsPage } from "../pages/confirmDetailsPage";
+import { ConfirmNhsNumber } from "../pages/confirmNhsNumberPage";
 
 const stepContent = [
     {
         label: "Provide Your NHS Number",
-        content: (
-            <>
-                <input type="text" placeholder="Enter NHS Number" />
-            </>
-        )
+        content: <ConfirmNhsNumber></ConfirmNhsNumber>
     },
     {
         label: "Confirm Your Details",
-        content: <p>Please confirm your name and date of birth.</p>
+        content: <ConfirmDetailsPage></ConfirmDetailsPage>
     },
     {
         label: "Positive Confirmation",

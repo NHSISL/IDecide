@@ -1,10 +1,11 @@
 ﻿import React from "react";
 import { Container } from "react-bootstrap";
+import { AppFlow } from "../components/appFlow";
 
-export const ConfirmNhsNumber = () => {
+export const AppFlowPage = () => {
     return (
         <Container style={{ padding: 20 }}>
-            <input type="text" placeholder="Enter NHS Number" />
+            <AppFlow></AppFlow>
         </Container>
     );
 };

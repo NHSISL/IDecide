@@ -49,3 +49,19 @@ body{background: white !important;}
     margin-left: 10px;
 }
 
+.root-layout {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.root-content {
+    flex: 1 0 auto;
+}
+
+.nhsuk-footer {
+    height: 50px !important;
+    min-height: 50px !important;
+    max-height: 50px !important;
+    box-sizing: border-box;
+}

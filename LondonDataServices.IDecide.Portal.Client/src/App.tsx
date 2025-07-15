@@ -8,6 +8,7 @@ import { ConfirmNhsNumber } from './pages/confirmNhsNumberPage';
 import { StepProvider } from './components/context/stepContext';
 import { ConfirmDetailsPage } from './pages/confirmDetailsPage';
 import { PositiveConfirmationPage } from './pages/positiveConfirmationPage';
+import { AppFlowPage } from './pages/appFlowPage';
 
 function App() {
 
@@ -27,6 +28,10 @@ function App() {
                 },
                 {
                     path: "optOut",
+                    element: <AppFlowPage />
+                },
+                {
+                    path: "confirmNhsNumber",
                     element: <ConfirmNhsNumber />
                 },
                 {
