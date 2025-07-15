@@ -14,47 +14,37 @@ export default function Root() {
     const { currentStepIndex, setCurrentStepIndex } = useStep();
 
     return (
-        <>
-            <Header>
-                <Header.Container>
-                    <Header.Logo href="/" />
-                    <Header.Content>
-                        {/* Optional content */}
-                    </Header.Content>
-                </Header.Container>
-                <Header.Nav>
-                    {/* Optional nav */}
-                </Header.Nav>
-            </Header>
+        <div className="root-layout">
+            {!doNotShowLeftPanel && (
+                <Header>
+                    <Header.Container>
+                        <Header.Logo href="/" />
+                        <Header.Content>
+                            {/* Optional content */}
+                        </Header.Content>
+                    </Header.Container>
+                    <Header.Nav>
+                        {/* Optional nav */}
+                    </Header.Nav>
+                </Header>
+            )}
 
-            <Container>
-                {!doNotShowLeftPanel ? (
+            <div className="root-content">
+                <Container>
                     <Row>
-                        <Col md={5}>
-                            <LeftProgress currentStepIndex={currentStepIndex} setCurrentStepIndex={setCurrentStepIndex} />
-                        </Col>
-                        <Col md={7}>
+                        {!doNotShowLeftPanel && (
+                            <Col md={5}>
+                                <LeftProgress currentStepIndex={currentStepIndex} setCurrentStepIndex={setCurrentStepIndex} />
+                            </Col>
+                        )}
+                        <Col md={doNotShowLeftPanel ? 12 : 7}>
                             <Outlet />
                         </Col>
                     </Row>
-                ) : (
-                    <Row>
-                        <Outlet />
-                    </Row>
-                )}
-            </Container>
+                </Container>
+            </div>
 
-            <>
-                <div
-                    id="restOfThePage"
-                    style={{
-                        height: '70vh'
-                    }}
-                />
-                <Footer>
-                    
-                </Footer>
-            </>
-        </>
+            <Footer />
+        </div>
     );
 }

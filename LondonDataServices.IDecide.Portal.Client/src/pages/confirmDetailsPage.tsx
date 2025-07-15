@@ -16,9 +16,7 @@ export const ConfirmDetailsPage = () => {
     return (
         <Container>
             <div>
-                <button onClick={handleNext}>
-                    Next Page
-                </button>
+                <p> Please confirm your name and date of birth.</p>
             </div>
         </Container>
     );
