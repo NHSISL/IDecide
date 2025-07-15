@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
-import { useStep } from "../components/context/stepContext";
+import { useStep } from "./context/stepContext";
 
 const stepContent = [
     {
@@ -29,7 +29,7 @@ const stepContent = [
     }
 ];
 
-export const StepWizard = () => {
+export const AppFlow = () => {
     const { currentStepIndex, setCurrentStepIndex } = useStep();
 
     useEffect(() => {
