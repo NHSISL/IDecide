@@ -46,6 +46,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LondonDataServices.IDecide.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LondonDataServices.IDecide.Core", "LondonDataServices.IDecide.Core\LondonDataServices.IDecide.Core.csproj", "{33A42C4F-2D17-E009-1B1B-D8614BCB4B57}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{5C78503B-EF92-4E71-A370-4BD3D937B7BD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LondonDataServices.IDecide.Documentation", "Documentation\LondonDataServices.IDecide.Documentation.csproj", "{CE87C58B-CF6C-1BFB-02E9-3143759DD3E2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -108,6 +112,10 @@ Global
 		{33A42C4F-2D17-E009-1B1B-D8614BCB4B57}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{33A42C4F-2D17-E009-1B1B-D8614BCB4B57}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{33A42C4F-2D17-E009-1B1B-D8614BCB4B57}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE87C58B-CF6C-1BFB-02E9-3143759DD3E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE87C58B-CF6C-1BFB-02E9-3143759DD3E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE87C58B-CF6C-1BFB-02E9-3143759DD3E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE87C58B-CF6C-1BFB-02E9-3143759DD3E2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -128,6 +136,7 @@ Global
 		{3996C9DD-C4A9-88EE-0AF2-D79DFBC620A9} = {7F24359F-95DB-429E-8CF5-18141726032C}
 		{A15527F8-B2EA-C22C-1C5F-79608B83BB66} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{33A42C4F-2D17-E009-1B1B-D8614BCB4B57} = {84F16610-F68A-42B8-A7C0-839F4B02A4C5}
+		{CE87C58B-CF6C-1BFB-02E9-3143759DD3E2} = {5C78503B-EF92-4E71-A370-4BD3D937B7BD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0D717146-FA34-4806-92FA-B345A87F5D78}
