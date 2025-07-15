@@ -49,7 +49,6 @@ const LeftProgress: React.FC = () => {
                             {steps.map((step, idx) => (
                                 <React.Fragment key={step}>
                                     {isPreviousStep(idx) ? (
-                                        // Completed step: render FontAwesome check-circle instead of radio
                                         <div
                                             className="completed-tick"
                                             aria-label={`${stepLabels[step]} completed`}
@@ -66,14 +65,13 @@ const LeftProgress: React.FC = () => {
                                         >
                                             <FontAwesomeIcon
                                                 icon={faCheckCircle}
-                                                style={{ marginRight: 8, fontSize: '2.5rem', color: "#006435" }} // Bigger icon & green color
+                                                style={{ marginRight: 8, fontSize: '2.5rem', color: "#006435" }}
                                                 aria-hidden="true"
                                             />
                                             <span>{stepLabels[step]}</span>
                                         </div>
 
                                     ) : (
-                                        // Current or next step radios
                                         <Radios.Radio
                                             id={`radio-${step}`}
                                             name="step"
@@ -87,7 +85,6 @@ const LeftProgress: React.FC = () => {
                                         </Radios.Radio>
                                     )}
 
-                                    {/* Show conditional content only for current step */}
                                     {isCurrentStep(idx) && (
                                         <div className="nhsuk-radios__conditional">{stepContent[step]}</div>
                                     )}
