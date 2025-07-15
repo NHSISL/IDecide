@@ -14,7 +14,7 @@ export const ConfirmDetailsPage = () => {
     };
 
     return (
-        <Container fluid>
+        <Container>
             <div>
                 <button onClick={handleNext}>
                     Next Page

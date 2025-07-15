@@ -27,13 +27,13 @@ export default function Root() {
                 </Header.Nav>
             </Header>
 
-            <Container fluid>
+            <Container>
                 {!doNotShowLeftPanel ? (
                     <Row>
-                        <Col md={4}>
+                        <Col md={5}>
                             <LeftProgress currentStepIndex={currentStepIndex} setCurrentStepIndex={setCurrentStepIndex} />
                         </Col>
-                        <Col md={8}>
+                        <Col md={7}>
                             <Outlet />
                         </Col>
                     </Row>

@@ -15,7 +15,7 @@ export const PositiveConfirmationPage = () => {
     };
 
     return (
-        <Container fluid>
+        <Container>
            
         </Container>
     );
