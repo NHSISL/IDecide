@@ -33,7 +33,7 @@ export const AppFlow = () => {
     const { currentStepIndex, setCurrentStepIndex } = useStep();
 
     useEffect(() => {
-        setCurrentStepIndex(0); // reset if needed
+        setCurrentStepIndex(0);
     }, [setCurrentStepIndex]);
 
     const nextStep = () => {
