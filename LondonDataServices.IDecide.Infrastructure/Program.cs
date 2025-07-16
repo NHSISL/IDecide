@@ -14,7 +14,7 @@ namespace LondonDataServices.IDecide.Infrastructure
 
             scriptGenerationService.GenerateBuildScript(
                 branchName: "main",
-                projectName: "DataServices.IDecide.Core",
+                projectName: "LondonDataServices.IDecide.Core",
                 dotNetVersion: "9.0.100");
 
             scriptGenerationService.GeneratePrLintScript(branchName: "main");
