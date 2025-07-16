@@ -29,7 +29,7 @@ jobs:
     - name: Install EF Tools
       run: dotnet tool install --global dotnet-ef
     - name: Deploy Database
-      run: dotnet ef database update --project DataServices.IDecide.Core/DataServices.IDecide.Core.csproj --startup-project DataServices.IDecide.Core/DataServices.IDecide.Core.csproj
+      run: dotnet ef database update --project LondonDataServices.IDecide.Core/LondonDataServices.IDecide.Core.csproj --startup-project LondonDataServices.IDecide.Core/LondonDataServices.IDecide.Core.csproj
     - name: Run Unit Tests
       run: >-
         $projects = Get-ChildItem -Path . -Filter "*Tests.Unit*.csproj" -Recurse
@@ -81,7 +81,7 @@ jobs:
 
         sudo apt-get install xmlstarlet
 
-        version_number=$(xmlstarlet sel -t -v "//Version" -n DataServices.IDecide.Core/DataServices.IDecide.Core.csproj)
+        version_number=$(xmlstarlet sel -t -v "//Version" -n LondonDataServices.IDecide.Core/LondonDataServices.IDecide.Core.csproj)
 
         echo "$version_number"
 
@@ -100,7 +100,7 @@ jobs:
 
         sudo apt-get install xmlstarlet
 
-        package_release_notes=$(xmlstarlet sel -t -v "//PackageReleaseNotes" -n DataServices.IDecide.Core/DataServices.IDecide.Core.csproj)
+        package_release_notes=$(xmlstarlet sel -t -v "//PackageReleaseNotes" -n LondonDataServices.IDecide.Core/LondonDataServices.IDecide.Core.csproj)
 
         echo "$package_release_notes"
 
