@@ -4,7 +4,6 @@
 
 using System;
 using System.IO;
-using System.Linq;
 using System.Text.Json;
 using Attrify.Extensions;
 using Attrify.InvisibleApi.Models;
@@ -15,7 +14,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Identity.Web;
-using Microsoft.OpenApi.Models;
 
 namespace LondonDataServices.IDecide.Portal.Server
 {
@@ -66,40 +64,7 @@ namespace LondonDataServices.IDecide.Portal.Server
                 throw new InvalidOperationException("AzureAd configuration is incomplete. Please check appsettings.json.");
             }
 
-            builder.Services.AddSwaggerGen(configuration =>
-            {
-                // Add an OAuth2 security definition for Azure AD
-                configuration.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
-                {
-                    Type = SecuritySchemeType.OAuth2,
-                    Flows = new OpenApiOAuthFlows
-                    {
-                        AuthorizationCode = new OpenApiOAuthFlow
-                        {
-                            AuthorizationUrl = new Uri($"{instance}{tenantId}/oauth2/v2.0/authorize"),
-                            TokenUrl = new Uri($"{instance}{tenantId}/oauth2/v2.0/token"),
-                            Scopes = scopes.Split(' ').ToDictionary(scope => scope, scope => "Access API as user")
-                        }
-                    }
-                });
-
-                // Add a global security requirement
-                configuration.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference
-                            {
-                                Type = ReferenceType.SecurityScheme,
-                                Id = "oauth2"
-                            }
-                        },
-                        scopes.Split(' ')
-                    }
-                });
-            });
-
+            builder.Services.AddSwaggerGen();
             builder.Services.AddSingleton(invisibleApiKey);
             builder.Services.AddAuthorization();
             builder.Services.AddDbContext<StorageBroker>();

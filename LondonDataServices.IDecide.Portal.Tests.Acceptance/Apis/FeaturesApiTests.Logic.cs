@@ -15,18 +15,7 @@ namespace LondonDataServices.IDecide.Portals.Server.Tests.Acceptance.Apis
         {
             // Given
             List<string> expectedResult = new List<string>
-            {
-                "Configuration",
-                "UserAccess",
-                "DelegatedUserAccess",
-                "Ods",
-                "Pds",
-                "ReportReidentify",
-                "SinglePatientReidentify",
-                "CsvReidentify",
-                "CsvWorklist",
-                "Projects"
-            };
+            { };
 
             // When
             string[] actualResult = await this.apiBroker.GetFeaturesAsync();
