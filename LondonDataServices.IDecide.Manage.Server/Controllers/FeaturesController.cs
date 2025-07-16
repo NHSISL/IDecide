@@ -23,7 +23,8 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
         [HttpGet]
         public ActionResult GetFeatures()
         {
-            var activeFeatures = configuration.GetSection("Features").Get<string[]>();
+            var activeFeatures = configuration.GetSection("Features").Get<string[]>() ?? [];
+
             return Ok(activeFeatures);
         }
     }
