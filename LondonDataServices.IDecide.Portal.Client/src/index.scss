@@ -1,7 +1,57 @@
+//// NHS UK Frontend
 @forward "nhsuk-frontend/dist/nhsuk";
 
-body{background: white !important;}
+//// Global font styles
+* {
+    font-family: "Helvetica Neue Roman", Arial, sans-serif;
+}
 
+body {
+    background: white !important;
+}
+
+//// Root variables
+:root {
+    --app-font-size: 14px;
+    --app-h1-size: calc(var(--app-font-size) * 2.0); // 28px
+    --app-h2-size: calc(var(--app-font-size) * 1.5); // 21px
+    --app-h3-size: calc(var(--app-font-size) * 1.17); // ~16.4px
+    --app-h4-size: var(--app-font-size); // 14px
+    --app-h5-size: calc(var(--app-font-size) * 0.83); // ~11.6px
+    --app-h6-size: calc(var(--app-font-size) * 0.67); // ~9.4px
+}
+
+//// Typography for headings and content
+.root-content,
+.root-content * {
+    font-size: var(--app-font-size);
+}
+
+.root-content h1 {
+    font-size: var(--app-h1-size);
+}
+
+.root-content h2 {
+    font-size: var(--app-h2-size);
+}
+
+.root-content h3 {
+    font-size: var(--app-h3-size);
+}
+
+.root-content h4 {
+    font-size: var(--app-h4-size);
+}
+
+.root-content h5 {
+    font-size: var(--app-h5-size);
+}
+
+.root-content h6 {
+    font-size: var(--app-h6-size);
+}
+
+//// Layout containers
 .container-fluid {
     margin: 0 !important;
     padding: 0 !important;
@@ -17,16 +67,19 @@ body{background: white !important;}
     padding: 0 !important;
 }
 
-.nhsuk-breadcrumb{
+//// Breadcrumb styles
+.nhsuk-breadcrumb {
     padding-top: 0 !important;
-   
     background: #fff;
     border: none;
 }
 
-.leftProgressPadding{padding:50px;}
+//// Progress padding
+.leftProgressPadding {
+    padding: 50px;
+}
 
-
+//// Radio button styles
 .completed-radio input[type="radio"] + label::before {
     border-color: #007f3b;
     background-color: #007f3b;
@@ -49,6 +102,7 @@ body{background: white !important;}
     margin-left: 10px;
 }
 
+//// Root layout and content
 .root-layout {
     min-height: 100vh;
     display: flex;
@@ -59,9 +113,79 @@ body{background: white !important;}
     flex: 1 0 auto;
 }
 
+//// Footer styles
 .nhsuk-footer {
     height: 50px !important;
     min-height: 50px !important;
     max-height: 50px !important;
     box-sizing: border-box;
+}
+
+//// Fullscreen background styles
+.fullscreen-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: url('/onelondon_bg1.jpg') no-repeat center center fixed;
+    background-size: cover;
+    z-index: 0;
+}
+
+.fullscreen-bg-overlay {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+}
+
+//// Home box styles
+.home-box {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 32px 24px;
+    border-radius: 5px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    max-width: 1200px;
+    z-index: 2;
+    width: auto;
+}
+
+//// Mobile styles
+@media (max-width: 600px) {
+    .home-box {
+        top: 10px;
+        left: 10px;
+        right: 10px;
+        width: auto;
+        max-width: none;
+        padding: 16px 10px;
+        border-radius: 3px;
+        font-size: 1rem;
+    }
+    .expandable-section button {
+        font-size: 1.1rem;
+        padding: 0.75rem 0;
+    }
+    .expandable-section span {
+        margin-right: 0.5rem;
+    }
+    .expandable-section div {
+        padding-left: 1.5rem !important;
+        font-size: 1rem;
+    }
+    h1 {
+        font-size: 1.5rem !important;
+    }
+    p {
+        font-size: 1rem !important;
+    }
+    .nhsuk-button {
+        width: 100%;
+        font-size: 1.1rem;
+        padding: 1rem 0.5rem;
+    }
 }

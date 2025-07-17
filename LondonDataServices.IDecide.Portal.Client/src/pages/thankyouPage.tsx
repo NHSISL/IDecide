@@ -1,10 +1,10 @@
 ﻿import React from "react";
 import { Container } from "react-bootstrap";
 
-export const ConfirmNhsNumber = () => {
+export const ThankyouPage = () => {
     return (
         <Container style={{ padding: 20 }}>
-            <input type="text" placeholder="Enter NHS Number" />
+        <h1>THANKYOU</h1>
         </Container>
     );
 };
