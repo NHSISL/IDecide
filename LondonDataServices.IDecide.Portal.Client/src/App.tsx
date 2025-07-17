@@ -4,7 +4,6 @@ import './App.css';
 import Root from './components/root';
 import ErrorPage from './errors/error';
 import { HomePage } from './pages/homePage';
-import { ConfirmNhsNumber } from './pages/confirmNhsNumberPage';
 import { StepProvider } from './components/context/stepContext';
 import { ConfirmDetailsPage } from './pages/confirmDetailsPage';
 import { PositiveConfirmationPage } from './pages/positiveConfirmationPage';
@@ -29,10 +28,6 @@ function App() {
                 {
                     path: "optOut",
                     element: <AppFlowPage />
-                },
-                {
-                    path: "confirmNhsNumber",
-                    element: <ConfirmNhsNumber />
                 },
                 {
                     path: "confirmDetails",
