@@ -5,6 +5,10 @@ import { Header } from "nhsuk-react-components";
 import LeftProgress from "./leftProgress/leftProgress";
 import FooterComponent from "./layouts/footer";
 import { useStep } from "./context/stepContext";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus } from "@fortawesome/free-solid-svg-icons/faPlus";
+import { faMinus } from "@fortawesome/free-solid-svg-icons/faMinus";
 
 const DEFAULT_FONT_SIZE = 16;
 
@@ -120,7 +124,7 @@ export default function Root() {
                                     aria-expanded={showAccessibilityBox}
                                 >
                                     <img
-                                        src="/Accessibility.png"
+                                        src="/accessibility-icon.webp"
                                         alt="Accessibility"
                                         style={{
                                             height: "2em",
@@ -144,7 +148,7 @@ export default function Root() {
                                             boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
                                             padding: "1rem 1.5rem 1rem 1rem",
                                             zIndex: 1000,
-                                            minWidth: "180px"
+                                            minWidth: "200px"
                                         }}
                                         role="dialog"
                                         aria-label="Accessibility options"
@@ -163,33 +167,105 @@ export default function Root() {
                                             }}
                                             aria-label="Close accessibility options"
                                         >
-                                            ×
+                                            <FontAwesomeIcon icon={faTimes} />
                                         </button>
-                                        <div style={{ display: "flex", flexDirection: "column", gap: "0.5em", marginTop: "1.5em" }}>
-                                            <a
-                                                href="#"
-                                                onClick={increaseFontSize}
-                                                style={{ fontSize: "1.1em", textDecoration: "none" }}
-                                                aria-label="Increase font size"
-                                            >
-                                                A+
-                                            </a>
-                                            <a
-                                                href="#"
-                                                onClick={decreaseFontSize}
-                                                style={{ fontSize: "1.1em", textDecoration: "none" }}
-                                                aria-label="Decrease font size"
-                                            >
-                                                A-
-                                            </a>
-                                            <a
-                                                href="#"
-                                                onClick={resetFontSize}
-                                                style={{ fontSize: "1.1em", textDecoration: "none" }}
-                                                aria-label="Reset font size"
-                                            >
-                                                Reset
-                                            </a>
+
+                                        <div style={{ display: "flex", flexDirection: "column", gap: "1em", marginTop: "1.5em" }}>
+                                            <div style={{ marginBottom: "0.5em", fontWeight: 500 }}>
+                                                <span>
+                                                    Current Zoom &nbsp;
+                                                    <span style={{ color: "#666", fontSize: "0.95em" }}>
+                                                        ({Math.round(((fontSize - DEFAULT_FONT_SIZE) / DEFAULT_FONT_SIZE) * 100)}%)
+                                                    </span>
+                                                </span>
+                                            </div>
+                                            <div style={{ display: "flex", alignItems: "center", gap: "0.7em" }}>
+                                                <a
+                                                    href="#"
+                                                    onClick={increaseFontSize}
+                                                    style={{
+                                                        fontSize: "1em",
+                                                        textDecoration: "none",
+                                                        fontWeight: 600,
+                                                        color: "#005eb8",
+                                                        padding: "0.2em 0.7em",
+                                                        borderRadius: "4px",
+                                                        border: "1px solid #005eb8",
+                                                        background: "#f0f6fa"
+                                                    }}
+                                                    aria-label="Increase text size"
+                                                >
+                                                    <FontAwesomeIcon icon={faPlus} />
+                                                </a>
+                                                <span style={{ fontSize: "0.98em", color: "#333" }}>
+                                                    Increase Text
+                                                </span>
+                                            </div>
+                                            <div style={{ display: "flex", alignItems: "center", gap: "0.7em" }}>
+                                                <a
+                                                    href="#"
+                                                    onClick={decreaseFontSize}
+                                                    style={{
+                                                        fontSize: "1em",
+                                                        textDecoration: "none",
+                                                        fontWeight: 600,
+                                                        color: "#005eb8",
+                                                        padding: "0.2em 0.7em",
+                                                        borderRadius: "4px",
+                                                        border: "1px solid #005eb8",
+                                                        background: "#f0f6fa"
+                                                    }}
+                                                    aria-label="Decrease font size"
+                                                >
+                                                    <FontAwesomeIcon icon={faMinus} />
+                                                </a>
+                                                <span style={{ fontSize: "0.98em", color: "#333" }}>
+                                                    Decrease Text
+                                                </span>
+                                            </div>
+
+                                            <div style={{ display: "flex", alignItems: "center", gap: "0.7em" }}>
+                                                <button
+                                                    style={{
+                                                        fontSize: "1em",
+                                                        textDecoration: "none",
+                                                        fontWeight: 600,
+                                                        color: "#005eb8",
+                                                        padding: "0.2em 0.7em",
+                                                        borderRadius: "4px",
+                                                        border: "1px solid #005eb8",
+                                                        background: "#f0f6fa"
+                                                    }}
+                                                    type="button"
+                                                    tabIndex={-1}
+                                                    disabled
+                                                >
+                                                    Negative Contrast
+                                                </button>
+                                               
+                                            </div>
+
+
+
+                                            <div style={{ display: "flex", alignItems: "center", gap: "0.7em" }}>
+                                                <a
+                                                    href="#"
+                                                    onClick={resetFontSize}
+                                                    style={{
+                                                        fontSize: "1em",
+                                                        textDecoration: "none",
+                                                        fontWeight: 600,
+                                                        color: "#005eb8",
+                                                        padding: "0.2em 0.7em",
+                                                        borderRadius: "4px",
+                                                        border: "1px solid #005eb8",
+                                                        background: "#f0f6fa"
+                                                    }}
+                                                    aria-label="Reset font size"
+                                                >
+                                                    Reset
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 )}
