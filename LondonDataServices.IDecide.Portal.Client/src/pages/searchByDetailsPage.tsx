@@ -1,11 +1,14 @@
 ﻿import React from "react";
-import { Container } from "react-bootstrap";
+import SearchByDetails from "../components/searchByDetails/searchByDetails";
 
-export const SearchByDetailsPage = () => {
-    return (
-        <Container style={{ padding: 20 }}>
-        <h1>Search By Details Page</h1>
-            <input type="text" placeholder="Enter NHS Number" />
-        </Container>
-    );
-};
+export const SearchByDetailsPage = ({
+    onBack,
+    nextStep,
+}: {
+    onBack: () => void;
+    nextStep: () => void;
+}) => (
+    <SearchByDetails onBack={onBack} nextStep={nextStep} />
+);
+
+export default SearchByDetailsPage;

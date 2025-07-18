@@ -1,26 +1,26 @@
 import React, { createContext, useContext, useState } from "react";
 
-interface StepContextType {
-    currentStepIndex: number;
-    setCurrentStepIndex: React.Dispatch<React.SetStateAction<number>>;
-}
+const StepContext = createContext<any>(null);
 
-const StepContext = createContext<StepContextType | undefined>(undefined);
+export const StepProvider = ({ children }) => {
+    const [currentStepIndex, setCurrentStepIndex] = useState(0);
+    const [nhsNumber, setNhsNumber] = useState(""); // NHS Number state
 
-export const StepProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [currentStepIndex, setCurrentStepIndex] = useState(0); // Start at step 0
+    const nextStep = () => setCurrentStepIndex((i) => i + 1);
 
     return (
-        <StepContext.Provider value={{ currentStepIndex, setCurrentStepIndex }}>
+        <StepContext.Provider
+            value={{
+                currentStepIndex,
+                setCurrentStepIndex,
+                nextStep,
+                nhsNumber,
+                setNhsNumber,
+            }}
+        >
             {children}
         </StepContext.Provider>
     );
 };
 
-export const useStep = () => {
-    const context = useContext(StepContext);
-    if (!context) {
-        throw new Error("useStep must be used within StepProvider");
-    }
-    return context;
-};
+export const useStep = () => useContext(StepContext);

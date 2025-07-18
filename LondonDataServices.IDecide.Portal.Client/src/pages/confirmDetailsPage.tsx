@@ -1,23 +1,12 @@
-import { Breadcrumb } from "nhsuk-react-components";
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Container} from "react-bootstrap";
-import { useStep } from "../components/context/stepContext";
+import { Container } from "react-bootstrap";
+import ConfirmDetails from "../components/confirmDetails/confirmDetails";
 
-export const ConfirmDetailsPage = () => {
-    const { setCurrentStepIndex } = useStep();
-    const navigate = useNavigate();
-
-    const handleNext = () => {
-        setCurrentStepIndex(2);
-        navigate("/positiveConfirmation");
-    };
-
+export const ConfirmDetailsPage = ({ goToConfirmCode }) => {
     return (
         <Container>
-            <div>
-                <p> Please confirm your name and date of birth.</p>
-            </div>
+            <ConfirmDetails goToConfirmCode={goToConfirmCode} />
         </Container>
     );
 };
+
+export default ConfirmDetailsPage;
