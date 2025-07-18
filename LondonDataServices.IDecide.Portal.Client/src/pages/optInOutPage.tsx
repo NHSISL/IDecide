@@ -1,10 +1,11 @@
 ﻿import React from "react";
 import { Container } from "react-bootstrap";
+import OptInOptOut from "../components/optInOptOut/optInOptOut";
 
 export const OptInOutPage = () => {
     return (
         <Container style={{ padding: 20 }}>
-        <h1>Opt In or Opt Out Page</h1>
+            <OptInOptOut />
         </Container>
     );
 };

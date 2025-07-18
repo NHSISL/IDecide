@@ -1,11 +1,12 @@
-﻿import React from "react";
-import { Container } from "react-bootstrap";
+﻿import { Container } from "react-bootstrap";
+import ConfirmCode from "../components/confirmCode/confirmCode";
 
 export const ConfirmCodePage = () => {
     return (
-        <Container style={{ padding: 20 }}>
-        <h1>Confirm With Code Page</h1>
-            <input type="text" placeholder="Enter Code" />
+        <Container>
+            <ConfirmCode />
         </Container>
     );
 };
+
+export default ConfirmCodePage;

@@ -1,10 +1,12 @@
-﻿import React from "react";
+﻿// LondonDataServices.IDecide.Portal.Client\src\pages\searchByNhsNumberPage.tsx
+import React from "react";
+import SearchByNhsNumber from "../components/SearchNhsNumber/searchByNhsNumber";
 import { Container } from "react-bootstrap";
 
-export const SearchByNhsNumberPage = () => {
-    return (
-        <Container style={{ padding: 20 }}>
-            <input type="text" placeholder="Enter NHS Number" />
-        </Container>
-    );
-};
+export const SearchByNhsNumberPage = ({ onIDontKnow }: { onIDontKnow: () => void }) => (
+    <Container>
+        <SearchByNhsNumber onIDontKnow={onIDontKnow} />
+    </Container>
+);
+
+export default SearchByNhsNumberPage;
