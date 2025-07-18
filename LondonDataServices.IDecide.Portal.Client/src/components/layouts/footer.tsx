@@ -1,23 +1,63 @@
-import { faCopyright } from '@fortawesome/free-solid-svg-icons/faCopyright';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Footer } from 'nhsuk-react-components';
 import React from 'react';
-import { Col, Container, Row } from "react-bootstrap";
-import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
+import { Container, Row, Col } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 const FooterComponent: React.FC = () => {
-    const { configuration } = useFrontendConfiguration();
     return (
-        <Container>
-            <Row className="bg-light">
-                <Col className="m-2">
-                    <small>
-                        <FontAwesomeIcon icon={faCopyright} className="me-2 fa-icon fa-regular" />
-                        2025 One London. All rights reserved.
-                        <br />
-                        <strong>Version:&nbsp;{configuration?.version}</strong>
-                    </small>
-                </Col>
-            </Row>
+        <Container fluid className="footer-center py-3">
+            <Footer>
+                <Footer.List>
+                    <Footer.ListItem>
+                        <Link to="/copyright" style={{ textDecoration: "none", color: "inherit" }}>
+                            Copyright
+                        </Link>
+                    </Footer.ListItem>
+                    <Footer.ListItem>
+                        <Link to="/about" style={{ textDecoration: "none", color: "inherit" }}>
+                            About us
+                        </Link>
+                    </Footer.ListItem>
+                    <Footer.ListItem>
+                        <Link to="/contact" style={{ textDecoration: "none", color: "inherit" }}>
+                            Contact us
+                        </Link>
+                    </Footer.ListItem>
+                    <Footer.ListItem>
+                        <Link to="/websitePrivacyNotice" style={{ textDecoration: "none", color: "inherit" }}>
+                            Website privacy notice
+                        </Link>
+                    </Footer.ListItem>
+                    <Footer.ListItem>
+                        <Link to="/accessibilityStatement" style={{ textDecoration: "none", color: "inherit" }}>
+                            Accessibility statement
+                        </Link>
+                    </Footer.ListItem>
+                    <Footer.ListItem>
+                        <Link to="/cookieUse" style={{ textDecoration: "none", color: "inherit" }}>
+                            Cookie use
+                        </Link>
+                    </Footer.ListItem>
+                </Footer.List>
+                <Footer.Copyright>
+                    <Row className="footer-logos align-items-center text-center">
+                        <Col xs={12} md="auto">
+                            <img
+                                src="/OneLondon_Logo_OneLondon_Logo_White.png"
+                                alt="OneLondon Logo"
+                                className="footer-logo"
+                            />
+                        </Col>
+                        <Col xs={12} md="auto">
+                            <img
+                                src="/National_Health_Service.png"
+                                alt="NHS Logo"
+                                className="footer-logo nhs-logo"
+                            />
+                        </Col>
+                    </Row>
+                </Footer.Copyright>
+            </Footer>
         </Container>
     );
 }

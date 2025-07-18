@@ -70,15 +70,14 @@ const LeftProgress: React.FC = () => {
                                             />
                                             <span>{stepLabels[step]}</span>
                                         </div>
-
                                     ) : (
                                         <Radios.Radio
                                             id={`radio-${step}`}
                                             name="step"
                                             value={step}
-                                            disabled={!(isCurrentStep(idx) || idx === currentStepIndex + 1)}
+                                            disabled={true} // <-- Always disabled
                                             checked={isCurrentStep(idx)}
-                                            onChange={() => handleChange(idx)}
+                                            onChange={() => { }} // No-op
                                             style={{ marginBottom: 8 }}
                                         >
                                             <span className="radio-label">{stepLabels[step]}</span>

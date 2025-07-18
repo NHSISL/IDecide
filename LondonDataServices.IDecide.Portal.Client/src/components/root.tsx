@@ -1,8 +1,9 @@
 import { Outlet, useLocation } from "react-router-dom";
 import { Container, Row, Col } from "react-bootstrap";
-import React, { useState, useEffect } from 'react';
-import { Footer, Header } from "nhsuk-react-components";
+import React, { useState, useEffect, useRef } from 'react';
+import { Header } from "nhsuk-react-components";
 import LeftProgress from "./leftProgress/leftProgress";
+import FooterComponent from "./layouts/footer";
 import { useStep } from "./context/stepContext";
 
 const DEFAULT_FONT_SIZE = 16;
@@ -11,12 +12,23 @@ export default function Root() {
     const location = useLocation();
 
     const cleanPath = location.pathname.replace(/\/+$/, '');
-    const doNotShowLeftPanelRoutes = ["/home", "/end"];
+    const doNotShowLeftPanelRoutes = [
+        "/home",
+        "/end",
+        "/copyright",
+        "/about",
+        "/contact",
+        "/websitePrivacyNotice",
+        "/cookieUse",
+        "/accessibilityStatement"];
+
     const doNotShowLeftPanel = doNotShowLeftPanelRoutes.includes(cleanPath);
     const { currentStepIndex, setCurrentStepIndex } = useStep();
 
     const [fontSize, setFontSize] = useState(DEFAULT_FONT_SIZE);
     const [showAccessibilityBox, setShowAccessibilityBox] = useState(false);
+    const dropdownRef = useRef<HTMLDivElement>(null);
+    const linkRef = useRef<HTMLAnchorElement>(null);
 
     useEffect(() => {
         document.documentElement.style.setProperty('--app-font-size', `${fontSize}px`);
@@ -47,6 +59,41 @@ export default function Root() {
         setShowAccessibilityBox(false);
     };
 
+    // Ensure dropdown stays within viewport
+    useEffect(() => {
+        if (showAccessibilityBox && dropdownRef.current && linkRef.current) {
+            const dropdown = dropdownRef.current;
+            const link = linkRef.current;
+            const dropdownRect = dropdown.getBoundingClientRect();
+            const linkRect = link.getBoundingClientRect();
+
+            // Calculate ideal left and top
+            let left = linkRect.left - 50;
+            let top = linkRect.bottom + 10; // Move down by 30px
+
+            // If dropdown overflows right, shift left
+            if (left + dropdownRect.width > window.innerWidth) {
+                left = window.innerWidth - dropdownRect.width - 50; // 8px margin
+            }
+            // If dropdown overflows left, clamp to 8px
+            if (left < 8) {
+                left = 8;
+            }
+
+            // If dropdown overflows bottom, show above the trigger (with 30px offset)
+            if (top + dropdownRect.height > window.innerHeight) {
+                top = linkRect.top - dropdownRect.height - 10;
+            }
+            // If still off top, clamp to 8px
+            if (top < 8) {
+                top = 8;
+            }
+
+            dropdown.style.left = `${left}px`;
+            dropdown.style.top = `${top}px`;
+        }
+    }, [showAccessibilityBox]);
+
     return (
         <div className="root-layout">
             {!doNotShowLeftPanel && (
@@ -58,23 +105,39 @@ export default function Root() {
                                 <a
                                     href="#"
                                     onClick={toggleAccessibilityBox}
+                                    className="accessibility-img-link"
+                                    tabIndex={-1}
+                                    ref={linkRef}
                                     style={{
                                         fontSize: "1.1em",
                                         textDecoration: "none",
                                         fontWeight: 500,
-                                        cursor: "pointer"
+                                        cursor: "pointer",
+                                        userSelect: "none",
+                                        outline: "none"
                                     }}
                                     aria-haspopup="true"
                                     aria-expanded={showAccessibilityBox}
                                 >
-                                    Accessibility
+                                    <img
+                                        src="/Accessibility.png"
+                                        alt="Accessibility"
+                                        style={{
+                                            height: "2em",
+                                            verticalAlign: "middle",
+                                            userSelect: "none",
+                                            pointerEvents: "none"
+                                        }}
+                                        draggable={false}
+                                    />
                                 </a>
                                 {showAccessibilityBox && (
                                     <div
+                                        ref={dropdownRef}
                                         style={{
-                                            position: "absolute",
-                                            top: "2.2em",
+                                            position: "fixed",
                                             left: 0,
+                                            top: 0,
                                             background: "#fff",
                                             border: "1px solid #ccc",
                                             borderRadius: "4px",
@@ -157,7 +220,7 @@ export default function Root() {
                 </Container>
             </div>
 
-            <Footer />
+            <FooterComponent />
         </div>
     );
 }
