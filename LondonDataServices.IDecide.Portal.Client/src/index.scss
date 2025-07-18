@@ -10,6 +10,8 @@ body {
     background: white !important;
 }
 
+
+
 //// Root variables
 :root {
     --app-font-size: 14px;
@@ -115,12 +117,19 @@ body {
 
 //// Footer styles
 .nhsuk-footer {
-    height: 50px !important;
     min-height: 50px !important;
+    height: auto !important;
     max-height: 50px !important;
     box-sizing: border-box;
+    overflow: hidden !important;
 }
 
+@media (max-width: 767.98px) {
+    .nhsuk-footer {
+        max-height: none !important;
+        overflow: visible !important;
+    }
+}
 //// Fullscreen background styles
 .fullscreen-bg {
     position: fixed;
@@ -154,6 +163,130 @@ body {
     width: auto;
 }
 
+footer .nhsuk-width-container {
+    max-width: 100% !important;
+    margin-left: 100px !important;
+    margin-right: 100px !important;
+    padding: 0 !important;
+}
+
+.nhsuk-width-container {
+    max-width: 100% !important;
+    margin-left: 100px !important;
+    margin-right: 100px !important;
+}
+
+.nhsuk-footer-container {
+    background: #00ABCD !important;
+}
+
+.nhsuk-footer {
+    background: #00ABCD !important;
+    font-size: 1.5rem;
+}
+
+.footer-center {
+    background: #00ABCD !important;
+    border:none !important;
+}
+
+.nhsuk-footer__list-item {
+    font-size: 1.2rem !important;
+    line-height: 1.71429 !important;
+}
+
+.nhsuk-footer-container {
+    background-color: #00ABCD !important;
+    border-top: 4px solid #00ABCD !important;
+}
+
+footer a,
+footer a:visited,
+footer a:active,
+footer a:hover,
+footer a:focus {
+    text-decoration: none !important;
+    color: inherit !important;
+   color:white !important;
+}
+
+.footer-center {
+    text-align: center;
+    background: #005eb8;
+    color: #fff;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+.footer-logos {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+
+.footer-logo {
+    height: 50px;
+    max-width: 90vw;
+    background: transparent;
+}
+
+.nhs-logo {
+    margin-left: 0;
+}
+
+@media (min-width: 768px) {
+    .footer-logos {
+        flex-direction: row;
+        gap: 3rem;
+    }
+
+    .nhs-logo {
+        margin-left: 50px;
+    }
+}
+
+.nhsuk-back-link {
+    display: inline-flex;
+    align-items: center;
+    background: none;
+    border: none;
+    color: #005eb8;
+    font-size: 1.1875rem;
+    line-height: 1.31579;
+    text-decoration: none;
+    cursor: pointer;
+    padding: 0;
+    margin-bottom: 24px;
+    font-family: inherit;
+}
+
+.nhsuk-back-link__arrow {
+    font-size: 1.5em;
+    margin-right: 8px;
+    line-height: 1;
+}
+
+.nhsuk-back-link:focus {
+    outline: 3px solid #ffeb3b;
+    outline-offset: 2px;
+}
+
+.nhsuk-back-link:hover {
+    text-decoration: underline;
+}
+
+.accessibility-img-link,
+.accessibility-img-link:focus,
+.accessibility-img-link:active,
+.accessibility-img-link:hover {
+    background: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    color: inherit !important;
+}
+
 //// Mobile styles
 @media (max-width: 600px) {
     .home-box {
@@ -166,23 +299,29 @@ body {
         border-radius: 3px;
         font-size: 1rem;
     }
+
     .expandable-section button {
         font-size: 1.1rem;
         padding: 0.75rem 0;
     }
+
     .expandable-section span {
         margin-right: 0.5rem;
     }
+
     .expandable-section div {
         padding-left: 1.5rem !important;
         font-size: 1rem;
     }
+
     h1 {
         font-size: 1.5rem !important;
     }
+
     p {
         font-size: 1rem !important;
     }
+
     .nhsuk-button {
         width: 100%;
         font-size: 1.1rem;
