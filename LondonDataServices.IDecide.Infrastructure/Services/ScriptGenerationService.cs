@@ -167,6 +167,12 @@ namespace LondonDataServices.IDecide.Infrastructure.Services
                         new LabelJobV2(runsOn: BuildMachines.UbuntuLatest)
                         {
                             Name = "Label",
+                            Permissions = new Dictionary<string, string>
+                            {
+                                { "contents", "read" },
+                                { "pull-requests", "write" },
+                                { "issues", "write" }
+                            }
                         }
                     },
                     {
