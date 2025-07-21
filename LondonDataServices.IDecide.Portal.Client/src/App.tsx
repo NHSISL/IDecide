@@ -12,6 +12,8 @@ import AboutPage from './pages/helpPages/aboutPage';
 import AccessibilityStatementPage from './pages/helpPages/accessibilityStatementPage';
 import CookieUsePage from './pages/helpPages/cookieUsePage';
 import ContactPage from './pages/helpPages/contactPage';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { queryClientGlobalOptions } from './brokers/apiBroker.globals';
 
 function App() {
 
@@ -72,7 +74,9 @@ function App() {
 
     return (
         <>
-            <RouterProvider router={router} />
+            <QueryClientProvider client={queryClientGlobalOptions}>
+                <RouterProvider router={router} />
+            </QueryClientProvider>
         </>
     );
 

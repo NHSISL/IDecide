@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useStep } from "../context/stepContext";
+import { Patient } from "../../models/patients/patient";
+import { patientViewService } from "../../services/views/patientViewService";
 
 export const SearchByNhsNumber = ({ onIDontKnow }: { onIDontKnow: () => void }) => {
     const [nhsNumberInput, setNhsNumberInput] = useState("1234567890");
@@ -12,6 +14,8 @@ export const SearchByNhsNumber = ({ onIDontKnow }: { onIDontKnow: () => void }) 
         if (error) setError("");
     };
 
+    const addPatient = patientViewService.useCreatePatient();
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (nhsNumberInput.length !== 10) {
@@ -19,7 +23,18 @@ export const SearchByNhsNumber = ({ onIDontKnow }: { onIDontKnow: () => void }) 
             return;
         }
         setNhsNumber(nhsNumberInput);
-        nextStep();
+
+        const patientToCreate = new Patient({ id: "", nhsNumber: nhsNumberInput });
+
+        addPatient.mutate(patientToCreate, {
+            onSuccess: (createdPatient) => {
+                console.log("Created patient:", createdPatient);
+                nextStep();
+            },
+            onError: (error: any) => {
+                console.error("Error creating patient:", error);
+            }
+        });
     };
 
     return (

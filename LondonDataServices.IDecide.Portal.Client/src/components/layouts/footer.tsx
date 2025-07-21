@@ -41,16 +41,16 @@ const FooterComponent: React.FC = () => {
                 </Footer.List>
                 <Footer.Copyright>
                     <Row className="footer-logos align-items-center text-center">
-                        <Col xs={12} md="auto">
+                        <Col xs={6} md="auto">
                             <img
                                 src="/OneLondon_Logo_OneLondon_Logo_White.png"
                                 alt="OneLondon Logo"
                                 className="footer-logo"
                             />
                         </Col>
-                        <Col xs={12} md="auto">
+                        <Col xs={6} md="auto">
                             <img
-                                src="/National_Health_Service.png"
+                                src="/londonSecureDE.png"
                                 alt="NHS Logo"
                                 className="footer-logo nhs-logo"
                             />
