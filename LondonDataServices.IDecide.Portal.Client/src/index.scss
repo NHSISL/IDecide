@@ -220,7 +220,7 @@ footer a:focus {
 
 .footer-logos {
     display: flex;
-    flex-direction: column;
+    flex-direction: row; // Always row for side-by-side
     justify-content: center;
     align-items: center;
     gap: 1rem;
@@ -332,4 +332,13 @@ footer a:focus {
 
 .nhsuk-summary-list__row {
     border-bottom: none !important;
+}
+
+@media (min-width: 48.0625em) {
+    .nhsuk-footer__list {
+        float: left;
+        padding-bottom: 0;
+        padding-right: 10px;
+        width: 65%;
+    }
 }

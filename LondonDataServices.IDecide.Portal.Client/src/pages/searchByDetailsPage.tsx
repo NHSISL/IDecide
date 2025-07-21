@@ -1,5 +1,4 @@
-﻿import React from "react";
-import SearchByDetails from "../components/searchByDetails/searchByDetails";
+﻿import SearchByDetails from "../components/searchByDetails/searchByDetails";
 
 export const SearchByDetailsPage = ({
     onBack,
