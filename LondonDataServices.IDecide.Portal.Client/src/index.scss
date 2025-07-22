@@ -104,7 +104,6 @@ body {
     margin-left: 10px;
 }
 
-//// Root layout and content
 .root-layout {
     min-height: 100vh;
     display: flex;
@@ -115,13 +114,22 @@ body {
     flex: 1 0 auto;
 }
 
+footer, .footer-component {
+    flex-shrink: 0 !important;
+}
+
+.nhsuk-header {
+    background-color: #005eb8 !important;
+}
+
 //// Footer styles
 .nhsuk-footer {
     min-height: 50px !important;
     height: auto !important;
-    max-height: 50px !important;
+    
     box-sizing: border-box;
     overflow: hidden !important;
+    margin-bottom: 0px;
 }
 
 @media (max-width: 767.98px) {
@@ -158,9 +166,10 @@ body {
     padding: 32px 24px;
     border-radius: 5px;
     box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-    max-width: 1200px;
+    max-width: 1500px;
     z-index: 2;
     width: auto;
+    height: calc(100vh - 15rem);
 }
 
 footer .nhsuk-width-container {
@@ -176,7 +185,7 @@ footer .nhsuk-width-container {
     margin-right: 100px !important;
 }
 
-.nhsuk-footer-container {
+/*.nhsuk-footer-container {
     background: #00ABCD !important;
 }
 
@@ -188,157 +197,198 @@ footer .nhsuk-width-container {
 .footer-center {
     background: #00ABCD !important;
     border:none !important;
-}
+}*/
 
-.nhsuk-footer__list-item {
-    font-size: 1.2rem !important;
-    line-height: 1.71429 !important;
-}
 
-.nhsuk-footer-container {
+    /*.nhsuk-footer-container {
     background-color: #00ABCD !important;
     border-top: 4px solid #00ABCD !important;
-}
+}*/
 
-footer a,
-footer a:visited,
-footer a:active,
-footer a:hover,
-footer a:focus {
-    text-decoration: none !important;
-    color: inherit !important;
-   color:white !important;
-}
+    .nhsuk-footer-container {
+        background-color: #d8dde0;
+        border-top: 4px solid #00ABCD !important;
+    }
 
-.footer-center {
-    text-align: center;
-    background: #005eb8;
-    color: #fff;
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-}
 
-.footer-logos {
-    display: flex;
-    flex-direction: row; // Always row for side-by-side
-    justify-content: center;
-    align-items: center;
-    gap: 1rem;
-}
 
-.footer-logo {
-    height: 50px;
-    max-width: 90vw;
-    background: transparent;
-}
+    .footer-center {
+        text-align: center;
+        /* background: #005eb8;*/
+        color: #fff;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
 
-.nhs-logo {
-    margin-left: 0;
-}
-
-@media (min-width: 768px) {
     .footer-logos {
-        flex-direction: row;
-        gap: 3rem;
+        display: flex;
+        flex-direction: row; // Always row for side-by-side
+        justify-content: center;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .footer-logo {
+        height: 50px;
+        max-width: 90vw;
+        background: transparent;
     }
 
     .nhs-logo {
-        margin-left: 50px;
+        margin-left: 0;
+    }
+
+    @media (min-width: 768px) {
+        .footer-logos {
+            flex-direction: row;
+            gap: 3rem;
+        }
+
+        .nhs-logo {
+            margin-left: 50px;
+        }
+    }
+
+    .nhsuk-back-link {
+        display: inline-flex;
+        align-items: center;
+        background: none;
+        border: none;
+        color: #005eb8;
+        font-size: 1.1875rem;
+        line-height: 1.31579;
+        text-decoration: none;
+        cursor: pointer;
+        padding: 0;
+        margin-bottom: 24px;
+        font-family: inherit;
+    }
+
+    .nhsuk-back-link__arrow {
+        font-size: 1.5em;
+        margin-right: 8px;
+        line-height: 1;
+    }
+
+    .nhsuk-back-link:focus {
+        outline: 3px solid #ffeb3b;
+        outline-offset: 2px;
+    }
+
+    .nhsuk-back-link:hover {
+        text-decoration: underline;
+    }
+
+    .accessibility-img-link,
+    .accessibility-img-link:focus,
+    .accessibility-img-link:active,
+    .accessibility-img-link:hover {
+        background: none !important;
+        outline: none !important;
+        box-shadow: none !important;
+        color: inherit !important;
+    }
+    //// Mobile styles
+    @media (max-width: 600px) {
+        .home-box {
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            width: auto;
+            max-width: none;
+            padding: 16px 10px;
+            border-radius: 3px;
+            font-size: 1rem;
+        }
+
+        .expandable-section button {
+            font-size: 1.1rem;
+            padding: 0.75rem 0;
+        }
+
+        .expandable-section span {
+            margin-right: 0.5rem;
+        }
+
+        .expandable-section div {
+            padding-left: 1.5rem !important;
+            font-size: 1rem;
+        }
+
+        h1 {
+            font-size: 1.5rem !important;
+        }
+
+        p {
+            font-size: 1rem !important;
+        }
+
+        .nhsuk-button {
+            width: 100%;
+            font-size: 1.1rem;
+            padding: 1rem 0.5rem;
+        }
+    }
+
+
+    .nhsuk-summary-list__row {
+        border-bottom: none !important;
+    }
+
+    @media (min-width: 48.0625em) {
+        .nhsuk-footer__list {
+            float: left;
+            padding-bottom: 0;
+            padding-right: 10px;
+            width: 65%;
+        }
+    }
+
+
+/* Add to your main CSS file, e.g. App.css or root.css */
+.accessibility-icon-link {
+    position: static;
+}
+
+@media (max-width: 768px) {
+    .accessibility-icon-link {
+        position: fixed;
+        top: 1.4em;
+        right: 2.2em;
+        z-index: 1100;
+        background: transparent;
     }
 }
 
-.nhsuk-back-link {
-    display: inline-flex;
-    align-items: center;
-    background: none;
-    border: none;
-    color: #005eb8;
-    font-size: 1.1875rem;
-    line-height: 1.31579;
-    text-decoration: none;
-    cursor: pointer;
-    padding: 0;
-    margin-bottom: 24px;
-    font-family: inherit;
+
+
+
+
+
+.root-layout {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
-.nhsuk-back-link__arrow {
-    font-size: 1.5em;
-    margin-right: 8px;
-    line-height: 1;
+.root-content {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 0; // Important for flex children to be scrollable
 }
 
-.nhsuk-back-link:focus {
-    outline: 3px solid #ffeb3b;
-    outline-offset: 2px;
+.home-content {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    height: 100%;
 }
 
-.nhsuk-back-link:hover {
-    text-decoration: underline;
-}
-
-.accessibility-img-link,
-.accessibility-img-link:focus,
-.accessibility-img-link:active,
-.accessibility-img-link:hover {
-    background: none !important;
-    outline: none !important;
-    box-shadow: none !important;
-    color: inherit !important;
-}
-
-//// Mobile styles
-@media (max-width: 600px) {
-    .home-box {
-        top: 10px;
-        left: 10px;
-        right: 10px;
-        width: auto;
-        max-width: none;
-        padding: 16px 10px;
-        border-radius: 3px;
-        font-size: 1rem;
-    }
-
-    .expandable-section button {
-        font-size: 1.1rem;
-        padding: 0.75rem 0;
-    }
-
-    .expandable-section span {
-        margin-right: 0.5rem;
-    }
-
-    .expandable-section div {
-        padding-left: 1.5rem !important;
-        font-size: 1rem;
-    }
-
-    h1 {
-        font-size: 1.5rem !important;
-    }
-
-    p {
-        font-size: 1rem !important;
-    }
-
-    .nhsuk-button {
-        width: 100%;
-        font-size: 1.1rem;
-        padding: 1rem 0.5rem;
-    }
-}
-
-
-.nhsuk-summary-list__row {
-    border-bottom: none !important;
-}
-
-@media (min-width: 48.0625em) {
-    .nhsuk-footer__list {
-        float: left;
-        padding-bottom: 0;
-        padding-right: 10px;
-        width: 65%;
-    }
+.home-box {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    min-height: 0;
+    max-height: 100%;
 }

@@ -19,7 +19,7 @@ export default function Root() {
     const doNotShowLeftPanelRoutes = [
         "/home",
         "/end",
-        "/copyright",
+      
         "/about",
         "/contact",
         "/websitePrivacyNotice",
@@ -109,7 +109,7 @@ export default function Root() {
                                 <a
                                     href="#"
                                     onClick={toggleAccessibilityBox}
-                                    className="accessibility-img-link"
+                                    className="accessibility-img-link accessibility-icon-link"
                                     tabIndex={-1}
                                     ref={linkRef}
                                     style={{
@@ -124,7 +124,7 @@ export default function Root() {
                                     aria-expanded={showAccessibilityBox}
                                 >
                                     <img
-                                        src="/accessibility-icon.webp"
+                                        src="/accessibility-icon-white.webp"
                                         alt="Accessibility"
                                         style={{
                                             height: "2em",
@@ -272,9 +272,6 @@ export default function Root() {
                             </div>
                         </Header.Content>
                     </Header.Container>
-                    <Header.Nav>
-                        {/* Optional nav */}
-                    </Header.Nav>
                 </Header>
             )}
 
@@ -290,7 +287,9 @@ export default function Root() {
                             </Col>
                         )}
                         <Col md={doNotShowLeftPanel ? 12 : 7}>
-                            <Outlet />
+                            <div className="home-content">
+                                <Outlet />
+                            </div>
                         </Col>
                     </Row>
                 </Container>

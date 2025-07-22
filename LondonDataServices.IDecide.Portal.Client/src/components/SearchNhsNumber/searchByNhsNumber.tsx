@@ -6,7 +6,7 @@ import { patientViewService } from "../../services/views/patientViewService";
 export const SearchByNhsNumber = ({ onIDontKnow }: { onIDontKnow: () => void }) => {
     const [nhsNumberInput, setNhsNumberInput] = useState("1234567890");
     const [error, setError] = useState("");
-    const { nextStep, setNhsNumber } = useStep();
+    const { nextStep, setCreatedPatient } = useStep();
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value.replace(/\D/g, "").slice(0, 10);
@@ -22,14 +22,14 @@ export const SearchByNhsNumber = ({ onIDontKnow }: { onIDontKnow: () => void }) 
             setError("NHS Number must be exactly 10 digits.");
             return;
         }
-        setNhsNumber(nhsNumberInput);
 
         const patientToCreate = new Patient({ id: "", nhsNumber: nhsNumberInput });
-
+       
         addPatient.mutate(patientToCreate, {
             onSuccess: (createdPatient) => {
                 console.log("Created patient:", createdPatient);
-                nextStep();
+                setCreatedPatient(createdPatient);
+                nextStep(createdPatient);
             },
             onError: (error: any) => {
                 console.error("Error creating patient:", error);

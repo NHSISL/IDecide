@@ -6,15 +6,19 @@ interface ConfirmDetailsProps {
 }
 
 export const ConfirmDetails: React.FC<ConfirmDetailsProps> = ({ goToConfirmCode }) => {
-    const { setCurrentStepIndex, nextStep } = useStep();
+    const { setCurrentStepIndex, nextStep, createdPatient } = useStep();
 
     const handleNoClick = () => {
-        setCurrentStepIndex(0); // Go back to NHS Number search step
+        setCurrentStepIndex(0); 
     };
 
     const handleYesClick = () => {
-        nextStep(); // Advance to the next step
+        nextStep(createdPatient); 
     };
+
+    if (!createdPatient) {
+        return <div>No patient details available.</div>;
+    }
 
     return (
         <div className="mt-4">
@@ -23,11 +27,11 @@ export const ConfirmDetails: React.FC<ConfirmDetailsProps> = ({ goToConfirmCode 
                 <dl className="nhsuk-summary-list" style={{ marginBottom: "2rem" }}>
                     <div className="nhsuk-summary-list__row">
                         <dt className="nhsuk-summary-list__key">Name</dt>
-                        <dd className="nhsuk-summary-list__value">Mr D**** H****</dd>
+                        <dd className="nhsuk-summary-list__value">{createdPatient.firstName +','+ createdPatient.surname}</dd>
                     </div>
                     <div className="nhsuk-summary-list__row">
                         <dt className="nhsuk-summary-list__key">Email</dt>
-                        <dd className="nhsuk-summary-list__value">d****hay**@googlemail.com</dd>
+                        <dd className="nhsuk-summary-list__value">{createdPatient.emailAddress}</dd>
                     </div>
                     <div className="nhsuk-summary-list__row">
                         <dt className="nhsuk-summary-list__key">Mobile Number</dt>
@@ -35,7 +39,7 @@ export const ConfirmDetails: React.FC<ConfirmDetailsProps> = ({ goToConfirmCode 
                     </div>
                     <div className="nhsuk-summary-list__row">
                         <dt className="nhsuk-summary-list__key">Address</dt>
-                        <dd className="nhsuk-summary-list__value">9 T** W********* Cr2 ***</dd>
+                        <dd className="nhsuk-summary-list__value">{createdPatient.address}</dd>
                     </div>
                 </dl>
 

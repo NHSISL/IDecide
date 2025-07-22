@@ -18,6 +18,7 @@ export const ConfirmCode = () => {
             setError("Please enter a 5-digit code.");
             return;
         }
+        //Call to service to confirm code matches against patients NHSNumber?
         nextStep();
     };
 
