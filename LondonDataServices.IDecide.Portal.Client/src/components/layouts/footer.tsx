@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 const FooterComponent: React.FC = () => {
     return (
-        <Container fluid className="footer-center py-3">
+        <Container fluid className="footer-center" style={{ zIndex: '1' }}>
             <Footer>
                 <Footer.List>
                     <Footer.ListItem>
@@ -41,20 +41,14 @@ const FooterComponent: React.FC = () => {
                 </Footer.List>
                 <Footer.Copyright>
                     <Row className="footer-logos align-items-center text-center">
-                        <Col xs={6} md="auto">
+                        <Col xs={12} md="auto">
                             <img
-                                src="/OneLondon_Logo_OneLondon_Logo_White.png"
+                                src="/Picture1.png"
                                 alt="OneLondon Logo"
                                 className="footer-logo"
                             />
                         </Col>
-                        <Col xs={6} md="auto">
-                            <img
-                                src="/londonSecureDE.png"
-                                alt="NHS Logo"
-                                className="footer-logo nhs-logo"
-                            />
-                        </Col>
+                        
                     </Row>
                 </Footer.Copyright>
             </Footer>

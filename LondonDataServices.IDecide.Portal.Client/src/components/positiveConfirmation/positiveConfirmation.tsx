@@ -1,17 +1,22 @@
 import React from "react";
+import { useStep } from "../context/stepContext";
 
 interface PositiveConfirmationProps {
-    onBack: () => void;
     goToConfirmCode: () => void;
 }
 
-const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ onBack, goToConfirmCode }) => {
-    const details = {
-        name: "Mr D**** H****",
-        email: "d****hay**@googlemail.com",
-        mobile: "07******084",
-        address: "9 T** W********* Cr2 ***"
+const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirmCode }) => {
+    const { createdPatient } = useStep();
+
+    const handleSubmit = (method: "email" | "sms" | "letter") => {
+        // Log how they recieve a code and submit
+        console.log(createdPatient.nhsNumber + ',' + method);
+        goToConfirmCode();
     };
+
+    if (!createdPatient) {
+        return <div>No patient details available.</div>;
+    }
 
     return (
         <div className="mt-4">
@@ -20,19 +25,19 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ onBack, goT
             <dl className="nhsuk-summary-list" style={{ marginBottom: "2rem" }}>
                 <div className="nhsuk-summary-list__row">
                     <dt className="nhsuk-summary-list__key">Name</dt>
-                    <dd className="nhsuk-summary-list__value">{details.name}</dd>
+                    <dd className="nhsuk-summary-list__value">{createdPatient.surname}</dd>
                 </div>
                 <div className="nhsuk-summary-list__row">
                     <dt className="nhsuk-summary-list__key">Email</dt>
-                    <dd className="nhsuk-summary-list__value">{details.email}</dd>
+                    <dd className="nhsuk-summary-list__value">{createdPatient.emailAddress}</dd>
                 </div>
                 <div className="nhsuk-summary-list__row">
                     <dt className="nhsuk-summary-list__key">Mobile Number</dt>
-                    <dd className="nhsuk-summary-list__value">{details.mobile}</dd>
+                    <dd className="nhsuk-summary-list__value">{createdPatient.mobileNumber}</dd>
                 </div>
                 <div className="nhsuk-summary-list__row">
                     <dt className="nhsuk-summary-list__key">Address</dt>
-                    <dd className="nhsuk-summary-list__value">{details.address}</dd>
+                    <dd className="nhsuk-summary-list__value">{createdPatient.address}</dd>
                 </div>
             </dl>
 
@@ -49,7 +54,7 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ onBack, goT
                     type="button"
                     className="nhsuk-button"
                     style={{ flex: 1, minWidth: 120 }}
-                    onClick={goToConfirmCode}
+                    onClick={() => handleSubmit("email")}
                 >
                     Email
                 </button>
@@ -57,7 +62,7 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ onBack, goT
                     type="button"
                     className="nhsuk-button"
                     style={{ flex: 1, minWidth: 120 }}
-                    onClick={goToConfirmCode}
+                    onClick={() => handleSubmit("sms")}
                 >
                     SMS
                 </button>
@@ -65,7 +70,7 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ onBack, goT
                     type="button"
                     className="nhsuk-button"
                     style={{ flex: 1, minWidth: 120 }}
-                    onClick={goToConfirmCode}
+                    onClick={() => handleSubmit("letter")}
                 >
                     Letter
                 </button>

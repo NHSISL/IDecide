@@ -1,10 +1,16 @@
-import React, { createContext, useContext, useState } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { createContext, useContext, useState, ReactNode } from "react";
+import { Patient } from "../../models/patients/patient";
 
 const StepContext = createContext<any>(null);
 
-export const StepProvider = ({ children }) => {
+interface StepProviderProps {
+    children: ReactNode;
+}
+
+export const StepProvider = ({ children }: StepProviderProps) => {
     const [currentStepIndex, setCurrentStepIndex] = useState(0);
-    const [nhsNumber, setNhsNumber] = useState(""); // NHS Number state
+    const [createdPatient, setCreatedPatient] = useState<Patient | null>(null);
 
     const nextStep = () => setCurrentStepIndex((i) => i + 1);
 
@@ -14,8 +20,8 @@ export const StepProvider = ({ children }) => {
                 currentStepIndex,
                 setCurrentStepIndex,
                 nextStep,
-                nhsNumber,
-                setNhsNumber,
+                createdPatient,
+                setCreatedPatient,
             }}
         >
             {children}
