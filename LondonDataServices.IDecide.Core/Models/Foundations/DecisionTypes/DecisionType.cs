@@ -4,7 +4,7 @@
 
 using System;
 
-namespace LondonDataServices.IDecide.Core.Models.Foundations.DecisionType
+namespace LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes
 {
     public class DecisionType
     {
