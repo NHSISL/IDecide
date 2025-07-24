@@ -44,11 +44,11 @@ export default function Root() {
 
                     <div className={`content ${sidebarOpen ? 'content-shift-right' : 'content-shift-left'}`}>
                         <NavbarComponent toggleSidebar={toggleSidebar} showMenuButton={true} />
+
                         <div className="content-inner">
-                            <AuthenticatedTemplate>
-                                <Outlet />
-                            </AuthenticatedTemplate>
+                            <Outlet />
                         </div>
+
                     </div>
                 </div>
             </AuthenticatedTemplate>

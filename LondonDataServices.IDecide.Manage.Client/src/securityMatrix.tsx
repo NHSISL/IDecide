@@ -11,7 +11,7 @@ const securityPoints = {
         delete: ['LondonDataServices.IDecide.Manage.Administrators'],
         view: ['LondonDataServices.IDecide.Manage.Administrators', 'LondonDataServices.IDecide.Manage.Users'],
     },
-    userAccess: {
+    patientSearch: {
         add: ['LondonDataServices.IDecide.Manage.Administrators', 'LondonDataServices.IDecide.Manage.Users'],
         edit: ['LondonDataServices.IDecide.Manage.Administrators', 'LondonDataServices.IDecide.Manage.Users'],
         delete: ['LondonDataServices.IDecide.Manage.Administrators', 'LondonDataServices.IDecide.Manage.Users'],
