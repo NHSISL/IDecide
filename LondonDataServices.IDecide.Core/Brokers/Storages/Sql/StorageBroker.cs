@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using EFxceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Audits;
-using LondonDataServices.IDecide.Core.Models.Foundations.DecisionType;
+using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using STX.EFCore.Client.Clients;
