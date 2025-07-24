@@ -49,12 +49,12 @@ export const patientService = {
         });
     },
 
-    useRetrievePatientById: (patientId: string) => {
+    useRetrievePatientById: (nhsNumber: string) => {
         const broker = new PatientBroker();
 
         return useQuery<Patient>({
-            queryKey: ["PatientGetById", { id: patientId }],
-            queryFn: () => broker.GetPatientByIdAsync(patientId),
+            queryKey: ["PatientGetById", { id: nhsNumber }],
+            queryFn: () => broker.GetPatientByIdAsync(nhsNumber),
             staleTime: Infinity
         });
     },

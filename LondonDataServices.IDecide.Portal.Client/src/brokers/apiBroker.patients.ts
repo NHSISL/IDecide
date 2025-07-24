@@ -37,15 +37,16 @@ class PatientBroker {
         return this.processOdataResult(response);
     }
 
-    async GetPatientByIdAsync(id: string) {
-        const url = `${this.relativePatientsUrl}/${id}`;
+    async GetPatientByIdAsync(nhsNumber: string) {
+        const url = `${this.relativePatientsUrl}/${nhsNumber}`;
 
         return await this.apiBroker.GetAsync(url)
             .then(result => new Patient(result.data));
     }
 
     async PutPatientAsync(patient: Patient) {
-        return await this.apiBroker.PutAsync(this.relativePatientsUrl, patient)
+        const url = `${this.relativePatientsUrl}/${patient.nhsNumber}`;
+        return await this.apiBroker.PutAsync(url, patient)
             .then(result => new Patient(result.data));
     }
 }

@@ -1,5 +1,7 @@
 import React from "react";
 import { useStep } from "../context/stepContext";
+import { patientViewService } from "../../services/views/patientViewService";
+import { Patient } from "../../models/patients/patient";
 
 interface PositiveConfirmationProps {
     goToConfirmCode: () => void;
@@ -7,10 +9,23 @@ interface PositiveConfirmationProps {
 
 const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirmCode }) => {
     const { createdPatient } = useStep();
+    const updatePatient = patientViewService.useUpdatePatient();
+    const patientToUpdate = new Patient(createdPatient);
 
     const handleSubmit = (method: "email" | "sms" | "letter") => {
-        // Log how they recieve a code and submit
         console.log(createdPatient.nhsNumber + ',' + method);
+        patientToUpdate.codeNotificationDecision = method;
+        updatePatient.mutate(patientToUpdate, {
+            onSuccess: (createdPatient) => {
+                console.log("Updated patient:", createdPatient);
+                
+                goToConfirmCode();
+            },
+            onError: (error: any) => {
+                console.error("Error updating patient:", error);
+            }
+    });
+
         goToConfirmCode();
     };
 
