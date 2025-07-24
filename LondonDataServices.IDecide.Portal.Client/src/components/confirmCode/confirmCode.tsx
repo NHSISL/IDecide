@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useStep } from "../context/stepContext";
+import { patientViewService } from "../../services/views/patientViewService";
 
 export const ConfirmCode = () => {
     const [code, setCode] = useState("12345");
@@ -12,13 +13,19 @@ export const ConfirmCode = () => {
         if (error) setError("");
     };
 
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (code.length !== 5) {
             setError("Please enter a 5-digit code.");
             return;
         }
-        //Call to service to confirm code matches against patients NHSNumber?
+
+       // const nhsNumber = "123456";
+       // const getPatientByNhsNumber = patientViewService.useGetPatientByNhsNumber(nhsNumber);
+       //console.log(getPatientByNhsNumber);
+        //Let them try 3 times and on 4th attempet take them to Error page asking them to either re-request their code or try again later or ring helpdesk
+
         nextStep();
     };
 

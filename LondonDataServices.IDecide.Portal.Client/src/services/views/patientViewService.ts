@@ -7,8 +7,8 @@ export const patientViewService = {
         return patientService.useCreatePatient();
     },
 
-    useGetPatientById: (id: string) => {
-        const response = patientService.useRetrievePatientById(id);
+    useGetPatientByNhsNumber: (nhsNumber: string) => {
+        const response = patientService.useRetrievePatientById(nhsNumber);
         const [mappedPatient, setMappedPatient] = useState<PatientView>();
 
         useEffect(() => {

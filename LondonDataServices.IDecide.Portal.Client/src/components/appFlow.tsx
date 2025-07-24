@@ -10,15 +10,9 @@ import { ThankyouPage } from "../pages/thankyouPage";
 import PositiveConfirmation from "./positiveConfirmation/positiveConfirmation";
 
 const stepContent = [
-    {
-        label: "Provide Your NHS Number",
-    },
-    {
-        label: "Confirm Your Details",
-    },
-    {
-        label: "Positive Confirmation"
-    },
+    { label: "Provide Your NHS Number",},
+    { label: "Confirm Your Details",},
+    { label: "Positive Confirmation"},
     {
         label: "Make Your Choice",
         content: <OptInOutPage />
