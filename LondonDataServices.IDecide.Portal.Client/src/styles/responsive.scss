@@ -1,0 +1,57 @@
+@media (max-width: 600px) {
+    .home-box {
+        top: 10px;
+        left: 10px;
+        right: 10px;
+        width: auto;
+        max-width: none;
+        padding: 16px 10px;
+        border-radius: 3px;
+        font-size: 1rem;
+    }
+
+    .expandable-section button {
+        font-size: 1.1rem;
+        padding: 0.75rem 0;
+    }
+
+    .expandable-section span {
+        margin-right: 0.5rem;
+    }
+
+    .expandable-section div {
+        padding-left: 1.5rem !important;
+        font-size: 1rem;
+    }
+
+    h1 {
+        font-size: 1.5rem !important;
+    }
+
+    p {
+        font-size: 1rem !important;
+    }
+
+    .nhsuk-button {
+        width: 100%;
+        font-size: 1.1rem;
+        padding: 1rem 0.5rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .nhsuk-footer {
+        max-height: none !important;
+        overflow: visible !important;
+    }
+}
+
+@media (min-width: 768px) {
+    .footer-logos {
+        gap: 3rem;
+    }
+
+    .nhs-logo {
+        margin-left: 50px;
+    }
+}

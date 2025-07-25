@@ -1,55 +1,27 @@
 import { Footer } from 'nhsuk-react-components';
 import React from 'react';
-import { Container, Row, Col } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Container } from "react-bootstrap";
 
 const FooterComponent: React.FC = () => {
     return (
         <Container fluid className="footer-center" style={{ zIndex: '1' }}>
             <Footer>
                 <Footer.List>
-                    <Footer.ListItem>
-                        <Link to="/copyright" style={{ textDecoration: "none", color: "inherit" }}>
-                            Copyright
-                        </Link>
-                    </Footer.ListItem>
-                    <Footer.ListItem>
-                        <Link to="/about" style={{ textDecoration: "none", color: "inherit" }}>
-                            About us
-                        </Link>
-                    </Footer.ListItem>
-                    <Footer.ListItem>
-                        <Link to="/contact" style={{ textDecoration: "none", color: "inherit" }}>
-                            Contact us
-                        </Link>
-                    </Footer.ListItem>
-                    <Footer.ListItem>
-                        <Link to="/websitePrivacyNotice" style={{ textDecoration: "none", color: "inherit" }}>
-                            Website privacy notice
-                        </Link>
-                    </Footer.ListItem>
-                    <Footer.ListItem>
-                        <Link to="/accessibilityStatement" style={{ textDecoration: "none", color: "inherit" }}>
-                            Accessibility statement
-                        </Link>
-                    </Footer.ListItem>
-                    <Footer.ListItem>
-                        <Link to="/cookieUse" style={{ textDecoration: "none", color: "inherit" }}>
-                            Cookie use
-                        </Link>
-                    </Footer.ListItem>
+                    <Footer.ListItem href="/copyright/"> Copyright </Footer.ListItem>
+                    <Footer.ListItem href="/about/">About Us</Footer.ListItem>
+                    <Footer.ListItem href="/contact/">Contact us</Footer.ListItem>
+                    <Footer.ListItem href="/websitePrivacyNotice/"> Website privacy notice </Footer.ListItem>
+                    <Footer.ListItem href="/accessibilityStatement/">Accessibility statement</Footer.ListItem>
+                    <Footer.ListItem href="/cookieUse/">Cookie use</Footer.ListItem>
                 </Footer.List>
                 <Footer.Copyright>
-                    <Row className="footer-logos align-items-center text-center">
-                        <Col xs={12} md="auto">
-                            <img
-                                src="/Picture1.png"
-                                alt="OneLondon Logo"
-                                className="footer-logo"
-                            />
-                        </Col>
-                        
-                    </Row>
+                    <span className="footer-logos align-items-center text-center">
+                        <img
+                            src="/Picture1.png"
+                            alt="OneLondon Logo"
+                            className="footer-logo"
+                        />
+                    </span>
                 </Footer.Copyright>
             </Footer>
         </Container>
