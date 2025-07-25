@@ -12,7 +12,7 @@ using LondonDataServices.IDecide.Core.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Brokers.Storages.Sql;
 using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
 using LondonDataServices.IDecide.Core.Models.Securities;
-using LondonDataServices.IDecide.Core.Services.DecisionTypes;
+using LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes;
 using Microsoft.Data.SqlClient;
 using Moq;
 using Tynamix.ObjectFiller;

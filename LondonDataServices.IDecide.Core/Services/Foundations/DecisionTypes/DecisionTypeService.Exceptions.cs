@@ -11,7 +11,7 @@ using System;
 using System.Threading.Tasks;
 using Xeptions;
 
-namespace LondonDataServices.IDecide.Core.Services.DecisionTypes
+namespace LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes
 {
     public partial class DecisionTypeService
     {

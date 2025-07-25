@@ -11,7 +11,7 @@ using LondonDataServices.IDecide.Core.Brokers.DateTimes;
 using LondonDataServices.IDecide.Core.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 
-namespace LondonDataServices.IDecide.Core.Services.DecisionTypes
+namespace LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes
 {
     public partial class DecisionTypeService : IDecisionTypeService
     {

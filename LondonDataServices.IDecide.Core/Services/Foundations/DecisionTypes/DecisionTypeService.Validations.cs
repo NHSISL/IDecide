@@ -8,7 +8,7 @@ using System;
 using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Securities;
 
-namespace LondonDataServices.IDecide.Core.Services.DecisionTypes
+namespace LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes
 {
     public partial class DecisionTypeService
     {
