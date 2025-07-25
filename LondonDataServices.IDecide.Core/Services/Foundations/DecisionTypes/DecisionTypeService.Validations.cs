@@ -42,6 +42,9 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes
                 (Rule: await IsNotRecentAsync(decisionType.UpdatedDate), Parameter: nameof(DecisionType.UpdatedDate)));
         }
 
+        public void ValidateDecisionTypeId(Guid decisionTypeId) =>
+            Validate((Rule: IsInvalid(decisionTypeId), Parameter: nameof(DecisionType.Id)));
+
         private static void ValidateStorageDecisionType(DecisionType maybeDecisionType, Guid decisionTypeId)
         {
             if (maybeDecisionType is null)
