@@ -28,11 +28,10 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes
                 (Rule: IsInvalidLength(decisionType.CreatedBy, 255), Parameter: nameof(DecisionType.CreatedBy)),
                 (Rule: IsInvalidLength(decisionType.UpdatedBy, 255), Parameter: nameof(DecisionType.UpdatedBy)),
 
-                (Rule: IsNotSame(
-                    firstDate: decisionType.UpdatedDate,
-                    secondDate: decisionType.CreatedDate,
-                    secondDateName: nameof(DecisionType.CreatedDate)),
-                Parameter: nameof(DecisionType.UpdatedDate)),
+                 (Rule: IsNotSame(
+                    first: currentUser.UserId,
+                    second: decisionType.UpdatedBy),
+                Parameter: nameof(DecisionType.UpdatedBy)),
 
                 (Rule: IsSame(
                     firstDate: decisionType.UpdatedDate,
@@ -48,11 +47,12 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes
             if (maybeDecisionType is null)
             {
                 throw new NotFoundDecisionTypeException(
-                    $"Couldn't find decision type with userAgreementId: {decisionTypeId}.");
+                    $"Couldn't find decision type with decisionTypeId: {decisionTypeId}.");
             }
         }
 
-        private static void ValidateAgainstStorageDecisionTypeOnModify(DecisionType inputDecisionType, DecisionType storageDecisionType)
+        private static void ValidateAgainstStorageDecisionTypeOnModify(DecisionType inputDecisionType,
+            DecisionType storageDecisionType)
         {
             Validate(
                 (Rule: IsNotSame(
