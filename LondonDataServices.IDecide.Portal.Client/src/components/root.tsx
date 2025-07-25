@@ -19,7 +19,7 @@ export default function Root() {
     const doNotShowLeftPanelRoutes = [
         "/home",
         "/end",
-      
+        "/copyright",
         "/about",
         "/contact",
         "/websitePrivacyNotice",
