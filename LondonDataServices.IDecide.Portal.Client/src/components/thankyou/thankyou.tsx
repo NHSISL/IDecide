@@ -10,7 +10,12 @@ export const Thankyou = () => {
     const navigate = useNavigate();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setPrefs({ ...prefs, [e.target.name]: e.target.checked });
+        const { name } = e.target;
+        setPrefs({
+            sms: name === "sms",
+            email: name === "email",
+            post: name === "post",
+        });
     };
 
     const handleSubmit = (e: React.FormEvent) => {

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useStep } from "../context/stepContext";
 import { Patient } from "../../models/patients/patient";
 import { patientViewService } from "../../services/views/patientViewService";
+import { TextInput, Button } from "nhsuk-react-components";
 
 export const SearchByNhsNumber = ({ onIDontKnow }: { onIDontKnow: () => void }) => {
     const [nhsNumberInput, setNhsNumberInput] = useState("1234567890");
@@ -24,60 +25,44 @@ export const SearchByNhsNumber = ({ onIDontKnow }: { onIDontKnow: () => void }) 
         }
 
         const patientToCreate = new Patient({ id: "", nhsNumber: nhsNumberInput });
-       
+
         addPatient.mutate(patientToCreate, {
             onSuccess: (createdPatient) => {
-                console.log("Created patient:", createdPatient);
                 setCreatedPatient(createdPatient);
                 nextStep(createdPatient);
             },
             onError: (error: any) => {
-                console.error("Error creating patient:", error);
+                // Optionally set error here
             }
         });
     };
 
     return (
-        <form className="nhsuk-form-group" autoComplete="off" onSubmit={handleSubmit}>
-            <label className="nhsuk-label" htmlFor="nhs-number">
-                NHS Number
-            </label>
-            <input
-                className="nhsuk-input"
+        <form autoComplete="off" onSubmit={handleSubmit}>
+            <TextInput
+                label="NHS Number"
+                hint="It's on your National Insurance card, benefit letter, payslip or P60."
                 id="nhs-number"
                 name="nhs-number"
-                type="text"
                 inputMode="numeric"
                 pattern="\d*"
                 maxLength={10}
                 autoComplete="off"
                 value={nhsNumberInput}
                 onChange={handleInputChange}
+                error={error ? "NHS Number must be exactly 10 digits. Only digits are allowed." : undefined}
                 style={{ maxWidth: "200px" }}
-                aria-describedby={error ? "nhs-number-error" : undefined}
             />
-            {error && (
-                <span
-                    id="nhs-number-error"
-                    className="nhsuk-error-message"
-                    style={{ display: "block", marginTop: "0.5rem" }}
-                >
-                    <strong>Error:</strong> {error} Only digits are allowed and the length must be 10.
-                </span>
-            )}
 
-            <div style={{ marginTop: "1.5rem" }}>
-                <button className="nhsuk-button" type="submit">
-                    Search
-                </button>
-                <button
-                    className="nhsuk-button nhsuk-button--secondary"
+            <div style={{ display: "flex", gap: "1rem", marginBottom: "0.2rem", marginTop: "1rem" }}>
+                <Button type="submit">Search</Button>
+                <Button
                     type="button"
-                    style={{ marginLeft: "1rem" }}
+                    secondary
                     onClick={onIDontKnow}
                 >
                     I Don't know my NHS Number
-                </button>
+                </Button>
             </div>
         </form>
     );

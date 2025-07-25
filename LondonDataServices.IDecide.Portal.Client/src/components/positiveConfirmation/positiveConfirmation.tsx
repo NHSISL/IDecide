@@ -18,15 +18,13 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
         updatePatient.mutate(patientToUpdate, {
             onSuccess: (createdPatient) => {
                 console.log("Updated patient:", createdPatient);
-                
+
                 goToConfirmCode();
             },
             onError: (error: any) => {
                 console.error("Error updating patient:", error);
             }
-    });
-
-        goToConfirmCode();
+        });
     };
 
     if (!createdPatient) {

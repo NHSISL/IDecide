@@ -1,10 +1,14 @@
 import { Container } from "react-bootstrap";
 import ConfirmDetails from "../components/confirmDetails/confirmDetails";
 
-export const ConfirmDetailsPage = () => {
+interface ConfirmDetailsPageProps {
+    goToConfirmCode: () => void;
+}
+
+export const ConfirmDetailsPage = ({ goToConfirmCode }: ConfirmDetailsPageProps) => {
     return (
         <Container>
-            <ConfirmDetails />
+            <ConfirmDetails goToConfirmCode={goToConfirmCode} />
         </Container>
     );
 };
