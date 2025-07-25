@@ -1,0 +1,9 @@
+:root {
+    --app-font-size: 14px;
+    --app-h1-size: calc(var(--app-font-size) * 2.0);
+    --app-h2-size: calc(var(--app-font-size) * 1.5);
+    --app-h3-size: calc(var(--app-font-size) * 1.17);
+    --app-h4-size: var(--app-font-size);
+    --app-h5-size: calc(var(--app-font-size) * 0.83);
+    --app-h6-size: calc(var(--app-font-size) * 0.67);
+}

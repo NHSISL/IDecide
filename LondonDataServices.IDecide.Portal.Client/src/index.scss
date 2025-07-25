@@ -1,0 +1,391 @@
+//// NHS UK Frontend
+@forward "nhsuk-frontend/dist/nhsuk";
+
+//// Global font styles
+* {
+    font-family: "Helvetica Neue Roman", Arial, sans-serif;
+}
+
+body {
+    background: white !important;
+}
+
+
+
+//// Root variables
+:root {
+    --app-font-size: 14px;
+    --app-h1-size: calc(var(--app-font-size) * 2.0); // 28px
+    --app-h2-size: calc(var(--app-font-size) * 1.5); // 21px
+    --app-h3-size: calc(var(--app-font-size) * 1.17); // ~16.4px
+    --app-h4-size: var(--app-font-size); // 14px
+    --app-h5-size: calc(var(--app-font-size) * 0.83); // ~11.6px
+    --app-h6-size: calc(var(--app-font-size) * 0.67); // ~9.4px
+}
+
+//// Typography for headings and content
+.root-content,
+.root-content * {
+    font-size: var(--app-font-size);
+}
+
+.root-content h1 {
+    font-size: var(--app-h1-size);
+}
+
+.root-content h2 {
+    font-size: var(--app-h2-size);
+}
+
+.root-content h3 {
+    font-size: var(--app-h3-size);
+}
+
+.root-content h4 {
+    font-size: var(--app-h4-size);
+}
+
+.root-content h5 {
+    font-size: var(--app-h5-size);
+}
+
+.root-content h6 {
+    font-size: var(--app-h6-size);
+}
+
+//// Layout containers
+.container-fluid {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.row {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.row > * {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+//// Breadcrumb styles
+.nhsuk-breadcrumb {
+    padding-top: 0 !important;
+    background: #fff;
+    border: none;
+}
+
+//// Progress padding
+.leftProgressPadding {
+    padding: 50px;
+}
+
+//// Radio button styles
+.completed-radio input[type="radio"] + label::before {
+    border-color: #007f3b;
+    background-color: #007f3b;
+}
+
+.completed-radio input[type="radio"]:checked + label::after {
+    background: none;
+    box-shadow: none;
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.tick {
+    color: #007f3b;
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+.root-layout {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.root-content {
+    flex: 1 0 auto;
+}
+
+footer, .footer-component {
+    flex-shrink: 0 !important;
+}
+
+.nhsuk-header {
+    background-color: #005eb8 !important;
+}
+
+//// Footer styles
+.nhsuk-footer {
+    min-height: 50px !important;
+    height: auto !important;
+    
+    box-sizing: border-box;
+    overflow: hidden !important;
+    margin-bottom: 0px;
+}
+
+@media (max-width: 767.98px) {
+    .nhsuk-footer {
+        max-height: none !important;
+        overflow: visible !important;
+    }
+}
+//// Fullscreen background styles
+.fullscreen-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: url('/onelondon_bg1.jpg') no-repeat center center fixed;
+    background-size: cover;
+    z-index: 0;
+}
+
+.fullscreen-bg-overlay {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+}
+
+//// Home box styles
+.home-box {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 32px 24px;
+    border-radius: 5px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    max-width: 1500px;
+    z-index: 2;
+    width: auto;
+    height: calc(100vh - 15rem);
+}
+
+footer .nhsuk-width-container {
+    max-width: 100% !important;
+    margin-left: 100px !important;
+    margin-right: 100px !important;
+    padding: 0 !important;
+}
+
+.nhsuk-width-container {
+    max-width: 100% !important;
+    margin-left: 100px !important;
+    margin-right: 100px !important;
+}
+
+/*.nhsuk-footer-container {
+    background: #00ABCD !important;
+}
+
+.nhsuk-footer {
+    background: #00ABCD !important;
+    font-size: 1.5rem;
+}
+
+.footer-center {
+    background: #00ABCD !important;
+    border:none !important;
+}*/
+
+
+    /*.nhsuk-footer-container {
+    background-color: #00ABCD !important;
+    border-top: 4px solid #00ABCD !important;
+}*/
+
+    .nhsuk-footer-container {
+        background-color: #d8dde0;
+        border-top: 4px solid #00ABCD !important;
+    }
+
+
+
+    .footer-center {
+        text-align: center;
+        /* background: #005eb8;*/
+        color: #fff;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+
+    .footer-logos {
+        display: flex;
+        flex-direction: row; // Always row for side-by-side
+        justify-content: center;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .footer-logo {
+        height: 50px;
+        max-width: 90vw;
+        background: transparent;
+    }
+
+    .nhs-logo {
+        margin-left: 0;
+    }
+
+    @media (min-width: 768px) {
+        .footer-logos {
+            flex-direction: row;
+            gap: 3rem;
+        }
+
+        .nhs-logo {
+            margin-left: 50px;
+        }
+    }
+
+    .nhsuk-back-link {
+        display: inline-flex;
+        align-items: center;
+        background: none;
+        border: none;
+        color: #005eb8;
+        font-size: 1.1875rem;
+        line-height: 1.31579;
+        text-decoration: none;
+        cursor: pointer;
+        padding: 0;
+        margin-bottom: 24px;
+        font-family: inherit;
+    }
+
+    .nhsuk-back-link__arrow {
+        font-size: 1.5em;
+        margin-right: 8px;
+        line-height: 1;
+    }
+
+    .nhsuk-back-link:focus {
+        outline: 3px solid #ffeb3b;
+        outline-offset: 2px;
+    }
+
+    .nhsuk-back-link:hover {
+        text-decoration: underline;
+    }
+
+    .accessibility-img-link,
+    .accessibility-img-link:focus,
+    .accessibility-img-link:active,
+    .accessibility-img-link:hover {
+        background: none !important;
+        outline: none !important;
+        box-shadow: none !important;
+        color: inherit !important;
+    }
+    //// Mobile styles
+    @media (max-width: 600px) {
+        .home-box {
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            width: auto;
+            max-width: none;
+            padding: 16px 10px;
+            border-radius: 3px;
+            font-size: 1rem;
+        }
+
+        .expandable-section button {
+            font-size: 1.1rem;
+            padding: 0.75rem 0;
+        }
+
+        .expandable-section span {
+            margin-right: 0.5rem;
+        }
+
+        .expandable-section div {
+            padding-left: 1.5rem !important;
+            font-size: 1rem;
+        }
+
+        h1 {
+            font-size: 1.5rem !important;
+        }
+
+        p {
+            font-size: 1rem !important;
+        }
+
+        .nhsuk-button {
+            width: 100%;
+            font-size: 1.1rem;
+            padding: 1rem 0.5rem;
+        }
+    }
+
+
+    .nhsuk-summary-list__row {
+        border-bottom: none !important;
+    }
+
+    @media (min-width: 48.0625em) {
+        .nhsuk-footer__list {
+            float: left;
+            padding-bottom: 0;
+            padding-right: 10px;
+            width: 65%;
+        }
+    }
+
+
+/* Add to your main CSS file, e.g. App.css or root.css */
+.accessibility-icon-link {
+    position: static;
+}
+
+@media (max-width: 768px) {
+    .accessibility-icon-link {
+        position: fixed;
+        top: 1.4em;
+        right: 2.2em;
+        z-index: 1100;
+        background: transparent;
+    }
+}
+
+
+
+.root-layout {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.root-content {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 0; // Important for flex children to be scrollable
+}
+
+.home-content {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    height: 100%;
+}
+
+.home-box {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    min-height: 0;
+    max-height: 100%;
+}
