@@ -7,22 +7,38 @@ using System.Linq;
 using System.Threading.Tasks;
 using System;
 using LondonDataServices.IDecide.Core.Brokers.Storages.Sql;
+using LondonDataServices.IDecide.Core.Brokers.DateTimes;
+using LondonDataServices.IDecide.Core.Brokers.Securities;
+using LondonDataServices.IDecide.Core.Brokers.Loggings;
 
 namespace LondonDataServices.IDecide.Core.Services.DecisionTypes
 {
-    public class DecisionTypeService : IDecisionTypeService
+    public partial class DecisionTypeService : IDecisionTypeService
     {
         private readonly IStorageBroker storageBroker;
+        private readonly IDateTimeBroker dateTimeBroker;
+        private readonly ISecurityBroker securityBroker;
+        private readonly ILoggingBroker loggingBroker;
 
-        public DecisionTypeService(IStorageBroker storageBroker)
+        public DecisionTypeService(
+            IStorageBroker storageBroker,
+            IDateTimeBroker dateTimeBroker,
+            ISecurityBroker securityBroker,
+            ILoggingBroker loggingBroker)
         {
             this.storageBroker = storageBroker;
+            this.dateTimeBroker = dateTimeBroker;
+            this.securityBroker = securityBroker;
+            this.loggingBroker = loggingBroker;
         }
 
-        public async ValueTask<DecisionType> AddDecisionTypeAsync(DecisionType decisionType)
-        {
-            return await this.storageBroker.InsertDecisionTypeAsync(decisionType);
-        }
+        public ValueTask<DecisionType> AddDecisionTypeAsync(DecisionType decisionType) =>
+            TryCatch(async () =>
+            {
+                await ValidateDecisionTypeOnAdd(decisionType);
+
+                return await this.storageBroker.InsertDecisionTypeAsync(decisionType);
+            });
 
         public ValueTask<DecisionType> ModifyDecisionTypeAsync(DecisionType decisionType)
         {
