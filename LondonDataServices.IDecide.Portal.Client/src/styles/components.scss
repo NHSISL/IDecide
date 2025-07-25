@@ -77,12 +77,3 @@
     position: static;
 }
 
-@media (max-width: 768px) {
-    .accessibility-icon-link {
-        position: fixed;
-        top: 1.4em;
-        right: 2.2em;
-        z-index: 1100;
-        background: transparent;
-    }
-}

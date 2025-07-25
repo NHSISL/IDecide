@@ -9,91 +9,139 @@ import { OptInOutPage } from "../pages/OptInOutPage";
 import { ThankyouPage } from "../pages/thankyouPage";
 import PositiveConfirmation from "./positiveConfirmation/positiveConfirmation";
 
-const stepContent = [
-    { label: "Provide Your NHS Number",},
-    { label: "Confirm Your Details",},
-    { label: "Positive Confirmation"},
+// Define all main steps and sub-steps in a clear structure
+const steps = [
     {
-        label: "Make Your Choice",
-        content: <OptInOutPage />
+        key: "nhsNumber",
+        label: "Provide Your NHS Number",
+        subSteps: [
+            {
+                key: "nhsNumberEntry",
+                label: "Enter NHS Number",
+                render: (goToSearchByDetails: () => void) => (
+                    <SearchByNhsNumberPage onIDontKnow={goToSearchByDetails} />
+                ),
+            },
+            {
+                key: "searchByDetails",
+                label: "Search By Details",
+                render: (goBack: () => void, nextStep: () => void) => (
+                    <SearchByDetailsPage onBack={goBack} nextStep={nextStep} />
+                ),
+            },
+        ],
     },
     {
+        key: "confirmDetails",
+        label: "Confirm Your Details",
+        render: (goToConfirmCode: () => void) => (
+            <ConfirmDetailsPage goToConfirmCode={goToConfirmCode} />
+        ),
+    },
+    {
+        key: "positiveConfirmation",
+        label: "Positive Confirmation",
+        subSteps: [
+            {
+                key: "positiveConfirmation",
+                label: "Positive Confirmation",
+                render: (goToConfirmCode: () => void) => (
+                    <PositiveConfirmation goToConfirmCode={goToConfirmCode} />
+                ),
+            },
+            {
+                key: "confirmCode",
+                label: "Confirm Code",
+                render: () => <ConfirmCodePage />,
+            },
+        ],
+    },
+    {
+        key: "optInOut",
+        label: "Make Your Choice",
+        render: () => <OptInOutPage />,
+    },
+    {
+        key: "thankYou",
         label: "Receive Notifications",
-        content: <ThankyouPage />
-    }
+        render: () => <ThankyouPage />,
+    },
 ];
 
 export const AppFlow = () => {
     const { currentStepIndex, setCurrentStepIndex } = useStep();
     const [nhsNumberSubStep, setNhsNumberSubStep] = useState(0); // 0: NHS Number, 1: Search by Details
-    const [confirmationSubStep, setConfirmationSubStep] = useState(0);
+    const [confirmationSubStep, setConfirmationSubStep] = useState(0); // 0: Positive Confirmation, 1: Confirm Code
 
     useEffect(() => {
         setCurrentStepIndex(0);
     }, [setCurrentStepIndex]);
 
-    const nextStep = () => {
-        // NHS Number sub-step logic
-        if (currentStepIndex === 0 && nhsNumberSubStep === 1) {
-            setCurrentStepIndex(currentStepIndex + 1);
-            setNhsNumberSubStep(0);
-            return;
-        }
-        // Positive Confirmation sub-step logic
-        if (currentStepIndex === 2) {
-            if (confirmationSubStep === 0) {
-                setConfirmationSubStep(1);
-                return;
-            }
-        }
-        // Reset sub-steps when leaving their main step
-        if (currentStepIndex < stepContent.length - 1) {
-            setCurrentStepIndex(currentStepIndex + 1);
-            setConfirmationSubStep(0);
-            setNhsNumberSubStep(0);
-        }
+    const goToNextMainStep = () => {
+        setCurrentStepIndex((prev: number) => Math.min(prev + 1, steps.length - 1));
+        setNhsNumberSubStep(0);
+        setConfirmationSubStep(0);
     };
 
-    let content;
-    if (currentStepIndex === 0) {
-        content =
-            nhsNumberSubStep === 0 ? (
-                <SearchByNhsNumberPage onIDontKnow={() => setNhsNumberSubStep(1)} />
-            ) : (
-                <SearchByDetailsPage onBack={() => setNhsNumberSubStep(0)} nextStep={nextStep} />
-            );
-    } else if (currentStepIndex === 1) {
-        content = (
-            <ConfirmDetailsPage
-                goToConfirmCode={() => {
-                    setCurrentStepIndex(2);
-                    setConfirmationSubStep(1);
-                }}
-            />
-        );
-    } else if (currentStepIndex === 2) {
-        content = confirmationSubStep === 0
-            ? <PositiveConfirmation
-                onBack={() => setCurrentStepIndex(currentStepIndex - 1)}
-                goToConfirmCode={() => setConfirmationSubStep(1)}
-            />
-            : <ConfirmCodePage />;
-    } else {
-        content = stepContent[currentStepIndex].content;
+    const goToPreviousMainStep = () => {
+        setCurrentStepIndex((prev: number) => Math.max(prev - 1, 0));
+        setNhsNumberSubStep(0);
+        setConfirmationSubStep(0);
+    };
+
+    let content: React.ReactNode;
+    let label: string;
+
+    switch (currentStepIndex) {
+        case 0: // NHS Number step
+            label = steps[0].label;
+            if (nhsNumberSubStep === 0) {
+                content = steps[0].subSteps?.[0]?.render?.(() => setNhsNumberSubStep(1)) ?? null;
+            } else {
+                content = steps[0].subSteps?.[1]?.render?.(
+                    () => setNhsNumberSubStep(0),
+                    goToNextMainStep
+                ) ?? null;
+            }
+            break;
+        case 1: // Confirm Details
+            label = steps[1].label;
+            content = steps[1].render?.(() => {
+                setCurrentStepIndex(2);
+                setConfirmationSubStep(1);
+            }) ?? null;
+            break;
+        case 2: // Positive Confirmation step
+            label = steps[2]?.label ?? "";
+            if (confirmationSubStep === 0) {
+                content = steps[2].subSteps?.[0]?.render?.(
+                    () => setConfirmationSubStep(1)
+                ) ?? null;
+            } else {
+                content = steps[2].subSteps?.[1]?.render?.() ?? null;
+            }
+            break;
+        case 3: // Opt In/Out
+            label = steps[3]?.label ?? "";
+            content = steps[3]?.render?.() ?? null;
+            break;
+        case 4: // Thank You
+            label = steps[4]?.label ?? "";
+            content = steps[4]?.render?.() ?? null;
+            break;
+        default:
+            label = "";
+            content = null;
     }
 
     return (
-        <div style={{ padding: "1rem" }}>
-            <h2>{stepContent[currentStepIndex].label}</h2>
+        <div className="appflow-wrapper">
+            <h2 className="step-label">{label}</h2>
             <div>{content}</div>
-            {/* Only show Next button if not on NHS Number step or sub-step or Positive Confirmation or Opt In/Opt Out step */}
-            {currentStepIndex !== 0 &&
-                currentStepIndex !== 1 &&
-                currentStepIndex !== 2 &&
-                currentStepIndex !== 3 &&
-                currentStepIndex < stepContent.length - 1 && (
-                    <Button onClick={nextStep} className="mt-3">Next</Button>
-                )}
+            {/* Show Next button only on steps that support it */}
+            {currentStepIndex === 3 && currentStepIndex < steps.length - 1 && (
+                <Button onClick={goToNextMainStep} className="mt-3">Next</Button>
+            )}
         </div>
     );
 };

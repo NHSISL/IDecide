@@ -45,7 +45,7 @@ body {
     max-width: 1500px;
     z-index: 2;
     width: auto;
-    height: calc(100vh - 15rem);
+    height: calc(100vh - 14rem);
     flex: 1 1 auto;
     overflow-y: auto;
     min-height: 0;
@@ -81,3 +81,13 @@ footer .nhsuk-width-container {
     margin-left: 100px !important;
     margin-right: 100px !important;
 }
+
+.container, .container-fluid, .container-lg, .container-md, .container-sm, .container-xl, .container-xxl{
+    padding:0 !important;
+}
+
+.nhsuk-form-group {
+    margin-bottom: 2px !important; 
+}
+
+.appflow-wrapper{padding: 3rem 1rem 1rem 1rem}
