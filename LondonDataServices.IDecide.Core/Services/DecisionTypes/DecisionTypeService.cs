@@ -19,9 +19,9 @@ namespace LondonDataServices.IDecide.Core.Services.DecisionTypes
             this.storageBroker = storageBroker;
         }
 
-        public ValueTask<DecisionType> AddDecisionTypeAsync(DecisionType decisionType)
+        public async ValueTask<DecisionType> AddDecisionTypeAsync(DecisionType decisionType)
         {
-            throw new NotImplementedException();
+            return await this.storageBroker.InsertDecisionTypeAsync(decisionType);
         }
 
         public ValueTask<DecisionType> ModifyDecisionTypeAsync(DecisionType decisionType)
