@@ -5,7 +5,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using ISL.Providers.Notifications.Abstractions;
-using LondonDataServices.IDecide.Core.Models.Brokers.Notifications;
 
 namespace LondonDataServices.IDecide.Core.Brokers.Notifications
 {
@@ -14,8 +13,7 @@ namespace LondonDataServices.IDecide.Core.Brokers.Notifications
         private readonly INotificationAbstractionProvider notificationAbstractionProvider;
 
         public NotificationBroker(
-            INotificationAbstractionProvider notificationAbstractionProvider,
-            NotificationConfigurations notificationConfigurations)
+            INotificationAbstractionProvider notificationAbstractionProvider)
         {
             this.notificationAbstractionProvider = notificationAbstractionProvider;
         }

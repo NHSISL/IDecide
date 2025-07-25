@@ -4,7 +4,6 @@
 
 using System;
 using System.IO;
-using System.Linq;
 using System.Text.Json;
 using Attrify.Extensions;
 using Attrify.InvisibleApi.Models;
@@ -15,7 +14,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Identity.Web;
-using Microsoft.OpenApi.Models;
 
 namespace LondonDataServices.IDecide.Portal.Server
 {
