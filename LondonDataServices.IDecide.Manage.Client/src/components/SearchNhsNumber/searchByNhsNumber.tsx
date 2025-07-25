@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { TextInput, Button } from "nhsuk-react-components";
 
 export const SearchByNhsNumber = () => {
     const [nhsNumberInput, setNhsNumberInput] = useState("1234567890");
@@ -18,44 +19,29 @@ export const SearchByNhsNumber = () => {
             setError("NHS Number must be exactly 10 digits.");
             return;
         }
-
-        // Navigate to the confirm details page
         navigate("/confirmDetails");
     };
 
     return (
-        <form className="nhsuk-form-group" autoComplete="off" onSubmit={handleSubmit}>
-            <label className="nhsuk-label" htmlFor="nhs-number">
-                NHS Number
-            </label>
-            <input
-                className="nhsuk-input"
+        <form autoComplete="off" onSubmit={handleSubmit}>
+            <TextInput
+                label="NHS Number"
+                hint="It's on your National Insurance card, benefit letter, payslip or P60."
                 id="nhs-number"
                 name="nhs-number"
-                type="text"
                 inputMode="numeric"
                 pattern="\d*"
                 maxLength={10}
                 autoComplete="off"
                 value={nhsNumberInput}
                 onChange={handleInputChange}
+                error={error ? "NHS Number must be exactly 10 digits. Only digits are allowed." : undefined}
                 style={{ maxWidth: "200px" }}
-                aria-describedby={error ? "nhs-number-error" : undefined}
             />
-            {error && (
-                <span
-                    id="nhs-number-error"
-                    className="nhsuk-error-message"
-                    style={{ display: "block", marginTop: "0.5rem" }}
-                >
-                    <strong>Error:</strong> {error} Only digits are allowed and the length must be 10.
-                </span>
-            )}
 
-            <div style={{ marginTop: "1.5rem" }}>
-                <button className="nhsuk-button" type="submit">
-                    Search
-                </button>
+            <div style={{ display: "flex", gap: "1rem", marginBottom: "0.2rem", marginTop: "1rem" }}>
+                <Button type="submit">Search</Button>
+                
             </div>
         </form>
     );
