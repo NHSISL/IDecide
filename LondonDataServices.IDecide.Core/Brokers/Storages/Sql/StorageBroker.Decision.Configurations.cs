@@ -44,8 +44,7 @@ namespace LondonDataServices.IDecide.Core.Brokers.Storages.Sql
 
             model
                .Property(decision => decision.DecisionTypeId)
-               .HasMaxLength(450)
-            .IsRequired();
+                .IsRequired();
 
             model
                 .HasOne(decision => decision.DecisionType)

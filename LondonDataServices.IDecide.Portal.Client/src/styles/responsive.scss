@@ -1,0 +1,117 @@
+/* PHONE: max-width: 600px */
+@media (max-width: 600px) {
+    .home-box {
+        top: 10px;
+        left: 10px;
+        right: 10px;
+        width: auto;
+        max-width: none;
+        padding: 16px 10px;
+        border-radius: 3px;
+        font-size: 1rem;
+        height: 100%;
+    }
+
+    .expandable-section button {
+        font-size: 1.1rem;
+        padding: 0.75rem 0;
+    }
+
+    .expandable-section span {
+        margin-right: 0.5rem;
+    }
+
+    .expandable-section div {
+        padding-left: 1.5rem !important;
+        font-size: 1rem;
+    }
+
+    h1 {
+        font-size: 1.5rem !important;
+    }
+
+    p,
+    .root-content,
+    .root-content p,
+    ol > li,
+    ul > li,
+    .nhsuk-list > li,
+    button,
+    input,
+    optgroup,
+    select,
+    textarea {
+        font-size: 0.8rem !important;
+    }
+
+    .nhsuk-button {
+        width: 100%;
+        font-size: 1.1rem;
+        padding: 1rem 0.5rem;
+    }
+}
+
+/* IPAD/TABLET: max-width: 900px, 768px, 767.98px */
+@media (max-width: 900px) {
+    .leftProgressPadding {
+        padding: 20px;
+    }
+
+    .nhsuk-width-container {
+        max-width: 100% !important;
+        margin-left: 30px !important;
+        margin-right: 100px !important;
+    }
+
+    .nhsuk-footer {
+        max-height: none !important;
+        overflow: visible !important;
+        z-index: 0;
+    }
+
+    .fullscreen-bg {
+        position: revert;
+    }
+
+    .home-contents {
+        /* padding-bottom: 80px; */
+    }
+}
+
+@media (max-width: 768px), (max-width: 767.98px) {
+    .nhsuk-footer {
+        max-height: none !important;
+        overflow: visible !important;
+    }
+
+    .step-label {
+        display: none;
+    }
+
+    .leftProgressPadding {
+        padding: 0 20px 0 20px;
+    }
+
+    .appflow-wrapper {
+        padding: 0 1rem 0 1rem;
+    }
+
+    .accessibility-icon-link {
+        position: fixed;
+        top: 1.4em;
+        right: 2.2em;
+        z-index: 1100;
+        background: transparent;
+    }
+}
+
+/* DESKTOP: min-width: 768px */
+@media (min-width: 768px) {
+    .footer-logos {
+        gap: 3rem;
+    }
+
+    .nhs-logo {
+        margin-left: 50px;
+    }
+}

@@ -4,26 +4,19 @@ import './App.css';
 import Root from './components/root';
 import ErrorPage from './errors/error';
 import { MsalProvider } from '@azure/msal-react';
-import { SecuredRoute } from './components/securitys/securedRoutes';
-import securityPoints from './securityMatrix';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClientGlobalOptions } from './brokers/apiBroker.globals';
 import { Home } from './pages/home';
-import { ConfigurationHome } from './pages/configuration/configurationHome';
-import { Lookups } from './pages/configuration/lookups';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { UserAccessNew } from './components/userAccess/userAccessNew';
 import "react-toastify/dist/ReactToastify.css";
 import ToastBroker from './brokers/toastBroker';
-import { UserAccessEdit } from './components/userAccess/userAccessEdit';
-import { CsvIdentificationRequestPage } from './pages/csvIdentificationRequest';
-import { CsvIdentificationRequestDetailPage } from './pages/csvIdentificationRequestDetail';
-import { ImpersonationContext } from './pages/impersonationContext';
-import { ImpersonationContextDetailPage } from './pages/impersonationContextDetail';
-import { OdsData } from './pages/odsData';
-import { PdsData } from './pages/pdsData';
-import { AccessAuditPage } from './pages/accesssAuditPage';
-import { UserAccessPage } from './pages/userAccessPage';
+import { PatientSearchPage } from './pages/patientSearchPage';
+import SearchByNhsNumberPage from './pages/searchByNhsNumberPage';
+import ConfirmDetailsPage from './pages/confirmDetailsPage';
+import { SendCodePage } from './pages/sendCodePage';
+import ConfirmCodePage from './pages/confirmCodePage';
+import { OptInOutPage } from './pages/optInOutPage';
+import { ThankyouPage } from './pages/thankyouPage';
 
 function App({ instance }: any) {
 
@@ -38,57 +31,37 @@ function App({ instance }: any) {
                     element: <Home />
                 },
                 {
-                    path: "configuration/home",
-                    element: <SecuredRoute allowedRoles={securityPoints.configuration.view}><ConfigurationHome /></SecuredRoute> 
+                    path: "nhsNumberSearch",
+                    element: <SearchByNhsNumberPage />
                 },
                 {
-                    path: "configuration/lookups",
-                    element: <SecuredRoute allowedRoles={securityPoints.configuration.view}><Lookups /></SecuredRoute>
+                    path: "patientSearch",
+                    element: <PatientSearchPage />
                 },
                 {
-                    path: "userAccess",
-                    element: <SecuredRoute allowedRoles={securityPoints.userAccess.view}><UserAccessPage /></SecuredRoute>
+                    path: "confirmDetails",
+                    element: <ConfirmDetailsPage />
                 },
                 {
-                    path: "userAccess/newUser",
-                    element: <SecuredRoute allowedRoles={securityPoints.userAccess.add}><UserAccessNew /></SecuredRoute>
+                    path: "confirmCode",
+                    element: <ConfirmCodePage />
                 },
                 {
-                    path: "userAccess/:UserId",
-                    element: <SecuredRoute allowedRoles={securityPoints.userAccess.add}><UserAccessEdit/></SecuredRoute>
+                    path: "sendCode",
+                    element: <SendCodePage />
                 },
                 {
-                    path: "impersonationContext",
-                    element: <ImpersonationContext />
+                    path: "optInOut",
+                    element: <OptInOutPage />
                 },
                 {
-                    path: "impersonationContextDetail/:ImpersonationContextId",
-                    element: <ImpersonationContextDetailPage />
-                },
-                {
-                    path: "csvIdentificationRequest",
-                    element: <CsvIdentificationRequestPage />
-                },
-                {
-                    path: "csvIdentificationRequestDetail/:CsvIdentificationRequestId",
-                    element: <CsvIdentificationRequestDetailPage />
-                },
-                {
-                    path: "odsData",
-                    element: <OdsData />
-                },
-                {
-                    path: "pdsData",
-                    element: <PdsData />
-                },
-                {
-                    path: "accessAudit",
-                    element: <AccessAuditPage />
+                    path: "thankyou",
+                    element: <ThankyouPage />
                 },
                 {
                     index: true,
                     element: <Navigate to="/home" />
-                }
+                },
             ]
         }
     ]);

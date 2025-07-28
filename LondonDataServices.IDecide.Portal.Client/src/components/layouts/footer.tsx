@@ -1,23 +1,29 @@
-import { faCopyright } from '@fortawesome/free-solid-svg-icons/faCopyright';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Footer } from 'nhsuk-react-components';
 import React from 'react';
-import { Col, Container, Row } from "react-bootstrap";
-import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
+import { Container } from "react-bootstrap";
 
 const FooterComponent: React.FC = () => {
-    const { configuration } = useFrontendConfiguration();
     return (
-        <Container>
-            <Row className="bg-light">
-                <Col className="m-2">
-                    <small>
-                        <FontAwesomeIcon icon={faCopyright} className="me-2 fa-icon fa-regular" />
-                        2025 One London. All rights reserved.
-                        <br />
-                        <strong>Version:&nbsp;{configuration?.version}</strong>
-                    </small>
-                </Col>
-            </Row>
+        <Container fluid className="footer-center" style={{ zIndex: '1' }}>
+            <Footer>
+                <Footer.List>
+                    <Footer.ListItem href="/copyright/"> Copyright </Footer.ListItem>
+                    <Footer.ListItem href="/about/">About Us</Footer.ListItem>
+                    <Footer.ListItem href="/contact/">Contact us</Footer.ListItem>
+                    <Footer.ListItem href="/websitePrivacyNotice/"> Website privacy notice </Footer.ListItem>
+                    <Footer.ListItem href="/accessibilityStatement/">Accessibility statement</Footer.ListItem>
+                    <Footer.ListItem href="/cookieUse/">Cookie use</Footer.ListItem>
+                </Footer.List>
+                <Footer.Copyright>
+                    <span className="footer-logos align-items-center text-center">
+                        <img
+                            src="/Picture1.png"
+                            alt="OneLondon Logo"
+                            className="footer-logo"
+                        />
+                    </span>
+                </Footer.Copyright>
+            </Footer>
         </Container>
     );
 }
