@@ -50,10 +50,8 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes
             throw new NotImplementedException();
         }
 
-        public ValueTask<IQueryable<DecisionType>> RetrieveAllDecisionTypesAsync()
-        {
-            throw new NotImplementedException();
-        }
+        public ValueTask<IQueryable<DecisionType>> RetrieveAllDecisionTypesAsync() =>
+            TryCatch(async () => await this.storageBroker.SelectAllDecisionTypesAsync());
 
         public ValueTask<DecisionType> RetrieveDecisionTypeByIdAsync(Guid decisionTypeId)
         {

@@ -8,6 +8,7 @@ using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes.Exception
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Xeptions;
 
@@ -16,6 +17,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes
     public partial class DecisionTypeService
     {
         private delegate ValueTask<DecisionType> ReturningDecisionTypeFunction();
+        private delegate ValueTask<IQueryable<DecisionType>> ReturningDecisionTypesFunction();
 
         private async ValueTask<DecisionType> TryCatch(ReturningDecisionTypeFunction returningDecisionTypeFunction)
         {
@@ -67,6 +69,33 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes
                         innerException: databaseUpdateException);
 
                 throw await CreateAndLogDependencyExceptionAsync(failedDecisionTypeStorageException);
+            }
+            catch (Exception exception)
+            {
+                var failedDecisionTypeServiceException =
+                    new FailedDecisionTypeServiceException(
+                        message: "Failed decision type service occurred, please contact support",
+                        innerException: exception);
+
+                throw await CreateAndLogServiceExceptionAsync(failedDecisionTypeServiceException);
+            }
+        }
+
+        private async ValueTask<IQueryable<DecisionType>> TryCatch(
+            ReturningDecisionTypesFunction returningDecisionTypesFunction)
+        {
+            try
+            {
+                return await returningDecisionTypesFunction();
+            }
+            catch (SqlException sqlException)
+            {
+                var failedDecisionTypeStorageException =
+                    new FailedDecisionTypeStorageException(
+                        message: "Failed decision type storage error occurred, contact support.",
+                        innerException: sqlException);
+
+                throw await CreateAndLogCriticalDependencyExceptionAsync(failedDecisionTypeStorageException);
             }
             catch (Exception exception)
             {

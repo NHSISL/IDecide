@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using LondonDataServices.IDecide.Core.Brokers.DateTimes;
@@ -68,6 +69,15 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                 dateTimeOffset: GetRandomDateTimeOffset(),
                 userId: GetRandomStringWithLengthOf(255))
                     .Create();
+        }
+
+        private static IQueryable<DecisionType> CreateRandomDecisionTypes()
+        {
+            return CreateRandomDecisionTypeFiller(
+                dateTimeOffset: GetRandomDateTimeOffset(),
+                userId: GetRandomStringWithLengthOf(255))
+                    .Create(count: GetRandomNumber())
+                        .AsQueryable();
         }
 
         private static DecisionType CreateRandomDecisionType(DateTimeOffset dateTimeOffset, string userId) =>
