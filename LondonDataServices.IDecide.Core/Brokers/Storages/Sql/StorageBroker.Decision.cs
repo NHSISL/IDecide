@@ -14,7 +14,6 @@ namespace LondonDataServices.IDecide.Core.Brokers.Storages.Sql
     {
         public DbSet<Decision> Decisions { get; set; }
 
-
         public async ValueTask<Decision> InsertDecisionAsync(Decision decision) =>
             await InsertAsync(decision);
 
