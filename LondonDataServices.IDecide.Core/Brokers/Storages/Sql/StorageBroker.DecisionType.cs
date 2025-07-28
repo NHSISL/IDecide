@@ -3,7 +3,6 @@
 // ---------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
@@ -14,9 +13,6 @@ namespace LondonDataServices.IDecide.Core.Brokers.Storages.Sql
     public partial class StorageBroker
     {
         public DbSet<DecisionType> DecisionTypes { get; set; }
-
-        public async ValueTask BulkInsertDecisionTypesAsync(List<DecisionType> decisionTypes) =>
-            await BulkInsertAsync(decisionTypes);
 
         public async ValueTask<DecisionType> InsertDecisionTypeAsync(DecisionType decisionType) =>
             await InsertAsync(decisionType);
