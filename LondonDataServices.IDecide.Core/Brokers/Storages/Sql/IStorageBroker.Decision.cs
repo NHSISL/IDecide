@@ -3,7 +3,6 @@
 // ---------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
@@ -12,7 +11,6 @@ namespace LondonDataServices.IDecide.Core.Brokers.Storages.Sql
 {
     public partial interface IStorageBroker
     {
-        ValueTask BulkInsertDecisionsAsync(List<Decision> decisions);
         ValueTask<Decision> InsertDecisionAsync(Decision decision);
         ValueTask<IQueryable<Decision>> SelectAllDecisionsAsync();
         ValueTask<Decision> SelectDecisionByIdAsync(Guid decisionId);
