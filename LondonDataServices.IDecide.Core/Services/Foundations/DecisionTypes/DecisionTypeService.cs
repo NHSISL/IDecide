@@ -55,9 +55,16 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes
             throw new NotImplementedException();
         }
 
-        public ValueTask<DecisionType> RetrieveDecisionTypeByIdAsync(Guid decisionTypeId)
-        {
-            throw new NotImplementedException();
-        }
+        public ValueTask<DecisionType> RetrieveDecisionTypeByIdAsync(Guid decisionTypeId) =>
+            TryCatch(async () =>
+            {
+                ValidateDecisionTypeId(decisionTypeId);
+
+                DecisionType maybeDecisionType = await this.storageBroker.SelectDecisionTypeByIdAsync(decisionTypeId);
+
+                ValidateStorageDecisionType(maybeDecisionType, decisionTypeId);
+
+                return maybeDecisionType;
+            });
     }
 }

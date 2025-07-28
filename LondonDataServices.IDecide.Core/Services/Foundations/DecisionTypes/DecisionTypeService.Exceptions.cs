@@ -40,6 +40,10 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes
 
                 throw await CreateAndLogCriticalDependencyExceptionAsync(failedDecisionTypeStorageException);
             }
+            catch (NotFoundDecisionTypeException notFoundDecisionTypeException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(notFoundDecisionTypeException);
+            }
             catch (DuplicateKeyException duplicateKeyException)
             {
                 var alreadyExistsDecisionTypeException =
