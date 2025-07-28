@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using EFxceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Audits;
+using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -22,7 +23,7 @@ namespace LondonDataServices.IDecide.Core.Brokers.Storages.Sql
         public StorageBroker(IConfiguration configuration)
         {
             this.configuration = configuration;
-            Database.Migrate();
+            //Database.Migrate();
             efCoreClient = new EFCoreClient(this);
         }
 
@@ -46,6 +47,7 @@ namespace LondonDataServices.IDecide.Core.Brokers.Storages.Sql
         {
             AddAuditConfigurations(modelBuilder.Entity<Audit>());
             AddDecisionTypeConfigurations(modelBuilder.Entity<DecisionType>());
+            AddDecisionConfigurations(modelBuilder.Entity<Decision>());
         }
 
         private async ValueTask<T> InsertAsync<T>(T @object) where T : class =>
