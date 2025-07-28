@@ -23,7 +23,7 @@ namespace LondonDataServices.IDecide.Core.Brokers.Storages.Sql
         public StorageBroker(IConfiguration configuration)
         {
             this.configuration = configuration;
-            //Database.Migrate();
+            Database.Migrate();
             efCoreClient = new EFCoreClient(this);
         }
 
