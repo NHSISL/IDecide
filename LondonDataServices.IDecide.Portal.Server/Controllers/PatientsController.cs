@@ -1,0 +1,102 @@
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using System;
+using System.Collections.Generic;
+
+namespace LondonDataServices.IDecide.Portal.Server.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class PatientsController : ControllerBase
+    {
+        private readonly IConfiguration configuration;
+
+        public PatientsController(IConfiguration configuration)
+        {
+            this.configuration = configuration;
+        }
+
+        // Mock Patient model for demonstration
+        public class Patient
+        {
+            public string Id { get; set; }
+            public string NhsNumber { get; set; }
+            public string FirstName { get; set; }
+            public string Surname { get; set; }
+            public string EmailAddress { get; set; }
+            public string PhoneNumber { get; set; }
+            public string Address { get; set; }
+            public string Postcode { get; set; }
+            public string CodeNotificationDecision { get; set; }
+            public string Code { get; set; }
+            public DateTime DateOfBirth { get; set; }
+            public string CreatedBy { get; set; }
+            public DateTime CreatedDate { get; set; }
+            public string UpdatedBy { get; set; }
+            public DateTime UpdatedDate { get; set; }
+        }
+
+        // GET: api/patients/{id}
+        [HttpGet("{id}")]
+        public ActionResult<Patient> GetPatientByNhsNumber(string nhsNumber)
+        {
+            var patient = new Patient
+            {
+                Id = Guid.NewGuid().ToString(),
+                NhsNumber = "1234567890",
+                FirstName = "D****",
+                Surname = "H****",
+                EmailAddress = "d********s@googlemail.com",
+                PhoneNumber = "07*********",
+                Address = "9 The Wood******, S**********, Surrey",
+                Postcode = "CR2 0HG",
+                Code = "12345",
+                CodeNotificationDecision = "Email",
+                DateOfBirth = new DateTime(1990, 5, 15),
+                CreatedBy = "system",
+                CreatedDate = DateTime.UtcNow,
+                UpdatedBy = "system",
+                UpdatedDate = DateTime.UtcNow
+            };
+            return Ok(patient);
+        }
+
+        // POST: api/patients
+        [HttpPost]
+        public ActionResult<Patient> CreatePatient([FromBody] Patient patient)
+        {
+            var createdPatient = new Patient
+            {
+                Id = Guid.NewGuid().ToString(),
+                NhsNumber = patient?.NhsNumber ?? "N/A",
+                FirstName = "D****",
+                Surname = "H****",
+                EmailAddress = "d********s@googlemail.com",
+                PhoneNumber = "07*********",
+                Address = "9 The Wood******, S**********, Surrey",
+                Postcode = "CR2 0HG",
+                Code = "",
+                CodeNotificationDecision = "",
+                DateOfBirth = patient?.DateOfBirth == default ? new DateTime(1990, 5, 15) : patient.DateOfBirth,
+                CreatedBy = "system",
+                CreatedDate = DateTime.UtcNow,
+                UpdatedBy = "system",
+                UpdatedDate = DateTime.UtcNow
+            };
+
+            return Ok(createdPatient);
+        }
+
+        // PUT: api/patients/{nhsNumber}
+        [HttpPut("{nhsNumber}")]
+        public ActionResult<Patient> UpdatePatient(string nhsNumber, [FromBody] Patient patient)
+        {
+            patient.NhsNumber = nhsNumber;
+            patient.UpdatedDate = DateTime.UtcNow;
+            patient.UpdatedBy = "system";
+            patient.Code = "12345";
+            return Ok(patient);
+        }
+    }
+}

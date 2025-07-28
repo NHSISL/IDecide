@@ -1,0 +1,93 @@
+* {
+    font-family: "Helvetica Neue Roman", Arial, sans-serif;
+}
+
+body {
+    background: white !important;
+}
+
+.container-fluid,
+.row,
+.row > * {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.root-layout {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.root-content {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.home-content {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    height: 100%;
+}
+
+.home-box {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 32px 24px;
+    border-radius: 5px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    max-width: 1500px;
+    z-index: 2;
+    width: auto;
+    height: calc(100vh - 14rem);
+    flex: 1 1 auto;
+    overflow-y: auto;
+    min-height: 0;
+    max-height: 100%;
+}
+.fullscreen-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: url('/onelondon_bg1.jpg') no-repeat center center fixed;
+    background-size: cover;
+    z-index: 0;
+}
+
+.fullscreen-bg-overlay {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+}
+
+footer .nhsuk-width-container {
+    max-width: 100% !important;
+    margin-left: 100px !important;
+    margin-right: 100px !important;
+    padding: 0 !important;
+}
+
+.nhsuk-width-container {
+    max-width: 100% !important;
+    margin-left: 100px !important;
+    margin-right: 100px !important;
+}
+
+.container, .container-fluid, .container-lg, .container-md, .container-sm, .container-xl, .container-xxl{
+    padding:0 !important;
+}
+
+.nhsuk-form-group {
+    margin-bottom: 2px !important; 
+}
+
+.appflow-wrapper{padding: 3rem 1rem 1rem 1rem}

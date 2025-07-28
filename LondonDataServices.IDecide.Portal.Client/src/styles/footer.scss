@@ -1,0 +1,55 @@
+footer, .footer-component {
+    flex-shrink: 0 !important;
+}
+
+.nhsuk-footer {
+    min-height: 50px !important;
+    height: auto !important;
+    box-sizing: border-box;
+    overflow: hidden !important;
+    margin-bottom: 0px;
+}
+
+.nhsuk-footer-container {
+    background-color: #d8dde0;
+    border-top: 4px solid #00ABCD !important;
+}
+
+.footer-center {
+    text-align: center;
+    color: #fff;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    margin-top: 50px !important
+}
+
+.footer-logos {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+
+.footer-logo {
+    height: 50px;
+    max-width: 90vw;
+    background: transparent;
+}
+
+.nhs-logo {
+    margin-left: 0;
+}
+
+.nhsuk-summary-list__row {
+    border-bottom: none !important;
+}
+
+@media (min-width: 48.0625em) {
+    .nhsuk-footer__list {
+        float: left;
+        padding-bottom: 0;
+        padding-right: 10px;
+        width: 65%;
+    }
+}
