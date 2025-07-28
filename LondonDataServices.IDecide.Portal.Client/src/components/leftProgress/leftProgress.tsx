@@ -2,7 +2,6 @@
 import React from "react";
 import { Container, Row } from "react-bootstrap";
 import { useStep } from "../context/stepContext";
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 
@@ -36,7 +35,7 @@ function useIsMobile() {
 }
 
 const LeftProgress: React.FC = () => {
-    const { currentStepIndex, setCurrentStepIndex } = useStep();
+    const { currentStepIndex } = useStep();
     const isMobile = useIsMobile();
 
     const isCurrentStep = (idx: number) => idx === currentStepIndex;

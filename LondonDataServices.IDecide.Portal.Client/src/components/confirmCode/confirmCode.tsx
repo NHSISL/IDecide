@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useStep } from "../context/stepContext";
-import { patientViewService } from "../../services/views/patientViewService";
 
 export const ConfirmCode = () => {
     const [code, setCode] = useState("12345");

@@ -83,12 +83,6 @@ export const AppFlow = () => {
         setConfirmationSubStep(0);
     };
 
-    const goToPreviousMainStep = () => {
-        setCurrentStepIndex((prev: number) => Math.max(prev - 1, 0));
-        setNhsNumberSubStep(0);
-        setConfirmationSubStep(0);
-    };
-
     let content: React.ReactNode;
     let label: string;
 
