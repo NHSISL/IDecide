@@ -12,7 +12,6 @@ namespace LondonDataServices.IDecide.Core.Brokers.Storages.Sql
 {
     public partial interface IStorageBroker
     {
-        ValueTask BulkInsertDecisionTypesAsync(List<DecisionType> decisionTypes);
         ValueTask<DecisionType> InsertDecisionTypeAsync(DecisionType decisionType);
         ValueTask<IQueryable<DecisionType>> SelectAllDecisionTypesAsync();
         ValueTask<DecisionType> SelectDecisionTypeByIdAsync(Guid decisionTypeId);
