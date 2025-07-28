@@ -1,0 +1,12 @@
+//// NHS UK Frontend
+@forward "nhsuk-frontend/dist/nhsuk";
+
+//// Global font styles
+* {
+    font-family: "Helvetica Neue Roman", Arial, sans-serif;
+}
+
+body {
+    background: white !important;
+}
+

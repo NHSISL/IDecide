@@ -1,95 +1,11 @@
-﻿/* App.css */
-#root {
-    width: 100%;
+﻿body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background-color: #f8f9fa;
 }
 
-.hero-text {
-    color: #00ABCD;
-}
-
-.sidebar {
-    width: 300px;
-    border-right: solid 1px #ccc;
-    transition: width 0.3s;
-}
-
-    .sidebar a {
-        color: black;
-        text-decoration: none;
+@media (min-width: 768px) {
+    body {
+        font-size: 18px;
     }
-
-    .sidebar .list-group-item.active a {
-        color: #00ABCD;
-        margin-left: 10px
-    }
-
-    .sidebar .list-group-item.active .fa-icon {
-        color: #00ABCD;
-        margin-left: 10px
-    }
-
-.sidebar-open {
-    transition: transform 0.1s ease-in-out;
-    transform: translateX(0);
-}
-
-.sidebar-closed {
-    transition: transform 0.1s ease-in-out;
-    transform: translateX(-100%);
-    overflow: hidden;
-    width: 0;
-}
-
-.layout-container {
-    display: flex;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-}
-
-.content {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    overflow: hidden;
-    transition: margin-left 0.3s;
-}
-
-.content-shift-left {
-    transition: margin-left 0.6s ease-in-out;
-    margin-left: -300px;
-}
-
-.content-shift-right {
-    transition: margin-left 0.6s ease-in-out;
-    margin-left: 0px;
-}
-
-.content-shift-left {
-    margin-left: 0;
-}
-
-.content-inner {
-    flex-grow: 1;
-    overflow-y: auto;
-}
-
-.footerContent {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    text-align: center;
-}
-
-.report-container {
-    height: 100%;
-    border: 0;
-}
-
-.customAnchor {
-    display: inline-block !important;
-    text-decoration: underline;
-    color: rgba(var(--bs-link-color-rgb),var(--bs-link-opacity,1));
-    font-weight: 500;
 }

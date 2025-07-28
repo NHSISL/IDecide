@@ -1,0 +1,36 @@
+* {
+    font-family: "Helvetica Neue Roman", Arial, sans-serif;
+}
+
+body {
+    background: white !important;
+}
+
+.root-content,
+.root-content * {
+    font-size: var(--app-font-size);
+}
+
+.root-content h1 {
+    font-size: var(--app-h1-size);
+}
+
+.root-content h2 {
+    font-size: var(--app-h2-size);
+}
+
+.root-content h3 {
+    font-size: var(--app-h3-size);
+}
+
+.root-content h4 {
+    font-size: var(--app-h4-size);
+}
+
+.root-content h5 {
+    font-size: var(--app-h5-size);
+}
+
+.root-content h6 {
+    font-size: var(--app-h6-size);
+}
