@@ -3,6 +3,9 @@
 // ---------------------------------------------------------
 
 using System;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.Collections.Generic;
+using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 
 namespace LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes
 {
@@ -14,5 +17,8 @@ namespace LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes
         public DateTimeOffset CreatedDate { get; set; }
         public string UpdatedBy { get; set; }
         public DateTimeOffset UpdatedDate { get; set; }
+
+        [BindNever]
+        public List<Decision> Decisions { get; set; } = new List<Decision>();
     }
 }
