@@ -1,10 +1,13 @@
+// ---------------------------------------------------------
+// Copyright (c) North East London ICB. All rights reserved.
+// ---------------------------------------------------------
+
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Force.DeepCloner;
+using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
 using Moq;
-using StandardlyTestProject.Api.Models.Foundations.DecisionTypes;
-using Xunit;
 
 namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionTypes
 {
@@ -24,8 +27,8 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
             Guid decisionTypeId = inputDecisionType.Id;
 
             this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset())
-                    .Returns(randomDateTimeOffset);
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTimeOffset);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectDecisionTypeByIdAsync(decisionTypeId))
@@ -43,7 +46,7 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
             actualDecisionType.Should().BeEquivalentTo(expectedDecisionType);
 
             this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
+                broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
 
             this.storageBrokerMock.Verify(broker =>

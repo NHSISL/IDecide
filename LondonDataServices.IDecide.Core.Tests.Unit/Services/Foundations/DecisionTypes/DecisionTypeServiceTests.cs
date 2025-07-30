@@ -105,7 +105,8 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
                 .OnProperty(decisionType => decisionType.CreatedBy).Use(user)
-                .OnProperty(decisionType => decisionType.UpdatedBy).Use(user);
+                .OnProperty(decisionType => decisionType.UpdatedBy).Use(user)
+                .OnProperty(decisionType => decisionType.Decisions).IgnoreIt();
 
             // TODO: Complete the filler setup e.g. ignore related properties etc...
 

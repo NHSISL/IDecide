@@ -1,10 +1,13 @@
+// ---------------------------------------------------------
+// Copyright (c) North East London ICB. All rights reserved.
+// ---------------------------------------------------------
+
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Force.DeepCloner;
+using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
 using Moq;
-using StandardlyTestProject.Api.Models.Foundations.DecisionTypes;
-using Xunit;
 
 namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionTypes
 {

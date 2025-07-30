@@ -1,11 +1,14 @@
+// ---------------------------------------------------------
+// Copyright (c) North East London ICB. All rights reserved.
+// ---------------------------------------------------------
+
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
+using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
 using Microsoft.Data.SqlClient;
 using Moq;
-using StandardlyTestProject.Api.Models.Foundations.DecisionTypes;
 using StandardlyTestProject.Api.Models.Foundations.DecisionTypes.Exceptions;
-using Xunit;
 
 namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionTypes
 {
@@ -49,7 +52,7 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogCritical(It.Is(SameExceptionAs(
+                broker.LogCriticalAsync(It.Is(SameExceptionAs(
                     expectedDecisionTypeDependencyException))),
                         Times.Once);
 
@@ -67,7 +70,7 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
 
             var failedDecisionTypeServiceException =
                 new FailedDecisionTypeServiceException(
-                    message: "Failed decisionType service occurred, please contact support", 
+                    message: "Failed decisionType service occurred, please contact support",
                     innerException: serviceException);
 
             var expectedDecisionTypeServiceException =
@@ -96,7 +99,7 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-               broker.LogError(It.Is(SameExceptionAs(
+               broker.LogErrorAsync(It.Is(SameExceptionAs(
                    expectedDecisionTypeServiceException))),
                         Times.Once);
 

@@ -1,16 +1,22 @@
+// ---------------------------------------------------------
+// Copyright (c) North East London ICB. All rights reserved.
+// ---------------------------------------------------------
+
 using System;
+using System.Linq;
+using System.Threading.Tasks;
 using FluentAssertions;
+using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
 using Microsoft.Data.SqlClient;
 using Moq;
 using StandardlyTestProject.Api.Models.Foundations.DecisionTypes.Exceptions;
-using Xunit;
 
 namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionTypes
 {
     public partial class DecisionTypeServiceTests
     {
         [Fact]
-        public void ShouldThrowCriticalDependencyExceptionOnRetrieveAllWhenSqlExceptionOccursAndLogIt()
+        public async Task ShouldThrowCriticalDependencyExceptionOnRetrieveAllWhenSqlExceptionOccursAndLogIt()
         {
             // given
             SqlException sqlException = GetSqlException();
@@ -26,26 +32,27 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
                     innerException: failedDecisionTypeStorageException);
 
             this.storageBrokerMock.Setup(broker =>
-                broker.SelectAllDecisionTypes())
-                    .Throws(sqlException);
+                broker.SelectAllDecisionTypesAsync())
+                    .ThrowsAsync(sqlException);
 
             // when
-            Action retrieveAllDecisionTypesAction = () =>
-                this.decisionTypeService.RetrieveAllDecisionTypes();
+            ValueTask<IQueryable<DecisionType>> retrieveAllDecisionTypesTask =
+                this.decisionTypeService.RetrieveAllDecisionTypesAsync();
 
             DecisionTypeDependencyException actualDecisionTypeDependencyException =
-                Assert.Throws<DecisionTypeDependencyException>(retrieveAllDecisionTypesAction);
+                await Assert.ThrowsAsync<DecisionTypeDependencyException>(
+                    retrieveAllDecisionTypesTask.AsTask);
 
             // then
             actualDecisionTypeDependencyException.Should()
                 .BeEquivalentTo(expectedDecisionTypeDependencyException);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectAllDecisionTypes(),
+                broker.SelectAllDecisionTypesAsync(),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogCritical(It.Is(SameExceptionAs(
+                broker.LogCriticalAsync(It.Is(SameExceptionAs(
                     expectedDecisionTypeDependencyException))),
                         Times.Once);
 
@@ -55,7 +62,7 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
         }
 
         [Fact]
-        public void ShouldThrowServiceExceptionOnRetrieveAllIfServiceErrorOccursAndLogItAsync()
+        public async Task ShouldThrowServiceExceptionOnRetrieveAllIfServiceErrorOccursAndLogItAsync()
         {
             // given
             string exceptionMessage = GetRandomString();
@@ -63,7 +70,7 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
 
             var failedDecisionTypeServiceException =
                 new FailedDecisionTypeServiceException(
-                    message: "Failed decisionType service occurred, please contact support", 
+                    message: "Failed decisionType service occurred, please contact support",
                     innerException: serviceException);
 
             var expectedDecisionTypeServiceException =
@@ -72,26 +79,26 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
                     innerException: failedDecisionTypeServiceException);
 
             this.storageBrokerMock.Setup(broker =>
-                broker.SelectAllDecisionTypes())
-                    .Throws(serviceException);
+                broker.SelectAllDecisionTypesAsync())
+                    .ThrowsAsync(serviceException);
 
             // when
-            Action retrieveAllDecisionTypesAction = () =>
-                this.decisionTypeService.RetrieveAllDecisionTypes();
+            ValueTask<IQueryable<DecisionType>> retrieveAllDecisionTypesTask =
+                this.decisionTypeService.RetrieveAllDecisionTypesAsync();
 
             DecisionTypeServiceException actualDecisionTypeServiceException =
-                Assert.Throws<DecisionTypeServiceException>(retrieveAllDecisionTypesAction);
+                await Assert.ThrowsAsync<DecisionTypeServiceException>(retrieveAllDecisionTypesTask.AsTask);
 
             // then
             actualDecisionTypeServiceException.Should()
                 .BeEquivalentTo(expectedDecisionTypeServiceException);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectAllDecisionTypes(),
+                broker.SelectAllDecisionTypesAsync(),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
                     expectedDecisionTypeServiceException))),
                         Times.Once);
 

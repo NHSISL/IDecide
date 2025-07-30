@@ -1,11 +1,14 @@
+// ---------------------------------------------------------
+// Copyright (c) North East London ICB. All rights reserved.
+// ---------------------------------------------------------
+
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Force.DeepCloner;
+using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
 using Moq;
-using StandardlyTestProject.Api.Models.Foundations.DecisionTypes;
 using StandardlyTestProject.Api.Models.Foundations.DecisionTypes.Exceptions;
-using Xunit;
 
 namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionTypes
 {
@@ -36,12 +39,12 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
                 .BeEquivalentTo(expectedDecisionTypeValidationException);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
                     expectedDecisionTypeValidationException))),
                         Times.Once);
 
             this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
+                broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Never);
 
             this.storageBrokerMock.Verify(broker =>
@@ -65,7 +68,7 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
                 // TODO:  Add default values for your properties i.e. Name = invalidText
             };
 
-            var invalidDecisionTypeException = 
+            var invalidDecisionTypeException =
                 new InvalidDecisionTypeException(
                     message: "Invalid decisionType. Please correct the errors and try again.");
 
@@ -141,8 +144,8 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
             DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
             DecisionType randomDecisionType = CreateRandomDecisionType(randomDateTimeOffset);
             DecisionType invalidDecisionType = randomDecisionType;
-            
-            var invalidDecisionTypeException = 
+
+            var invalidDecisionTypeException =
                 new InvalidDecisionTypeException(
                     message: "Invalid decisionType. Please correct the errors and try again.");
 
@@ -198,7 +201,7 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
             DecisionType randomDecisionType = CreateRandomDecisionType(randomDateTimeOffset);
             randomDecisionType.UpdatedDate = randomDateTimeOffset.AddMinutes(minutes);
 
-            var invalidDecisionTypeException = 
+            var invalidDecisionTypeException =
                 new InvalidDecisionTypeException(
                     message: "Invalid decisionType. Please correct the errors and try again.");
 
@@ -312,8 +315,8 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
             DecisionType storageDecisionType = invalidDecisionType.DeepClone();
             storageDecisionType.CreatedDate = storageDecisionType.CreatedDate.AddMinutes(randomMinutes);
             storageDecisionType.UpdatedDate = storageDecisionType.UpdatedDate.AddMinutes(randomMinutes);
-            
-            var invalidDecisionTypeException = 
+
+            var invalidDecisionTypeException =
                 new InvalidDecisionTypeException(
                     message: "Invalid decisionType. Please correct the errors and try again.");
 
@@ -375,7 +378,7 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
             invalidDecisionType.CreatedBy = Guid.NewGuid().ToString();
             storageDecisionType.UpdatedDate = storageDecisionType.CreatedDate;
 
-            var invalidDecisionTypeException = 
+            var invalidDecisionTypeException =
                 new InvalidDecisionTypeException(
                     message: "Invalid decisionType. Please correct the errors and try again.");
 
@@ -434,7 +437,7 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
             DecisionType invalidDecisionType = randomDecisionType;
             DecisionType storageDecisionType = randomDecisionType.DeepClone();
 
-            var invalidDecisionTypeException = 
+            var invalidDecisionTypeException =
                 new InvalidDecisionTypeException(
                     message: "Invalid decisionType. Please correct the errors and try again.");
 

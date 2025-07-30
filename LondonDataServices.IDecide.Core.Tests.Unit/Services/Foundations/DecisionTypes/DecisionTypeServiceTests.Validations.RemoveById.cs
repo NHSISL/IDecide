@@ -1,10 +1,13 @@
+// ---------------------------------------------------------
+// Copyright (c) North East London ICB. All rights reserved.
+// ---------------------------------------------------------
+
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
+using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
 using Moq;
-using StandardlyTestProject.Api.Models.Foundations.DecisionTypes;
 using StandardlyTestProject.Api.Models.Foundations.DecisionTypes.Exceptions;
-using Xunit;
 
 namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionTypes
 {
@@ -16,7 +19,7 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
             // given
             Guid invalidDecisionTypeId = Guid.Empty;
 
-            var invalidDecisionTypeException = 
+            var invalidDecisionTypeException =
                 new InvalidDecisionTypeException(
                     message: "Invalid decisionType. Please correct the errors and try again.");
 
@@ -42,7 +45,7 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
                 .BeEquivalentTo(expectedDecisionTypeValidationException);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
                     expectedDecisionTypeValidationException))),
                         Times.Once);
 

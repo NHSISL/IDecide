@@ -1,15 +1,19 @@
+// ---------------------------------------------------------
+// Copyright (c) North East London ICB. All rights reserved.
+// ---------------------------------------------------------
+
 using System.Linq;
+using System.Threading.Tasks;
 using FluentAssertions;
+using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
 using Moq;
-using StandardlyTestProject.Api.Models.Foundations.DecisionTypes;
-using Xunit;
 
 namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionTypes
 {
     public partial class DecisionTypeServiceTests
     {
         [Fact]
-        public void ShouldReturnDecisionTypes()
+        public async Task ShouldReturnDecisionTypes()
         {
             // given
             IQueryable<DecisionType> randomDecisionTypes = CreateRandomDecisionTypes();
@@ -17,18 +21,18 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
             IQueryable<DecisionType> expectedDecisionTypes = storageDecisionTypes;
 
             this.storageBrokerMock.Setup(broker =>
-                broker.SelectAllDecisionTypes())
-                    .Returns(storageDecisionTypes);
+                broker.SelectAllDecisionTypesAsync())
+                    .ReturnsAsync(storageDecisionTypes);
 
             // when
             IQueryable<DecisionType> actualDecisionTypes =
-                this.decisionTypeService.RetrieveAllDecisionTypes();
+                await this.decisionTypeService.RetrieveAllDecisionTypesAsync();
 
             // then
             actualDecisionTypes.Should().BeEquivalentTo(expectedDecisionTypes);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectAllDecisionTypes(),
+                broker.SelectAllDecisionTypesAsync(),
                     Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();

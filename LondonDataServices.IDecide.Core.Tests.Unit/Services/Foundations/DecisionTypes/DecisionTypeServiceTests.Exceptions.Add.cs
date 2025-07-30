@@ -1,13 +1,16 @@
+// ---------------------------------------------------------
+// Copyright (c) North East London ICB. All rights reserved.
+// ---------------------------------------------------------
+
 using System;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using FluentAssertions;
+using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Moq;
-using StandardlyTestProject.Api.Models.Foundations.DecisionTypes;
 using StandardlyTestProject.Api.Models.Foundations.DecisionTypes.Exceptions;
-using Xunit;
 
 namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionTypes
 {
@@ -28,11 +31,11 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
             var expectedDecisionTypeDependencyException =
                 new DecisionTypeDependencyException(
                     message: "DecisionType dependency error occurred, contact support.",
-                    innerException: failedDecisionTypeStorageException); 
+                    innerException: failedDecisionTypeStorageException);
 
             this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset())
-                    .Throws(sqlException);
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ThrowsAsync(sqlException);
 
             // when
             ValueTask<DecisionType> addDecisionTypeTask =
@@ -47,7 +50,7 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
                 .BeEquivalentTo(expectedDecisionTypeDependencyException);
 
             this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
+                broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
@@ -55,7 +58,7 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
                     Times.Never);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogCritical(It.Is(SameExceptionAs(
+                broker.LogCriticalAsync(It.Is(SameExceptionAs(
                     expectedDecisionTypeDependencyException))),
                         Times.Once);
 
@@ -86,8 +89,8 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
                     innerException: alreadyExistsDecisionTypeException);
 
             this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset())
-                    .Throws(duplicateKeyException);
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ThrowsAsync(duplicateKeyException);
 
             // when
             ValueTask<DecisionType> addDecisionTypeTask =
@@ -102,7 +105,7 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
                 .BeEquivalentTo(expectedDecisionTypeDependencyValidationException);
 
             this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
+                broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
@@ -110,7 +113,7 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
                     Times.Never);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
                     expectedDecisionTypeDependencyValidationException))),
                         Times.Once);
 
@@ -120,7 +123,7 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
         }
 
         [Fact]
-        public async void ShouldThrowValidationExceptionOnAddIfReferenceErrorOccursAndLogItAsync()
+        public async Task ShouldThrowValidationExceptionOnAddIfReferenceErrorOccursAndLogItAsync()
         {
             // given
             DecisionType someDecisionType = CreateRandomDecisionType();
@@ -132,7 +135,7 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
 
             var invalidDecisionTypeReferenceException =
                 new InvalidDecisionTypeReferenceException(
-                    message: "Invalid decisionType reference error occurred.", 
+                    message: "Invalid decisionType reference error occurred.",
                     innerException: foreignKeyConstraintConflictException);
 
             var expectedDecisionTypeValidationException =
@@ -141,8 +144,8 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
                     innerException: invalidDecisionTypeReferenceException);
 
             this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset())
-                    .Throws(foreignKeyConstraintConflictException);
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ThrowsAsync(foreignKeyConstraintConflictException);
 
             // when
             ValueTask<DecisionType> addDecisionTypeTask =
@@ -157,11 +160,11 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
                 .BeEquivalentTo(expectedDecisionTypeValidationException);
 
             this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
+                broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once());
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
                     expectedDecisionTypeValidationException))),
                         Times.Once);
 
@@ -191,11 +194,11 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
             var expectedDecisionTypeDependencyException =
                 new DecisionTypeDependencyException(
                     message: "DecisionType dependency error occurred, contact support.",
-                    innerException: failedDecisionTypeStorageException); 
+                    innerException: failedDecisionTypeStorageException);
 
             this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset())
-                    .Throws(databaseUpdateException);
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ThrowsAsync(databaseUpdateException);
 
             // when
             ValueTask<DecisionType> addDecisionTypeTask =
@@ -210,7 +213,7 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
                 .BeEquivalentTo(expectedDecisionTypeDependencyException);
 
             this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
+                broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
@@ -218,7 +221,7 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
                     Times.Never);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
                     expectedDecisionTypeDependencyException))),
                         Times.Once);
 
@@ -236,7 +239,7 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
 
             var failedDecisionTypeServiceException =
                 new FailedDecisionTypeServiceException(
-                    message: "Failed decisionType service occurred, please contact support", 
+                    message: "Failed decisionType service occurred, please contact support",
                     innerException: serviceException);
 
             var expectedDecisionTypeServiceException =
@@ -245,8 +248,8 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
                     innerException: failedDecisionTypeServiceException);
 
             this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset())
-                    .Throws(serviceException);
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ThrowsAsync(serviceException);
 
             // when
             ValueTask<DecisionType> addDecisionTypeTask =
@@ -261,7 +264,7 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
                 .BeEquivalentTo(expectedDecisionTypeServiceException);
 
             this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
+                broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
@@ -269,7 +272,7 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
                     Times.Never);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
                     expectedDecisionTypeServiceException))),
                         Times.Once);
 
