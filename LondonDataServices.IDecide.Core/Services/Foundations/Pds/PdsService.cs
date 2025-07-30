@@ -5,7 +5,6 @@
 using ISL.Providers.PDS.Abstractions.Models;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Brokers.Pds;
-using LondonDataServices.IDecide.Core.Mappers;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
 using System.Threading.Tasks;
 
@@ -24,32 +23,28 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
             this.loggingBroker = loggingBroker;
         }
 
-        public ValueTask<Patient> PatientLookupByDetailsAsync(
-            string givenName = null,
-            string familyName = null,
-            string gender = null,
-            string postcode = null,
-            string dateOfBirth = null,
-            string dateOfDeath = null,
-            string registeredGpPractice = null,
-            string email = null,
-            string phoneNumber = null) =>
+        public ValueTask<PatientLookup> PatientLookupByDetailsAsync(PatientLookup patientLookup) =>
             TryCatch(async () =>
             {
+                SearchCriteria searchCriteria = patientLookup.SearchCriteria;
                 PatientBundle patientBundle = await this.pdsBroker.PatientLookupByDetailsAsync(
-                    givenName,
-                    familyName,
-                    gender,
-                    postcode,
-                    dateOfBirth,
-                    dateOfDeath,
-                    registeredGpPractice,
-                    email,
-                    phoneNumber);
+                    searchCriteria.FirstName,
+                    searchCriteria.Surname,
+                    searchCriteria.Gender,
+                    searchCriteria.Postcode,
+                    searchCriteria.DateOfBirth,
+                    searchCriteria.DateOfDeath,
+                    searchCriteria.RegisteredGpPractice,
+                    searchCriteria.Email,
+                    searchCriteria.PhoneNumber);
 
-                Patient patient = LocalPatientMapper.FromPatientBundle(patientBundle);
+                PatientLookup updatedPatientLookup = new PatientLookup
+                {
+                    SearchCriteria = searchCriteria,
+                    Patients = patientBundle
+                };
 
-                return patient;
+                return updatedPatientLookup;
             });
 
         public ValueTask<Patient> PatientLookupByNhsNumberAsync(string nhsNumber)

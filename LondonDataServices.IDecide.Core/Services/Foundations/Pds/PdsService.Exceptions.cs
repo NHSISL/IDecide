@@ -13,13 +13,13 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
 {
     public partial class PdsService
     {
-        private delegate ValueTask<Patient> ReturningPatientFunction();
+        private delegate ValueTask<PatientLookup> ReturningPatientLookupFunction();
 
-        private async ValueTask<Patient> TryCatch(ReturningPatientFunction returningPatientFunction)
+        private async ValueTask<PatientLookup> TryCatch(ReturningPatientLookupFunction returningPatientLookupFunction)
         {
             try
             {
-                return await returningPatientFunction();
+                return await returningPatientLookupFunction();
             }
             catch (PdsProviderValidationException pdsProviderValidationException)
             {
@@ -58,18 +58,6 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
 
                 throw await CreateAndLogServiceExceptionAsync(failedServicePdsException);
             }
-        }
-
-        private async ValueTask<PdsValidationException> CreateAndLogValidationExceptionAsync(
-            Xeption exception)
-        {
-            var pdsValidationException = new PdsValidationException(
-                message: "PDS validation error occurred, please fix errors and try again.",
-                innerException: exception);
-
-            await this.loggingBroker.LogErrorAsync(pdsValidationException);
-
-            return pdsValidationException;
         }
 
         private async ValueTask<PdsDependencyValidationException>

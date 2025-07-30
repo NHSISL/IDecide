@@ -12,10 +12,10 @@ using LondonDataServices.IDecide.Core.Brokers.Pds;
 using LondonDataServices.IDecide.Core.Services.Foundations.Pds;
 using Moq;
 using Tynamix.ObjectFiller;
-using System.Linq;
-using LondonDataServices.IDecide.Core.Mappers;
 using System.Linq.Expressions;
 using Xeptions;
+using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
+using Patient = Hl7.Fhir.Model.Patient;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
 {
@@ -127,11 +127,19 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
             return PatientBundleMapper.FromBundle(bundle);
         }
 
-        private Models.Foundations.Pds.Patient CreateRandomLocalPatient(PatientBundle patientBundle)
+        private PatientLookup GetRandomSearchPatientLookup(string surname)
         {
-            Models.Foundations.Pds.Patient patient = LocalPatientMapper.FromPatientBundle(patientBundle);
+            SearchCriteria searchCriteria = new SearchCriteria
+            {
+                Surname = surname
+            };
 
-            return patient;
+            PatientLookup randomPatientLookup = new PatientLookup
+            {
+                SearchCriteria = searchCriteria
+            };
+
+            return randomPatientLookup;
         }
 
         private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
