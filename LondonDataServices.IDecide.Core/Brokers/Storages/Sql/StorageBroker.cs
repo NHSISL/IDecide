@@ -7,6 +7,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using EFxceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Audits;
+using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
+using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using STX.EFCore.Client.Clients;
@@ -37,7 +39,15 @@ namespace LondonDataServices.IDecide.Core.Brokers.Storages.Sql
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+            AddConfigurations(modelBuilder);
+        }
+
+        private static void AddConfigurations(ModelBuilder modelBuilder)
+        {
             AddAuditConfigurations(modelBuilder.Entity<Audit>());
+            AddDecisionTypeConfigurations(modelBuilder.Entity<DecisionType>());
+            AddDecisionConfigurations(modelBuilder.Entity<Decision>());
         }
 
         private async ValueTask<T> InsertAsync<T>(T @object) where T : class =>

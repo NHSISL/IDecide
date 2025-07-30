@@ -4,6 +4,7 @@ using LondonDataServices.IDecide.Core.Brokers.Storages.Sql;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LondonDataServices.IDecide.Core.Migrations
 {
     [DbContext(typeof(StorageBroker))]
-    partial class StorageBrokerModelSnapshot : ModelSnapshot
+    [Migration("20250724160954_DecisionType")]
+    partial class DecisionType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -79,7 +82,7 @@ namespace LondonDataServices.IDecide.Core.Migrations
                     b.ToTable("Audits", "Audit");
                 });
 
-            modelBuilder.Entity("LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes.DecisionType", b =>
+            modelBuilder.Entity("LondonDataServices.IDecide.Core.Models.Foundations.DecisionType.DecisionType", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -109,59 +112,6 @@ namespace LondonDataServices.IDecide.Core.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("DecisionTypes", "Decision");
-                });
-
-            modelBuilder.Entity("LondonDataServices.IDecide.Core.Models.Foundations.Decisions.Decision", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid>("DecisionTypeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("PatientNhsNumber")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("UpdatedBy")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<DateTimeOffset>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DecisionTypeId");
-
-                    b.ToTable("Decisions", "Decision");
-                });
-
-            modelBuilder.Entity("LondonDataServices.IDecide.Core.Models.Foundations.Decisions.Decision", b =>
-                {
-                    b.HasOne("LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes.DecisionType", "DecisionType")
-                        .WithMany("Decisions")
-                        .HasForeignKey("DecisionTypeId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("DecisionType");
-                });
-
-            modelBuilder.Entity("LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes.DecisionType", b =>
-                {
-                    b.Navigation("Decisions");
                 });
 #pragma warning restore 612, 618
         }
