@@ -125,6 +125,11 @@ namespace LondonDataServices.IDecide.Core.Migrations
                     b.Property<DateTimeOffset>("CreatedDate")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<string>("DecisionChoice")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
                     b.Property<Guid>("DecisionTypeId")
                         .HasColumnType("uniqueidentifier");
 

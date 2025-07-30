@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LondonDataServices.IDecide.Core.Migrations
 {
     [DbContext(typeof(StorageBroker))]
-    [Migration("20250728114223_Decision-remove-id-length")]
-    partial class Decisionremoveidlength
+    [Migration("20250730121924_AddDecisionTypeAndDecision")]
+    partial class AddDecisionTypeAndDecision
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -127,6 +127,11 @@ namespace LondonDataServices.IDecide.Core.Migrations
 
                     b.Property<DateTimeOffset>("CreatedDate")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("DecisionChoice")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<Guid>("DecisionTypeId")
                         .HasColumnType("uniqueidentifier");
