@@ -120,11 +120,11 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
                 .BeEquivalentTo(expectedDecisionTypeValidationException);
 
             this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
+                broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
                     expectedDecisionTypeValidationException))),
                         Times.Once());
 
@@ -159,8 +159,8 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
                     innerException: invalidDecisionTypeException);
 
             this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset())
-                    .Returns(randomDateTimeOffset);
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTimeOffset);
 
             // when
             ValueTask<DecisionType> modifyDecisionTypeTask =
@@ -175,11 +175,11 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
                 .BeEquivalentTo(expectedDecisionTypeValidationException);
 
             this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
+                broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
                     expectedDecisionTypeValidationException))),
                         Times.Once);
 
@@ -215,8 +215,8 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
                     innerException: invalidDecisionTypeException);
 
             this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset())
-                .Returns(randomDateTimeOffset);
+                broker.GetCurrentDateTimeOffsetAsync())
+                .ReturnsAsync(randomDateTimeOffset);
 
             // when
             ValueTask<DecisionType> modifyDecisionTypeTask =
@@ -231,11 +231,11 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
                 .BeEquivalentTo(expectedDecisionTypeValidatonException);
 
             this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
+                broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
                     expectedDecisionTypeValidatonException))),
                         Times.Once);
 
@@ -257,8 +257,8 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
             DecisionType nonExistDecisionType = randomDecisionType;
             DecisionType nullDecisionType = null;
 
-            var notFoundDecisionTypeException =
-                new NotFoundDecisionTypeException(nonExistDecisionType.Id);
+            var notFoundDecisionTypeException = new NotFoundDecisionTypeException(
+                message: $"Couldn't find decision type with decisionTypeId: {nonExistDecisionType.Id}.");
 
             var expectedDecisionTypeValidationException =
                 new DecisionTypeValidationException(
@@ -270,8 +270,8 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
                 .ReturnsAsync(nullDecisionType);
 
             this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset())
-                .Returns(randomDateTimeOffset);
+                broker.GetCurrentDateTimeOffsetAsync())
+                .ReturnsAsync(randomDateTimeOffset);
 
             // when 
             ValueTask<DecisionType> modifyDecisionTypeTask =
@@ -290,11 +290,11 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
                     Times.Once);
 
             this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
+                broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
                     expectedDecisionTypeValidationException))),
                         Times.Once);
 
@@ -334,8 +334,8 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
                 .ReturnsAsync(storageDecisionType);
 
             this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset())
-                .Returns(randomDateTimeOffset);
+                broker.GetCurrentDateTimeOffsetAsync())
+                .ReturnsAsync(randomDateTimeOffset);
 
             // when
             ValueTask<DecisionType> modifyDecisionTypeTask =
@@ -354,11 +354,11 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
                     Times.Once);
 
             this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
+                broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-               broker.LogError(It.Is(SameExceptionAs(
+               broker.LogErrorAsync(It.Is(SameExceptionAs(
                    expectedDecisionTypeValidationException))),
                        Times.Once);
 
@@ -396,8 +396,8 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
                 .ReturnsAsync(storageDecisionType);
 
             this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset())
-                .Returns(randomDateTimeOffset);
+                broker.GetCurrentDateTimeOffsetAsync())
+                .ReturnsAsync(randomDateTimeOffset);
 
             // when
             ValueTask<DecisionType> modifyDecisionTypeTask =
@@ -415,11 +415,11 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
                     Times.Once);
 
             this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
+                broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-               broker.LogError(It.Is(SameExceptionAs(
+               broker.LogErrorAsync(It.Is(SameExceptionAs(
                    expectedDecisionTypeValidationException))),
                        Times.Once);
 
@@ -455,8 +455,8 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
                 .ReturnsAsync(storageDecisionType);
 
             this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset())
-                    .Returns(randomDateTimeOffset);
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTimeOffset);
 
             // when
             ValueTask<DecisionType> modifyDecisionTypeTask =
@@ -467,11 +467,11 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
                 modifyDecisionTypeTask.AsTask);
 
             this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
+                broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
                     expectedDecisionTypeValidationException))),
                         Times.Once);
 
