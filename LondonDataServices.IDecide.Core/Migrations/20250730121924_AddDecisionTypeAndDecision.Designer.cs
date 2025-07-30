@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LondonDataServices.IDecide.Core.Migrations
 {
     [DbContext(typeof(StorageBroker))]
-    [Migration("20250730120235_Decision-Add-DecisionChoice")]
-    partial class DecisionAddDecisionChoice
+    [Migration("20250730121924_AddDecisionTypeAndDecision")]
+    partial class AddDecisionTypeAndDecision
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
