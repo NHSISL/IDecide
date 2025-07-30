@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
 {
-    public class PdsService : IPdsService
+    public partial class PdsService : IPdsService
     {
         private readonly IPdsBroker pdsBroker;
         private readonly ILoggingBroker loggingBroker;
@@ -24,7 +24,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
             this.loggingBroker = loggingBroker;
         }
 
-        public async ValueTask<Patient> PatientLookupByDetailsAsync(
+        public ValueTask<Patient> PatientLookupByDetailsAsync(
             string givenName = null,
             string familyName = null,
             string gender = null,
@@ -33,23 +33,24 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
             string dateOfDeath = null,
             string registeredGpPractice = null,
             string email = null,
-            string phoneNumber = null)
-        {
-            PatientBundle patientBundle = await this.pdsBroker.PatientLookupByDetailsAsync(
-                givenName,
-                familyName,
-                gender,
-                postcode,
-                dateOfBirth,
-                dateOfDeath,
-                registeredGpPractice,
-                email,
-                phoneNumber);
+            string phoneNumber = null) =>
+            TryCatch(async () =>
+            {
+                PatientBundle patientBundle = await this.pdsBroker.PatientLookupByDetailsAsync(
+                    givenName,
+                    familyName,
+                    gender,
+                    postcode,
+                    dateOfBirth,
+                    dateOfDeath,
+                    registeredGpPractice,
+                    email,
+                    phoneNumber);
 
-            Patient patient = LocalPatientMapper.FromPatientBundle(patientBundle);
+                Patient patient = LocalPatientMapper.FromPatientBundle(patientBundle);
 
-            return patient;
-        }
+                return patient;
+            });
 
         public ValueTask<Patient> PatientLookupByNhsNumberAsync(string nhsNumber)
         {

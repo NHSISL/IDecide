@@ -14,6 +14,8 @@ using Moq;
 using Tynamix.ObjectFiller;
 using System.Linq;
 using LondonDataServices.IDecide.Core.Mappers;
+using System.Linq.Expressions;
+using Xeptions;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
 {
@@ -131,5 +133,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
 
             return patient;
         }
+
+        private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
+            actualException => actualException.SameExceptionAs(expectedException);
     }
 }
