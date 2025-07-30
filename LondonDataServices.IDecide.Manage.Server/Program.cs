@@ -10,16 +10,19 @@ using Attrify.InvisibleApi.Models;
 using ISL.Providers.Notifications.Abstractions;
 using ISL.Providers.Notifications.GovukNotify.Models;
 using ISL.Providers.Notifications.GovukNotify.Providers.Notifications;
+using ISL.Providers.PDS.Abstractions;
 using ISL.Providers.ReIdentification.Necs.Models.Brokers.Notifications;
 using LondonDataServices.IDecide.Core.Brokers.DateTimes;
 using LondonDataServices.IDecide.Core.Brokers.Identifiers;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Brokers.Notifications;
+using LondonDataServices.IDecide.Core.Brokers.Pds;
 using LondonDataServices.IDecide.Core.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Brokers.Storages.Sql;
 using LondonDataServices.IDecide.Core.Models.Foundations.Audits;
 using LondonDataServices.IDecide.Core.Services.Audits;
 using LondonDataServices.IDecide.Core.Services.Foundations.Audits;
+using LondonDataServices.IDecide.Core.Services.Foundations.Pds;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.OData;
@@ -170,6 +173,7 @@ namespace LondonDataServices.IDecide.Manage.Server
             services.AddSingleton(notifyConfigurations);
             services.AddTransient<INotificationAbstractionProvider, NotificationAbstractionProvider>();
             services.AddTransient<INotificationProvider, GovukNotifyProvider>();
+            services.AddTransient<IPdsAbstractionProvider, PdsAbstractionProvider>();
         }
 
         private static void AddBrokers(IServiceCollection services, IConfiguration configuration)
@@ -180,11 +184,13 @@ namespace LondonDataServices.IDecide.Manage.Server
             services.AddTransient<ISecurityBroker, SecurityBroker>();
             services.AddTransient<IStorageBroker, StorageBroker>();
             services.AddTransient<INotificationBroker, NotificationBroker>();
+            services.AddTransient<IPdsBroker, PdsBroker>();
         }
 
         private static void AddFoundationServices(IServiceCollection services)
         {
             services.AddTransient<IAuditService, AuditService>();
+            services.AddTransient<IPdsService, PdsService>();
         }
 
         private static void AddProcessingServices(IServiceCollection services)
