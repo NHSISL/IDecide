@@ -50,6 +50,13 @@ class PatientBroker {
         return await this.apiBroker.PutAsync(url, patient)
             .then(result => new Patient(result.data));
     }
+
+    async ConfirmPatientCodeAsync(nhsNumber: string, code: string) {
+        const url = `${this.relativePatientsUrl}/confirm-code`;
+        const payload = { nhsNumber, code };
+        return await this.apiBroker.PostAsync(url, payload)
+            .then(result => result.data);
+    }
 }
 
 export default PatientBroker;

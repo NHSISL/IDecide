@@ -2,21 +2,29 @@ import React, { useState } from "react";
 import { useStep } from "../context/stepContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
+import { Patient } from "../../models/patients/patient";
 
-export const OptInOptOut = () => {
-    const [selected, setSelected] = useState<"optout" | "optin" | "">("");
+interface OptInOptOutProps {
+    createdPatient: Patient;
+}
+
+export const OptInOptOut: React.FC<OptInOptOutProps> = ({ createdPatient }) => {
+    const [selectedOption, setSelectedOption] = useState<"optout" | "optin" | "">("");
     const [error, setError] = useState("");
     const [showInfo, setShowInfo] = useState(false);
     const { nextStep } = useStep();
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!selected) {
+        if (!selectedOption) {
             setError("Please select an option to continue.");
             return;
         }
         setError("");
-        nextStep();
+
+        console.log(createdPatient.nhsNumber)
+        console.log(selectedOption)
+        nextStep(selectedOption, createdPatient.nhsNumber);
     };
 
     React.useEffect(() => {
@@ -96,7 +104,7 @@ export const OptInOptOut = () => {
                 <div
                     className="nhsuk-card"
                     style={{
-                        border: selected === "optout" ? "2px solid #005eb8" : "1px solid #d8dde0",
+                        border: selectedOption === "optout" ? "2px solid #005eb8" : "1px solid #d8dde0",
                         marginBottom: "2rem",
                         padding: "1.5rem",
                         borderRadius: "6px",
@@ -108,8 +116,8 @@ export const OptInOptOut = () => {
                             type="radio"
                             name="opt"
                             value="optout"
-                            checked={selected === "optout"}
-                            onChange={() => setSelected("optout")}
+                            checked={selectedOption === "optout"}
+                            onChange={() => setSelectedOption("optout")}
                             style={{ marginRight: "1rem", marginTop: "0.2rem" }}
                             aria-describedby="optout-desc"
                         />
@@ -131,7 +139,7 @@ export const OptInOptOut = () => {
                 <div
                     className="nhsuk-card"
                     style={{
-                        border: selected === "optin" ? "2px solid #005eb8" : "1px solid #d8dde0",
+                        border: selectedOption === "optin" ? "2px solid #005eb8" : "1px solid #d8dde0",
                         padding: "1.5rem",
                         borderRadius: "6px",
                         background: "#fff"
@@ -142,8 +150,8 @@ export const OptInOptOut = () => {
                             type="radio"
                             name="opt"
                             value="optin"
-                            checked={selected === "optin"}
-                            onChange={() => setSelected("optin")}
+                            checked={selectedOption === "optin"}
+                            onChange={() => setSelectedOption("optin")}
                             style={{ marginRight: "1rem", marginTop: "0.2rem" }}
                             aria-describedby="optin-desc"
                         />

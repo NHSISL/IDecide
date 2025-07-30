@@ -4,7 +4,7 @@ import { patientViewService } from "../../services/views/patientViewService";
 import { Patient } from "../../models/patients/patient";
 
 interface PositiveConfirmationProps {
-    goToConfirmCode: () => void;
+    goToConfirmCode: (createdPatient: Patient) => void;
 }
 
 const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirmCode }) => {
@@ -12,14 +12,14 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
     const updatePatient = patientViewService.useUpdatePatient();
     const patientToUpdate = new Patient(createdPatient);
 
-    const handleSubmit = (method: "email" | "sms" | "letter") => {
+    const handleSubmit = (method: "Email" | "SMS" | "Letter") => {
         console.log(createdPatient.nhsNumber + ',' + method);
-        patientToUpdate.codeNotificationDecision = method;
+        patientToUpdate.notificationPreference = method;
         updatePatient.mutate(patientToUpdate, {
             onSuccess: (createdPatient) => {
-                console.log("Updated patient:", createdPatient);
-
-                goToConfirmCode();
+                console.log("Updated patient:", createdPatient.notificationPreference);
+                console.log("Updated patient Nhs Number:", createdPatient.nhsNumber);
+                goToConfirmCode(createdPatient);
             },
             onError: (error: unknown) => {
                 if (error instanceof Error) {
@@ -71,7 +71,7 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                     type="button"
                     className="nhsuk-button"
                     style={{ flex: 1, minWidth: 120 }}
-                    onClick={() => handleSubmit("email")}
+                    onClick={() => handleSubmit("Email")}
                 >
                     Email
                 </button>
@@ -79,7 +79,7 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                     type="button"
                     className="nhsuk-button"
                     style={{ flex: 1, minWidth: 120 }}
-                    onClick={() => handleSubmit("sms")}
+                    onClick={() => handleSubmit("SMS")}
                 >
                     SMS
                 </button>
@@ -87,7 +87,7 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                     type="button"
                     className="nhsuk-button"
                     style={{ flex: 1, minWidth: 120 }}
-                    onClick={() => handleSubmit("letter")}
+                    onClick={() => handleSubmit("Letter")}
                 >
                     Letter
                 </button>

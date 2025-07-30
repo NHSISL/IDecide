@@ -61,7 +61,7 @@ export const SearchByNhsNumber = ({ onIDontKnow }: { onIDontKnow: () => void }) 
                 addPatient.mutate(patientToCreate, {
                     onSuccess: (createdPatient) => {
                         setCreatedPatient(createdPatient);
-                        nextStep(createdPatient);
+                        nextStep(undefined, undefined, createdPatient);
                         setLoading(false);
                     },
                     onError: () => {

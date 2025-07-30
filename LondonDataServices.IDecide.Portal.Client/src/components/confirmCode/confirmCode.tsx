@@ -1,17 +1,23 @@
 import React, { useState } from "react";
 import { useStep } from "../context/stepContext";
+import { Patient } from "../../models/patients/patient";
+import { patientViewService } from "../../services/views/patientViewService";
 
-export const ConfirmCode = () => {
+interface ConfirmCodeProps {
+    createdPatient: Patient;
+}
+
+export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
     const [code, setCode] = useState("12345");
     const [error, setError] = useState("");
     const { nextStep } = useStep();
+    const confirmCodeMutation = patientViewService.useConfirmCode();
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value.replace(/\D/g, "").slice(0, 5);
         setCode(value);
         if (error) setError("");
     };
-
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -20,12 +26,23 @@ export const ConfirmCode = () => {
             return;
         }
 
-       // const nhsNumber = "123456";
-       // const getPatientByNhsNumber = patientViewService.useGetPatientByNhsNumber(nhsNumber);
-       //console.log(getPatientByNhsNumber);
-        //Let them try 3 times and on 4th attempet take them to Error page asking them to either re-request their code or try again later or ring helpdesk
-
-        nextStep();
+        confirmCodeMutation.mutate(
+            { nhsNumber: createdPatient.nhsNumber, code },
+            {
+                onSuccess: () => {
+                    nextStep(createdPatient);
+                },
+                onError: (error: unknown) => {
+                    if (error instanceof Error) {
+                        setError("Invalid code. Please try again.");
+                        console.error("Error confirming code:", error.message);
+                    } else {
+                        setError("An error occurred. Please try again.");
+                        console.error("Error confirming code:", error);
+                    }
+                }
+            }
+        );
     };
 
     return (
@@ -59,8 +76,13 @@ export const ConfirmCode = () => {
                 </div>
             )}
 
-            <button className="nhsuk-button" type="submit" style={{ width: "100%", marginTop: "1.5rem" }}>
-                Submit
+            <button
+                className="nhsuk-button"
+                type="submit"
+                style={{ width: "100%", marginTop: "1.5rem" }}
+                disabled={confirmCodeMutation.isLoading}
+            >
+                {confirmCodeMutation.isLoading ? "Submitting..." : "Submit"}
             </button>
         </form>
     );

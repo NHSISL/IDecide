@@ -59,4 +59,13 @@ export const patientService = {
             staleTime: Infinity
         });
     },
+
+    useConfirmCode: () => {
+        const broker = new PatientBroker();
+        return useMutation({
+            mutationFn: ({ nhsNumber, code }: { nhsNumber: string; code: string }) => {
+                return broker.ConfirmPatientCodeAsync(nhsNumber, code);
+            }
+        });
+    },
 };

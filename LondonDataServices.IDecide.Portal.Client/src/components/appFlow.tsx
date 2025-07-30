@@ -5,11 +5,11 @@ import { ConfirmDetailsPage } from "../pages/confirmDetailsPage";
 import { SearchByNhsNumberPage } from "../pages/searchByNhsNumberPage";
 import { SearchByDetailsPage } from "../pages/searchByDetailsPage";
 import { ConfirmCodePage } from "../pages/confirmCodePage";
-import { OptInOutPage } from "../pages/OptInOutPage";
-import { ThankyouPage } from "../pages/thankyouPage";
+import { OptInOutPage } from "../pages/optInOutPage";
 import PositiveConfirmation from "./positiveConfirmation/positiveConfirmation";
+import { ConfirmationPage } from "../pages/confirmationPage";
+import { ThankyouPage } from "../pages/thankyouPage";
 
-// Define all main steps and sub-steps in a clear structure
 const steps = [
     {
         key: "nhsNumber",
@@ -62,8 +62,13 @@ const steps = [
         render: () => <OptInOutPage />,
     },
     {
-        key: "thankYou",
+        key: "confirmation",
         label: "Receive Notifications",
+        render: () => <ConfirmationPage />,
+    },
+    {
+        key: "completed",
+        label: "",
         render: () => <ThankyouPage />,
     },
 ];
@@ -119,9 +124,13 @@ export const AppFlow = () => {
             label = steps[3]?.label ?? "";
             content = steps[3]?.render?.() ?? null;
             break;
-        case 4: // Thank You
+        case 4: // Confirmation
             label = steps[4]?.label ?? "";
             content = steps[4]?.render?.() ?? null;
+            break;
+        case 5: // Thank You
+            label = steps[5]?.label ?? "";
+            content = steps[5]?.render?.() ?? null;
             break;
         default:
             label = "";
