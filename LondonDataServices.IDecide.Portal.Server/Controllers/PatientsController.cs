@@ -28,8 +28,8 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
             public string PhoneNumber { get; set; }
             public string Address { get; set; }
             public string Postcode { get; set; }
-            public string CodeNotificationDecision { get; set; }
-            public string Code { get; set; }
+            public string NotificationPreference { get; set; }
+            public string VerificationCode { get; set; }
             public DateTime DateOfBirth { get; set; }
             public string CreatedBy { get; set; }
             public DateTime CreatedDate { get; set; }
@@ -51,8 +51,8 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
                 PhoneNumber = "07*********",
                 Address = "9 The Wood******, S**********, Surrey",
                 Postcode = "CR2 0HG",
-                Code = "12345",
-                CodeNotificationDecision = "Email",
+                VerificationCode = "12345",
+                NotificationPreference = "Email",
                 DateOfBirth = new DateTime(1990, 5, 15),
                 CreatedBy = "system",
                 CreatedDate = DateTime.UtcNow,
@@ -69,15 +69,15 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
             var createdPatient = new Patient
             {
                 Id = Guid.NewGuid().ToString(),
-                NhsNumber = patient?.NhsNumber ?? "N/A",
+                NhsNumber = "1234567890",
                 FirstName = "D****",
                 Surname = "H****",
                 EmailAddress = "d********s@googlemail.com",
                 PhoneNumber = "07*********",
                 Address = "9 The Wood******, S**********, Surrey",
                 Postcode = "CR2 0HG",
-                Code = "",
-                CodeNotificationDecision = "",
+                VerificationCode = "",
+                NotificationPreference = "",
                 DateOfBirth = patient?.DateOfBirth == default ? new DateTime(1990, 5, 15) : patient.DateOfBirth,
                 CreatedBy = "system",
                 CreatedDate = DateTime.UtcNow,
@@ -88,15 +88,28 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
             return Ok(createdPatient);
         }
 
-        // PUT: api/patients/{nhsNumber}
         [HttpPut("{nhsNumber}")]
         public ActionResult<Patient> UpdatePatient(string nhsNumber, [FromBody] Patient patient)
         {
-            patient.NhsNumber = nhsNumber;
-            patient.UpdatedDate = DateTime.UtcNow;
-            patient.UpdatedBy = "system";
-            patient.Code = "12345";
-            return Ok(patient);
+            var updatedPatient = new Patient
+            {
+                Id = patient.Id ?? Guid.NewGuid().ToString(),
+                NhsNumber = nhsNumber,
+                FirstName = patient.FirstName ?? "D****",
+                Surname = patient.Surname ?? "H****",
+                EmailAddress = patient.EmailAddress ?? "d********s@googlemail.com",
+                PhoneNumber = patient.PhoneNumber ?? "07*********",
+                Address = patient.Address ?? "9 The Wood******, S**********, Surrey",
+                Postcode = patient.Postcode ?? "CR2 0HG",
+                NotificationPreference = patient.NotificationPreference ?? "",
+                VerificationCode = "12345",
+                DateOfBirth = patient.DateOfBirth == default ? new DateTime(1990, 5, 15) : patient.DateOfBirth,
+                CreatedBy = patient.CreatedBy ?? "system",
+                CreatedDate = patient.CreatedDate == default ? DateTime.UtcNow : patient.CreatedDate,
+                UpdatedBy = "system",
+                UpdatedDate = DateTime.UtcNow
+            };
+            return Ok(updatedPatient);
         }
     }
 }
