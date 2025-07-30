@@ -134,6 +134,13 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
             return patient;
         }
 
+        private Models.Foundations.Pds.Patient CreateRandomLocalPatient(Patient fhirPatient)
+        {
+            Models.Foundations.Pds.Patient patient = LocalPatientMapper.FromFhirPatient(fhirPatient);
+
+            return patient;
+        }
+
         private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
             actualException => actualException.SameExceptionAs(expectedException);
     }

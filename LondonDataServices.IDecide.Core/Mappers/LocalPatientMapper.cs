@@ -5,6 +5,7 @@
 using System;
 using System.Linq;
 using Hl7.Fhir.Model;
+using Hl7.Fhir.Utility;
 using ISL.Providers.PDS.Abstractions.Models;
 
 namespace LondonDataServices.IDecide.Core.Mappers
@@ -13,50 +14,24 @@ namespace LondonDataServices.IDecide.Core.Mappers
     {
         public static Models.Foundations.Pds.Patient FromPatientBundle(PatientBundle patientBundle)
         {
-            Hl7.Fhir.Model.Patient bundlePatient = patientBundle.Patients.FirstOrDefault();
+            Patient bundlePatient = patientBundle.Patients.FirstOrDefault();
+            Models.Foundations.Pds.Patient patient = FromFhirPatient(bundlePatient);
 
-            string address = bundlePatient.Address
-                .OrderByDescending(t => ParseEndDate(t.Period?.End) ?? DateTimeOffset.MaxValue)
-                .Select(a => BuildUkAddressString(a))
-                .FirstOrDefault();
+            return patient;
+        }
 
-            string postcode = bundlePatient.Address
-                .OrderByDescending(t => ParseEndDate(t.Period?.End) ?? DateTimeOffset.MaxValue)
-                .Select(a => a.PostalCode)
-                .FirstOrDefault();
-
-            string email = bundlePatient.Telecom
-                .Where(t => t.System == ContactPoint.ContactPointSystem.Email)
-                .OrderByDescending(t => ParseEndDate(t.Period?.End) ?? DateTimeOffset.MaxValue)
-                .Select(t => t.Value)
-                .FirstOrDefault();
-
-            string phoneNumber = bundlePatient.Telecom
-                .Where(t => t.System == ContactPoint.ContactPointSystem.Phone)
-                .OrderByDescending(t => ParseEndDate(t.Period?.End) ?? DateTimeOffset.MaxValue)
-                .Select(t => t.Value)
-                .FirstOrDefault();
-
-            string firstNameString = bundlePatient.Name
-                .OrderByDescending(n => ParseEndDate(n.Period?.End) ?? DateTimeOffset.MaxValue)
-                .Select(n => string.Join(' ', n.Given))
-                .FirstOrDefault();
-
-            string surname = bundlePatient.Name
-                .OrderByDescending(n => ParseEndDate(n.Period?.End) ?? DateTimeOffset.MaxValue)
-                .Select(n => n.Family)
-                .FirstOrDefault();
-
+        public static Models.Foundations.Pds.Patient FromFhirPatient(Patient fhirPatient)
+        {
             Models.Foundations.Pds.Patient patient = new Models.Foundations.Pds.Patient
             {
-                NhsNumber = bundlePatient.Id,
-                Address = address,
-                DateOfBirth = DateTimeOffset.Parse(bundlePatient.BirthDate),
-                EmailAddress = email,
-                FirstName = firstNameString,
-                Surname = surname,
-                Postcode = postcode,
-                PhoneNumber = phoneNumber
+                NhsNumber = fhirPatient.Id,
+                Address = GetCurrentAddressString(fhirPatient),
+                DateOfBirth = DateTimeOffset.Parse(fhirPatient.BirthDate),
+                EmailAddress = GetCurrentEmail(fhirPatient),
+                FirstName = GetFirstName(fhirPatient),
+                Surname = GetSurname(fhirPatient),
+                Postcode = GetCurrentPostcode(fhirPatient),
+                PhoneNumber = GetCurrentPhoneNumber(fhirPatient)
             };
 
             return patient;
@@ -80,6 +55,68 @@ namespace LondonDataServices.IDecide.Core.Mappers
             };
 
             return string.Join(", ", parts.Where(p => !string.IsNullOrWhiteSpace(p)));
+        }
+
+        private static string GetCurrentAddressString(Patient patient)
+        {
+            string address = patient.Address
+                .OrderByDescending(t => ParseEndDate(t.Period?.End) ?? DateTimeOffset.MaxValue)
+                .Select(a => BuildUkAddressString(a))
+                .FirstOrDefault();
+
+            return address;
+        }
+
+        private static string GetCurrentPostcode(Patient patient)
+        {
+            string postcode = patient.Address
+                .OrderByDescending(t => ParseEndDate(t.Period?.End) ?? DateTimeOffset.MaxValue)
+                .Select(a => a.PostalCode)
+                .FirstOrDefault();
+
+            return postcode;
+        }
+
+        private static string GetCurrentEmail(Patient patient)
+        {
+            string email = patient.Telecom
+                .Where(t => t.System == ContactPoint.ContactPointSystem.Email)
+                .OrderByDescending(t => ParseEndDate(t.Period?.End) ?? DateTimeOffset.MaxValue)
+                .Select(t => t.Value)
+                .FirstOrDefault();
+
+            return email;
+        }
+
+        private static string GetCurrentPhoneNumber(Patient patient)
+        {
+            string phoneNumber = patient.Telecom
+                .Where(t => t.System == ContactPoint.ContactPointSystem.Phone)
+                .OrderByDescending(t => ParseEndDate(t.Period?.End) ?? DateTimeOffset.MaxValue)
+                .Select(t => t.Value)
+                .FirstOrDefault();
+
+            return phoneNumber;
+        }
+
+        private static string GetFirstName(Patient patient)
+        {
+            string firstNameString = patient.Name
+                .OrderByDescending(n => ParseEndDate(n.Period?.End) ?? DateTimeOffset.MaxValue)
+                .Select(n => string.Join(' ', n.Given))
+                .FirstOrDefault();
+
+            return firstNameString;
+        }
+
+        private static string GetSurname(Patient patient)
+        {
+            string surname = patient.Name
+                .OrderByDescending(n => ParseEndDate(n.Period?.End) ?? DateTimeOffset.MaxValue)
+                .Select(n => n.Family)
+                .FirstOrDefault();
+
+            return surname;
         }
     }
 }

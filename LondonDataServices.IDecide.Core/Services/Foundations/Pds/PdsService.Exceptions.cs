@@ -48,6 +48,10 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
 
                 throw await CreateAndLogDependencyExceptionAsync(serverPdsException);
             }
+            catch (InvalidPdsArgumentException invalidArgumentPdsException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(invalidArgumentPdsException);
+            }
             catch (Exception exception)
             {
                 var failedServicePdsException =
