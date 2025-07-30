@@ -6,11 +6,31 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace LondonDataServices.IDecide.Core.Migrations
 {
     /// <inheritdoc />
-    public partial class Decision : Migration
+    public partial class AddDecisionTypeAndDecision : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.EnsureSchema(
+                name: "Decision");
+
+            migrationBuilder.CreateTable(
+                name: "DecisionTypes",
+                schema: "Decision",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    UpdatedBy = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DecisionTypes", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Decisions",
                 schema: "Decision",
@@ -18,7 +38,8 @@ namespace LondonDataServices.IDecide.Core.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PatientNhsNumber = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    DecisionTypeId = table.Column<Guid>(type: "uniqueidentifier", maxLength: 450, nullable: false),
+                    DecisionTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DecisionChoice = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedBy = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
@@ -47,6 +68,10 @@ namespace LondonDataServices.IDecide.Core.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Decisions",
+                schema: "Decision");
+
+            migrationBuilder.DropTable(
+                name: "DecisionTypes",
                 schema: "Decision");
         }
     }

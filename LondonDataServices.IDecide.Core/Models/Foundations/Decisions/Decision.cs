@@ -13,6 +13,7 @@ namespace LondonDataServices.IDecide.Core.Models.Foundations.Decisions
         public Guid Id { get; set; }
         public string PatientNhsNumber { get; set; }
         public Guid DecisionTypeId { get; set; }
+        public string DecisionChoice { get; set; }
         public string CreatedBy { get; set; }
         public DateTimeOffset CreatedDate { get; set; }
         public string UpdatedBy { get; set; }
