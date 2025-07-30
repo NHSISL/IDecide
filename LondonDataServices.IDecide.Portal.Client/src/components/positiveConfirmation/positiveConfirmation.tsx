@@ -21,8 +21,12 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
 
                 goToConfirmCode();
             },
-            onError: (error: any) => {
-                console.error("Error updating patient:", error);
+            onError: (error: unknown) => {
+                if (error instanceof Error) {
+                    console.error("Error updating patient:", error.message);
+                } else {
+                    console.error("Error updating patient:", error);
+                }
             }
         });
     };

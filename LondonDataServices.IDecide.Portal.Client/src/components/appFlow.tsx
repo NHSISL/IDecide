@@ -133,9 +133,9 @@ export const AppFlow = () => {
             <h2 className="step-label">{label}</h2>
             <div>{content}</div>
             {/* Show Next button only on steps that support it */}
-            {currentStepIndex === 3 && currentStepIndex < steps.length - 1 && (
-                <Button onClick={goToNextMainStep} className="mt-3">Next</Button>
-            )}
+            {/*{currentStepIndex === 3 && currentStepIndex < steps.length - 1 && (*/}
+            {/*    <Button onClick={goToNextMainStep} className="mt-3">Next</Button>*/}
+            {/*)}*/}
         </div>
     );
 };
