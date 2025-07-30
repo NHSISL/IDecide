@@ -3,6 +3,7 @@ import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { Patient } from "../../models/patients/patient";
 
 export const patientService = {
+
     useCreatePatient: () => {
         const broker = new PatientBroker();
         const queryClient = useQueryClient();

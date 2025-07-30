@@ -8,7 +8,7 @@ import { loadRecaptchaScript } from "../../helpers/recaptureLoad";
 const RECAPTCHA_SITE_KEY = "6LcOJn4rAAAAAIUdB70R9BqkfPFD-bPYTk6ojRGg";
 
 export const SearchByNhsNumber = ({ onIDontKnow }: { onIDontKnow: () => void }) => {
-    const [nhsNumberInput, setNhsNumberInput] = useState("");
+    const [nhsNumberInput, setNhsNumberInput] = useState("1234567890");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const [recaptchaReady, setRecaptchaReady] = useState(false);
