@@ -1,0 +1,58 @@
+using System;
+using System.Threading.Tasks;
+using FluentAssertions;
+using Moq;
+using StandardlyTestProject.Api.Models.Foundations.DecisionTypes;
+using StandardlyTestProject.Api.Models.Foundations.DecisionTypes.Exceptions;
+using Xunit;
+
+namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionTypes
+{
+    public partial class DecisionTypeServiceTests
+    {
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnRemoveIfIdIsInvalidAndLogItAsync()
+        {
+            // given
+            Guid invalidDecisionTypeId = Guid.Empty;
+
+            var invalidDecisionTypeException = 
+                new InvalidDecisionTypeException(
+                    message: "Invalid decisionType. Please correct the errors and try again.");
+
+            invalidDecisionTypeException.AddData(
+                key: nameof(DecisionType.Id),
+                values: "Id is required");
+
+            var expectedDecisionTypeValidationException =
+                new DecisionTypeValidationException(
+                    message: "DecisionType validation errors occurred, please try again.",
+                    innerException: invalidDecisionTypeException);
+
+            // when
+            ValueTask<DecisionType> removeDecisionTypeByIdTask =
+                this.decisionTypeService.RemoveDecisionTypeByIdAsync(invalidDecisionTypeId);
+
+            DecisionTypeValidationException actualDecisionTypeValidationException =
+                await Assert.ThrowsAsync<DecisionTypeValidationException>(
+                    removeDecisionTypeByIdTask.AsTask);
+
+            // then
+            actualDecisionTypeValidationException.Should()
+                .BeEquivalentTo(expectedDecisionTypeValidationException);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedDecisionTypeValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.DeleteDecisionTypeAsync(It.IsAny<DecisionType>()),
+                    Times.Never);
+
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
+    }
+}

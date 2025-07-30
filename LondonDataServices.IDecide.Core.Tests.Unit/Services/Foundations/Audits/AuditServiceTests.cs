@@ -16,7 +16,6 @@ using LondonDataServices.IDecide.Core.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Brokers.Storages.Sql;
 using LondonDataServices.IDecide.Core.Models.Foundations.Audits;
 using LondonDataServices.IDecide.Core.Models.Securities;
-using LondonDataServices.IDecide.Core.Services.Audits;
 using Microsoft.Data.SqlClient;
 using Moq;
 using Tynamix.ObjectFiller;
