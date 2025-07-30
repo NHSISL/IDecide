@@ -4,10 +4,6 @@
 
 using System.Linq;
 using Attrify.InvisibleApi.Models;
-using ISL.Providers.ReIdentification.Abstractions;
-using ISL.Providers.ReIdentification.OfflineFileSources.Models;
-using ISL.Providers.ReIdentification.OfflineFileSources.Providers.OfflineFileSources;
-using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Tests.Acceptance;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -31,10 +27,6 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Tests.Accept
             builder.ConfigureServices((context, services) =>
             {
                 OverrideSecurityForTesting(services);
-
-                OverrideReIdentificationProviderForTesting(
-                    services,
-                    context.Configuration);
             });
         }
 
@@ -77,26 +69,6 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Tests.Accept
             {
                 options.AddPolicy("TestPolicy", policy => policy.RequireAssertion(_ => true));
             });
-        }
-
-        private static void OverrideReIdentificationProviderForTesting(
-            IServiceCollection services,
-            IConfiguration configiration)
-        {
-            var reIdentificationDescriptor = services
-                .FirstOrDefault(d => d.ServiceType == typeof(IReIdentificationProvider));
-
-            if (reIdentificationDescriptor != null)
-            {
-                services.Remove(reIdentificationDescriptor);
-            }
-
-            OfflineSourceReIdentificationConfigurations offlineSourceReIdentificationConfigurations = configiration
-                .GetSection("offlineSourceReIdentificationConfigurations")
-                    .Get<OfflineSourceReIdentificationConfigurations>();
-
-            services.AddSingleton(offlineSourceReIdentificationConfigurations);
-            services.AddTransient<IReIdentificationProvider, OfflineFileSourceReIdentificationProvider>();
         }
     }
 }
