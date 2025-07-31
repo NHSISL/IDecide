@@ -31,7 +31,6 @@ namespace LondonDataServices.IDecide.Core.Migrations
                     Surname = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     DateOfBirth = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     Gender = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    NHSNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Phone = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Address = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
