@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LondonDataServices.IDecide.Core.Migrations
 {
     [DbContext(typeof(StorageBroker))]
-    [Migration("20250731154127_AddPatientAndLinkToDecision")]
+    [Migration("20250731160945_AddPatientAndLinkToDecision")]
     partial class AddPatientAndLinkToDecision
     {
         /// <inheritdoc />
