@@ -3,6 +3,7 @@ import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { Patient } from "../../models/patients/patient";
 
 export const patientService = {
+
     useCreatePatient: () => {
         const broker = new PatientBroker();
         const queryClient = useQueryClient();
@@ -56,6 +57,15 @@ export const patientService = {
             queryKey: ["PatientGetById", { id: nhsNumber }],
             queryFn: () => broker.GetPatientByIdAsync(nhsNumber),
             staleTime: Infinity
+        });
+    },
+
+    useConfirmCode: () => {
+        const broker = new PatientBroker();
+        return useMutation({
+            mutationFn: ({ nhsNumber, code }: { nhsNumber: string; code: string }) => {
+                return broker.ConfirmPatientCodeAsync(nhsNumber, code);
+            }
         });
     },
 };

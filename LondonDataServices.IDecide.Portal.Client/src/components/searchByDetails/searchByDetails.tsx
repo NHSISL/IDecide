@@ -1,14 +1,16 @@
 import React, { useState } from "react";
+import { useStep } from "../context/stepContext";
+import { Patient } from "../../models/patients/patient";
+import { patientViewService } from "../../services/views/patientViewService";
 
 interface SearchByDetailsProps {
     onBack: () => void;
-    nextStep: () => void;
+    nextStep: (createdPatient: Patient) => void;
 }
 
 const isValidUKDate = (day: string, month: string, year: string): string | null => {
-    // Only allow "01" or "03" for month
-    if (!/^\d{2}$/.test(month) || (month !== "01" && month !== "03")) {
-        return "Month must be 01 or 03";
+    if (!/^\d{2}$/.test(month) || parseInt(month, 10) < 1 || parseInt(month, 10) > 12) {
+        return "Month must be between 01 and 12";
     }
     if (!/^\d{1,2}$/.test(day) || !/^\d{4}$/.test(year)) {
         return "Enter a valid date of birth";
@@ -39,8 +41,12 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, nextStep }) =
     const [dobMonth, setDobMonth] = useState("");
     const [dobYear, setDobYear] = useState("");
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
+    const [loading, setLoading] = useState(false);
 
-    const handleFieldChange = (field: string, value: string) => {
+    const { setCreatedPatient } = useStep();
+    const addPatient = patientViewService.useCreatePatient();
+
+    const handleFieldChange = (field: string) => {
         setErrors(prev => {
             const newErrors = { ...prev };
             if (field === "dobDay" || field === "dobMonth" || field === "dobYear") {
@@ -53,13 +59,9 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, nextStep }) =
     };
 
     const handleMonthChange = (value: string) => {
-        // Only allow up to 2 digits, and only "01" or "03"
-        let filtered = value.replace(/\D/g, "").slice(0, 2);
-        if (filtered.length === 2 && filtered !== "01" && filtered !== "03") {
-            filtered = filtered[0]; // fallback to first digit if not valid
-        }
+        const filtered = value.replace(/\D/g, "").slice(0, 2);
         setDobMonth(filtered);
-        handleFieldChange("dobMonth", filtered);
+        handleFieldChange("dobMonth");
     };
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -75,7 +77,26 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, nextStep }) =
         }
         setErrors(newErrors);
         if (Object.keys(newErrors).length === 0) {
-            nextStep();
+            setLoading(true);
+            const dateOfBirth = new Date(`${dobYear}-${dobMonth}-${dobDay}`);
+            const patientToCreate = new Patient({
+                id: "",
+                surname,
+                postcode,
+                dateOfBirth
+            });
+
+            addPatient.mutate(patientToCreate, {
+                onSuccess: (createdPatient: Patient) => {
+                    setCreatedPatient(createdPatient);
+                    nextStep(createdPatient);
+                    setLoading(false);
+                },
+                onError: () => {
+                    setErrors({ submit: "Failed to create patient. Please try again." });
+                    setLoading(false);
+                }
+            });
         }
     };
 
@@ -214,7 +235,7 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, nextStep }) =
                             name="dob-month"
                             type="text"
                             inputMode="numeric"
-                            pattern="0[13]"
+                            pattern="^(0[1-9]|1[0-2])$"
                             maxLength={2}
                             value={dobMonth}
                             onChange={e => handleMonthChange(e.target.value)}
@@ -246,8 +267,14 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, nextStep }) =
                 </div>
             </fieldset>
 
-            <button className="nhsuk-button" type="submit" style={{ width: "100%" }}>
-                Search
+            {errors.submit && (
+                <div className="nhsuk-error-message" style={{ marginBottom: "1rem" }} role="alert">
+                    <strong>Error:</strong> {errors.submit}
+                </div>
+            )}
+
+            <button className="nhsuk-button" type="submit" style={{ width: "100%" }} disabled={loading}>
+                {loading ? "Submitting..." : "Search"}
             </button>
         </form>
     );

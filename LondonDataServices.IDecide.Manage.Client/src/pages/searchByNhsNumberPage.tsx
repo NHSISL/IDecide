@@ -1,11 +1,19 @@
 ﻿// LondonDataServices.IDecide.Portal.Client\src\pages\searchByNhsNumberPage.tsx
 import React from "react";
 import SearchByNhsNumber from "../components/SearchNhsNumber/searchByNhsNumber";
-import { Container } from "react-bootstrap";
+import { Card, Container } from "nhsuk-react-components";
+
 
 export const SearchByNhsNumberPage = () => (
     <Container fluid>
-        <SearchByNhsNumber />
+        <Card cardType="feature">
+        <Card.Content>
+            <Card.Heading>NHS Number Search</Card.Heading>
+            <Card.Description>
+                <SearchByNhsNumber />
+            </Card.Description>
+        </Card.Content>
+        </Card>
     </Container>
 );
 

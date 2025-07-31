@@ -6,8 +6,8 @@ export class Patient {
     public emailAddress?: string;
     public address?: string;
     public postcode?: string;
-    public code?: string;
-    public codeNotificationDecision?: string;
+    public verificationCode?: string;
+    public notificationPreference?: string;
     public dateOfBirth?: Date;
     public createdBy?: string;
     public createdDate?: Date;
@@ -22,8 +22,8 @@ export class Patient {
         this.emailAddress = patient.emailAddress || "";
         this.address = patient.address || "";
         this.postcode = patient.postcode || "";
-        this.code = patient.code || "";
-        this.codeNotificationDecision = patient.codeNotificationDecision || "";
+        this.verificationCode = patient.verificationCode || "";
+        this.notificationPreference = patient.notificationPreference || "";
         this.dateOfBirth = patient.dateOfBirth ? new Date(patient.dateOfBirth) : undefined;
         this.createdBy = patient.createdBy || "";
         this.createdDate = patient.createdDate ? new Date(patient.createdDate) : undefined;

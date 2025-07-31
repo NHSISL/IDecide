@@ -5,70 +5,16 @@ import { ConfirmDetailsPage } from "../pages/confirmDetailsPage";
 import { SearchByNhsNumberPage } from "../pages/searchByNhsNumberPage";
 import { SearchByDetailsPage } from "../pages/searchByDetailsPage";
 import { ConfirmCodePage } from "../pages/confirmCodePage";
-import { OptInOutPage } from "../pages/OptInOutPage";
-import { ThankyouPage } from "../pages/thankyouPage";
+import { OptInOutPage } from "../pages/optInOutPage";
 import PositiveConfirmation from "./positiveConfirmation/positiveConfirmation";
+import { ConfirmationPage } from "../pages/confirmationPage";
+import { ThankyouPage } from "../pages/thankyouPage";
 
-// Define all main steps and sub-steps in a clear structure
-const steps = [
-    {
-        key: "nhsNumber",
-        label: "Provide Your NHS Number",
-        subSteps: [
-            {
-                key: "nhsNumberEntry",
-                label: "Enter NHS Number",
-                render: (goToSearchByDetails: () => void) => (
-                    <SearchByNhsNumberPage onIDontKnow={goToSearchByDetails} />
-                ),
-            },
-            {
-                key: "searchByDetails",
-                label: "Search By Details",
-                render: (goBack: () => void, nextStep: () => void) => (
-                    <SearchByDetailsPage onBack={goBack} nextStep={nextStep} />
-                ),
-            },
-        ],
-    },
-    {
-        key: "confirmDetails",
-        label: "Confirm Your Details",
-        render: (goToConfirmCode: () => void) => (
-            <ConfirmDetailsPage goToConfirmCode={goToConfirmCode} />
-        ),
-    },
-    {
-        key: "positiveConfirmation",
-        label: "Positive Confirmation",
-        subSteps: [
-            {
-                key: "positiveConfirmation",
-                label: "Positive Confirmation",
-                render: (goToConfirmCode: () => void) => (
-                    <PositiveConfirmation goToConfirmCode={goToConfirmCode} />
-                ),
-            },
-            {
-                key: "confirmCode",
-                label: "Confirm Code",
-                render: () => <ConfirmCodePage />,
-            },
-        ],
-    },
-    {
-        key: "optInOut",
-        label: "Make Your Choice",
-        render: () => <OptInOutPage />,
-    },
-    {
-        key: "thankYou",
-        label: "Receive Notifications",
-        render: () => <ThankyouPage />,
-    },
-];
+interface AppFlowProps {
+    powerOfAttourney?: boolean;
+}
 
-export const AppFlow = () => {
+export const AppFlow: React.FC<AppFlowProps> = ({ powerOfAttourney }) => {
     const { currentStepIndex, setCurrentStepIndex } = useStep();
     const [nhsNumberSubStep, setNhsNumberSubStep] = useState(0); // 0: NHS Number, 1: Search by Details
     const [confirmationSubStep, setConfirmationSubStep] = useState(0); // 0: Positive Confirmation, 1: Confirm Code
@@ -83,11 +29,72 @@ export const AppFlow = () => {
         setConfirmationSubStep(0);
     };
 
-    const goToPreviousMainStep = () => {
-        setCurrentStepIndex((prev: number) => Math.max(prev - 1, 0));
-        setNhsNumberSubStep(0);
-        setConfirmationSubStep(0);
-    };
+    // Steps array moved inside so it can use the prop
+    const steps = [
+        {
+            key: "nhsNumber",
+            label: "Provide Your NHS Number",
+            subSteps: [
+                {
+                    key: "nhsNumberEntry",
+                    label: "Enter NHS Number",
+                    render: (goToSearchByDetails: () => void) => (
+                        <SearchByNhsNumberPage
+                            onIDontKnow={goToSearchByDetails}
+                            powerOfAttourney={powerOfAttourney}
+                        />
+                    ),
+                },
+                {
+                    key: "searchByDetails",
+                    label: "Search By Details",
+                    render: (goBack: () => void, nextStep: () => void) => (
+                        <SearchByDetailsPage onBack={goBack} nextStep={nextStep} />
+                    ),
+                },
+            ],
+        },
+        {
+            key: "confirmDetails",
+            label: "Confirm Your Details",
+            render: (goToConfirmCode: () => void) => (
+                <ConfirmDetailsPage goToConfirmCode={goToConfirmCode} />
+            ),
+        },
+        {
+            key: "positiveConfirmation",
+            label: "Positive Confirmation",
+            subSteps: [
+                {
+                    key: "positiveConfirmation",
+                    label: "Positive Confirmation",
+                    render: (goToConfirmCode: () => void) => (
+                        <PositiveConfirmation goToConfirmCode={goToConfirmCode} />
+                    ),
+                },
+                {
+                    key: "confirmCode",
+                    label: "Confirm Code",
+                    render: () => <ConfirmCodePage />,
+                },
+            ],
+        },
+        {
+            key: "optInOut",
+            label: "Make Your Choice",
+            render: () => <OptInOutPage />,
+        },
+        {
+            key: "confirmation",
+            label: "Receive Notifications",
+            render: () => <ConfirmationPage />,
+        },
+        {
+            key: "completed",
+            label: "",
+            render: () => <ThankyouPage />,
+        },
+    ];
 
     let content: React.ReactNode;
     let label: string;
@@ -125,9 +132,13 @@ export const AppFlow = () => {
             label = steps[3]?.label ?? "";
             content = steps[3]?.render?.() ?? null;
             break;
-        case 4: // Thank You
+        case 4: // Confirmation
             label = steps[4]?.label ?? "";
             content = steps[4]?.render?.() ?? null;
+            break;
+        case 5: // Thank You
+            label = steps[5]?.label ?? "";
+            content = steps[5]?.render?.() ?? null;
             break;
         default:
             label = "";
@@ -139,9 +150,9 @@ export const AppFlow = () => {
             <h2 className="step-label">{label}</h2>
             <div>{content}</div>
             {/* Show Next button only on steps that support it */}
-            {currentStepIndex === 3 && currentStepIndex < steps.length - 1 && (
+            {/*{currentStepIndex === 3 && currentStepIndex < steps.length - 1 && (
                 <Button onClick={goToNextMainStep} className="mt-3">Next</Button>
-            )}
+            )}*/}
         </div>
     );
 };
