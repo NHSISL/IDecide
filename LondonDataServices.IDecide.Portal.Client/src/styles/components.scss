@@ -91,3 +91,31 @@
     overflow: hidden;
 }
 
+
+
+/* Remove display: flex and flex-wrap from .custom-col-spacing */
+.custom-col-spacing > [class^="col-"],
+.custom-col-spacing > [class*=" col-"] {
+    margin-bottom: 2rem; /* vertical spacing on mobile */
+}
+
+@media (min-width: 768px) {
+    .custom-col-spacing > [class^="col-"],
+    .custom-col-spacing > [class*=" col-"] {
+        margin-bottom: 0;
+        margin-right: 2rem; /* horizontal spacing between columns */
+    }
+
+    .custom-col-spacing > [class^="col-"]:last-child,
+    .custom-col-spacing > [class*=" col-"]:last-child {
+        margin-right: 0;
+    }
+    .custom-col-spacing {
+        padding-left: 0px !important;
+    }
+}
+
+.custom-col-spacing {
+    padding-left: 10px !important;
+
+}

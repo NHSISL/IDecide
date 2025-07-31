@@ -114,7 +114,17 @@ export const Home = () => {
                 <p style={{ marginBottom: "0.7rem" }}>
                     <strong>Click on the Start button below to tell us your data preference</strong>
                 </p>
-                <Button onClick={() => navigate("/optOut")} style={{ margin: "0 0 1rem 0", width: 160, fontWeight: 600 }}>Start</Button>
+                <Button
+                    onClick={() => navigate("/optOut")}
+                    style={{ margin: "0 0 1rem 0", width: 160, fontWeight: 600 }}>
+                    Start
+                </Button>
+
+                <Button
+                    onClick={() => navigate("/optOut", { state: { powerOfAttourney: true } })}
+                    style={{ margin: "0 0 1rem 1rem", width: 160, fontWeight: 600 }}>
+                    Start PoA
+                </Button>
 
                 {expandableHeaders.map((header, idx) => (
                     <ExpandableSection

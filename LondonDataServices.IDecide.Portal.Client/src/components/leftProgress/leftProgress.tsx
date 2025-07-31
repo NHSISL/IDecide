@@ -71,7 +71,7 @@ const LeftProgress: React.FC = () => {
                                             style={{
                                                 flex: 1,
                                                 textAlign: "center",
-                                                minWidth: 80,
+                                                minWidth: 40,
                                                 opacity: isPreviousStep(idx) ? 0.5 : 1,
                                                 borderBottom: isCurrentStep(idx) ? "3px solid #005eb8" : "1px solid #ccc",
                                                 padding: "8px 0"
