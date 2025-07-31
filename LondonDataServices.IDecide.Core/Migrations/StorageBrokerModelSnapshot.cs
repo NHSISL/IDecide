@@ -195,9 +195,6 @@ namespace LondonDataServices.IDecide.Core.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<string>("NHSNumber")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("NhsNumber")
                         .IsRequired()
                         .HasMaxLength(10)

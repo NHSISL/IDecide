@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LondonDataServices.IDecide.Core.Migrations
 {
     [DbContext(typeof(StorageBroker))]
-    [Migration("20250731154127_AddPatientAndLinkToDecision")]
+    [Migration("20250731175945_AddPatientAndLinkToDecision")]
     partial class AddPatientAndLinkToDecision
     {
         /// <inheritdoc />
@@ -197,9 +197,6 @@ namespace LondonDataServices.IDecide.Core.Migrations
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("NHSNumber")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NhsNumber")
                         .IsRequired()
