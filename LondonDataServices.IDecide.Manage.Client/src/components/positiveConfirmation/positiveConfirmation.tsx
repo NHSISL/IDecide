@@ -5,7 +5,7 @@ import { Button } from "nhsuk-react-components";
 const PositiveConfirmation = () => {
     const navigate = useNavigate();
 
-    const handleSubmit = (method: "email" | "sms" | "letter") => {
+    const handleSubmit = (method: "Email" | "SMS" | "Letter" | "Agent") => {
         console.log(method);
         // Navigate to confirmCode route
         navigate("/confirmCode");
@@ -48,7 +48,7 @@ const PositiveConfirmation = () => {
                     type="button"
                     className="nhsuk-button"
                     style={{ flex: 1, minWidth: 120 }}
-                    onClick={() => handleSubmit("email")}
+                    onClick={() => handleSubmit("Email")}
                 >
                     Email
                 </button>
@@ -56,18 +56,26 @@ const PositiveConfirmation = () => {
                     type="button"
                     className="nhsuk-button"
                     style={{ flex: 1, minWidth: 120 }}
-                    onClick={() => handleSubmit("sms")}
+                    onClick={() => handleSubmit("SMS")}
                 >
                     SMS
                 </button>
                 <button
-                warning
+                
                     type="button"
                     className="nhsuk-button"
                     style={{ flex: 1, minWidth: 120 }}
-                    onClick={() => handleSubmit("letter")}
+                    onClick={() => handleSubmit("Letter")}
                 >
                     Letter
+                </button>
+                <button
+                    type="button"
+                    className="nhsuk-button"
+                    style={{ flex: 1, minWidth: 120 }}
+                    onClick={() => handleSubmit("Agent")}
+                >
+                    Agent Accept
                 </button>
             </div>
         </div>
