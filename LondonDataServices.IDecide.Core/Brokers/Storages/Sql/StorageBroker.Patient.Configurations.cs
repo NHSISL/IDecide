@@ -25,6 +25,50 @@ namespace LondonDataServices.IDecide.Core.Brokers.Storages.Sql
                 .IsRequired();
 
             model
+                .Property(patient => patient.Title)
+                .HasMaxLength(255)
+                .IsRequired();
+
+            model
+                .Property(patient => patient.GivenName)
+                .HasMaxLength(255)
+                .IsRequired();
+
+            model
+               .Property(patient => patient.Surname)
+               .HasMaxLength(255)
+               .IsRequired();
+
+            model
+               .Property(patient => patient.DateOfBirth)
+               .IsRequired();
+
+            model
+               .Property(patient => patient.Gender)
+               .HasMaxLength(255)
+               .IsRequired();
+
+            model
+               .Property(patient => patient.Email)
+               .HasMaxLength(255)
+               .IsRequired();
+
+            model
+               .Property(patient => patient.Phone)
+               .HasMaxLength(255)
+               .IsRequired();
+
+            model
+               .Property(patient => patient.Address)
+               .HasMaxLength(255)
+               .IsRequired();
+
+            model
+               .Property(patient => patient.PostCode)
+               .HasMaxLength(255)
+               .IsRequired();
+
+            model
                 .Property(patient => patient.ValidationCode)
                 .HasMaxLength(5)
                 .IsRequired();
@@ -35,6 +79,24 @@ namespace LondonDataServices.IDecide.Core.Brokers.Storages.Sql
 
             model
                 .Property(patient => patient.RetryCount)
+                .IsRequired();
+
+            model
+                .Property(decisionType => decisionType.CreatedBy)
+                .HasMaxLength(255)
+                .IsRequired();
+
+            model
+                .Property(decisionType => decisionType.CreatedDate)
+                .IsRequired();
+
+            model
+                .Property(decisionType => decisionType.UpdatedBy)
+                .HasMaxLength(255)
+                .IsRequired();
+
+            model
+                .Property(decisionType => decisionType.UpdatedDate)
                 .IsRequired();
 
             model
