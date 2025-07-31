@@ -116,14 +116,14 @@ export const Home = () => {
                 </p>
                 <Button
                     onClick={() => navigate("/optOut")}
-                    style={{ margin: "0 0 1rem 0", width: 160, fontWeight: 600 }}>
+                    style={{ margin: "0 0 1rem 1rem", width: 160, fontWeight: 600, minHeight: 75 }}>
                     Start
                 </Button>
 
                 <Button
                     onClick={() => navigate("/optOut", { state: { powerOfAttourney: true } })}
-                    style={{ margin: "0 0 1rem 1rem", width: 160, fontWeight: 600 }}>
-                    Start PoA
+                    style={{ margin: "0 0 1rem 1rem", width: 260, fontWeight: 600, minHeight: 75 }}>
+                    Requesting an Opt-out on someone else's behalf
                 </Button>
 
                 {expandableHeaders.map((header, idx) => (

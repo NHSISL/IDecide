@@ -176,7 +176,7 @@ export const SearchByNhsNumber = ({
                                     value={poaNhsNumberInput}
                                     onChange={handlePoaNhsNumberChange}
                                     error={poaNhsNumberError || undefined}
-                                    style={{ maxWidth: "200px", marginBottom: "1rem" }}
+                                    style={{ maxWidth: "300px", marginBottom: "1rem" }}
                                 />
                                 <TextInput
                                     label="Firstname"
@@ -186,7 +186,7 @@ export const SearchByNhsNumber = ({
                                     value={poaFirstname}
                                     onChange={handlePoaFirstnameChange}
                                     error={poaFirstnameError || undefined}
-                                    style={{ maxWidth: "300px", marginBottom: "1rem" }}
+                                    style={{ maxWidth: "400px", marginBottom: "1rem" }}
                                 />
                                 <TextInput
                                     label="Surname"
@@ -196,7 +196,7 @@ export const SearchByNhsNumber = ({
                                     value={poaSurname}
                                     onChange={handlePoaSurnameChange}
                                     error={poaSurnameError || undefined}
-                                    style={{ maxWidth: "300px", marginBottom: "1rem" }}
+                                    style={{ maxWidth: "400px", marginBottom: "1rem" }}
                                 />
                                 <div style={{ marginBottom: "1rem" }}>
                                     <Select
@@ -209,18 +209,18 @@ export const SearchByNhsNumber = ({
                                         value={poaRelationship}
                                         onChange={handlePoaRelationshipChange}
                                         error={poaRelationshipError || undefined}
-                                        style={{ maxWidth: "300px", marginBottom: "1rem" }}
+                                        style={{ maxWidth: "400px", marginBottom: "1rem" }}
                                     >
                                         <option value="" disabled>
                                             Select relationship
                                         </option>
-                                        <option value="Parent">Parent</option>
-                                        <option value="Carer">Carer</option>
+                                        <option value="Parent">The patient is under 13 and you are their parent</option>
+                                        <option value="Guardian">The patient is under 13 and you are their appointed guardian</option>
+                                        <option value="poa">The patient is over 13 and you have power of attorney with the right to act on their behalf.</option>
                                     </Select>
                                 </div>
                             </div>
                         )}
-
                         <div style={{ display: "flex", gap: "1rem", marginBottom: "0.2rem", marginTop: "1rem" }}>
                             <Button
                                 type="submit"
@@ -261,29 +261,22 @@ export const SearchByNhsNumber = ({
                             }}
                         >
                             <h2 className="mb-3" style={{ color: "#005eb8" }}>Help & Guidance</h2>
+                            <h3 className="mb-3" style={{ color: "#005eb8" }}>
+                                Requesting an Opt-out on someone else's behalf
+                            </h3>
                             <p>
-                                <strong>Why we ask for Power of Attorney details</strong><br />
-                                If you are acting on behalf of someone else, we need to confirm your authority to do so. Providing your Power of Attorney details helps us ensure that you have the legal right to make decisions or access information for the person you represent.
+                                You can make a request to opt-out on behalf of someone else to stop their personal data being used for secondary purposes if:
+                            </p>
+                            <ul>
+                                <li>The patient is under 13 and you are their parent</li>
+                                <li>The patient is under 13 and you are their appointed guardian</li>
+                                <li>The patient is over 13 and you have power of attorney with the right to act on their behalf.</li>
+                            </ul>
+                            <p>
+                                If you are in these circumstances then please enter your details in this blue box and in every other box use the patient's details.
                             </p>
                             <p>
-                                <strong>What to enter:</strong>
-                                <ul>
-                                    <li><strong>First name and surname:</strong> Enter your own name as it appears on your Power of Attorney documentation.</li>
-                                    <li><strong>Relationship:</strong> Select your relationship to the person you are representing (for example, Parent or Carer).</li>
-                                </ul>
-                            </p>
-                            <p>
-                                <strong>What happens next:</strong>
-                                <ul>
-                                    <li>The information you provide will be used to verify your authority to act on behalf of the individual.</li>
-                                    <li>We may contact you or request further documentation if needed.</li>
-                                </ul>
-                            </p>
-                            <p className="mb-2">
-                                <strong>Important:</strong> Please ensure the details you provide match your official Power of Attorney documents. If you are unsure about your status or need more information, you can find guidance on the&nbsp;
-                                <a href="https://www.gov.uk/power-of-attorney" target="_blank" rel="noopener noreferrer">
-                                    UK Government website about Power of Attorney
-                                </a>.
+                                If one of these circumstances does not describe you then you cannot opt someone else out. Please click the back button.
                             </p>
                         </div>
                     )}
