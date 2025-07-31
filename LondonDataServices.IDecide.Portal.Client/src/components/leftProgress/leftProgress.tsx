@@ -5,7 +5,6 @@ import { useStep } from "../context/stepContext";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 
-// Add "thanks" to the steps array
 const steps = ["nhs", "details", "confirm", "choice", "notify", "thanks"];
 
 const stepLabels: Record<string, string> = {

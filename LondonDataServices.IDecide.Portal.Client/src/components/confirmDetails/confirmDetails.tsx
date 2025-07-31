@@ -14,7 +14,7 @@ export const ConfirmDetails: React.FC<ConfirmDetailsProps> = ({ goToConfirmCode 
     };
 
     const handleYesClick = () => {
-        nextStep(createdPatient);
+        nextStep(undefined, undefined, createdPatient);
     };
 
     if (!createdPatient) {
@@ -71,7 +71,7 @@ export const ConfirmDetails: React.FC<ConfirmDetailsProps> = ({ goToConfirmCode 
                             style={{ width: "100%", marginBottom: 0, borderBottom: "none" }}
                             onClick={goToConfirmCode}
                         >
-                            We have already sent you a code. Would you like to use that code to continue?
+                            We have already been sent a code. Would you like to use that code to continue?
                         </button>
                     </form>
                 </div>
