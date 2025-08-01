@@ -12,6 +12,7 @@ console.log(webServerCommand);
 export default defineConfig({
     testDir: './tests',
     reporter: 'html',
+    ignoreHTTPSErrors: true,
     webServer: {
         command: webServerCommand,
         url: 'https://localhost:5173',
