@@ -16,7 +16,8 @@ class PatientBroker {
     }
 
     async PostPatientAsync(patient: Patient) {
-        return await this.apiBroker.PostAsync(this.relativePatientsUrl, patient)
+        const url = `${this.relativePatientsUrl}/GetPatientByNhsNumber`;
+        return await this.apiBroker.PostAsync(url, patient)
             .then(result => new Patient(result.data));
     }
 
@@ -48,6 +49,13 @@ class PatientBroker {
         const url = `${this.relativePatientsUrl}/${patient.nhsNumber}`;
         return await this.apiBroker.PutAsync(url, patient)
             .then(result => new Patient(result.data));
+    }
+
+    async ConfirmPatientCodeAsync(nhsNumber: string, code: string) {
+        const url = `${this.relativePatientsUrl}/confirm-code`;
+        const payload = { nhsNumber, code };
+        return await this.apiBroker.PostAsync(url, payload)
+            .then(result => result.data);
     }
 }
 

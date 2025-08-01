@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { Button } from "nhsuk-react-components";
 
 const PositiveConfirmation = () => {
     const navigate = useNavigate();
@@ -11,8 +12,7 @@ const PositiveConfirmation = () => {
     };
 
     return (
-        <div className="mt-4">
-            <h2>Confirmation required</h2>
+        <div className="mt-2">
             <p>Please confirm these details are correct before continuing:</p>
             <dl className="nhsuk-summary-list" style={{ marginBottom: "2rem" }}>
                 <div className="nhsuk-summary-list__row">
@@ -61,6 +61,7 @@ const PositiveConfirmation = () => {
                     SMS
                 </button>
                 <button
+                warning
                     type="button"
                     className="nhsuk-button"
                     style={{ flex: 1, minWidth: 120 }}

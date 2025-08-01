@@ -26,4 +26,8 @@ export const patientViewService = {
     useUpdatePatient: () => {
         return patientService.useModifyPatient();
     },
+
+    useConfirmCode: () => {
+        return patientService.useConfirmCode();
+    },
 };

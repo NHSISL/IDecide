@@ -1,11 +1,15 @@
-﻿// LondonDataServices.IDecide.Portal.Client\src\pages\searchByNhsNumberPage.tsx
-import React from "react";
+﻿import React from "react";
 import SearchByNhsNumber from "../components/SearchNhsNumber/searchByNhsNumber";
 import { Container } from "react-bootstrap";
 
-export const SearchByNhsNumberPage = ({ onIDontKnow }: { onIDontKnow: () => void }) => (
+interface SearchByNhsNumberPageProps {
+    onIDontKnow: () => void;
+    powerOfAttourney?: boolean;
+}
+
+export const SearchByNhsNumberPage: React.FC<SearchByNhsNumberPageProps> = ({ onIDontKnow, powerOfAttourney }) => (
     <Container>
-        <SearchByNhsNumber onIDontKnow={onIDontKnow} />
+        <SearchByNhsNumber onIDontKnow={onIDontKnow} powerOfAttourney={powerOfAttourney} />
     </Container>
 );
 

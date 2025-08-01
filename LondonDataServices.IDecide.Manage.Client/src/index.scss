@@ -10,3 +10,36 @@ body {
     background: white !important;
 }
 
+.nhsuk-card__heading--feature {
+    background: #004F69 !important;
+    color: #ffffff;
+    display: inline-block;
+    left: -25px;
+    margin-bottom: 8px;
+    margin-right: -24px;
+    padding: 8px 24px;
+    position: relative;
+    top: -8px;
+}
+/*
+.nhsuk-button {
+    -webkit-appearance: none;
+    box-shadow: 0 4px 0 #004F69 !Important;
+    background-color: #00ABCD !important;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    box-sizing: border-box;
+    cursor: pointer;
+    display: inline-block;
+    overflow: visible;
+    margin-top: 0;
+    padding: 8px 16px;
+    position: relative;
+    text-align: center;
+    vertical-align: top;
+    width: auto;
+}
+
+*/.content-inner {
+    background: #FAF9F6 !important;
+}
