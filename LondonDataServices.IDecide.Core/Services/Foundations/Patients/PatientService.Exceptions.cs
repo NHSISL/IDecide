@@ -40,6 +40,10 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Patients
 
                 throw await CreateAndLogCriticalDependencyExceptionAsync(failedPatientStorageException);
             }
+            catch (NotFoundPatientException notFoundPatientException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(notFoundPatientException);
+            }
             catch (DuplicateKeyException duplicateKeyException)
             {
                 var alreadyExistsPatientException =

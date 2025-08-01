@@ -2,7 +2,6 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Securities;
@@ -50,21 +49,33 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Patients
                 (Rule: IsNotSame(
                     firstDate: patient.UpdatedDate,
                     secondDate: patient.CreatedDate,
-                    secondDateName: nameof(DecisionType.CreatedDate)),
-                Parameter: nameof(DecisionType.UpdatedDate)),
+                    secondDateName: nameof(Patient.CreatedDate)),
+                Parameter: nameof(Patient.UpdatedDate)),
 
                 (Rule: IsNotSame(
                     first: currentUser.UserId,
                     second: patient.CreatedBy),
-                Parameter: nameof(DecisionType.CreatedBy)),
+                Parameter: nameof(Patient.CreatedBy)),
 
                 (Rule: IsNotSame(
                     first: patient.UpdatedBy,
                     second: patient.CreatedBy,
-                    secondName: nameof(DecisionType.CreatedBy)),
-                Parameter: nameof(DecisionType.UpdatedBy)),
+                    secondName: nameof(Patient.CreatedBy)),
+                Parameter: nameof(Patient.UpdatedBy)),
 
-                (Rule: await IsNotRecentAsync(patient.CreatedDate), Parameter: nameof(DecisionType.CreatedDate)));
+                (Rule: await IsNotRecentAsync(patient.CreatedDate), Parameter: nameof(Patient.CreatedDate)));
+        }
+
+        public void ValidatePatientId(Guid patientId) =>
+            Validate((Rule: IsInvalid(patientId), Parameter: nameof(Patient.Id)));
+
+        private static void ValidateStoragePatient(Patient maybePatient, Guid patientId)
+        {
+            if (maybePatient is null)
+            {
+                throw new NotFoundPatientException(
+                    $"Couldn't find patient with patientId: {patientId}.");
+            }
         }
 
         private static void ValidatePatientIsNotNull(Patient patient)
