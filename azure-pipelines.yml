@@ -138,12 +138,9 @@ steps:
     displayName: 'Install Node.js'
     inputs:
       versionSpec: '24.x'
-  - task: Npm@1
-    displayName: NPM Install
-    inputs:
-      workingDir: './LondonDataServices.IDecide.Portal.Client'
-      command: 'install'
   - script: |
       npm ci
       npx playwright install --with-deps
       npx playwright test
+    workingDirectory: './LondonDataServices.IDecide.Portal.Client'
+    displayName: 'Playwright test'
