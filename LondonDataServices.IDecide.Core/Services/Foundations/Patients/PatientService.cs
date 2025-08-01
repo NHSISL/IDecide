@@ -49,10 +49,8 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Patients
             throw new NotImplementedException();
         }
 
-        public ValueTask<IQueryable<Patient>> RetrieveAllPatientsAsync()
-        {
-            throw new NotImplementedException();
-        }
+        public ValueTask<IQueryable<Patient>> RetrieveAllPatientsAsync() =>
+            TryCatch(async () => await this.storageBroker.SelectAllPatientsAsync());
 
         public ValueTask<Patient> RetrievePatientByIdAsync(Guid patientId)
         {

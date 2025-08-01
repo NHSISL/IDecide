@@ -8,6 +8,7 @@ using LondonDataServices.IDecide.Core.Models.Foundations.Patients.Exceptions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Xeptions;
 
@@ -16,6 +17,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Patients
     public partial class PatientService
     {
         private delegate ValueTask<Patient> ReturningPatientFunction();
+        private delegate ValueTask<IQueryable<Patient>> ReturningPatientsFunction();
 
         private async ValueTask<Patient> TryCatch(ReturningPatientFunction returningPatientFunction)
         {
@@ -67,6 +69,33 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Patients
                         innerException: databaseUpdateException);
 
                 throw await CreateAndLogDependencyExceptionAsync(failedPatientStorageException);
+            }
+            catch (Exception exception)
+            {
+                var failedPatientServiceException =
+                    new FailedPatientServiceException(
+                        message: "Failed patient service occurred, please contact support",
+                        innerException: exception);
+
+                throw await CreateAndLogServiceExceptionAsync(failedPatientServiceException);
+            }
+        }
+
+        private async ValueTask<IQueryable<Patient>> TryCatch(
+            ReturningPatientsFunction returningPatientsFunction)
+        {
+            try
+            {
+                return await returningPatientsFunction();
+            }
+            catch (SqlException sqlException)
+            {
+                var failedPatientStorageException =
+                    new FailedPatientStorageException(
+                        message: "Failed patient storage error occurred, contact support.",
+                        innerException: sqlException);
+
+                throw await CreateAndLogCriticalDependencyExceptionAsync(failedPatientStorageException);
             }
             catch (Exception exception)
             {

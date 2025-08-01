@@ -17,6 +17,8 @@ using LondonDataServices.IDecide.Core.Brokers.DateTimes;
 using LondonDataServices.IDecide.Core.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Models.Securities;
 using System.Collections.Generic;
+using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
+using System.Linq;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patients
 {
@@ -88,6 +90,17 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                 GetRandomDateTimeOffset(), 
                 GetRandomStringWithLengthOf(255))
                     .Create();
+        }
+
+        private static IQueryable<Patient> CreateRandomPatients()
+        {
+            return CreateRandomPatientFiller(
+                nhsNumber: GenerateRandom10DigitNumber(),
+                validationCode: GenerateRandom5DigitNumber(),
+                dateTimeOffset: GetRandomDateTimeOffset(),
+                userId: GetRandomStringWithLengthOf(255))
+                    .Create(count: GetRandomNumber())
+                        .AsQueryable();
         }
 
         private static Patient CreateRandomPatient(
