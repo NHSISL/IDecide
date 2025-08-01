@@ -3,6 +3,7 @@ import { useStep } from "../context/stepContext";
 import { Patient } from "../../models/patients/patient";
 import { patientViewService } from "../../services/views/patientViewService";
 import { Row, Col } from "react-bootstrap";
+import { ConfirmCodeRequest } from "../../models/patients/confirmCodeRequest";
 
 interface ConfirmCodeProps {
     createdPatient: Patient;
@@ -28,7 +29,7 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
         }
 
         confirmCodeMutation.mutate(
-            { nhsNumber: createdPatient.nhsNumber, code },
+            { nhsNumber: createdPatient.nhsNumber, code } as ConfirmCodeRequest,
             {
                 onSuccess: () => {
                     nextStep(createdPatient);

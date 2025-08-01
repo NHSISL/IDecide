@@ -1,26 +1,28 @@
 import React from "react";
 import { useStep } from "../context/stepContext";
 import { patientViewService } from "../../services/views/patientViewService";
-import { Patient } from "../../models/patients/patient";
+import { GenerateCodeRequest } from "../../models/patients/generateCodeRequest";
 import { Row, Col } from "react-bootstrap";
 
 interface PositiveConfirmationProps {
-    goToConfirmCode: (createdPatient: Patient) => void;
+    goToConfirmCode: (createdPatient: GenerateCodeRequest) => void;
 }
 
 const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirmCode }) => {
     const { createdPatient } = useStep();
     const updatePatient = patientViewService.useUpdatePatient();
-    const patientToUpdate = new Patient(createdPatient);
+
+    if (!createdPatient) {
+        return <div>No patient details available.</div>;
+    }
+
+    const patientToUpdate = new GenerateCodeRequest(createdPatient);
 
     const handleSubmit = (method: "Email" | "SMS" | "Letter") => {
-        console.log(createdPatient.nhsNumber + ',' + method);
         patientToUpdate.notificationPreference = method;
         updatePatient.mutate(patientToUpdate, {
-            onSuccess: (createdPatient) => {
-                console.log("Updated patient:", createdPatient.notificationPreference);
-                console.log("Updated patient Nhs Number:", createdPatient.nhsNumber);
-                goToConfirmCode(createdPatient);
+            onSuccess: () => {
+                goToConfirmCode(patientToUpdate);
             },
             onError: (error: unknown) => {
                 if (error instanceof Error) {
@@ -31,10 +33,6 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
             }
         });
     };
-
-    if (!createdPatient) {
-        return <div>No patient details available.</div>;
-    }
 
     return (
         <Row className="custom-col-spacing">

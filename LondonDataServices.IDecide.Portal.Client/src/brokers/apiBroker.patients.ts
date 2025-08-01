@@ -1,4 +1,5 @@
 import { Patient } from "../models/patients/patient";
+import { GenerateCodeRequest } from "../models/patients/generateCodeRequest";
 import ApiBroker from "./apiBroker";
 import { AxiosResponse } from "axios";
 
@@ -45,16 +46,16 @@ class PatientBroker {
             .then(result => new Patient(result.data));
     }
 
-    async PutPatientAsync(patient: Patient) {
-        const url = `${this.relativePatientsUrl}/${patient.nhsNumber}`;
+    async PutGenerateCodeRequestAsync(patient: GenerateCodeRequest) {
+        const url = this.relativePatientsUrl; // No nhsNumber in the URL
         return await this.apiBroker.PutAsync(url, patient)
-            .then(result => new Patient(result.data));
+            .then(() => undefined); // No response body expected
     }
 
     async ConfirmPatientCodeAsync(nhsNumber: string, code: string) {
         const url = `${this.relativePatientsUrl}/confirm-code`;
         const payload = { nhsNumber, code };
-        return await this.apiBroker.PostAsync(url, payload)
+        return await this.apiBroker.PutAsync(url, payload)
             .then(result => result.data);
     }
 }

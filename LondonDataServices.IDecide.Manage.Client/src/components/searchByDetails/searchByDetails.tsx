@@ -2,11 +2,10 @@ import React, { useState } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 
 interface SearchByDetailsProps {
-    onBack: () => void;
     nextStep: () => void;
 }
 
-const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, nextStep }) => {
+const SearchByDetails: React.FC<SearchByDetailsProps> = ({ nextStep }) => {
     // Main form state
     const [surname, setSurname] = useState("");
     const [postcode, setPostcode] = useState("");
@@ -26,14 +25,13 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, nextStep }) =
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        if (!surname || !postcode || !dobDay || !dobMonth || !dobYear) {
+            setError("All fields are required.");
+            return;
+        }
         if (isPowerOfAttorney) {
             if (!poaSurname || !poaPostcode || !poaDobDay || !poaDobMonth || !poaDobYear) {
-                setError("All fields are required.");
-                return;
-            }
-        } else {
-            if (!surname || !postcode || !dobDay || !dobMonth || !dobYear) {
-                setError("All fields are required.");
+                setError("All Power of Attorney fields are required.");
                 return;
             }
         }
@@ -43,7 +41,14 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, nextStep }) =
 
     const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setIsPowerOfAttorney(e.target.checked);
-        setError(""); // Clear error when toggling
+        setError("");
+        if (!e.target.checked) {
+            setPoaSurname("");
+            setPoaPostcode("");
+            setPoaDobDay("");
+            setPoaDobMonth("");
+            setPoaDobYear("");
+        }
     };
 
     return (
@@ -59,11 +64,123 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, nextStep }) =
                                     onChange={handleCheckboxChange}
                                     style={{ marginRight: "0.5rem" }}
                                 />
-                                I am acting under a Power of Attorney
+                                Requesting an Opt-out on someone else's behalf.
                             </label>
                         </div>
 
-                        {isPowerOfAttorney ? (
+                        <div
+                            style={{
+                                padding: "1rem",
+                                marginBottom: "1rem",
+                            }}
+                            data-testid="power-of-attorney-section">
+
+                            {isPowerOfAttorney && (
+                                <>
+                                <h5 style={{ marginBottom: "0.5rem" }}>Provide Details of the person they are representing</h5>
+                                   
+                                </>
+                            )}
+                            {!isPowerOfAttorney && (
+                                <>
+                                    <h5 style={{ marginBottom: "0.5rem" }}>Provide Patients Details</h5>
+                                    
+                                </>
+                            )}
+
+                            <label className="nhsuk-label mt-2" htmlFor="surname">
+                                Surname
+                            </label>
+                            <input
+                                className="nhsuk-input"
+                                id="surname"
+                                name="surname"
+                                type="text"
+                                autoComplete="family-name"
+                                value={surname}
+                                onChange={e => setSurname(e.target.value)}
+                                style={{ marginBottom: "1rem" }}
+                            />
+
+                            <label className="nhsuk-label" htmlFor="postcode">
+                                Postcode
+                            </label>
+                            <input
+                                className="nhsuk-input"
+                                id="postcode"
+                                name="postcode"
+                                type="text"
+                                autoComplete="postal-code"
+                                value={postcode}
+                                onChange={e => setPostcode(e.target.value)}
+                                style={{ marginBottom: "1rem" }}
+                            />
+
+                            <fieldset className="nhsuk-fieldset" style={{ marginBottom: "1rem" }}>
+                                <legend className="nhsuk-fieldset__legend nhsuk-label">
+                                    Date of birth
+                                </legend>
+                                <div className="nhsuk-date-input" id="dob">
+                                    <div className="nhsuk-date-input__item" style={{ display: "inline-block", marginRight: "0.5rem" }}>
+                                        <label className="nhsuk-label nhsuk-date-input__label" htmlFor="dob-day">
+                                            Day
+                                        </label>
+                                        <input
+                                            className="nhsuk-input nhsuk-date-input__input"
+                                            id="dob-day"
+                                            name="dob-day"
+                                            type="text"
+                                            inputMode="numeric"
+                                            pattern="[0-9]*"
+                                            maxLength={2}
+                                            value={dobDay}
+                                            onChange={e => setDobDay(e.target.value.replace(/\D/g, ""))}
+                                            style={{ width: "3em" }}
+                                            autoComplete="bday-day"
+                                        />
+                                    </div>
+                                    <div className="nhsuk-date-input__item" style={{ display: "inline-block", marginRight: "0.5rem" }}>
+                                        <label className="nhsuk-label nhsuk-date-input__label" htmlFor="dob-month">
+                                            Month
+                                        </label>
+                                        <input
+                                            className="nhsuk-input nhsuk-date-input__input"
+                                            id="dob-month"
+                                            name="dob-month"
+                                            type="text"
+                                            inputMode="numeric"
+                                            pattern="[0-9]*"
+                                            maxLength={2}
+                                            value={dobMonth}
+                                            onChange={e => setDobMonth(e.target.value.replace(/\D/g, ""))}
+                                            style={{ width: "3em" }}
+                                            autoComplete="bday-month"
+                                        />
+                                    </div>
+                                    <div className="nhsuk-date-input__item" style={{ display: "inline-block" }}>
+                                        <label className="nhsuk-label nhsuk-date-input__label" htmlFor="dob-year">
+                                            Year
+                                        </label>
+                                        <input
+                                            className="nhsuk-input nhsuk-date-input__input"
+                                            id="dob-year"
+                                            name="dob-year"
+                                            type="text"
+                                            inputMode="numeric"
+                                            pattern="[0-9]*"
+                                            maxLength={4}
+                                            value={dobYear}
+                                            onChange={e => setDobYear(e.target.value.replace(/\D/g, ""))}
+                                            style={{ width: "4em" }}
+                                            autoComplete="bday-year"
+                                        />
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+
+
+                        {isPowerOfAttorney && (
                             <div
                                 style={{
                                     border: "1px solid #005eb8",
@@ -74,10 +191,7 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, nextStep }) =
                                 }}
                                 data-testid="power-of-attorney-section"
                             >
-                                <h3>Power of Attorney Details</h3>
-                                <p>
-                                    Please provide details and documentation regarding your Power of Attorney status.
-                                </p>
+                                <h5>Provide Details of the person that is representing</h5>
                                 <label className="nhsuk-label" htmlFor="poa-surname">
                                     Surname
                                 </label>
@@ -168,98 +282,6 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, nextStep }) =
                                     </div>
                                 </fieldset>
                             </div>
-                        ) : (
-                            <>
-                                <label className="nhsuk-label" htmlFor="surname">
-                                    Surname
-                                </label>
-                                <input
-                                    className="nhsuk-input"
-                                    id="surname"
-                                    name="surname"
-                                    type="text"
-                                    autoComplete="family-name"
-                                    value={surname}
-                                    onChange={e => setSurname(e.target.value)}
-                                    style={{ marginBottom: "1rem" }}
-                                />
-
-                                <label className="nhsuk-label" htmlFor="postcode">
-                                    Postcode
-                                </label>
-                                <input
-                                    className="nhsuk-input"
-                                    id="postcode"
-                                    name="postcode"
-                                    type="text"
-                                    autoComplete="postal-code"
-                                    value={postcode}
-                                    onChange={e => setPostcode(e.target.value)}
-                                    style={{ marginBottom: "1rem" }}
-                                />
-
-                                <fieldset className="nhsuk-fieldset" style={{ marginBottom: "1rem" }}>
-                                    <legend className="nhsuk-fieldset__legend nhsuk-label">
-                                        Date of birth
-                                    </legend>
-                                    <div className="nhsuk-date-input" id="dob">
-                                        <div className="nhsuk-date-input__item" style={{ display: "inline-block", marginRight: "0.5rem" }}>
-                                            <label className="nhsuk-label nhsuk-date-input__label" htmlFor="dob-day">
-                                                Day
-                                            </label>
-                                            <input
-                                                className="nhsuk-input nhsuk-date-input__input"
-                                                id="dob-day"
-                                                name="dob-day"
-                                                type="text"
-                                                inputMode="numeric"
-                                                pattern="[0-9]*"
-                                                maxLength={2}
-                                                value={dobDay}
-                                                onChange={e => setDobDay(e.target.value.replace(/\D/g, ""))}
-                                                style={{ width: "3em" }}
-                                                autoComplete="bday-day"
-                                            />
-                                        </div>
-                                        <div className="nhsuk-date-input__item" style={{ display: "inline-block", marginRight: "0.5rem" }}>
-                                            <label className="nhsuk-label nhsuk-date-input__label" htmlFor="dob-month">
-                                                Month
-                                            </label>
-                                            <input
-                                                className="nhsuk-input nhsuk-date-input__input"
-                                                id="dob-month"
-                                                name="dob-month"
-                                                type="text"
-                                                inputMode="numeric"
-                                                pattern="[0-9]*"
-                                                maxLength={2}
-                                                value={dobMonth}
-                                                onChange={e => setDobMonth(e.target.value.replace(/\D/g, ""))}
-                                                style={{ width: "3em" }}
-                                                autoComplete="bday-month"
-                                            />
-                                        </div>
-                                        <div className="nhsuk-date-input__item" style={{ display: "inline-block" }}>
-                                            <label className="nhsuk-label nhsuk-date-input__label" htmlFor="dob-year">
-                                                Year
-                                            </label>
-                                            <input
-                                                className="nhsuk-input nhsuk-date-input__input"
-                                                id="dob-year"
-                                                name="dob-year"
-                                                type="text"
-                                                inputMode="numeric"
-                                                pattern="[0-9]*"
-                                                maxLength={4}
-                                                value={dobYear}
-                                                onChange={e => setDobYear(e.target.value.replace(/\D/g, ""))}
-                                                style={{ width: "4em" }}
-                                                autoComplete="bday-year"
-                                            />
-                                        </div>
-                                    </div>
-                                </fieldset>
-                            </>
                         )}
 
                         {error && (

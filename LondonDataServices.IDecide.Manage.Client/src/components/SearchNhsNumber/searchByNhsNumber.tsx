@@ -1,12 +1,21 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { TextInput, Button } from "nhsuk-react-components";
+import { TextInput, Button, Select } from "nhsuk-react-components";
 import { Container, Row, Col } from "react-bootstrap";
 
 export const SearchByNhsNumber = () => {
     const [nhsNumberInput, setNhsNumberInput] = useState("1234567890");
+    const [poaNhsNumberInput, setPoaNhsNumberInput] = useState("");
+    const [poaFirstname, setPoaFirstname] = useState("");
+    const [poaSurname, setPoaSurname] = useState("");
+    const [poaRelationship, setPoaRelationship] = useState("");
     const [error, setError] = useState("");
+    const [poaNhsNumberError, setPoaNhsNumberError] = useState("");
+    const [poaFirstnameError, setPoaFirstnameError] = useState("");
+    const [poaSurnameError, setPoaSurnameError] = useState("");
+    const [poaRelationshipError, setPoaRelationshipError] = useState("");
     const [isPowerOfAttorney, setIsPowerOfAttorney] = useState(false);
+
     const navigate = useNavigate();
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -15,17 +24,80 @@ export const SearchByNhsNumber = () => {
         if (error) setError("");
     };
 
+    const handlePoaNhsNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value.replace(/\D/g, "").slice(0, 10);
+        setPoaNhsNumberInput(value);
+        setPoaNhsNumberError("");
+    };
+    const handlePoaFirstnameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setPoaFirstname(e.target.value);
+        setPoaFirstnameError("");
+    };
+    const handlePoaSurnameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setPoaSurname(e.target.value);
+        setPoaSurnameError("");
+    };
+    const handlePoaRelationshipChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setPoaRelationship(e.target.value);
+        setPoaRelationshipError("");
+    };
+
     const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setIsPowerOfAttorney(e.target.checked);
+        setError("");
+        // Reset PoA fields when unchecked
+        if (!e.target.checked) {
+            setPoaNhsNumberInput("");
+            setPoaFirstname("");
+            setPoaSurname("");
+            setPoaRelationship("");
+            setPoaNhsNumberError("");
+            setPoaFirstnameError("");
+            setPoaSurnameError("");
+            setPoaRelationshipError("");
+        }
+    };
+
+    const validatePoaFields = () => {
+        let valid = true;
+        if (poaNhsNumberInput.length !== 10) {
+            setPoaNhsNumberError("Enter a 10-digit NHS Number");
+            valid = false;
+        }
+        if (!poaFirstname.trim()) {
+            setPoaFirstnameError("Enter a first name");
+            valid = false;
+        }
+        if (!poaSurname.trim()) {
+            setPoaSurnameError("Enter a surname");
+            valid = false;
+        }
+        if (!poaRelationship) {
+            setPoaRelationshipError("Select a relationship");
+            valid = false;
+        }
+        return valid;
     };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (nhsNumberInput.length !== 10) {
-            setError("NHS Number must be exactly 10 digits.");
-            return;
+        setError("");
+        setPoaNhsNumberError("");
+        setPoaFirstnameError("");
+        setPoaSurnameError("");
+        setPoaRelationshipError("");
+
+        if (isPowerOfAttorney) {
+            if (!validatePoaFields()) return;
+            // Use PoA NHS number for navigation or API
+            navigate("/confirmDetails");
+        } else {
+            if (nhsNumberInput.length !== 10) {
+                setError("NHS Number must be exactly 10 digits.");
+                return;
+            }
+            navigate("/confirmDetails");
         }
-        navigate("/confirmDetails");
     };
 
     return (
@@ -41,35 +113,11 @@ export const SearchByNhsNumber = () => {
                                     onChange={handleCheckboxChange}
                                     style={{ marginRight: "0.5rem" }}
                                 />
-                                I am acting under a Power of Attorney
+                                Requesting an Opt-out on someone else's behalf.
                             </label>
                         </div>
 
-                        {isPowerOfAttorney ? (
-                            <div
-                                style={{marginBottom: "1rem" }}
-                                data-testid="power-of-attorney-section"
-                            >
-                                
-                                <p>
-                                    Please provide details and documentation regarding your Power of Attorney status.
-                                </p>
-                                <TextInput
-                                    label="NHS Number"
-                                    hint="It's on your National Insurance card, benefit letter, payslip or P60."
-                                    id="nhs-number-poa"
-                                    name="nhs-number-poa"
-                                    inputMode="numeric"
-                                    pattern="\d*"
-                                    maxLength={10}
-                                    autoComplete="off"
-                                    value={nhsNumberInput}
-                                    onChange={handleInputChange}
-                                    error={error ? "NHS Number must be exactly 10 digits. Only digits are allowed." : undefined}
-                                    style={{ maxWidth: "200px" }}
-                                />
-                            </div>
-                        ) : (
+                        {!isPowerOfAttorney && (
                             <TextInput
                                 label="NHS Number"
                                 hint="It's on your National Insurance card, benefit letter, payslip or P60."
@@ -81,13 +129,85 @@ export const SearchByNhsNumber = () => {
                                 autoComplete="off"
                                 value={nhsNumberInput}
                                 onChange={handleInputChange}
-                                error={error ? "NHS Number must be exactly 10 digits. Only digits are allowed." : undefined}
+                                error={error || undefined}
                                 style={{ maxWidth: "200px" }}
                             />
                         )}
 
+                        {isPowerOfAttorney && (
+                            <div style={{ marginBottom: "1.5rem" }}>
+                                <TextInput
+                                    label="NHS Number of the person they are representing"
+                                    id="poa-nhs-number"
+                                    name="poa-nhs-number"
+                                    inputMode="numeric"
+                                    pattern="\d*"
+                                    maxLength={10}
+                                    autoComplete="off"
+                                    value={poaNhsNumberInput}
+                                    onChange={handlePoaNhsNumberChange}
+                                    error={poaNhsNumberError || undefined}
+                                    style={{ maxWidth: "300px" }}
+                                />
+                                <TextInput
+                                    label="Firstname"
+                                    id="poa-firstname"
+                                    name="poa-firstname"
+                                    autoComplete="off"
+                                    value={poaFirstname}
+                                    onChange={handlePoaFirstnameChange}
+                                    error={poaFirstnameError || undefined}
+                                    style={{ maxWidth: "400px" }}
+                                />
+                                <TextInput
+                                    label="Surname"
+                                    id="poa-surname"
+                                    name="poa-surname"
+                                    autoComplete="off"
+                                    value={poaSurname}
+                                    onChange={handlePoaSurnameChange}
+                                    error={poaSurnameError || undefined}
+                                    style={{ maxWidth: "400px" }}
+                                />
+                                <div style={{ marginBottom: "1rem" }}>
+                                    <Select
+                                        label="Relationship"
+                                        id="poa-relationship"
+                                        name="poa-relationship"
+                                        aria-label="Relationship to the person you are representing"
+                                        aria-required="true"
+                                        required
+                                        value={poaRelationship}
+                                        onChange={handlePoaRelationshipChange}
+                                        error={poaRelationshipError || undefined}
+                                        style={{ maxWidth: "400px", marginBottom: "1rem" }}
+                                    >
+                                        <option value="" disabled>
+                                            Select relationship
+                                        </option>
+                                        <option value="Parent">The patient is under 13 and you are their parent</option>
+                                        <option value="Guardian">The patient is under 13 and you are their appointed guardian</option>
+                                        <option value="poa">The patient is over 13 and you have power of attorney with the right to act on their behalf.</option>
+                                    </Select>
+                                </div>
+                            </div>
+                        )}
+
                         <div style={{ display: "flex", gap: "1rem", marginBottom: "0.2rem", marginTop: "1rem" }}>
-                            <Button type="submit">Search</Button>
+                            <Button
+                                type="submit"
+                                disabled={
+                                    isPowerOfAttorney
+                                        ? !poaNhsNumberInput ||
+                                        !poaFirstname.trim() ||
+                                        !poaSurname.trim() ||
+                                        !poaRelationship ||
+                                        poaNhsNumberInput.length !== 10
+                                        : nhsNumberInput.length !== 10
+                                }
+                            >
+                                Search
+                            </Button>
                         </div>
                     </form>
                 </Col>
@@ -102,15 +222,24 @@ export const SearchByNhsNumber = () => {
                                 minWidth: "250px",
                                 marginTop: "3.6rem"
                             }}>
-
-                            <h3>Help and Guidance</h3>
+                            <h2 className="mb-3" style={{ color: "#005eb8" }}>Help & Guidance</h2>
+                            <h3 className="mb-3" style={{ color: "#005eb8" }}>
+                                Requesting an Opt-out on someone else's behalf
+                            </h3>
                             <p>
-                                Your NHS Number is a 10-digit number, like 485 777 3456. You can find it on any letter the NHS has sent you, on a prescription, or by logging in to a GP online service. If you cannot find your NHS Number, contact your GP practice.
+                                You can make a request to opt-out on behalf of someone else to stop their personal data being used for secondary purposes if:
                             </p>
                             <ul>
-                                <li>Only enter numbers, no spaces or letters.</li>
-                                <li>If you are acting under a Power of Attorney, please tick the box and provide the required details.</li>
+                                <li>The patient is under 13 and you are their parent</li>
+                                <li>The patient is under 13 and you are their appointed guardian</li>
+                                <li>The patient is over 13 and you have power of attorney with the right to act on their behalf.</li>
                             </ul>
+                            <p>
+                                If you are in these circumstances then please enter your details in this blue box and in every other box use the patient's details.
+                            </p>
+                            <p>
+                                If one of these circumstances does not describe you then you cannot opt someone else out. Please click the back button.
+                            </p>
                         </aside>
                     )}
                 </Col>

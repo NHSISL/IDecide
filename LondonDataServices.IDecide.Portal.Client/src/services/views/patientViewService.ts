@@ -7,24 +7,24 @@ export const patientViewService = {
         return patientService.useCreatePatient();
     },
 
-    useGetPatientByNhsNumber: (nhsNumber: string) => {
-        const response = patientService.useRetrievePatientById(nhsNumber);
-        const [mappedPatient, setMappedPatient] = useState<PatientView>();
+    //useGetPatientByNhsNumber: (nhsNumber: string) => {
+    //    const response = patientService.useRetrievePatientById(nhsNumber);
+    //    const [mappedPatient, setMappedPatient] = useState<PatientView>();
 
-        useEffect(() => {
-            if (response.data) {
-                setMappedPatient(response.data as PatientView);
-            }
-        }, [response.data]);
+    //    useEffect(() => {
+    //        if (response.data) {
+    //            setMappedPatient(response.data as PatientView);
+    //        }
+    //    }, [response.data]);
 
-        return {
-            mappedPatient,
-            ...response
-        };
-    },
+    //    return {
+    //        mappedPatient,
+    //        ...response
+    //    };
+    //},
 
     useUpdatePatient: () => {
-        return patientService.useModifyPatient();
+        return patientService.useGenerateCodeRequest();
     },
 
     useConfirmCode: () => {

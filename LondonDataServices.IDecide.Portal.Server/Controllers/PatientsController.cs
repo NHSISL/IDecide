@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
-using System.Collections.Generic;
 
 namespace LondonDataServices.IDecide.Portal.Server.Controllers
 {
@@ -18,7 +17,6 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
             this.configuration = configuration;
         }
 
-        // Mock Patient model for demonstration
         public class Patient
         {
             public string Id { get; set; }
@@ -38,6 +36,19 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
             public DateTime UpdatedDate { get; set; }
         }
 
+        public class GenerateCodeRequest
+        {
+            public string NhsNumber { get; set; }
+            public string NotificationPreference { get; set; }
+        }
+
+        public class ConfirmCodeRequest
+        {
+            public string NhsNumber { get; set; }
+            public string Code { get; set; }
+        }
+
+        //recapture
         [HttpPost("GetPatientByNhsNumber")]
         public ActionResult<Patient> GetPatientByNhsNumber([FromBody] Patient patient)
         {
@@ -53,16 +64,13 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
                 Postcode = "CR2 0**",
                 DateOfBirth = patient?.DateOfBirth == default ? new DateTime(1990, 5, 15) : patient.DateOfBirth,
                 VerificationCode = "",
-                NotificationPreference = "",
-                CreatedBy = "system",
-                CreatedDate = DateTime.UtcNow,
-                UpdatedBy = "system",
-                UpdatedDate = DateTime.UtcNow
+                NotificationPreference = ""               
             };
 
             return Ok(createdPatient);
         }
 
+        //recapture
         [HttpPost("GetPatientByDetails")]
         public ActionResult<Patient> GetPatientByDetails([FromBody] Patient patient)
         {
@@ -78,88 +86,33 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
                 Postcode = "CR2 0**",
                 DateOfBirth = patient?.DateOfBirth == default ? new DateTime(1990, 5, 15) : patient.DateOfBirth,
                 VerificationCode = "",
-                NotificationPreference = "",
-                CreatedBy = "system",
-                CreatedDate = DateTime.UtcNow,
-                UpdatedBy = "system",
-                UpdatedDate = DateTime.UtcNow
+                NotificationPreference = ""
             };
 
             return Ok(createdPatient);
         }
 
+        //recapture
         [HttpPut]
-        public ActionResult<Patient> UpdatePatientNotificationPreference([FromBody] Patient patient)
+        public IActionResult GenerateAndSendCode([FromBody] GenerateCodeRequest request)
         {
-            var createdPatient = new Patient
+            if (string.IsNullOrWhiteSpace(request.NhsNumber) || string.IsNullOrWhiteSpace(request.NotificationPreference))
             {
-                Id = Guid.NewGuid().ToString(),
-                NhsNumber = "1234567890",
-                FirstName = "D****",
-                Surname = "H****",
-                EmailAddress = "d****.h***s@googlemail.com",
-                PhoneNumber = "07*******84",
-                Address = "9 T** W*********, S**********, S*****",
-                Postcode = "CR2 0**",
-                DateOfBirth = patient?.DateOfBirth == default ? new DateTime(1990, 5, 15) : patient.DateOfBirth,
-                VerificationCode = "",
-                NotificationPreference = "",
-                CreatedBy = "system",
-                CreatedDate = DateTime.UtcNow,
-                UpdatedBy = "system",
-                UpdatedDate = DateTime.UtcNow
-            };
+                return BadRequest("NhsNumber and NotificationPreference are required.");
+            }
 
-            return Ok(createdPatient);
+            return NoContent(); 
         }
 
-        [HttpPost("confirm-code")]
+        //recapture
+        [HttpPut("confirm-code")]
         public IActionResult ConfirmPatientCode([FromBody] ConfirmCodeRequest request)
         {
-            var patient = new Patient
-            {
-                Id = Guid.NewGuid().ToString(),
-                NhsNumber = request.NhsNumber,
-                FirstName = "D****",
-                Surname = "H****",
-                EmailAddress = "d****.h***s@googlemail.com",
-                PhoneNumber = "07*******84",
-                Address = "9 T** W*********, S**********, S*****",
-                Postcode = "CR2 0**",
-                VerificationCode = "12345",
-                NotificationPreference = "SMS",
-                DateOfBirth = new DateTime(1990, 5, 15),
-                CreatedBy = "system",
-                CreatedDate = DateTime.UtcNow,
-                UpdatedBy = "system",
-                UpdatedDate = DateTime.UtcNow
-            };
-
-            return Ok(patient);
-        }
-
-        [HttpPut("{nhsNumber}")]
-        public ActionResult<Patient> UpdatePatient(string nhsNumber, [FromBody] Patient patient)
-        {
-            var updatedPatient = new Patient
-            {
-                Id = patient.Id ?? Guid.NewGuid().ToString(),
-                NhsNumber = "1234567890",
-                FirstName = "D****",
-                Surname = "H****",
-                EmailAddress = "d****.h***s@googlemail.com",
-                PhoneNumber = "07*******84",
-                Address = "9 T** W*********, S**********, S*****",
-                Postcode = "CR2 0**",
-                NotificationPreference = patient.NotificationPreference ?? "",
-                VerificationCode = "12345",
-                DateOfBirth = patient.DateOfBirth == default ? new DateTime(1990, 5, 15) : patient.DateOfBirth,
-                CreatedBy = patient.CreatedBy ?? "system",
-                CreatedDate = patient.CreatedDate == default ? DateTime.UtcNow : patient.CreatedDate,
-                UpdatedBy = "system",
-                UpdatedDate = DateTime.UtcNow
-            };
-            return Ok(updatedPatient);
+            bool isCodeValid = request.Code == "12345";
+            if (isCodeValid)
+                return Ok(true);
+            else
+                return Forbid();
         }
     }
 }
