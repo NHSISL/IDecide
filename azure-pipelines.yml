@@ -18,6 +18,7 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
+  CI: true
 
 steps:
   - bash: |
@@ -142,9 +143,7 @@ steps:
     inputs:
       workingDir: './LondonDataServices.IDecide.Portal.Client'
       command: 'install'
-  - task: Npm@1
-    displayName: NPM Test
-    inputs:
-      workingDir: './LondonDataServices.IDecide.Portal.Client'
-      command: 'custom'
-      customCommand: 'run test'
+  - script: |
+      npm ci
+      npx playwright install --with-deps
+      npx playwright test
