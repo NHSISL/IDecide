@@ -8,17 +8,26 @@ using System.Threading.Tasks;
 using System;
 using LondonDataServices.IDecide.Core.Brokers.Storages.Sql;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
+using LondonDataServices.IDecide.Core.Brokers.DateTimes;
+using LondonDataServices.IDecide.Core.Brokers.Securities;
 
 namespace LondonDataServices.IDecide.Core.Services.Foundations.Patients
 {
     public partial class PatientService : IPatientService
     {
         private readonly IStorageBroker storageBroker;
+        private readonly IDateTimeBroker dateTimeBroker;
+        private readonly ISecurityBroker securityBroker;
         private readonly ILoggingBroker loggingBroker;
 
-        public PatientService(IStorageBroker storageBroker, ILoggingBroker loggingBroker)
+        public PatientService(IStorageBroker storageBroker,
+            IDateTimeBroker dateTimeBroker,
+            ISecurityBroker securityBroker,
+            ILoggingBroker loggingBroker)
         {
             this.storageBroker = storageBroker;
+            this.dateTimeBroker = dateTimeBroker;
+            this.securityBroker = securityBroker;
             this.loggingBroker = loggingBroker;
         }
 

@@ -13,22 +13,32 @@ using System.Runtime.CompilerServices;
 using System;
 using Tynamix.ObjectFiller;
 using Xeptions;
+using LondonDataServices.IDecide.Core.Brokers.DateTimes;
+using LondonDataServices.IDecide.Core.Brokers.Securities;
+using LondonDataServices.IDecide.Core.Models.Securities;
+using System.Collections.Generic;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patients
 {
     public partial class PatientServiceTests
     {
         private readonly Mock<IStorageBroker> storageBrokerMock;
+        private readonly Mock<IDateTimeBroker> dateTimeBrokerMock;
+        private readonly Mock<ISecurityBroker> securityBrokerMock;
         private readonly Mock<ILoggingBroker> loggingBrokerMock;
         private readonly PatientService patientService;
 
         public PatientServiceTests()
         {
             this.storageBrokerMock = new Mock<IStorageBroker>();
+            this.dateTimeBrokerMock = new Mock<IDateTimeBroker>();
+            this.securityBrokerMock = new Mock<ISecurityBroker>();
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
 
             this.patientService = new PatientService(
                 storageBroker: this.storageBrokerMock.Object,
+                dateTimeBroker: this.dateTimeBrokerMock.Object,
+                securityBroker: this.securityBrokerMock.Object,
                 loggingBroker: this.loggingBrokerMock.Object);
         }
 
@@ -68,22 +78,62 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
-        private static Patient CreateRandomPatient(string nhsNumber, string validationCode)
+        private static Patient CreateRandomPatient(
+            string nhsNumber,
+            string validationCode)
         {
-            return CreateRandomPatientFiller(nhsNumber, validationCode).Create();
+            return CreateRandomPatientFiller(
+                nhsNumber,
+                validationCode, 
+                GetRandomDateTimeOffset(), 
+                GetRandomStringWithLengthOf(255))
+                    .Create();
         }
 
-        private static Filler<Patient> CreateRandomPatientFiller(string nhsNumber, string validationCode)
+        private static Patient CreateRandomPatient(
+            string nhsNumber,
+            string validationCode,
+            DateTimeOffset dateTimeOffset,
+            string userId)
+        {
+            return CreateRandomPatientFiller(nhsNumber, validationCode, dateTimeOffset, userId).Create();
+        }
+
+        private static Filler<Patient> CreateRandomPatientFiller(
+            string nhsNumber,
+            string validationCode,
+            DateTimeOffset dateTimeOffset,
+            string userId)
         {
             var filler = new Filler<Patient>();
-            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
 
             filler.Setup()
-                .OnType<DateTimeOffset>().Use(randomDateTime)
+                .OnType<DateTimeOffset>().Use(dateTimeOffset)
+                .OnProperty(user => user.CreatedBy).Use(userId)
+                .OnProperty(user => user.UpdatedBy).Use(userId)
                 .OnProperty(patient => patient.NhsNumber).Use(nhsNumber)
                 .OnProperty(patient => patient.ValidationCode).Use(validationCode);
 
             return filler;
+        }
+
+        private User CreateRandomUser(string userId = "")
+        {
+            var newUserId = string.IsNullOrWhiteSpace(userId) ? GetRandomStringWithLengthOf(255) : userId;
+
+            return new User(
+                userId: newUserId,
+                givenName: GetRandomString(),
+                surname: GetRandomString(),
+                displayName: GetRandomString(),
+                email: GetRandomString(),
+                jobTitle: GetRandomString(),
+                roles: new List<string> { GetRandomString() },
+
+                claims: new List<System.Security.Claims.Claim>
+                {
+                    new System.Security.Claims.Claim(type: GetRandomString(), value: GetRandomString())
+                });
         }
 
         private static Expression<Func<Xeption, bool>> SameExceptionAs(

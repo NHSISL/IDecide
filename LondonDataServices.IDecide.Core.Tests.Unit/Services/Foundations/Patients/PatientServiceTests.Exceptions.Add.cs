@@ -35,8 +35,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                     message: "Patient dependency error occurred, contact support.",
                     innerException: failedPatientStorageException);
 
-            this.storageBrokerMock.Setup(broker =>
-                broker.InsertPatientAsync(somePatient))
+            this.securityBrokerMock.Setup(broker =>
+                broker.GetCurrentUserAsync())
                     .ThrowsAsync(sqlException);
 
             // when
@@ -51,15 +51,21 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
             actualPatientDependencyException.Should()
                 .BeEquivalentTo(expectedPatientDependencyException);
 
+            this.securityBrokerMock.Verify(broker =>
+                broker.GetCurrentUserAsync(),
+                    Times.Once);
+
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertPatientAsync(somePatient),
-                    Times.Once);
+                    Times.Never);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogCriticalAsync(It.Is(SameExceptionAs(
                     expectedPatientDependencyException))),
                         Times.Once);
 
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.securityBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
@@ -88,8 +94,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                     message: "Patient dependency validation occurred, please fix errors and try again.",
                     innerException: alreadyExistsPatientException);
 
-            this.storageBrokerMock.Setup(broker =>
-                broker.InsertPatientAsync(somePatient))
+            this.securityBrokerMock.Setup(broker =>
+                broker.GetCurrentUserAsync())
                     .ThrowsAsync(duplicateKeyException);
 
             // when
@@ -104,15 +110,21 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
             actualPatientDependencyValidationException.Should()
                 .BeEquivalentTo(expectedPatientDependencyValidationException);
 
+            this.securityBrokerMock.Verify(broker =>
+                broker.GetCurrentUserAsync(),
+                    Times.Once);
+
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertPatientAsync(somePatient),
-                    Times.Once);
+                    Times.Never);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
                     expectedPatientDependencyValidationException))),
                         Times.Once);
 
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.securityBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
@@ -138,8 +150,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                     message: "Patient dependency error occurred, contact support.",
                     innerException: failedPatientStorageException);
 
-            this.storageBrokerMock.Setup(broker =>
-                broker.InsertPatientAsync(somePatient))
+            this.securityBrokerMock.Setup(broker =>
+                broker.GetCurrentUserAsync())
                     .ThrowsAsync(databaseUpdateException);
 
             // when
@@ -154,15 +166,21 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
             actualPatientDependencyException.Should()
                 .BeEquivalentTo(expectedPatientDependencyException);
 
+            this.securityBrokerMock.Verify(broker =>
+                broker.GetCurrentUserAsync(),
+                    Times.Once);
+
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertPatientAsync(somePatient),
-                    Times.Once);
+                    Times.Never);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
                     expectedPatientDependencyException))),
                         Times.Once);
 
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.securityBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
@@ -186,8 +204,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                     message: "Patient service error occurred, contact support.",
                     innerException: failedPatientServiceException);
 
-            this.storageBrokerMock.Setup(broker =>
-                broker.InsertPatientAsync(somePatient))
+            this.securityBrokerMock.Setup(broker =>
+                broker.GetCurrentUserAsync())
                     .ThrowsAsync(serviceException);
 
             // when
@@ -202,15 +220,21 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
             actualPatientServiceException.Should()
                 .BeEquivalentTo(expectedPatientServiceException);
 
+            this.securityBrokerMock.Verify(broker =>
+                broker.GetCurrentUserAsync(),
+                    Times.Once);
+
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertPatientAsync(somePatient),
-                    Times.Once);
+                    Times.Never);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
                     expectedPatientServiceException))),
                         Times.Once);
 
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.securityBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
