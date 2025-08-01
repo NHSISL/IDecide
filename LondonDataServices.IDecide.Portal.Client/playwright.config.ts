@@ -12,7 +12,7 @@ console.log(webServerCommand);
 export default defineConfig({
     testDir: './tests',
     reporter: 'html',
-    ignoreHTTPSErrors: true,
+    
     webServer: {
         command: webServerCommand,
         url: 'https://localhost:5173',
@@ -22,6 +22,7 @@ export default defineConfig({
         stdout: 'pipe'
     },
     use: {
+        ignoreHTTPSErrors: true,
         baseURL: 'http://localhost:5173',
     },
     projects: [
