@@ -44,10 +44,18 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Patients
             throw new NotImplementedException();
         }
 
-        public ValueTask<Patient> RemovePatientByIdAsync(Guid patientId)
-        {
-            throw new NotImplementedException();
-        }
+        public ValueTask<Patient> RemovePatientByIdAsync(Guid patientId) =>
+            TryCatch(async () =>
+            {
+                ValidatePatientId(patientId);
+
+                Patient maybePatient = await this.storageBroker
+                .SelectPatientByIdAsync(patientId);
+
+                ValidateStoragePatient(maybePatient, patientId);
+
+                return await this.storageBroker.DeletePatientAsync(maybePatient);
+            });
 
         public ValueTask<IQueryable<Patient>> RetrieveAllPatientsAsync()
         {
