@@ -11,7 +11,7 @@ export default defineConfig({
     testDir: './tests',
     reporter: 'html',
     webServer: {
-        command: 'dotnet run -p ..\\LondonDataServices.IDecide.Portal.Server\\LondonDataServices.IDecide.Portal.Server.csproj',
+        command: 'dotnet run -p ..\\LondonDataServices.IDecide.Portal.Server\\LondonDataServices.IDecide.Portal.Server.csproj' + (process.env.CI ? ' --environment ASPNETCORE_ENVIRONMENT=ContinuousIntegration' : ''),
         url: 'https://localhost:5173',
         reuseExistingServer: true,
         ignoreHTTPSErrors: true,
