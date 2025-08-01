@@ -5,34 +5,29 @@
 using Hl7.Fhir.Model;
 using ISL.Providers.PDS.Abstractions.Models;
 using ISL.Providers.PDS.FakeFHIR.Mappers;
+using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
 using System.Collections.Generic;
 using System;
-using LondonDataServices.IDecide.Core.Brokers.Loggings;
-using LondonDataServices.IDecide.Core.Brokers.Pds;
 using LondonDataServices.IDecide.Core.Services.Foundations.Pds;
+using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
 using Moq;
 using Tynamix.ObjectFiller;
-using System.Linq.Expressions;
-using Xeptions;
-using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
 using Patient = Hl7.Fhir.Model.Patient;
+using LondonDataServices.IDecide.Core.Mappers;
 
-namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
+namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Patients
 {
-    public partial class PdsServiceTests
+    public partial class PatientOrchestrationServiceTests
     {
-        private readonly Mock<IPdsBroker> pdsBrokerMock;
-        private readonly Mock<ILoggingBroker> loggingBrokerMock;
-        private readonly PdsService pdsService;
+        private readonly Mock<IPdsService> pdsServiceMock = new Mock<IPdsService>();
+        private readonly PatientOrchestrationService patientOrchestrationService;
 
-        public PdsServiceTests()
+        public PatientOrchestrationServiceTests()
         {
-            this.pdsBrokerMock = new Mock<IPdsBroker>();
-            this.loggingBrokerMock = new Mock<ILoggingBroker>();
+            this.pdsServiceMock = new Mock<IPdsService>();
 
-            this.pdsService = new PdsService(
-                pdsBroker: pdsBrokerMock.Object,
-                loggingBroker: loggingBrokerMock.Object);
+            this.patientOrchestrationService = new PatientOrchestrationService(
+                this.pdsServiceMock.Object);
         }
 
         private static string GetRandomString() =>
@@ -109,7 +104,16 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
             return randomPatientLookup;
         }
 
-        private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
-            actualException => actualException.SameExceptionAs(expectedException);
+        private Models.Foundations.Pds.Patient GetPatientFromFhirPatient(Patient fhirPatient)
+        {
+            Models.Foundations.Pds.Patient patient = LocalPatientMapper.FromFhirPatient(fhirPatient);
+
+            return patient;
+        }
+
+        private Models.Foundations.Pds.Patient GetRedactedPatient(Models.Foundations.Pds.Patient patient)
+        {
+            return patient;
+        }
     }
 }
