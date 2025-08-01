@@ -11,10 +11,13 @@ export default defineConfig({
     testDir: './tests',
     reporter: 'html',
     webServer: {
-        command: "npm run dev", // or "yarn dev" if you use yarn
-        url: 'https://localhost:5173/home',
+        command: 'dotnet run -p ..\\LondonDataServices.IDecide.Portal.Server\\LondonDataServices.IDecide.Portal.Server.csproj',
+        url: 'https://localhost:5173',
         reuseExistingServer: true,
         ignoreHTTPSErrors: true,
+    },
+    use: {
+        baseURL: 'http://localhost:5173',
     },
     projects: [
         { name: 'setup', testMatch: /.*\.setup\.ts/ },
