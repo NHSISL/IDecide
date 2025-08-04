@@ -1,6 +1,6 @@
 ﻿import { Container } from "react-bootstrap";
-import ConfirmCode from "../components/confirmCode/confirmCodepppp";
 import { useStep } from "../components/context/stepContext";
+import { ConfirmCode } from "../components/confirmCode/confirmCode";
 
 export const ConfirmCodePage = () => {
     const { createdPatient } = useStep();
