@@ -16,7 +16,6 @@ using LondonDataServices.IDecide.Core.Brokers.DateTimes;
 using LondonDataServices.IDecide.Core.Brokers.Identifiers;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Brokers.Notifications;
-using LondonDataServices.IDecide.Core.Brokers.Pds;
 using LondonDataServices.IDecide.Core.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Brokers.Storages.Sql;
 using LondonDataServices.IDecide.Core.Models.Foundations.Audits;
@@ -184,7 +183,6 @@ namespace LondonDataServices.IDecide.Manage.Server
             services.AddTransient<ISecurityBroker, SecurityBroker>();
             services.AddTransient<IStorageBroker, StorageBroker>();
             services.AddTransient<INotificationBroker, NotificationBroker>();
-            services.AddTransient<IPdsBroker, PdsBroker>();
         }
 
         private static void AddFoundationServices(IServiceCollection services)

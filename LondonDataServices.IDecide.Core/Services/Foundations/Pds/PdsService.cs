@@ -3,7 +3,6 @@
 // ---------------------------------------------------------
 
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
-using LondonDataServices.IDecide.Core.Brokers.Pds;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
 using System.Threading.Tasks;
 
@@ -11,14 +10,10 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
 {
     public partial class PdsService : IPdsService
     {
-        private readonly IPdsBroker pdsBroker;
         private readonly ILoggingBroker loggingBroker;
 
-        public PdsService(
-            IPdsBroker pdsBroker,
-            ILoggingBroker loggingBroker)
+        public PdsService(ILoggingBroker loggingBroker)
         {
-            this.pdsBroker = pdsBroker;
             this.loggingBroker = loggingBroker;
         }
 
