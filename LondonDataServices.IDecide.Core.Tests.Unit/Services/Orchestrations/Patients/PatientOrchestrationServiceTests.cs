@@ -33,6 +33,23 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         private static string GetRandomString() =>
             new MnemonicString().GetValue();
 
+        private static string GenerateRandom10DigitNumber()
+        {
+            Random random = new Random();
+            var randomNumber = random.Next(1000000000, 2000000000).ToString();
+
+            return randomNumber;
+        }
+
+        public static string GenerateRandomMobileNumber()
+        {
+            Random random = new Random();
+            string prefix = "07";
+            string number = random.Next(100000000, 999999999).ToString();
+
+            return prefix + number;
+        }
+
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
@@ -57,6 +74,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             patient.Name = new List<HumanName> { nameFiller.Create() };
             patient.Gender = AdministrativeGender.Male;
             patient.BirthDate = GetRandomDateTimeOffset().ToString("yyyy-MM-dd");
+            patient.Address = new List<Address> { CreateRandomAddress() };
+            patient.Id = GenerateRandom10DigitNumber();
+            patient.Telecom = new List<ContactPoint> { CreateRandomEmail(), CreateRandomPhoneNumber() };
 
             return patient;
         }
@@ -111,9 +131,69 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             return patient;
         }
 
-        private Models.Foundations.Pds.Patient GetRedactedPatient(Models.Foundations.Pds.Patient patient)
+        private static Address CreateRandomAddress() =>
+            CreateAddressFiller().Create();
+
+        private static Filler<Address> CreateAddressFiller()
         {
-            return patient;
+            DateTimeOffset dateTimeOffset = DateTimeOffset.UtcNow;
+            DateTimeOffset dateTimeOffsetEnd = dateTimeOffset.AddDays(1);
+            FhirDateTime periodStart = new FhirDateTime(dateTimeOffset);
+            FhirDateTime periodEnd = new FhirDateTime(dateTimeOffsetEnd);
+            Period addressPeriod = new Period(periodStart, periodEnd);
+            var filler = new Filler<Address>();
+
+            filler.Setup()
+                .OnType<DateTimeOffset>().Use(dateTimeOffset)
+                .OnType<DateTimeOffset?>().Use(dateTimeOffset)
+                .OnProperty(n => n.Period).Use(addressPeriod)
+                .OnProperty(n => n.Children).IgnoreIt()
+                .OnProperty(n => n.Extension).IgnoreIt()
+                .OnProperty(n => n.NamedChildren).IgnoreIt()
+                .OnProperty(n => n.TextElement).IgnoreIt()
+                .OnProperty(n => n.CityElement).IgnoreIt()
+                .OnProperty(n => n.CountryElement).IgnoreIt()
+                .OnProperty(n => n.DistrictElement).IgnoreIt()
+                .OnProperty(n => n.LineElement).IgnoreIt()
+                .OnProperty(n => n.PostalCodeElement).IgnoreIt()
+                .OnProperty(n => n.StateElement).IgnoreIt()
+                .OnProperty(n => n.TextElement).IgnoreIt()
+                .OnProperty(n => n.TypeElement).IgnoreIt()
+                .OnProperty(n => n.UseElement).IgnoreIt();
+
+            return filler;
+        }
+
+        private static ContactPoint CreateRandomEmail()
+        {
+            DateTimeOffset dateTimeOffset = DateTimeOffset.UtcNow;
+            DateTimeOffset dateTimeOffsetEnd = dateTimeOffset.AddDays(1);
+            FhirDateTime periodStart = new FhirDateTime(dateTimeOffset);
+            FhirDateTime periodEnd = new FhirDateTime(dateTimeOffsetEnd);
+            Period emailPeriod = new Period(periodStart, periodEnd);
+
+            return new ContactPoint
+            {
+                System = ContactPoint.ContactPointSystem.Email,
+                Period = emailPeriod,
+                Value = GetRandomString()
+            };
+        }
+
+        private static ContactPoint CreateRandomPhoneNumber()
+        {
+            DateTimeOffset dateTimeOffset = DateTimeOffset.UtcNow;
+            DateTimeOffset dateTimeOffsetEnd = dateTimeOffset.AddDays(1);
+            FhirDateTime periodStart = new FhirDateTime(dateTimeOffset);
+            FhirDateTime periodEnd = new FhirDateTime(dateTimeOffsetEnd);
+            Period phoneNumberPeriod = new Period(periodStart, periodEnd);
+
+            return new ContactPoint
+            {
+                System = ContactPoint.ContactPointSystem.Phone,
+                Period = phoneNumberPeriod,
+                Value = GenerateRandomMobileNumber()
+            };
         }
     }
 }
