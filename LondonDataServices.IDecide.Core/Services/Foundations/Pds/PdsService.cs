@@ -2,7 +2,6 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using ISL.Providers.PDS.Abstractions.Models;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Brokers.Pds;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
@@ -23,29 +22,10 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
             this.loggingBroker = loggingBroker;
         }
 
-        public ValueTask<PatientLookup> PatientLookupByDetailsAsync(PatientLookup patientLookup) =>
-            TryCatch(async () =>
-            {
-                SearchCriteria searchCriteria = patientLookup.SearchCriteria;
-                PatientBundle patientBundle = await this.pdsBroker.PatientLookupByDetailsAsync(
-                    searchCriteria.FirstName,
-                    searchCriteria.Surname,
-                    searchCriteria.Gender,
-                    searchCriteria.Postcode,
-                    searchCriteria.DateOfBirth,
-                    searchCriteria.DateOfDeath,
-                    searchCriteria.RegisteredGpPractice,
-                    searchCriteria.Email,
-                    searchCriteria.PhoneNumber);
-
-                PatientLookup updatedPatientLookup = new PatientLookup
-                {
-                    SearchCriteria = searchCriteria,
-                    Patients = patientBundle
-                };
-
-                return updatedPatientLookup;
-            });
+        public ValueTask<PatientLookup> PatientLookupByDetailsAsync(PatientLookup patientLookup)
+        {
+            throw new System.NotImplementedException();
+        }
 
         public ValueTask<Patient> PatientLookupByNhsNumberAsync(string nhsNumber)
         {
