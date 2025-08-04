@@ -9,6 +9,7 @@ using EFxceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Audits;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
+using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using STX.EFCore.Client.Clients;
@@ -48,6 +49,7 @@ namespace LondonDataServices.IDecide.Core.Brokers.Storages.Sql
             AddAuditConfigurations(modelBuilder.Entity<Audit>());
             AddDecisionTypeConfigurations(modelBuilder.Entity<DecisionType>());
             AddDecisionConfigurations(modelBuilder.Entity<Decision>());
+            AddPatientConfigurations(modelBuilder.Entity<Patient>());
         }
 
         private async ValueTask<T> InsertAsync<T>(T @object) where T : class =>
