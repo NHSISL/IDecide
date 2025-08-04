@@ -4,6 +4,7 @@
 
 using System.Linq;
 using System.Threading.Tasks;
+using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Extensions.Patients;
 using LondonDataServices.IDecide.Core.Mappers;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
@@ -11,19 +12,22 @@ using LondonDataServices.IDecide.Core.Services.Foundations.Pds;
 
 namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
 {
-    public class PatientOrchestrationService : IPatientOrchestrationService
+    public partial class PatientOrchestrationService : IPatientOrchestrationService
     {
         private readonly IPdsService pdsService;
+        private readonly ILoggingBroker loggingBroker;
 
-        public PatientOrchestrationService(IPdsService pdsService)
+        public PatientOrchestrationService(IPdsService pdsService, ILoggingBroker loggingBroker)
         {
             this.pdsService = pdsService;
+            this.loggingBroker = loggingBroker;
         }
 
         public async ValueTask<Patient> PatientLookupByDetailsAsync(PatientLookup patientLookup)
         {
+            ValidatePatientLookupIsNotNull(patientLookup);
             PatientLookup responsePatientLookup = await this.pdsService.PatientLookupByDetailsAsync(patientLookup);
-            // add validation to throw error if more than one patient returned
+            ValidatePatientLookupPatientIsExactMatch(responsePatientLookup);
             Hl7.Fhir.Model.Patient fhirPatient = responsePatientLookup.Patients.Patients.First();
             Patient patientToRedact = LocalPatientMapper.FromFhirPatient(fhirPatient);
             Patient redactedPatient = patientToRedact.GetRedactedPatient();

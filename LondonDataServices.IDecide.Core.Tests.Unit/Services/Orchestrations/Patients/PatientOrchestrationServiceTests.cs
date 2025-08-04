@@ -14,20 +14,26 @@ using Moq;
 using Tynamix.ObjectFiller;
 using Patient = Hl7.Fhir.Model.Patient;
 using LondonDataServices.IDecide.Core.Mappers;
+using LondonDataServices.IDecide.Core.Brokers.Loggings;
+using System.Linq.Expressions;
+using Xeptions;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Patients
 {
     public partial class PatientOrchestrationServiceTests
     {
         private readonly Mock<IPdsService> pdsServiceMock = new Mock<IPdsService>();
+        private readonly Mock<ILoggingBroker> loggingBrokerMock = new Mock<ILoggingBroker>();
         private readonly PatientOrchestrationService patientOrchestrationService;
 
         public PatientOrchestrationServiceTests()
         {
             this.pdsServiceMock = new Mock<IPdsService>();
+            this.loggingBrokerMock = new Mock<ILoggingBroker>();
 
             this.patientOrchestrationService = new PatientOrchestrationService(
-                this.pdsServiceMock.Object);
+                this.pdsServiceMock.Object,
+                this.loggingBrokerMock.Object);
         }
 
         private static string GetRandomString() =>
@@ -98,6 +104,48 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     FullUrl = $"https://api.service.nhs.uk/personal-demographics/FHIR/R4/Patient/{patient.Id}",
                     Search = new Bundle.SearchComponent { Score = 1 },
                     Resource = patient
+                }
+            };
+
+            return bundle;
+        }
+
+        private Bundle CreateRandomEmptyBundle()
+        {
+            var bundle = new Bundle
+            {
+                Type = Bundle.BundleType.Searchset,
+                Total = 0,
+                Timestamp = DateTimeOffset.UtcNow
+            };
+
+            return bundle;
+        }
+
+        private Bundle CreateRandomMultiplePatientBundle()
+        {
+            var bundle = new Bundle
+            {
+                Type = Bundle.BundleType.Searchset,
+                Total = 2,
+                Timestamp = DateTimeOffset.UtcNow
+            };
+
+            Patient patient1 = CreateRandomPatient(GetRandomString());
+            Patient patient2 = CreateRandomPatient(GetRandomString());
+
+            bundle.Entry = new List<Bundle.EntryComponent>{
+                new Bundle.EntryComponent
+                {
+                    FullUrl = $"https://api.service.nhs.uk/personal-demographics/FHIR/R4/Patient/{patient1.Id}",
+                    Search = new Bundle.SearchComponent { Score = 1 },
+                    Resource = patient1
+                },
+                new Bundle.EntryComponent
+                {
+                    FullUrl = $"https://api.service.nhs.uk/personal-demographics/FHIR/R4/Patient/{patient2.Id}",
+                    Search = new Bundle.SearchComponent { Score = 1 },
+                    Resource = patient2
                 }
             };
 
@@ -195,5 +243,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 Value = GenerateRandomMobileNumber()
             };
         }
+
+        private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
+            actualException => actualException.SameExceptionAs(expectedException);
     }
 }
