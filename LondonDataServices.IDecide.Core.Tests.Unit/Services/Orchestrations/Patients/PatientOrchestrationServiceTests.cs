@@ -17,6 +17,7 @@ using LondonDataServices.IDecide.Core.Mappers;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using System.Linq.Expressions;
 using Xeptions;
+using LondonDataServices.IDecide.Core.Models.Foundations.Pds.Exceptions;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Patients
 {
@@ -246,5 +247,41 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
         private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
             actualException => actualException.SameExceptionAs(expectedException);
+
+        public static TheoryData<Xeption> DependencyValidationExceptions()
+        {
+            string randomMessage = GetRandomString();
+            string exceptionMessage = randomMessage;
+            var innerException = new Xeption(exceptionMessage);
+
+            return new TheoryData<Xeption>
+            {
+                new PdsValidationException(
+                    message: "PDS validation errors occured, please try again",
+                    innerException),
+
+                new PdsDependencyValidationException(
+                    message: "PDS dependency validation occurred, please try again.",
+                    innerException),
+            };
+        }
+
+        public static TheoryData<Xeption> DependencyExceptions()
+        {
+            string randomMessage = GetRandomString();
+            string exceptionMessage = randomMessage;
+            var innerException = new Xeption(exceptionMessage);
+
+            return new TheoryData<Xeption>
+            {
+                new PdsDependencyException(
+                    message: "PDS dependency error occurred, please contact support.",
+                    innerException),
+
+                new PdsServiceException(
+                    message: "PDS service error occurred, please contact support.",
+                    innerException),
+            };
+        }
     }
 }

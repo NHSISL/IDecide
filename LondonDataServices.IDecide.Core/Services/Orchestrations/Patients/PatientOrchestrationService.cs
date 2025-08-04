@@ -23,16 +23,17 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             this.loggingBroker = loggingBroker;
         }
 
-        public async ValueTask<Patient> PatientLookupByDetailsAsync(PatientLookup patientLookup)
-        {
-            ValidatePatientLookupIsNotNull(patientLookup);
-            PatientLookup responsePatientLookup = await this.pdsService.PatientLookupByDetailsAsync(patientLookup);
-            ValidatePatientLookupPatientIsExactMatch(responsePatientLookup);
-            Hl7.Fhir.Model.Patient fhirPatient = responsePatientLookup.Patients.Patients.First();
-            Patient patientToRedact = LocalPatientMapper.FromFhirPatient(fhirPatient);
-            Patient redactedPatient = patientToRedact.GetRedactedPatient();
+        public ValueTask<Patient> PatientLookupByDetailsAsync(PatientLookup patientLookup) =>
+            TryCatch(async () =>
+            {
+                ValidatePatientLookupIsNotNull(patientLookup);
+                PatientLookup responsePatientLookup = await this.pdsService.PatientLookupByDetailsAsync(patientLookup);
+                ValidatePatientLookupPatientIsExactMatch(responsePatientLookup);
+                Hl7.Fhir.Model.Patient fhirPatient = responsePatientLookup.Patients.Patients.First();
+                Patient patientToRedact = LocalPatientMapper.FromFhirPatient(fhirPatient);
+                Patient redactedPatient = patientToRedact.GetRedactedPatient();
 
-            return redactedPatient;
-        }
+                return redactedPatient;
+            });
     }
 }
