@@ -2,15 +2,11 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export const Thankyou = () => {
-    const [prefs, setPrefs] = useState({
-        sms: false,
-        email: false,
-        post: false,
-    });
+    const [selected, setSelected] = useState<string | null>(null);
     const navigate = useNavigate();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setPrefs({ ...prefs, [e.target.name]: e.target.checked });
+        setSelected(e.target.name === selected ? null : e.target.name);
     };
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -34,7 +30,7 @@ export const Thankyou = () => {
                         id="sms"
                         name="sms"
                         type="checkbox"
-                        checked={prefs.sms}
+                        checked={selected === "sms"}
                         onChange={handleChange}
                     />
                     <label className="nhsuk-label nhsuk-checkboxes__label" htmlFor="sms">
@@ -47,7 +43,7 @@ export const Thankyou = () => {
                         id="email"
                         name="email"
                         type="checkbox"
-                        checked={prefs.email}
+                        checked={selected === "email"}
                         onChange={handleChange}
                     />
                     <label className="nhsuk-label nhsuk-checkboxes__label" htmlFor="email">
@@ -60,7 +56,7 @@ export const Thankyou = () => {
                         id="post"
                         name="post"
                         type="checkbox"
-                        checked={prefs.post}
+                        checked={selected === "post"}
                         onChange={handleChange}
                     />
                     <label className="nhsuk-label nhsuk-checkboxes__label" htmlFor="post">

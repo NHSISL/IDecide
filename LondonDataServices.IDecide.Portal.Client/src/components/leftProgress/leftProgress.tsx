@@ -2,11 +2,11 @@
 import React from "react";
 import { Container, Row } from "react-bootstrap";
 import { useStep } from "../context/stepContext";
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 
-const steps = ["nhs", "details", "confirm", "choice", "notify"];
+// Add "thanks" to the steps array
+const steps = ["nhs", "details", "confirm", "choice", "notify", "thanks"];
 
 const stepLabels: Record<string, string> = {
     nhs: "Provide Your NHS Number",
@@ -14,6 +14,7 @@ const stepLabels: Record<string, string> = {
     confirm: "Positive Confirmation",
     choice: "Make Your Choice",
     notify: "Receive Notifications",
+    thanks: "Complete",
 };
 
 const stepContent: Record<string, React.ReactNode> = {
@@ -22,6 +23,7 @@ const stepContent: Record<string, React.ReactNode> = {
     confirm: <p>Confirmation means you've reviewed and validated the information provided.</p>,
     choice: <p>Please indicate your preference regarding the opt-out.</p>,
     notify: <p>Choose how you would like to receive updates about your preferences.</p>,
+    thanks: <p>Process Complete</p>
 };
 
 function useIsMobile() {
@@ -36,11 +38,12 @@ function useIsMobile() {
 }
 
 const LeftProgress: React.FC = () => {
-    const { currentStepIndex, setCurrentStepIndex } = useStep();
+    const { currentStepIndex } = useStep();
     const isMobile = useIsMobile();
 
     const isCurrentStep = (idx: number) => idx === currentStepIndex;
     const isPreviousStep = (idx: number) => idx < currentStepIndex;
+    const isLastStep = (idx: number) => idx === steps.length - 1;
 
     return (
         <Container>
@@ -68,13 +71,13 @@ const LeftProgress: React.FC = () => {
                                             style={{
                                                 flex: 1,
                                                 textAlign: "center",
-                                                minWidth: 80,
+                                                minWidth: 40,
                                                 opacity: isPreviousStep(idx) ? 0.5 : 1,
                                                 borderBottom: isCurrentStep(idx) ? "3px solid #005eb8" : "1px solid #ccc",
                                                 padding: "8px 0"
                                             }}
                                         >
-                                            {isPreviousStep(idx) ? (
+                                            {(isPreviousStep(idx) || (isLastStep(idx) && isCurrentStep(idx))) ? (
                                                 <FontAwesomeIcon icon={faCheckCircle} style={{ color: "#006435", fontSize: "1.5rem" }} />
                                             ) : (
                                                 <span
@@ -104,7 +107,7 @@ const LeftProgress: React.FC = () => {
                             <Radios>
                                 {steps.map((step, idx) => (
                                     <React.Fragment key={step}>
-                                        {isPreviousStep(idx) ? (
+                                        {(isPreviousStep(idx) || (isLastStep(idx) && isCurrentStep(idx))) ? (
                                             <div
                                                 className="completed-tick"
                                                 aria-label={`${stepLabels[step]} completed`}

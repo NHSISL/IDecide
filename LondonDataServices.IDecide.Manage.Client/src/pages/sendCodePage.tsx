@@ -1,12 +1,18 @@
 ﻿import React from "react";
-import { Container } from "react-bootstrap";
 import PositiveConfirmation from "../components/positiveConfirmation/positiveConfirmation";
+import { Card, Container } from "nhsuk-react-components";
 
 export const SendCodePage = () => {
     return (
-        <Container style={{ padding: 20 }}>
-            <PositiveConfirmation/>
-            
+         <Container fluid>
+            <Card cardType="feature">
+                <Card.Content>
+                    <Card.Heading>Positive Confimation Notification</Card.Heading>
+                    <Card.Description>
+                       <PositiveConfirmation/>
+                    </Card.Description>
+                </Card.Content>
+            </Card>
         </Container>
     );
 };
