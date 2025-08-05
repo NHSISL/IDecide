@@ -8,7 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Models.Foundations.Audits;
 
-namespace LondonDataServices.IDecide.Core.Services.Audits
+namespace LondonDataServices.IDecide.Core.Services.Foundations.Audits
 {
     public interface IAuditService
     {
