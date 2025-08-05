@@ -88,9 +88,11 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
                 broker.UpdateDecisionTypeAsync(auditEnsuredDecisionType),
                     Times.Once);
 
+            this.securityAuditBrokerMock.VerifyNoOtherCalls();
+            this.securityBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
     }
 }

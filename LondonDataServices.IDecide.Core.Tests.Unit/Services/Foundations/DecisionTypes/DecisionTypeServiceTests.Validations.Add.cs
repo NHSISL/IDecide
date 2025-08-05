@@ -46,8 +46,10 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
                     expectedDecisionTypeValidationException))),
                         Times.Once);
 
-            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.securityAuditBrokerMock.VerifyNoOtherCalls();
+            this.securityBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
 
@@ -140,9 +142,11 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
                 broker.InsertDecisionTypeAsync(It.IsAny<DecisionType>()),
                     Times.Never);
 
+            this.securityAuditBrokerMock.VerifyNoOtherCalls();
+            this.securityBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -217,6 +221,8 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
                 broker.InsertDecisionTypeAsync(It.IsAny<DecisionType>()),
                     Times.Never);
 
+            this.securityAuditBrokerMock.VerifyNoOtherCalls();
+            this.securityBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
@@ -291,9 +297,11 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
                 broker.InsertDecisionTypeAsync(It.IsAny<DecisionType>()),
                     Times.Never);
 
+            this.securityAuditBrokerMock.VerifyNoOtherCalls();
+            this.securityBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
 
         [Theory]
@@ -374,6 +382,8 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
                 broker.InsertDecisionTypeAsync(It.IsAny<DecisionType>()),
                     Times.Never);
 
+            this.securityAuditBrokerMock.VerifyNoOtherCalls();
+            this.securityBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
