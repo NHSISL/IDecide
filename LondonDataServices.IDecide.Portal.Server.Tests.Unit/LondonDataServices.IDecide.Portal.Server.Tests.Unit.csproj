@@ -29,12 +29,6 @@
 	</ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LondonDataServices.IDecide.Manage.Server\LondonDataServices.IDecide.Manage.Server.csproj" />
-    <ProjectReference Include="..\LondonDataServices.IDecide.Portal.Client\LondonDataServices.IDecide.Portal.Client.esproj" />
-    <ProjectReference Include="..\LondonDataServices.IDecide.Portal.Server\LondonDataServices.IDecide.Portal.Server.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
 
