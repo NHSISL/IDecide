@@ -1,20 +1,23 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useStep } from "../context/stepContext";
-import { Row, Col } from "react-bootstrap";
+import { Row, Col, Alert } from "react-bootstrap";
 
 interface ConfirmDetailsProps {
     goToConfirmCode: () => void;
 }
 
 export const ConfirmDetails: React.FC<ConfirmDetailsProps> = ({ goToConfirmCode }) => {
-    const { setCurrentStepIndex, nextStep, createdPatient } = useStep();
+    const { setCurrentStepIndex, nextStep, createdPatient, powerOfAttourney } = useStep();
+
+    useEffect(() => {
+    }, [powerOfAttourney]);
 
     const handleNoClick = () => {
         setCurrentStepIndex(0);
     };
 
     const handleYesClick = () => {
-        nextStep(undefined, undefined, createdPatient);
+        nextStep(undefined, undefined, createdPatient!, powerOfAttourney!);
     };
 
     if (!createdPatient) {
@@ -25,6 +28,13 @@ export const ConfirmDetails: React.FC<ConfirmDetailsProps> = ({ goToConfirmCode 
         <Row className="custom-col-spacing">
             <Col xs={12} md={7} lg={7}>
                 <div className="mt-4">
+                    {powerOfAttourney && (
+                        <Alert variant="info" style={{ marginBottom: "1rem" }}>
+                            <strong>Power of Attorney Details:</strong><br />
+                            Name: <strong>{powerOfAttourney.firstName} {powerOfAttourney.surname}</strong>,&nbsp;
+                            Relationship: <strong>{powerOfAttourney.relationship}</strong>
+                        </Alert>
+                    )}
                     <h4>Is this you?</h4>
                     <form className="nhsuk-form-group">
                         <dl className="nhsuk-summary-list" style={{ marginBottom: "2rem" }}>

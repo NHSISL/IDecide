@@ -32,7 +32,7 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
             { nhsNumber: createdPatient.nhsNumber, code } as ConfirmCodeRequest,
             {
                 onSuccess: () => {
-                    nextStep(createdPatient);
+                    nextStep(undefined, undefined,createdPatient);
                 },
                 onError: (error: unknown) => {
                     if (error instanceof Error) {

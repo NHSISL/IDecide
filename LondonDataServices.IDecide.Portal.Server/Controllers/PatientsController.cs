@@ -40,6 +40,11 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
         {
             public string NhsNumber { get; set; }
             public string NotificationPreference { get; set; }
+            public string PoaFirstName { get; set; }
+            public string PoaSurname { get; set; }
+            public string PoaRelationship { get; set; }
+
+            //PoA fields
         }
 
         public class ConfirmCodeRequest
@@ -49,7 +54,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
         }
 
         //recapture
-        [HttpPost("GetPatientByNhsNumber")]
+        [HttpPost("PostPatientByNhsNumber")]
         public ActionResult<Patient> GetPatientByNhsNumber([FromBody] Patient patient)
         {
             var createdPatient = new Patient
@@ -71,7 +76,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
         }
 
         //recapture
-        [HttpPost("GetPatientByDetails")]
+        [HttpPost("PostPatientByDetails")]
         public ActionResult<Patient> GetPatientByDetails([FromBody] Patient patient)
         {
             var createdPatient = new Patient

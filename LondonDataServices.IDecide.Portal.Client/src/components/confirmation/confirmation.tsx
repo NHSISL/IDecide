@@ -23,9 +23,9 @@ export const Confirmation: React.FC<ConfirmationProps> = ({ selectedOption, nhsN
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name } = e.target;
         setPrefs({
-            sms: name === "sms",
-            email: name === "email",
-            post: name === "post",
+            sms: name === "SMS",
+            email: name === "Email",
+            post: name === "Post",
         });
     };
 
@@ -47,7 +47,6 @@ export const Confirmation: React.FC<ConfirmationProps> = ({ selectedOption, nhsN
 
         createDecisionMutation.mutate(decision, {
             onSuccess: (createdDecision) => {
-                alert(`Your choice "${createdDecision.decisionChoice}" has been saved.`);
                 nextStep();
             },
             onError: (error: unknown) => {

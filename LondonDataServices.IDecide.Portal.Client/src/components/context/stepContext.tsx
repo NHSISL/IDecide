@@ -1,14 +1,22 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { Patient } from "../../models/patients/patient";
+import { PowerOfAttourney } from "../../models/powerOfAttourneys/powerOfAttourney";
 
 type StepContextType = {
     currentStepIndex: number;
     setCurrentStepIndex: React.Dispatch<React.SetStateAction<number>>;
-    nextStep: (selectedOption?: "optout" | "optin", nhsNumber?: string, patient?: Patient) => void;
+    nextStep: (
+        selectedOption?: "optout" | "optin",
+        nhsNumber?: string,
+        patient?: Patient,
+        powerOfAttourney?: PowerOfAttourney
+    ) => void;
     createdPatient: Patient | null;
     setCreatedPatient: React.Dispatch<React.SetStateAction<Patient | null>>;
     selectedOption: "optout" | "optin" | null;
     nhsNumber: string | null;
+    powerOfAttourney: PowerOfAttourney | null;
+    setPowerOfAttourney: React.Dispatch<React.SetStateAction<PowerOfAttourney | null>>;
 };
 
 const StepContext = createContext<StepContextType | undefined>(undefined);
@@ -22,16 +30,19 @@ export const StepProvider = ({ children }: StepProviderProps) => {
     const [createdPatient, setCreatedPatient] = useState<Patient | null>(null);
     const [selectedOption, setSelectedOption] = useState<"optout" | "optin" | null>(null);
     const [nhsNumber, setNhsNumber] = useState<string | null>(null);
+    const [powerOfAttourney, setPowerOfAttourney] = useState<PowerOfAttourney | null>(null);
 
-    // nextStep can be called with or without params, depending on the step
     const nextStep = (
         option?: "optout" | "optin",
         nhs?: string,
-        patient?: Patient
+        patient?: Patient,
+        poa?: PowerOfAttourney
     ) => {
+        console.log("nextStep called with:", { option, nhs, patient, poa });
         if (option) setSelectedOption(option);
         if (nhs) setNhsNumber(nhs);
         if (patient) setCreatedPatient(patient);
+        if (poa) setPowerOfAttourney(poa);
         setCurrentStepIndex((i) => i + 1);
     };
 
@@ -45,6 +56,8 @@ export const StepProvider = ({ children }: StepProviderProps) => {
                 setCreatedPatient,
                 selectedOption,
                 nhsNumber,
+                powerOfAttourney,
+                setPowerOfAttourney,
             }}
         >
             {children}

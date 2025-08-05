@@ -6,7 +6,7 @@ import { ConfirmCodeRequest } from "../../models/patients/confirmCodeRequest";
 
 export const patientService = {
 
-    useCreatePatient: () => {
+    useCreatePatientByNhsNumber: () => {
         const broker = new PatientBroker();
         const queryClient = useQueryClient();
 
@@ -15,7 +15,25 @@ export const patientService = {
                 const date = new Date();
                 patient.createdDate = patient.updatedDate = date;
                
-                return broker.PostPatientAsync(patient);
+                return broker.PostPatientNhsNumberAsync(patient);
+            },
+            onSuccess: (variables: Patient) => {
+                queryClient.invalidateQueries({ queryKey: ["PatientGetAll"] });
+                queryClient.invalidateQueries({ queryKey: ["PatientGetById", { id: variables.id }] });
+            }
+        });
+    },
+
+    useCreatePatientByDetails: () => {
+        const broker = new PatientBroker();
+        const queryClient = useQueryClient();
+
+        return useMutation({
+            mutationFn: (patient: Patient) => {
+                const date = new Date();
+                patient.createdDate = patient.updatedDate = date;
+
+                return broker.PostPatientDetailsAsync(patient);
             },
             onSuccess: (variables: Patient) => {
                 queryClient.invalidateQueries({ queryKey: ["PatientGetAll"] });

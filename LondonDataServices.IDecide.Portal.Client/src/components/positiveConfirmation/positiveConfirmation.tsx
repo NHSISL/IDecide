@@ -2,14 +2,14 @@ import React from "react";
 import { useStep } from "../context/stepContext";
 import { patientViewService } from "../../services/views/patientViewService";
 import { GenerateCodeRequest } from "../../models/patients/generateCodeRequest";
-import { Row, Col } from "react-bootstrap";
+import { Row, Col, Alert } from "react-bootstrap";
 
 interface PositiveConfirmationProps {
     goToConfirmCode: (createdPatient: GenerateCodeRequest) => void;
 }
 
 const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirmCode }) => {
-    const { createdPatient } = useStep();
+    const { createdPatient, powerOfAttourney } = useStep();
     const updatePatient = patientViewService.useUpdatePatient();
 
     if (!createdPatient) {
@@ -20,6 +20,13 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
 
     const handleSubmit = (method: "Email" | "SMS" | "Letter") => {
         patientToUpdate.notificationPreference = method;
+
+        if (powerOfAttourney) {
+            patientToUpdate.poaFirstName = powerOfAttourney.firstName;
+            patientToUpdate.poaSurname = powerOfAttourney.surname;
+            patientToUpdate.poaRelationship = powerOfAttourney.relationship;
+        }
+
         updatePatient.mutate(patientToUpdate, {
             onSuccess: () => {
                 goToConfirmCode(patientToUpdate);
@@ -38,6 +45,15 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
         <Row className="custom-col-spacing">
             <Col xs={12} md={7} lg={7}>
                 <div className="mt-4">
+
+                    {powerOfAttourney && (
+                        <Alert variant="info" style={{ marginBottom: "1rem" }}>
+                            <strong>Power of Attorney Details:</strong><br />
+                            Name: <strong>{powerOfAttourney.firstName} {powerOfAttourney.surname}</strong>,&nbsp;
+                            Relationship: <strong>{powerOfAttourney.relationship}</strong>
+                        </Alert>
+                    )}
+
                     <h2>Confirmation required</h2>
                     <p>Please confirm these details are correct before continuing:</p>
                     <dl className="nhsuk-summary-list" style={{ marginBottom: "2rem" }}>

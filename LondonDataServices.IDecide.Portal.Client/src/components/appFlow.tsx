@@ -49,7 +49,7 @@ export const AppFlow: React.FC<AppFlowProps> = ({ powerOfAttourney }) => {
                     key: "searchByDetails",
                     label: "Search By Details",
                     render: (goBack: () => void, nextStep: () => void) => (
-                        <SearchByDetailsPage onBack={goBack} nextStep={nextStep} />
+                        <SearchByDetailsPage onBack={goBack} nextStep={nextStep} powerOfAttourney={powerOfAttourney} />
                     ),
                 },
             ],
