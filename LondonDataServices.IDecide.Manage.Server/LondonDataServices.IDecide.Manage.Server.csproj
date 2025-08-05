@@ -36,6 +36,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\LondonDataServices.IDecide.Core\LondonDataServices.IDecide.Core.csproj" />
+		<ProjectReference Include="..\LondonDataServices.IDecide.Manage.Client\LondonDataServices.IDecide.Manage.Client.esproj" />
 	</ItemGroup>
 
 	<ItemGroup>
