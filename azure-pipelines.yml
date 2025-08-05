@@ -145,42 +145,42 @@ steps:
     workingDirectory: './LondonDataServices.IDecide.Portal.Client'
     displayName: 'Playwright test'
 
-    - task: Npm@1
-  displayName: 'Install client dependencies (patient portal)'
-  inputs:
-    command: 'install'
-    workingDir: 'LondonDataServices.IDecide.Portal.Client'
+  - task: Npm@1
+    displayName: 'Install client dependencies (patient portal)'
+    inputs:
+      command: 'install'
+      workingDir: 'LondonDataServices.IDecide.Portal.Client'
 
-- task: Npm@1
-  displayName: 'Install client dependencies (back office portal)'
-  inputs:
-    command: 'install'
-    workingDir: 'LondonDataServices.IDecide.Manage.Client'
+  - task: Npm@1
+    displayName: 'Install client dependencies (back office portal)'
+    inputs:
+      command: 'install'
+      workingDir: 'LondonDataServices.IDecide.Manage.Client'
 
-- task: DotNetCoreCLI@2
-  displayName: "Dotnet Publish Patient Portal"
-  inputs:
-    command: "publish"
-    publishWebProjects: false
-    projects: "**/LondonDataServices.IDecide.Portal.Server.csproj"
-    arguments: "-o $(Build.ArtifactStagingDirectory)/$(Build.BuildId)_publish_output_website_patient_portal"
-    zipAfterPublish: true
-    modifyOutputPath: false
+  - task: DotNetCoreCLI@2
+    displayName: "Dotnet Publish Patient Portal"
+    inputs:
+      command: "publish"
+      publishWebProjects: false
+      projects: "**/LondonDataServices.IDecide.Portal.Server.csproj"
+      arguments: "-o $(Build.ArtifactStagingDirectory)/$(Build.BuildId)_publish_output_website_patient_portal"
+      zipAfterPublish: true
+      modifyOutputPath: false
 
-- publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)_publish_output_website_patient_portal
-  displayName: 'Publish Artifact - Patient Portal'
-  artifact: drop-patient-portal
+  - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)_publish_output_website_patient_portal
+    displayName: 'Publish Artifact - Patient Portal'
+    artifact: drop-patient-portal
 
-- task: DotNetCoreCLI@2
-  displayName: "Dotnet Publish Back Office Portal"
-  inputs:
-    command: "publish"
-    publishWebProjects: false
-    projects: "**/LondonDataServices.IDecide.Manage.Server.csproj"
-    arguments: "-o $(Build.ArtifactStagingDirectory)/$(Build.BuildId)_publish_output_website_backend_portal"
-    zipAfterPublish: true
-    modifyOutputPath: false
+  - task: DotNetCoreCLI@2
+    displayName: "Dotnet Publish Back Office Portal"
+    inputs:
+      command: "publish"
+      publishWebProjects: false
+      projects: "**/LondonDataServices.IDecide.Manage.Server.csproj"
+      arguments: "-o $(Build.ArtifactStagingDirectory)/$(Build.BuildId)_publish_output_website_backend_portal"
+      zipAfterPublish: true
+      modifyOutputPath: false
 
-- publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)_publish_output_website_backend_portal
-  displayName: 'Publish Artifact - Back Office'
-  artifact: drop-backoffice-portal
+  - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)_publish_output_website_backend_portal
+    displayName: 'Publish Artifact - Back Office'
+    artifact: drop-backoffice-portal
