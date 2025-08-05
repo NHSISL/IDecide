@@ -63,7 +63,7 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
 
             var invalidDecisionType = new DecisionType
             {
-                // TODO:  Add default values for your properties i.e. Name = invalidText
+                Name = invalidText
             };
 
             var invalidDecisionTypeException =
@@ -77,8 +77,6 @@ namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionType
             invalidDecisionTypeException.AddData(
                 key: nameof(DecisionType.Name),
                 values: "Text is required");
-
-            // TODO: Add or remove data here to suit the validation needs for the DecisionType model
 
             invalidDecisionTypeException.AddData(
                 key: nameof(DecisionType.CreatedDate),
