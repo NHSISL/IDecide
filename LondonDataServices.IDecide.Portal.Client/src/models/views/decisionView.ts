@@ -1,5 +1,4 @@
 export class DecisionView {
-    public id: string;
     public patientNhsNumber?: string;
     public decisionTypeId?: number;
     public decisionChoice?: string;
@@ -9,7 +8,6 @@ export class DecisionView {
     public updatedDate?: Date;
 
     constructor(
-        id: string,
         patientNhsNumber?: string,
         decisionTypeId?: number,
         decisionChoice?: string,
@@ -18,7 +16,6 @@ export class DecisionView {
         updatedBy?: string,
         updatedDate?: Date
     ) {
-        this.id = id;
         this.patientNhsNumber = patientNhsNumber || "";
         this.decisionTypeId = decisionTypeId;
         this.decisionChoice = decisionChoice || "";

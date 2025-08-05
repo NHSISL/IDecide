@@ -63,7 +63,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
                 NhsNumber = "1234567890",
                 FirstName = "D****",
                 Surname = "H****",
-                EmailAddress = "d****.h***s@googlemail.com",
+                EmailAddress = "",
                 PhoneNumber = "07*******84",
                 Address = "9 T** W*********, S**********, S*****",
                 Postcode = "CR2 0**",

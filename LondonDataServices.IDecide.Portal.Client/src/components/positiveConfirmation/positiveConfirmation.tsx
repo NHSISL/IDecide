@@ -67,7 +67,7 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                         </div>
                         <div className="nhsuk-summary-list__row">
                             <dt className="nhsuk-summary-list__key">Mobile Number</dt>
-                            <dd className="nhsuk-summary-list__value">{createdPatient.mobileNumber}</dd>
+                            <dd className="nhsuk-summary-list__value">{createdPatient.phoneNumber}</dd>
                         </div>
                         <div className="nhsuk-summary-list__row">
                             <dt className="nhsuk-summary-list__key">Address</dt>
@@ -89,6 +89,7 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                             className="nhsuk-button"
                             style={{ flex: 1, minWidth: 120 }}
                             onClick={() => handleSubmit("Email")}
+                            disabled={!createdPatient.emailAddress}
                         >
                             Email
                         </button>
@@ -97,6 +98,7 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                             className="nhsuk-button"
                             style={{ flex: 1, minWidth: 120 }}
                             onClick={() => handleSubmit("SMS")}
+                            disabled={!createdPatient.phoneNumber}
                         >
                             SMS
                         </button>
@@ -105,6 +107,7 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                             className="nhsuk-button"
                             style={{ flex: 1, minWidth: 120 }}
                             onClick={() => handleSubmit("Letter")}
+                            disabled={!createdPatient.address}
                         >
                             Letter
                         </button>
