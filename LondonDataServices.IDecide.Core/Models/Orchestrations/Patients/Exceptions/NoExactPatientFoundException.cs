@@ -9,7 +9,7 @@ namespace LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Excepti
     public class NoExactPatientFoundException : Xeption
     {
         public NoExactPatientFoundException(string message)
-                    : base(message)
+            : base(message)
         { }
     }
 }

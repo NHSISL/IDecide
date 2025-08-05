@@ -10,7 +10,6 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
     public interface IPdsService
     {
         ValueTask<PatientLookup> PatientLookupByDetailsAsync(PatientLookup patientLookup);
-
         ValueTask<Patient> PatientLookupByNhsNumberAsync(string nhsNumber);
     }
 }

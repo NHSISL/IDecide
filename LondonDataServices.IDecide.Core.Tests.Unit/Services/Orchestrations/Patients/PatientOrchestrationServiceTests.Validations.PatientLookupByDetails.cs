@@ -8,10 +8,7 @@ using FluentAssertions;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
 using Force.DeepCloner;
-using Hl7.Fhir.Model;
-using ISL.Providers.PDS.Abstractions.Models;
-using Task = System.Threading.Tasks.Task;
-using Patient = LondonDataServices.IDecide.Core.Models.Foundations.Pds.Patient;
+using System.Collections.Generic;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Patients
 {
@@ -68,10 +65,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             string inputSurname = randomString.DeepClone();
             PatientLookup randomPatientLookup = GetRandomSearchPatientLookup(inputSurname);
             PatientLookup inputPatientLookup = randomPatientLookup.DeepClone();
-            Bundle randomEmptyBundle = CreateRandomEmptyBundle();
-            PatientBundle outputPatientBundle = CreateRandomPatientBundle(randomEmptyBundle);
             PatientLookup updatedPatientLookup = randomPatientLookup.DeepClone();
-            updatedPatientLookup.Patients = outputPatientBundle;
+            updatedPatientLookup.Patients = new List<Patient>();
             PatientLookup outputPatientLookup = updatedPatientLookup.DeepClone();
 
             var nullPatientLookupException =
@@ -122,10 +117,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             string inputSurname = randomString.DeepClone();
             PatientLookup randomPatientLookup = GetRandomSearchPatientLookup(inputSurname);
             PatientLookup inputPatientLookup = randomPatientLookup.DeepClone();
-            Bundle randomEmptyBundle = CreateRandomMultiplePatientBundle();
-            PatientBundle outputPatientBundle = CreateRandomPatientBundle(randomEmptyBundle);
             PatientLookup updatedPatientLookup = randomPatientLookup.DeepClone();
-            updatedPatientLookup.Patients = outputPatientBundle;
+            updatedPatientLookup.Patients = GetRandomPatients();
             PatientLookup outputPatientLookup = updatedPatientLookup.DeepClone();
 
             var nullPatientLookupException =

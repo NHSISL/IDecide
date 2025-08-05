@@ -2,16 +2,14 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using Hl7.Fhir.Model;
-using ISL.Providers.PDS.Abstractions.Models;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
 using Moq;
 using FluentAssertions;
 using Force.DeepCloner;
 using System.Linq;
-using Patient = LondonDataServices.IDecide.Core.Models.Foundations.Pds.Patient;
-using Task = System.Threading.Tasks.Task;
 using LondonDataServices.IDecide.Core.Extensions.Patients;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Patients
 {
@@ -25,19 +23,17 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             string inputSurname = randomString.DeepClone();
             PatientLookup randomPatientLookup = GetRandomSearchPatientLookup(inputSurname);
             PatientLookup inputPatientLookup = randomPatientLookup.DeepClone();
-            Bundle randomBundle = CreateRandomBundle(inputSurname);
-            PatientBundle outputPatientBundle = CreateRandomPatientBundle(randomBundle);
             PatientLookup updatedPatientLookup = randomPatientLookup.DeepClone();
-            updatedPatientLookup.Patients = outputPatientBundle;
+            updatedPatientLookup.Patients = new List<Patient> { GetRandomPatient(inputSurname) };
             PatientLookup outputPatientLookup = updatedPatientLookup.DeepClone();
-            Hl7.Fhir.Model.Patient fhirPatient = outputPatientLookup.Patients.Patients.FirstOrDefault();
-            Patient patientToRedact = GetPatientFromFhirPatient(fhirPatient);
+            Patient patient = outputPatientLookup.Patients.FirstOrDefault();
+            Patient patientToRedact = patient.DeepClone();
             Patient redactedPatient = patientToRedact.Redact();
             Patient expectedPatient = redactedPatient.DeepClone();
 
             this.pdsServiceMock.Setup(service =>
                 service.PatientLookupByDetailsAsync(inputPatientLookup))
-                        .ReturnsAsync(outputPatientLookup);
+                    .ReturnsAsync(outputPatientLookup);
 
             // when
             Patient actualPatient = 
@@ -48,7 +44,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             this.pdsServiceMock.Verify(service =>
                 service.PatientLookupByDetailsAsync(inputPatientLookup),
-                        Times.Once);
+                    Times.Once);
 
             this.pdsServiceMock.VerifyNoOtherCalls();
         }

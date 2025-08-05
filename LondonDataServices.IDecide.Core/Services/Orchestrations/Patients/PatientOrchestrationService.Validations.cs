@@ -19,10 +19,10 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
 
         private static void ValidatePatientLookupPatientIsExactMatch(PatientLookup patientLookup)
         {
-            if (patientLookup.Patients.Patients.Count != 1)
+            if (patientLookup.Patients.Count != 1)
             {
                 throw new NoExactPatientFoundException(
-                    patientLookup.Patients.Patients.Count == 0 
+                    patientLookup.Patients.Count == 0 
                         ? "No matching patient found." : "Multiple matching patients found.");
             }
         }

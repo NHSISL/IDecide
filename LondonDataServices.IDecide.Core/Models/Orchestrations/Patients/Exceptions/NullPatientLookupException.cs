@@ -9,7 +9,7 @@ namespace LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Excepti
     public class NullPatientLookupException : Xeption
     {
         public NullPatientLookupException(string message)
-                    : base(message)
+            : base(message)
         { }
     }
 }
