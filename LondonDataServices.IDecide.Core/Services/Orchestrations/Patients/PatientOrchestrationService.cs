@@ -31,7 +31,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                 ValidatePatientLookupPatientIsExactMatch(responsePatientLookup);
                 Hl7.Fhir.Model.Patient fhirPatient = responsePatientLookup.Patients.Patients.First();
                 Patient patientToRedact = LocalPatientMapper.FromFhirPatient(fhirPatient);
-                Patient redactedPatient = patientToRedact.GetRedactedPatient();
+                Patient redactedPatient = patientToRedact.Redact();
 
                 return redactedPatient;
             });

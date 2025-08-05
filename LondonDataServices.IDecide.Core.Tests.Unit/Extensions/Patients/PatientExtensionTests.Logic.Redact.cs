@@ -12,7 +12,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Extensions.Patients
     public partial class PatientExtensionTests
     {
         [Fact]
-        public void ShouldReturnRedactedPatientWhenGetRedactedPatient()
+        public void ShouldReturnRedactedPatientWhenRedact()
         {
             // given
             Patient somePatient = GetPatientToRedact();
@@ -20,7 +20,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Extensions.Patients
             Patient expectedRedactedPatient = GetRedactedPatient(inputPatient);
 
             // when
-            Patient actualResult = inputPatient.GetRedactedPatient();
+            Patient actualResult = inputPatient.Redact();
 
             // then
             actualResult.Should().BeEquivalentTo(expectedRedactedPatient);

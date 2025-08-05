@@ -32,7 +32,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             PatientLookup outputPatientLookup = updatedPatientLookup.DeepClone();
             Hl7.Fhir.Model.Patient fhirPatient = outputPatientLookup.Patients.Patients.FirstOrDefault();
             Patient patientToRedact = GetPatientFromFhirPatient(fhirPatient);
-            Patient redactedPatient = patientToRedact.GetRedactedPatient();
+            Patient redactedPatient = patientToRedact.Redact();
             Patient expectedPatient = redactedPatient.DeepClone();
 
             this.pdsServiceMock.Setup(service =>

@@ -11,7 +11,7 @@ namespace LondonDataServices.IDecide.Core.Extensions.Patients
 {
     public static class PatientExtension
     {
-        public static Patient GetRedactedPatient(this Patient patient)
+        public static Patient Redact(this Patient patient)
         {
             Patient redactedPatient = new Patient
             {
