@@ -23,7 +23,8 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             {
                 throw new NoExactPatientFoundException(
                     patientLookup.Patients.Count == 0 
-                        ? "No matching patient found." : "Multiple matching patients found.");
+                        ? "No matching patient found." 
+                        : "Multiple matching patients found.");
             }
         }
     }

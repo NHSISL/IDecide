@@ -69,8 +69,7 @@ namespace LondonDataServices.IDecide.Core.Extensions.Patients
             string[] usernameParts = parts[0].Split('.');
 
             string redactedUsername = string.Join(".", usernameParts.Select(word =>
-                word.Length > 0 ? word[0] + new string('*', word.Length - 1) : word
-            ));
+                word.Length > 0 ? word[0] + new string('*', word.Length - 1) : word));
 
             string providerPart = parts[1];
 
@@ -87,8 +86,8 @@ namespace LondonDataServices.IDecide.Core.Extensions.Patients
             }
 
             string redactedPhoneNumber = number.Substring(0, 2) +
-                   new string('*', number.Length - 4) +
-                   number.Substring(number.Length - 2);
+                new string('*', number.Length - 4) +
+                    number.Substring(number.Length - 2);
 
             return redactedPhoneNumber;
         }
