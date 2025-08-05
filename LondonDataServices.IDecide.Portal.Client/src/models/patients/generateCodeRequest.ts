@@ -4,6 +4,7 @@ export class GenerateCodeRequest {
     public poaFirstName?: string;
     public poaSurname?: string;
     public poaRelationship?: string;
+
     constructor(patient: GenerateCodeRequest) {
         this.nhsNumber = patient.nhsNumber || "";
         this.notificationPreference = patient.notificationPreference || "";

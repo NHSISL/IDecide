@@ -43,8 +43,6 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
             public string PoaFirstName { get; set; }
             public string PoaSurname { get; set; }
             public string PoaRelationship { get; set; }
-
-            //PoA fields
         }
 
         public class ConfirmCodeRequest
