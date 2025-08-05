@@ -29,7 +29,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                 ValidatePatientLookupIsNotNull(patientLookup);
                 PatientLookup responsePatientLookup = await this.pdsService.PatientLookupByDetailsAsync(patientLookup);
                 ValidatePatientLookupPatientIsExactMatch(responsePatientLookup);
-                Patient redactedPatient = responsePatientLookup.First().Redact();
+                Patient redactedPatient = responsePatientLookup.Patients.First().Redact();
 
                 return redactedPatient;
             });
