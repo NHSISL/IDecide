@@ -6,6 +6,7 @@ export class PatientView {
     public emailAddress?: string;
     public address?: string;
     public postcode?: string;
+    public phoneNumber?: string;
     public dateOfBirth?: Date;
     public verificationCode?: string;
     public notificationPreference?: string;
@@ -23,6 +24,7 @@ export class PatientView {
         address?: string,
         postcode?: string,
         dateOfBirth?: Date,
+        phoneNumber?: Date,
         verificationCode?: string,
         notificationPreference?: string,
         createdBy?: string,
@@ -37,6 +39,7 @@ export class PatientView {
         this.emailAddress = emailAddress || "";
         this.address = address || "";
         this.postcode = postcode || "";
+        this.phoneNumber = phoneNumber || "";
         this.dateOfBirth = dateOfBirth;
         this.verificationCode = verificationCode;
         this.notificationPreference = notificationPreference;

@@ -24,12 +24,14 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
             public string PatientNhsNumber { get; set; }
             public int? DecisionTypeId { get; set; }
             public string DecisionChoice { get; set; }
+            public string Code { get; set; }
             public string CreatedBy { get; set; }
             public DateTime CreatedDate { get; set; }
             public string UpdatedBy { get; set; }
             public DateTime UpdatedDate { get; set; }
         }
 
+        //Recapture
         [HttpPost]
         public ActionResult<Decision> CreateDecision([FromBody] Decision decision)
         {

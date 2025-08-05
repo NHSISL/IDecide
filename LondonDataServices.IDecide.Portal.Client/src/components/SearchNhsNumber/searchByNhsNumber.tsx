@@ -1,18 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useStep } from "../context/stepContext";
 import { Patient } from "../../models/patients/patient";
+import { PowerOfAttourney } from "../../models/powerOfAttourneys/powerOfAttourney";
 import { patientViewService } from "../../services/views/patientViewService";
-import { TextInput, Button, Select } from "nhsuk-react-components";
+import { TextInput, Button, Select, Card } from "nhsuk-react-components";
 import { loadRecaptchaScript } from "../../helpers/recaptureLoad";
 import { Container, Row, Col } from "react-bootstrap";
 
 const RECAPTCHA_SITE_KEY = "6LcOJn4rAAAAAIUdB70R9BqkfPFD-bPYTk6ojRGg";
 
-export const SearchByNhsNumber = ({
-    onIDontKnow,
-    powerOfAttourney = false
-}: {
-    onIDontKnow: () => void;
+export const SearchByNhsNumber = ({onIDontKnow,powerOfAttourney = false} : {
+    onIDontKnow: (powerOfAttourney: boolean) => void;
     powerOfAttourney?: boolean;
 }) => {
     const [nhsNumberInput, setNhsNumberInput] = useState("1234567890");
@@ -28,7 +26,7 @@ export const SearchByNhsNumber = ({
     const [loading, setLoading] = useState(false);
     const [recaptchaReady, setRecaptchaReady] = useState(false);
     const { nextStep, setCreatedPatient } = useStep();
-    const addPatient = patientViewService.useCreatePatient();
+    const addPatient = patientViewService.usePostPatientNhsNumber();
 
     useEffect(() => {
         let isMounted = true;
@@ -123,10 +121,20 @@ export const SearchByNhsNumber = ({
             grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: "submit" }).then((token: string) => {
                 const nhsNumberToUse = powerOfAttourney ? poaNhsNumberInput : nhsNumberInput;
                 const patientToCreate = new Patient({ id: "", nhsNumber: nhsNumberToUse, recaptchaToken: token });
+
+                let poaModel = undefined;
+                if (powerOfAttourney) {
+                    poaModel = new PowerOfAttourney({
+                        firstName: poaFirstname,
+                        surname: poaSurname,
+                        relationship: poaRelationship
+                    });
+                }
+
                 addPatient.mutate(patientToCreate, {
                     onSuccess: (createdPatient) => {
                         setCreatedPatient(createdPatient);
-                        nextStep(undefined, undefined, createdPatient);
+                        nextStep(undefined, nhsNumberToUse, createdPatient, poaModel);
                         setLoading(false);
                     },
                     onError: () => {
@@ -165,60 +173,77 @@ export const SearchByNhsNumber = ({
 
                         {powerOfAttourney && (
                             <div style={{ marginBottom: "1.5rem" }}>
-                                <TextInput
-                                    label="NHS Number of the person you are representing"
-                                    id="poa-nhs-number"
-                                    name="poa-nhs-number"
-                                    inputMode="numeric"
-                                    pattern="\d*"
-                                    maxLength={10}
-                                    autoComplete="off"
-                                    value={poaNhsNumberInput}
-                                    onChange={handlePoaNhsNumberChange}
-                                    error={poaNhsNumberError || undefined}
-                                    style={{ maxWidth: "300px", marginBottom: "1rem" }}
-                                />
-                                <TextInput
-                                    label="Firstname"
-                                    id="poa-firstname"
-                                    name="poa-firstname"
-                                    autoComplete="off"
-                                    value={poaFirstname}
-                                    onChange={handlePoaFirstnameChange}
-                                    error={poaFirstnameError || undefined}
-                                    style={{ maxWidth: "400px", marginBottom: "1rem" }}
-                                />
-                                <TextInput
-                                    label="Surname"
-                                    id="poa-surname"
-                                    name="poa-surname"
-                                    autoComplete="off"
-                                    value={poaSurname}
-                                    onChange={handlePoaSurnameChange}
-                                    error={poaSurnameError || undefined}
-                                    style={{ maxWidth: "400px", marginBottom: "1rem" }}
-                                />
-                                <div style={{ marginBottom: "1rem" }}>
-                                    <Select
-                                        label="Relationship"
-                                        id="poa-relationship"
-                                        name="poa-relationship"
-                                        aria-label="Relationship to the person you are representing"
-                                        aria-required="true"
-                                        required
-                                        value={poaRelationship}
-                                        onChange={handlePoaRelationshipChange}
-                                        error={poaRelationshipError || undefined}
-                                        style={{ maxWidth: "400px", marginBottom: "1rem" }}
-                                    >
-                                        <option value="" disabled>
-                                            Select relationship
-                                        </option>
-                                        <option value="Parent">The patient is under 13 and you are their parent</option>
-                                        <option value="Guardian">The patient is under 13 and you are their appointed guardian</option>
-                                        <option value="poa">The patient is over 13 and you have power of attorney with the right to act on their behalf.</option>
-                                    </Select>
-                                </div>
+                                <Card cardType="feature">
+                                    <Card.Content>
+                                        <Card.Heading>NHS Number of the Person You Are Representing</Card.Heading>
+                                        <TextInput
+                                            label="NHS Number"
+                                            id="poa-nhs-number"
+                                            name="poa-nhs-number"
+                                            inputMode="numeric"
+                                            pattern="\d*"
+                                            maxLength={10}
+                                            autoComplete="off"
+                                            value={poaNhsNumberInput}
+                                            onChange={handlePoaNhsNumberChange}
+                                            error={poaNhsNumberError || undefined}
+                                            style={{ maxWidth: "300px", marginBottom: "1rem" }}
+                                        />
+                                    </Card.Content>
+                                </Card>
+
+                                <Card cardType="feature">
+                                    <Card.Content>
+                                        <Card.Heading>My Details (The Requester)</Card.Heading>
+                                        <TextInput
+                                            label="Firstname"
+                                            id="poa-firstname"
+                                            name="poa-firstname"
+                                            autoComplete="off"
+                                            value={poaFirstname}
+                                            onChange={handlePoaFirstnameChange}
+                                            error={poaFirstnameError || undefined}
+                                            style={{ maxWidth: "400px", marginBottom: "1rem" }}
+                                        />
+                                        <TextInput
+                                            label="Surname"
+                                            id="poa-surname"
+                                            name="poa-surname"
+                                            autoComplete="off"
+                                            value={poaSurname}
+                                            onChange={handlePoaSurnameChange}
+                                            error={poaSurnameError || undefined}
+                                            style={{ maxWidth: "400px", marginBottom: "1rem" }}
+                                        />
+                                        <div style={{ marginBottom: "1rem" }}>
+                                            <Select
+                                                label="Relationship"
+                                                id="poa-relationship"
+                                                name="poa-relationship"
+                                                aria-label="Relationship to the person you are representing"
+                                                aria-required="true"
+                                                required
+                                                value={poaRelationship}
+                                                onChange={handlePoaRelationshipChange}
+                                                error={poaRelationshipError || undefined}
+                                                style={{ maxWidth: "400px", marginBottom: "1rem" }}
+                                            >
+                                                <option value="" disabled>
+                                                    Select relationship
+                                                </option>
+                                                <option value="The patient is under 13 and you are their parent">
+                                                    The patient is under 13 and you are their parent
+                                                </option>
+                                                <option value="The patient is under 13 and you are their appointed guardian">
+                                                    The patient is under 13 and you are their appointed guardian
+                                                </option>
+                                                <option value="The patient is over 13 and you have power of attorney with the right to act on their behalf.">
+                                                    The patient is over 13 and you have power of attorney with the right to act on their behalf.
+                                                </option>
+                                            </Select>
+                                        </div>
+                                    </Card.Content>
+                                </Card>
                             </div>
                         )}
                         <div style={{ display: "flex", gap: "1rem", marginBottom: "0.2rem", marginTop: "1rem" }}>
@@ -229,10 +254,10 @@ export const SearchByNhsNumber = ({
                                     !recaptchaReady ||
                                     (powerOfAttourney
                                         ? !poaNhsNumberInput ||
-                                          !poaFirstname.trim() ||
-                                          !poaSurname.trim() ||
-                                          !poaRelationship ||
-                                          poaNhsNumberInput.length !== 10
+                                        !poaFirstname.trim() ||
+                                        !poaSurname.trim() ||
+                                        !poaRelationship ||
+                                        poaNhsNumberInput.length !== 10
                                         : nhsNumberInput.length !== 10)
                                 }
                             >
@@ -241,7 +266,7 @@ export const SearchByNhsNumber = ({
                             <Button
                                 type="button"
                                 secondary
-                                onClick={onIDontKnow}
+                                onClick={() => onIDontKnow(powerOfAttourney)}
                                 disabled={loading}
                             >
                                 I Don't know my NHS Number

@@ -21,25 +21,16 @@ body {
     position: relative;
     top: -8px;
 }
-/*
-.nhsuk-button {
-    -webkit-appearance: none;
-    box-shadow: 0 4px 0 #004F69 !Important;
-    background-color: #00ABCD !important;
-    border: 2px solid transparent;
-    border-radius: 4px;
-    box-sizing: border-box;
-    cursor: pointer;
-    display: inline-block;
-    overflow: visible;
-    margin-top: 0;
-    padding: 8px 16px;
-    position: relative;
-    text-align: center;
-    vertical-align: top;
-    width: auto;
+
+.content-inner {
+    background: #FAF9F6 !important;
 }
 
-*/.content-inner {
-    background: #FAF9F6 !important;
+
+.fa-icon:hover {
+    cursor: pointer;
+}
+
+.list-group-item {
+    cursor: pointer;
 }

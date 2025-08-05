@@ -14,6 +14,7 @@ import CookieUsePage from './pages/helpPages/cookieUsePage';
 import ContactPage from './pages/helpPages/contactPage';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClientGlobalOptions } from './brokers/apiBroker.globals';
+import SearchByNhsNumber from './components/SearchNhsNumber/searchByNhsNumber';
 
 function App() {
 
@@ -66,7 +67,11 @@ function App() {
                 {
                     index: true,
                     element: <Navigate to="/home" />
-                }
+                },
+                {
+                    path: "test-poa",
+                    element: <SearchByNhsNumber onIDontKnow={() => { }} powerOfAttourney={true} />
+                },
 
             ]
         },

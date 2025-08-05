@@ -1,5 +1,4 @@
 export class Decision {
-    public id: string;
     public patientNhsNumber?: string;
     public decisionTypeId?: number;
     public decisionChoice?: string;
@@ -9,7 +8,6 @@ export class Decision {
     public updatedDate?: Date;
 
     constructor(decision: Decision) {
-        this.id = decision.id || "";
         this.patientNhsNumber = decision.patientNhsNumber || "";
         this.decisionTypeId = decision.decisionTypeId;
         this.decisionChoice = decision.decisionChoice || "";
