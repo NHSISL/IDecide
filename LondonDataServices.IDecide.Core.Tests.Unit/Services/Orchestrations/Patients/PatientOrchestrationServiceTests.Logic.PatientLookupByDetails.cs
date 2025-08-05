@@ -10,6 +10,7 @@ using System.Linq;
 using LondonDataServices.IDecide.Core.Extensions.Patients;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Patients
 {

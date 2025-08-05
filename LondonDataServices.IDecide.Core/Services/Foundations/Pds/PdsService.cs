@@ -4,6 +4,7 @@
 
 using ISL.Providers.PDS.Abstractions.Models;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
+using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
 using System;
 using System.Threading.Tasks;
@@ -21,12 +22,12 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
 
         public ValueTask<PatientLookup> PatientLookupByDetailsAsync(PatientLookup patientLookup)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public ValueTask<Patient> PatientLookupByNhsNumberAsync(string nhsNumber)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         virtual internal Patient MapToPatientFromPatientBundle(PatientBundle patientBundle) 

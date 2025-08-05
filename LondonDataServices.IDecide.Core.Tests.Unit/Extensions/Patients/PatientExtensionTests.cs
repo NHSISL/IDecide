@@ -3,7 +3,9 @@
 // ---------------------------------------------------------
 
 using System;
-using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
+using System.Collections.Generic;
+using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
+using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using Tynamix.ObjectFiller;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Extensions.Patients
@@ -12,6 +14,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Extensions.Patients
     {
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
+
+        private static string GetRandomString() =>
+            new MnemonicString().GetValue();
 
         private static string GenerateRandom10DigitNumber()
         {
@@ -27,12 +32,23 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Extensions.Patients
             {
                 Address = "16 Red Grove, Testville",
                 DateOfBirth = GetRandomDateTimeOffset(),
-                EmailAddress = "test.family@gmail.com",
-                FirstName = "Test Person",
+                Email = "test.family@gmail.com",
+                GivenName = "Test Person",
                 NhsNumber = GenerateRandom10DigitNumber(),
-                PhoneNumber = "07123456712",
-                Postcode = "AB2 1ZY",
-                Surname = "Family"
+                Phone = "07123456712",
+                PostCode = "AB2 1ZY",
+                Surname = "Family",
+                CreatedBy = GetRandomString(),
+                CreatedDate = GetRandomDateTimeOffset(),
+                Decisions = new List<Decision>(),
+                Gender = GetRandomString(),
+                Id = Guid.NewGuid(),
+                RetryCount = 0,
+                Title = GetRandomString(),
+                UpdatedBy = GetRandomString(),
+                UpdatedDate = GetRandomDateTimeOffset(),
+                ValidationCode = GetRandomString(),
+                ValidationCodeExpiresOn = GetRandomDateTimeOffset()
             };
         }
 
@@ -42,12 +58,23 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Extensions.Patients
             {
                 Address = "16 R** G****, T********",
                 DateOfBirth = patient.DateOfBirth,
-                EmailAddress = "t***.f*****@gmail.com",
-                FirstName = "T*** P*****",
+                Email = "t***.f*****@gmail.com",
+                GivenName = "T*** P*****",
                 NhsNumber = patient.NhsNumber,
-                PhoneNumber = "07*******12",
-                Postcode = "AB2 1**",
-                Surname = "F*****"
+                Phone = "07*******12",
+                PostCode = "AB2 1**",
+                Surname = "F*****",
+                CreatedBy = patient.CreatedBy,
+                CreatedDate = patient.CreatedDate,
+                Decisions = patient.Decisions,
+                Gender = patient.Gender,
+                Id = patient.Id,
+                RetryCount = patient.RetryCount,
+                Title = patient.Title,
+                UpdatedBy = patient.UpdatedBy,
+                UpdatedDate= patient.UpdatedDate,
+                ValidationCode = patient.ValidationCode,
+                ValidationCodeExpiresOn = patient.ValidationCodeExpiresOn
             };
         }
     }

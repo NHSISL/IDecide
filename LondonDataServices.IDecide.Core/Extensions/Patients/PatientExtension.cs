@@ -5,7 +5,7 @@
 using System.Linq;
 using Hl7.FhirPath.Sprache;
 using System.Text.RegularExpressions;
-using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
+using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 
 namespace LondonDataServices.IDecide.Core.Extensions.Patients
 {
@@ -17,12 +17,23 @@ namespace LondonDataServices.IDecide.Core.Extensions.Patients
             {
                 Address = RedactAddress(patient.Address),
                 DateOfBirth = patient.DateOfBirth,
-                EmailAddress = RedactEmail(patient.EmailAddress),
-                FirstName = RedactNames(patient.FirstName),
+                Email = RedactEmail(patient.Email),
+                GivenName = RedactNames(patient.GivenName),
                 NhsNumber = patient.NhsNumber,
-                PhoneNumber = RedactPhoneNumber(patient.PhoneNumber),
-                Postcode = RedactPostcode(patient.Postcode),
-                Surname = RedactNames(patient.Surname)
+                Phone = RedactPhoneNumber(patient.Phone),
+                PostCode = RedactPostcode(patient.PostCode),
+                Surname = RedactNames(patient.Surname),
+                CreatedBy = patient.CreatedBy,
+                CreatedDate = patient.CreatedDate,
+                Decisions = patient.Decisions,
+                Gender = patient.Gender,
+                Id = patient.Id,
+                RetryCount = patient.RetryCount,
+                Title = patient.Title,
+                UpdatedBy = patient.UpdatedBy,
+                UpdatedDate = patient.UpdatedDate,
+                ValidationCode = patient.ValidationCode,
+                ValidationCodeExpiresOn = patient.ValidationCodeExpiresOn
             };
 
             return redactedPatient;

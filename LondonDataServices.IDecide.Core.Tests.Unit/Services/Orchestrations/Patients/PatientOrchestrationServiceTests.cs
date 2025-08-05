@@ -14,6 +14,7 @@ using LondonDataServices.IDecide.Core.Models.Foundations.Pds.Exceptions;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
 using System.Collections.Generic;
 using System.Linq;
+using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Patients
 {

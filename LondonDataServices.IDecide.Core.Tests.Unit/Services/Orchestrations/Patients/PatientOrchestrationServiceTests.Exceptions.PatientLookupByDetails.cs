@@ -5,13 +5,12 @@
 using Moq;
 using FluentAssertions;
 using System.Threading.Tasks;
-using Task = System.Threading.Tasks.Task;
 using System;
 using Xeptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
 using Force.DeepCloner;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
-using Patient = LondonDataServices.IDecide.Core.Models.Foundations.Pds.Patient;
+using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Patients
 {

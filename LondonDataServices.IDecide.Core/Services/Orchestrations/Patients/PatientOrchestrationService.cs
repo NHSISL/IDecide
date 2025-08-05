@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Extensions.Patients;
+using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
 using LondonDataServices.IDecide.Core.Services.Foundations.Pds;
 

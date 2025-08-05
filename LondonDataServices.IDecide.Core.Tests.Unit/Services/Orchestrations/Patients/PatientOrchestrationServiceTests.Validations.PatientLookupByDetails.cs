@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
 using Force.DeepCloner;
 using System.Collections.Generic;
+using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Patients
 {

@@ -5,7 +5,7 @@
 using FluentAssertions;
 using Force.DeepCloner;
 using LondonDataServices.IDecide.Core.Extensions.Patients;
-using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
+using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Extensions.Patients
 {
