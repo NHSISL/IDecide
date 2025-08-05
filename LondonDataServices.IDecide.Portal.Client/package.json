@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "test": "vitest --dom validation",
+    "test": "npx playwright test",
     "preview": "vite preview"
   },
   "dependencies": {

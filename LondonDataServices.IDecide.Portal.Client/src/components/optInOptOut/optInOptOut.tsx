@@ -109,7 +109,7 @@ export const OptInOptOut: React.FC<OptInOptOutProps> = ({ createdPatient }) => {
                             className="nhsuk-button"
                             style={{ width: "100%", marginTop: "0.2rem" }}
                         >
-                            Submit
+                            Next
                         </button>
                     </form>
                 </Col>

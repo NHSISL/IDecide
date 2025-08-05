@@ -21,11 +21,12 @@ export const Confirmation: React.FC<ConfirmationProps> = ({ selectedOption, nhsN
     const [error, setError] = useState<string | null>(null);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name } = e.target;
+        const { name, checked } = e.target;
         setPrefs({
-            sms: name === "sms",
-            email: name === "email",
-            post: name === "post",
+            sms: false,
+            email: false,
+            post: false,
+            [name]: checked,
         });
     };
 
@@ -40,14 +41,12 @@ export const Confirmation: React.FC<ConfirmationProps> = ({ selectedOption, nhsN
         setError(null);
 
         const decision = new Decision({
-            id: "", // Let backend generate or use uuid if needed
             patientNhsNumber: nhsNumber,
             decisionChoice: selectedOption,
         });
 
         createDecisionMutation.mutate(decision, {
-            onSuccess: (createdDecision) => {
-                alert(`Your choice "${createdDecision.decisionChoice}" has been saved.`);
+            onSuccess: () => {
                 nextStep();
             },
             onError: (error: unknown) => {
@@ -57,7 +56,6 @@ export const Confirmation: React.FC<ConfirmationProps> = ({ selectedOption, nhsN
                 } else if (typeof error === "string") {
                     message = error;
                 } else if (isAxiosError(error)) {
-                    // Type guard for AxiosError
                     const data = error.response?.data;
                     if (data && typeof data === "object" && "message" in data && typeof (data as any).message === "string") {
                         message = (data as { message: string }).message;

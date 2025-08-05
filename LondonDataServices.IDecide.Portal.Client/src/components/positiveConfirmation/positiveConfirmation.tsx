@@ -1,26 +1,35 @@
 import React from "react";
 import { useStep } from "../context/stepContext";
 import { patientViewService } from "../../services/views/patientViewService";
-import { Patient } from "../../models/patients/patient";
-import { Row, Col } from "react-bootstrap";
+import { GenerateCodeRequest } from "../../models/patients/generateCodeRequest";
+import { Row, Col, Alert } from "react-bootstrap";
 
 interface PositiveConfirmationProps {
-    goToConfirmCode: (createdPatient: Patient) => void;
+    goToConfirmCode: (createdPatient: GenerateCodeRequest) => void;
 }
 
 const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirmCode }) => {
-    const { createdPatient } = useStep();
+    const { createdPatient, powerOfAttourney } = useStep();
     const updatePatient = patientViewService.useUpdatePatient();
-    const patientToUpdate = new Patient(createdPatient);
+
+    if (!createdPatient) {
+        return <div>No patient details available.</div>;
+    }
+
+    const patientToUpdate = new GenerateCodeRequest(createdPatient);
 
     const handleSubmit = (method: "Email" | "SMS" | "Letter") => {
-        console.log(createdPatient.nhsNumber + ',' + method);
         patientToUpdate.notificationPreference = method;
+
+        if (powerOfAttourney) {
+            patientToUpdate.poaFirstName = powerOfAttourney.firstName;
+            patientToUpdate.poaSurname = powerOfAttourney.surname;
+            patientToUpdate.poaRelationship = powerOfAttourney.relationship;
+        }
+
         updatePatient.mutate(patientToUpdate, {
-            onSuccess: (createdPatient) => {
-                console.log("Updated patient:", createdPatient.notificationPreference);
-                console.log("Updated patient Nhs Number:", createdPatient.nhsNumber);
-                goToConfirmCode(createdPatient);
+            onSuccess: () => {
+                goToConfirmCode(patientToUpdate);
             },
             onError: (error: unknown) => {
                 if (error instanceof Error) {
@@ -32,14 +41,19 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
         });
     };
 
-    if (!createdPatient) {
-        return <div>No patient details available.</div>;
-    }
-
     return (
         <Row className="custom-col-spacing">
             <Col xs={12} md={7} lg={7}>
                 <div className="mt-4">
+
+                    {powerOfAttourney && (
+                        <Alert variant="info" style={{ marginBottom: "1rem" }}>
+                            <strong>Power of Attorney Details:</strong><br />
+                            Name: <strong>{powerOfAttourney.firstName} {powerOfAttourney.surname}</strong>,&nbsp;
+                            Relationship: <strong>{powerOfAttourney.relationship}</strong>
+                        </Alert>
+                    )}
+
                     <h2>Confirmation required</h2>
                     <p>Please confirm these details are correct before continuing:</p>
                     <dl className="nhsuk-summary-list" style={{ marginBottom: "2rem" }}>
@@ -53,7 +67,7 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                         </div>
                         <div className="nhsuk-summary-list__row">
                             <dt className="nhsuk-summary-list__key">Mobile Number</dt>
-                            <dd className="nhsuk-summary-list__value">{createdPatient.mobileNumber}</dd>
+                            <dd className="nhsuk-summary-list__value">{createdPatient.phoneNumber}</dd>
                         </div>
                         <div className="nhsuk-summary-list__row">
                             <dt className="nhsuk-summary-list__key">Address</dt>
@@ -75,6 +89,7 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                             className="nhsuk-button"
                             style={{ flex: 1, minWidth: 120 }}
                             onClick={() => handleSubmit("Email")}
+                            disabled={!createdPatient.emailAddress}
                         >
                             Email
                         </button>
@@ -83,6 +98,7 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                             className="nhsuk-button"
                             style={{ flex: 1, minWidth: 120 }}
                             onClick={() => handleSubmit("SMS")}
+                            disabled={!createdPatient.phoneNumber}
                         >
                             SMS
                         </button>
@@ -91,6 +107,7 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                             className="nhsuk-button"
                             style={{ flex: 1, minWidth: 120 }}
                             onClick={() => handleSubmit("Letter")}
+                            disabled={!createdPatient.address}
                         >
                             Letter
                         </button>

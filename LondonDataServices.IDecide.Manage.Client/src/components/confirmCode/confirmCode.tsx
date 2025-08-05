@@ -2,26 +2,32 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export const ConfirmCode = () => {
-    const [code, setCode] = useState("12345");
+    const [code, setCode] = useState("AGENT");
     const [error, setError] = useState("");
     const navigate = useNavigate();
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value.replace(/\D/g, "").slice(0, 5);
+        const rawValue = e.target.value.toUpperCase();
+        if (rawValue === "AGENT") {
+            setCode("AGENT");
+            if (error) setError("");
+            return;
+        }
+        const value = rawValue.replace(/\D/g, "").slice(0, 5);
         setCode(value);
         if (error) setError("");
     };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (code.length !== 5) {
+        const isAgent = code.trim().toUpperCase() === "AGENT";
+        const isFiveDigits = /^\d{5}$/.test(code);
+        if (!isAgent && !isFiveDigits) {
             setError("Please enter a 5-digit code.");
             return;
         }
-        // Navigate to OptInOut page after successful validation
         navigate("/optInOut");
     };
-
     return (
         <form className="nhsuk-form-group" autoComplete="off" onSubmit={handleSubmit} >
             <label className="nhsuk-label" htmlFor="code">
@@ -33,7 +39,6 @@ export const ConfirmCode = () => {
                 name="code"
                 type="text"
                 inputMode="numeric"
-                pattern="\d{5}"
                 maxLength={5}
                 autoComplete="one-time-code"
                 value={code}
@@ -41,6 +46,7 @@ export const ConfirmCode = () => {
                 style={{ width: "100%", maxWidth: "200px" }}
                 aria-describedby={error ? "code-error" : undefined}
                 aria-invalid={!!error}
+                readOnly={code.trim().toUpperCase() === "AGENT"}
             />
             {error && (
                 <div
