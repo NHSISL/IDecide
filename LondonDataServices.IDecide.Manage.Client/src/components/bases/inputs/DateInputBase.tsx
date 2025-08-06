@@ -1,5 +1,5 @@
 import { FunctionComponent, ChangeEvent } from "react";
-import { Label, Input } from 'nhsuk-react-components'
+import { Label } from 'nhsuk-react-components'
 import { InputGroup, Form } from "react-bootstrap"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAsterisk } from "@fortawesome/free-solid-svg-icons";
@@ -32,7 +32,7 @@ const DateInputBase: FunctionComponent<DateInputBaseProps> = (props) => {
                         && (
                             <InputGroup.Text>{props.prependLabel}</InputGroup.Text>
                         )}
-                    <Input
+                    {/*     <Input
                         id={props.id}
                         name={props.name}
                         value={props.value}
@@ -40,7 +40,7 @@ const DateInputBase: FunctionComponent<DateInputBaseProps> = (props) => {
                         type={props.type}
                         placeholder={props.placeholder || ""}
                         error={props.error}
-                    />
+                    />*/}
                     {
                         props.appendLabel !== undefined
                         && props.appendLabel.length > 0

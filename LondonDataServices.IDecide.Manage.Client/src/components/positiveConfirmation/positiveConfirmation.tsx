@@ -1,6 +1,4 @@
-import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "nhsuk-react-components";
 
 const PositiveConfirmation = () => {
     const navigate = useNavigate();
