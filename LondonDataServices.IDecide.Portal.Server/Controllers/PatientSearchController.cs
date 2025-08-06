@@ -2,7 +2,6 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using System;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
@@ -25,7 +24,9 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
         [HttpPost("PostPatientByDetails")]
         public async ValueTask<ActionResult<Patient>> PostPatientByDetailsAsync([FromBody] PatientLookup patientLookup)
         {
-            throw new NotImplementedException();
+            Patient patient = await this.patientOrchestrationService.PatientLookupByDetailsAsync(patientLookup);
+
+            return Ok(patient);
         }
     }
 }

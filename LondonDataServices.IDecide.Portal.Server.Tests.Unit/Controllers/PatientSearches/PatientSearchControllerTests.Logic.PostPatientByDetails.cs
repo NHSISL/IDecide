@@ -15,7 +15,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Patien
     public partial class PatientSearchControllerTests
     {
         [Fact]
-        public async Task ShouldReturnCreatedOnPostAsync()
+        public async Task ShouldReturnOkOnPostAsync()
         {
             // given
             string randomString = GetRandomString();
