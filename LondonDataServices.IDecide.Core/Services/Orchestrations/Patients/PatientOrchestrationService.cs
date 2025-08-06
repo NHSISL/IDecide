@@ -36,7 +36,9 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
 
         public async ValueTask<Patient> PatientLookupByNhsNumberAsync(string nhsNumber)
         {
+            ValidatePatientLookupByNhsNumberArguments(nhsNumber);
             Patient maybePatient = await this.pdsService.PatientLookupByNhsNumberAsync(nhsNumber);
+            ValidatePatientIsNotNull(maybePatient);
             Patient redactedPatient = maybePatient.Redact();
 
             return redactedPatient;
