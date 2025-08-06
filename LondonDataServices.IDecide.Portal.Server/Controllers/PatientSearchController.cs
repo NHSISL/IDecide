@@ -50,5 +50,33 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
                 return InternalServerError(patientOrchestrationServiceException);
             }
         }
+
+        [HttpPost("PostPatientByNhsNumber")]
+        public async ValueTask<ActionResult<Patient>> PostPatientByNhsNumberAsync([FromBody] string nhsNumber)
+        {
+            try
+            {
+                Patient patient = await this.patientOrchestrationService.PatientLookupByNhsNumberAsync(nhsNumber);
+
+                return Ok(patient);
+            }
+            catch (PatientOrchestrationValidationException patientOrchestrationValidationException)
+            {
+                return BadRequest(patientOrchestrationValidationException.InnerException);
+            }
+            catch (PatientOrchestrationDependencyValidationException
+                patientOrchestrationDependencyValidationException)
+            {
+                return BadRequest(patientOrchestrationDependencyValidationException.InnerException);
+            }
+            catch (PatientOrchestrationDependencyException patientOrchestrationDependencyException)
+            {
+                return InternalServerError(patientOrchestrationDependencyException);
+            }
+            catch (PatientOrchestrationServiceException patientOrchestrationServiceException)
+            {
+                return InternalServerError(patientOrchestrationServiceException);
+            }
+        }
     }
 }

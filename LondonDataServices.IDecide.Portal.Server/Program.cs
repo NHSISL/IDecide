@@ -8,6 +8,8 @@ using Attrify.Extensions;
 using Attrify.InvisibleApi.Models;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Brokers.Storages.Sql;
+using LondonDataServices.IDecide.Core.Services.Foundations.Notifications;
+using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Services.Foundations.Pds;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
 using Microsoft.AspNetCore.Builder;
@@ -124,6 +126,8 @@ namespace LondonDataServices.IDecide.Portal.Server
         private static void AddFoundationServices(IServiceCollection services)
         { 
             services.AddTransient<IPdsService, PdsService>();
+            services.AddTransient<IPatientService, PatientService>();
+            services.AddTransient<INotificationService, NotificationService>();
         }
 
         private static void AddProcessingServices(IServiceCollection services)
