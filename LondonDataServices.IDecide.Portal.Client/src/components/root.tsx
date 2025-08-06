@@ -33,14 +33,14 @@ export default function Root() {
                 <Container fluid>
                     <Row>
                         {!doNotShowLeftPanel && (
-                            <Col md={3}>
+                            <Col md={4}>
                                 <LeftProgress
                                     currentStepIndex={currentStepIndex}
                                     setCurrentStepIndex={setCurrentStepIndex}
                                 />
                             </Col>
                         )}
-                        <Col md={doNotShowLeftPanel ? 12 : 9}>
+                        <Col md={doNotShowLeftPanel ? 12 : 8}>
                             <div className="home-content">
                                 <Outlet />
                             </div>

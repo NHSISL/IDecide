@@ -33,7 +33,7 @@ export const OptInOptOut: React.FC<OptInOptOutProps> = ({ createdPatient }) => {
     return (
         <>
             <Row className="custom-col-spacing">
-                <Col xs={12} md={7} lg={7}>
+                <Col xs={12} md={12} lg={7}>
                     <form onSubmit={handleSubmit}>
                         {/* Opt-Out Card */}
                         <div
@@ -114,7 +114,7 @@ export const OptInOptOut: React.FC<OptInOptOutProps> = ({ createdPatient }) => {
                         </button>
                     </form>
                 </Col>
-                <Col xs={12} md={5} lg={5} className="custom-col-spacing">
+                <Col xs={12} md={12} lg={5} className="custom-col-spacing">
                     <div
                         className="p-4 mb-4"
                         style={{
