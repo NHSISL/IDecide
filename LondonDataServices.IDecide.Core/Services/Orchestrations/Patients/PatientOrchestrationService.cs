@@ -27,21 +27,25 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             TryCatch(async () =>
             {
                 ValidatePatientLookupIsNotNull(patientLookup);
-                PatientLookup responsePatientLookup = await this.pdsService.PatientLookupByDetailsAsync(patientLookup);
+
+                PatientLookup responsePatientLookup =
+                    await this.pdsService.PatientLookupByDetailsAsync(patientLookup);
+
                 ValidatePatientLookupPatientIsExactMatch(responsePatientLookup);
                 Patient redactedPatient = responsePatientLookup.Patients.First().Redact();
 
                 return redactedPatient;
             });
 
-        public async ValueTask<Patient> PatientLookupByNhsNumberAsync(string nhsNumber)
-        {
-            ValidatePatientLookupByNhsNumberArguments(nhsNumber);
-            Patient maybePatient = await this.pdsService.PatientLookupByNhsNumberAsync(nhsNumber);
-            ValidatePatientIsNotNull(maybePatient);
-            Patient redactedPatient = maybePatient.Redact();
+        public ValueTask<Patient> PatientLookupByNhsNumberAsync(string nhsNumber) =>
+            TryCatch(async () =>
+            {
+                ValidatePatientLookupByNhsNumberArguments(nhsNumber);
+                Patient maybePatient = await this.pdsService.PatientLookupByNhsNumberAsync(nhsNumber);
+                ValidatePatientIsNotNull(maybePatient);
+                Patient redactedPatient = maybePatient.Redact();
 
-            return redactedPatient;
-        }
+                return redactedPatient;
+            });
     }
 }

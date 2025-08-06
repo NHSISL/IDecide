@@ -23,7 +23,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             // given
             var invalidPatientOrchestrationArgumentException =
                 new InvalidPatientOrchestrationArgumentException(
-                    "Invalid patient orcehstration argument. Please correct the errors and try again.");
+                    "Invalid patient orchestration argument. Please correct the errors and try again.");
 
             invalidPatientOrchestrationArgumentException.AddData(
                 key: "nhsNumber",
@@ -31,7 +31,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             var expectedPatientOrchestrationValidationException =
                 new PatientOrchestrationValidationException(
-                    message: "Patient orchesration validation error occurred, please fix errors and try again.",
+                    message: "Patient orchestration validation error occurred, please fix the errors and try again.",
                     innerException: invalidPatientOrchestrationArgumentException);
 
             // when
@@ -59,7 +59,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             var expectedPatientOrchestrationValidationException =
                 new PatientOrchestrationValidationException(
                     message: "Patient orchestration validation error occurred, " +
-                        "fix the errors and try again.",
+                        "please fix the errors and try again.",
                     innerException: nullPatientException);
 
             this.pdsServiceMock.Setup(service =>

@@ -28,7 +28,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             var expectedPatientOrchestrationValidationException =
                 new PatientOrchestrationValidationException(
                     message: "Patient orchestration validation error occurred, " +
-                        "fix the errors and try again.",
+                        "please fix the errors and try again.",
                     innerException: nullPatientLookupException);
 
             this.pdsServiceMock.Setup(service =>
@@ -76,7 +76,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             var expectedPatientOrchestrationValidationException =
                 new PatientOrchestrationValidationException(
                     message: "Patient orchestration validation error occurred, " +
-                        "fix the errors and try again.",
+                        "please fix the errors and try again.",
                     innerException: nullPatientLookupException);
 
             this.pdsServiceMock.Setup(service =>
@@ -128,7 +128,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             var expectedPatientOrchestrationValidationException =
                 new PatientOrchestrationValidationException(
                     message: "Patient orchestration validation error occurred, " +
-                        "fix the errors and try again.",
+                        "please fix the errors and try again.",
                     innerException: nullPatientLookupException);
 
             this.pdsServiceMock.Setup(service =>
