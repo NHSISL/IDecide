@@ -70,7 +70,7 @@ export const Confirmation: React.FC<ConfirmationProps> = ({ selectedOption, nhsN
     return (
         <>
             <Row className="custom-col-spacing">
-                <Col xs={12} md={7} lg={7}>
+                <Col xs={12} md={6} lg={6}>
                     <Alert variant="success">
                         <strong>Selected Option: &nbsp;</strong>
                         {selectedOption === "optin" ? "Opt-In" : selectedOption === "optout" ? "Opt-Out" : "Not selected"}
@@ -138,12 +138,40 @@ export const Confirmation: React.FC<ConfirmationProps> = ({ selectedOption, nhsN
                             Save Preferences
                         </button>
 
-                        <div style={{ color: "#505a5f" }}>
-                            <strong>You can come back to this site and change your preference at any time.</strong>
-                        </div>
+                       
                     </form>
                 </Col>
-                <Col xs={12} md={5} lg={5} className="custom-col-spacing">
+                <Col xs={12} md={6} lg={6} className="custom-col-spacing">
+                    <div
+                        className="p-4 mb-4"
+                        style={{
+                            background: "#f4f8fb",
+                            border: "1px solid #d1e3f0",
+                            borderRadius: "8px",
+                            boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+                        }}
+                    >
+                        <h2 className="mb-3" style={{ color: "#005eb8" }}>Help & Guidance</h2>
+                        <h3>About this step</h3>
+                        <p>
+                            You are about to save your opt-out preference. This means you are choosing how your data will be shared for secondary uses within The London Data Service.
+                        </p>
+                        <p>
+                            Please select how you would like to be notified when your data has flowed into The London Data Service. You can choose to receive updates by SMS, email, or letter.
+                        </p>
+                        <ul>
+                            <li><strong>SMS</strong> - a text message will be sent to your mobile phone</li>
+                            <li><strong>Email</strong> - a message will be sent to your registered email address</li>
+                            <li><strong>Letter</strong> - a letter will be sent to your home address (please allow up to 3 days for delivery)</li>
+                        </ul>
+                        <p>
+                            You can return to this site at any time to change your notification preferences.
+                        </p>
+                        <h3>Need help?</h3>
+                        <p>
+                            If you have any questions or need assistance, please contact our helpdesk.
+                        </p>
+                    </div>
                 </Col>
             </Row>
         </>

@@ -53,7 +53,7 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
 
     return (
         <Row className="custom-col-spacing">
-            <Col xs={12} md={7} lg={7}>
+            <Col xs={12} md={5} lg={5}>
                 <form className="nhsuk-form-group" autoComplete="off" onSubmit={handleSubmit} >
                     <label className="nhsuk-label" htmlFor="code">
                         Enter Code
@@ -87,14 +87,44 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
                     <button
                         className="nhsuk-button"
                         type="submit"
-                        style={{ width: "100%", marginTop: "1.5rem" }}
+                        style={{ width: "70%", marginTop: "1.5rem" }}
                         disabled={confirmCodeMutation.isPending}
                     >
                         {confirmCodeMutation.isPending ? "Submitting..." : "Submit"}
                     </button>
                 </form>
             </Col>
-            <Col xs={12} md={5} lg={5} className="custom-col-spacing">
+            <Col xs={12} md={7} lg={7} className="custom-col-spacing">
+                <div
+                    className="p-4 mb-4"
+                    style={{
+                        background: "#f4f8fb",
+                        border: "1px solid #d1e3f0",
+                        borderRadius: "8px",
+                        boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+                    }}
+                >
+                    <h2 className="mb-3" style={{ color: "#005eb8" }}>Help & Guidance</h2>
+                    <h3>How do I get my code?</h3>
+                    <p>
+                        A 5-digit code has been sent to you by one of the following methods:
+                    </p>
+                    <ul>
+                        <li><strong>SMS</strong> (text message) to your mobile phone</li>
+                        <li><strong>Email</strong> to your registered email address</li>
+                        <li><strong>Letter</strong> to your home address (please allow up to 3 days for delivery)</li>
+                    </ul>
+                    <p>
+                        Once you receive your code, please enter it in the box provided. This helps us confirm that the contact details you have provided match our records.
+                    </p>
+                    <p>
+                        If you have not received your code, please check your spam or junk email folder, or allow extra time if you are waiting for a letter.
+                    </p>
+                    <h3>What if I enter the wrong code?</h3>
+                    <p>
+                        If you enter the wrong code 3 times, you will be prompted to call our helpdesk to complete your opt-in or opt-out request.
+                    </p>
+                </div>
             </Col>
         </Row>
     );
