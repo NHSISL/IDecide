@@ -6,7 +6,9 @@ using System.IO;
 using System.Text.Json;
 using Attrify.Extensions;
 using Attrify.InvisibleApi.Models;
+using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Brokers.Storages.Sql;
+using LondonDataServices.IDecide.Core.Services.Foundations.Pds;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -61,10 +63,10 @@ namespace LondonDataServices.IDecide.Portal.Server
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddControllers();
+            AddBrokers(builder.Services, builder.Configuration);
+            AddFoundationServices(builder.Services);
             AddOrchestrationServices(builder.Services, builder.Configuration);
             //     AddProviders(builder.Services, builder.Configuration);
-            //     AddBrokers(builder.Services, builder.Configuration);
-            //     AddFoundationServices(builder.Services);
             //     AddProcessingServices(builder.Services);
             //     AddCoordinationServices(builder.Services, builder.Configuration);
 
@@ -115,10 +117,14 @@ namespace LondonDataServices.IDecide.Portal.Server
         { }
 
         private static void AddBrokers(IServiceCollection services, IConfiguration configuration)
-        { }
+        {
+            services.AddTransient<ILoggingBroker, LoggingBroker>();
+        }
 
         private static void AddFoundationServices(IServiceCollection services)
-        { }
+        { 
+            services.AddTransient<IPdsService, PdsService>();
+        }
 
         private static void AddProcessingServices(IServiceCollection services)
         { }
