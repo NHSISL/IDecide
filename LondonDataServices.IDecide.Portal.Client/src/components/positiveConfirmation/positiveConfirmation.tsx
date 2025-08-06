@@ -1,5 +1,5 @@
 import React from "react";
-import { useStep } from "../context/stepContext";
+import { useStep } from "../../hooks/useStep";
 import { patientViewService } from "../../services/views/patientViewService";
 import { GenerateCodeRequest } from "../../models/patients/generateCodeRequest";
 import { Row, Col, Alert } from "react-bootstrap";
@@ -115,6 +115,7 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                 </div>
             </Col>
             <Col xs={12} md={5} lg={5} className="custom-col-spacing">
+            
             </Col>
         </Row>
     );

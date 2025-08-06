@@ -1,18 +1,24 @@
 import React, { useState } from "react";
-import { useStep } from "../context/stepContext";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
+import { useStep } from "../../hooks/useStep";
 import { Patient } from "../../models/patients/patient";
 import { Row, Col } from "react-bootstrap";
 
 interface OptInOptOutProps {
-    createdPatient: Patient;
+    createdPatient: Patient | null;
 }
 
 export const OptInOptOut: React.FC<OptInOptOutProps> = ({ createdPatient }) => {
     const [selectedOption, setSelectedOption] = useState<"optout" | "optin" | "">("");
     const [error, setError] = useState("");
     const { nextStep } = useStep();
+
+    if (!createdPatient) {
+        return (
+            <div className="nhsuk-error-message" role="alert">
+                <strong>Error:</strong> Patient information is missing.
+            </div>
+        );
+    }
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -21,18 +27,13 @@ export const OptInOptOut: React.FC<OptInOptOutProps> = ({ createdPatient }) => {
             return;
         }
         setError("");
-
-        console.log(createdPatient.nhsNumber)
-        console.log(selectedOption)
         nextStep(selectedOption, createdPatient.nhsNumber);
     };
 
     return (
         <>
-            
-
             <Row className="custom-col-spacing">
-                <Col xs={12} md={7} lg={7}>
+                <Col xs={12} md={12} lg={7}>
                     <form onSubmit={handleSubmit}>
                         {/* Opt-Out Card */}
                         <div
@@ -113,7 +114,7 @@ export const OptInOptOut: React.FC<OptInOptOutProps> = ({ createdPatient }) => {
                         </button>
                     </form>
                 </Col>
-                <Col xs={12} md={5} lg={5} className="custom-col-spacing">
+                <Col xs={12} md={12} lg={5} className="custom-col-spacing">
                     <div
                         className="p-4 mb-4"
                         style={{
@@ -138,7 +139,6 @@ export const OptInOptOut: React.FC<OptInOptOutProps> = ({ createdPatient }) => {
                             need to be referred to hospital or get a prescription.
                         </p>
                     </div>
-
                 </Col>
             </Row>
         </>

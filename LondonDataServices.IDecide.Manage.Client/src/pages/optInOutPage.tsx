@@ -1,5 +1,4 @@
-﻿import React from "react";
-import { Container } from "react-bootstrap";
+﻿import { Container } from "react-bootstrap";
 import OptInOptOut from "../components/optInOptOut/optInOptOut";
 
 export const OptInOutPage = () => {

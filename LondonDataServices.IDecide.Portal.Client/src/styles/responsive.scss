@@ -49,6 +49,14 @@
         font-size: 1.1rem;
         padding: 1rem 0.5rem;
     }
+
+    .header-padding-top {
+        padding-top: 30px;
+    }
+
+    .accessibility-img-link accessibility-icon-link {
+        padding-top: 40px !important;
+    }
 }
 
 /* IPAD/TABLET: max-width: 900px, 768px, 767.98px */
@@ -76,6 +84,14 @@
     .home-contents {
         /* padding-bottom: 80px; */
     }
+
+    .header-padding-top {
+        padding-top: 30px;
+    }
+
+    .accessibility-img-link accessibility-icon-link {
+        padding-top: 40px !important;
+    }
 }
 
 @media (max-width: 768px), (max-width: 767.98px) {
@@ -102,6 +118,9 @@
         right: 2.2em;
         z-index: 1100;
         background: transparent;
+    }
+    .header-padding-top {
+        padding-top: 30px;
     }
 }
 

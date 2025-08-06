@@ -1,5 +1,4 @@
-﻿import React from "react";
-import PositiveConfirmation from "../components/positiveConfirmation/positiveConfirmation";
+﻿import PositiveConfirmation from "../components/positiveConfirmation/positiveConfirmation";
 import { Card, Container } from "nhsuk-react-components";
 
 export const SendCodePage = () => {

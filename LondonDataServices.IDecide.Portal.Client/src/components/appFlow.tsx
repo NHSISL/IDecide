@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Button } from "react-bootstrap";
-import { useStep } from "./context/stepContext";
 import { ConfirmDetailsPage } from "../pages/confirmDetailsPage";
 import { SearchByNhsNumberPage } from "../pages/searchByNhsNumberPage";
 import { SearchByDetailsPage } from "../pages/searchByDetailsPage";
@@ -9,6 +7,7 @@ import { OptInOutPage } from "../pages/optInOutPage";
 import PositiveConfirmation from "./positiveConfirmation/positiveConfirmation";
 import { ConfirmationPage } from "../pages/confirmationPage";
 import { ThankyouPage } from "../pages/thankyouPage";
+import { useStep } from "../hooks/useStep";
 
 interface AppFlowProps {
     powerOfAttourney?: boolean;
@@ -22,12 +21,6 @@ export const AppFlow: React.FC<AppFlowProps> = ({ powerOfAttourney }) => {
     useEffect(() => {
         setCurrentStepIndex(0);
     }, [setCurrentStepIndex]);
-
-    const goToNextMainStep = () => {
-        setCurrentStepIndex((prev: number) => Math.min(prev + 1, steps.length - 1));
-        setNhsNumberSubStep(0);
-        setConfirmationSubStep(0);
-    };
 
     // Steps array moved inside so it can use the prop
     const steps = [
@@ -48,8 +41,8 @@ export const AppFlow: React.FC<AppFlowProps> = ({ powerOfAttourney }) => {
                 {
                     key: "searchByDetails",
                     label: "Search By Details",
-                    render: (goBack: () => void, nextStep: () => void) => (
-                        <SearchByDetailsPage onBack={goBack} nextStep={nextStep} powerOfAttourney={powerOfAttourney} />
+                    render: (goBack: () => void) => (
+                        <SearchByDetailsPage onBack={goBack} powerOfAttourney={powerOfAttourney} />
                     ),
                 },
             ],
@@ -106,8 +99,7 @@ export const AppFlow: React.FC<AppFlowProps> = ({ powerOfAttourney }) => {
                 content = steps[0].subSteps?.[0]?.render?.(() => setNhsNumberSubStep(1)) ?? null;
             } else {
                 content = steps[0].subSteps?.[1]?.render?.(
-                    () => setNhsNumberSubStep(0),
-                    goToNextMainStep
+                    () => setNhsNumberSubStep(0)
                 ) ?? null;
             }
             break;
@@ -125,20 +117,21 @@ export const AppFlow: React.FC<AppFlowProps> = ({ powerOfAttourney }) => {
                     () => setConfirmationSubStep(1)
                 ) ?? null;
             } else {
-                content = steps[2].subSteps?.[1]?.render?.() ?? null;
+                // Pass a no-op function as required
+                content = steps[2].subSteps?.[1]?.render?.(() => { }) ?? null;
             }
             break;
         case 3: // Opt In/Out
             label = steps[3]?.label ?? "";
-            content = steps[3]?.render?.() ?? null;
+            content = steps[3]?.render?.(() => { }) ?? null;
             break;
         case 4: // Confirmation
             label = steps[4]?.label ?? "";
-            content = steps[4]?.render?.() ?? null;
+            content = steps[4]?.render?.(() => { }) ?? null;
             break;
         case 5: // Thank You
             label = steps[5]?.label ?? "";
-            content = steps[5]?.render?.() ?? null;
+            content = steps[5]?.render?.(() => { }) ?? null;
             break;
         default:
             label = "";

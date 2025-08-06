@@ -116,7 +116,7 @@ export const Home = () => {
                 </p>
                 <Button
                     onClick={() => navigate("/optOut")}
-                    style={{ margin: "0 0 1rem 1rem", width: 160, fontWeight: 600, minHeight: 75 }}>
+                    style={{ margin: "0 0 1rem 1rem", width: 260, fontWeight: 600, minHeight: 75 }}>
                     Start
                 </Button>
 

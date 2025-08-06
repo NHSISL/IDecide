@@ -1,5 +1,4 @@
-﻿import React from "react";
-import { Container, Card, Row, Col, Button } from "react-bootstrap";
+﻿import { Container, Card, Row, Col } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import HeaderComponent from "../../components/layouts/header";
 import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';

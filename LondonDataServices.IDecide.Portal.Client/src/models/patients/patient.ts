@@ -10,6 +10,7 @@ export class Patient {
     public verificationCode?: string;
     public notificationPreference?: string;
     public dateOfBirth?: Date;
+    public recaptchaToken?: string;
     public createdBy?: string;
     public createdDate?: Date;
     public updatedBy?: string;
@@ -27,6 +28,7 @@ export class Patient {
         this.verificationCode = patient.verificationCode || "";
         this.notificationPreference = patient.notificationPreference || "";
         this.dateOfBirth = patient.dateOfBirth ? new Date(patient.dateOfBirth) : undefined;
+        this.recaptchaToken = patient.recaptchaToken || "";
         this.createdBy = patient.createdBy || "";
         this.createdDate = patient.createdDate ? new Date(patient.createdDate) : undefined;
         this.updatedBy = patient.updatedBy || "";

@@ -1,5 +1,4 @@
-﻿import React from "react";
-import { Container, Alert, Button, Col, Row } from "react-bootstrap";
+﻿import { Container, Alert, Button, Col, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
 export const ThankyouPage = () => {
