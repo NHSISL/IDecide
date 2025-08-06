@@ -13,9 +13,9 @@ using LondonDataServices.IDecide.Core.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Brokers.Storages.Sql;
 using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
 using LondonDataServices.IDecide.Core.Models.Securities;
+using LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes;
 using Microsoft.Data.SqlClient;
 using Moq;
-using LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes;
 using Tynamix.ObjectFiller;
 using Xeptions;
 
@@ -136,8 +136,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                 .OnProperty(decisionType => decisionType.CreatedBy).Use(userId)
                 .OnProperty(decisionType => decisionType.UpdatedBy).Use(userId)
                 .OnProperty(decisionType => decisionType.Decisions).IgnoreIt();
-
-            // TODO: Complete the filler setup e.g. ignore related properties etc...
 
             return filler;
         }
