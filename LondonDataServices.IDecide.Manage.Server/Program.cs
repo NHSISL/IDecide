@@ -19,7 +19,6 @@ using LondonDataServices.IDecide.Core.Brokers.Notifications;
 using LondonDataServices.IDecide.Core.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Brokers.Storages.Sql;
 using LondonDataServices.IDecide.Core.Models.Foundations.Audits;
-using LondonDataServices.IDecide.Core.Services.Audits;
 using LondonDataServices.IDecide.Core.Services.Foundations.Audits;
 using LondonDataServices.IDecide.Core.Services.Foundations.Pds;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -91,12 +90,12 @@ namespace LondonDataServices.IDecide.Manage.Server
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddControllers();
-          //  AddProviders(builder.Services, builder.Configuration);
-          //  AddBrokers(builder.Services, builder.Configuration);
-          //  AddFoundationServices(builder.Services);
-          //  AddProcessingServices(builder.Services);
-          //  AddOrchestrationServices(builder.Services, builder.Configuration);
-          //  AddCoordinationServices(builder.Services, builder.Configuration);
+            //  AddProviders(builder.Services, builder.Configuration);
+            //  AddBrokers(builder.Services, builder.Configuration);
+            //  AddFoundationServices(builder.Services);
+            //  AddProcessingServices(builder.Services);
+            //  AddOrchestrationServices(builder.Services, builder.Configuration);
+            //  AddCoordinationServices(builder.Services, builder.Configuration);
 
             // Register IConfiguration to be available for dependency injection
             builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
