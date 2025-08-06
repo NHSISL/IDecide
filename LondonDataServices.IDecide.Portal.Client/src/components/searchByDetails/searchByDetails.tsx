@@ -186,7 +186,7 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
 
                         <Card cardType="feature">
                             <Card.Content>
-                                <Card.Heading>Details of the Person You Are Representing</Card.Heading>
+                                <Card.Heading>My Details</Card.Heading>
 
                                 <div className={`nhsuk-form-group${errors.surname ? " nhsuk-form-group--error" : ""}`}>
                                     <label className="nhsuk-label" htmlFor="surname">

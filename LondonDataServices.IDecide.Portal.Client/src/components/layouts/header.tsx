@@ -89,16 +89,17 @@ const HeaderComponent: React.FC = () => {
                         left: 0,
                         width: "100vw",
                         height: "20px",
-                        background: "red",
+                        background: "#222",
                         zIndex: 2000,
                         display: "flex",
                         alignItems: "center",     
-                        justifyContent: "center",
+                        justifyContent: "center"
                     }}
                 >
                     <div className="test-env-banner">
-                        <small>
-                            <strong>Test Environment:</strong> This website is for demonstration and testing purposes only. Any information you enter here will not be saved to real patient records or used for clinical care. Please do not enter real patient data.
+                        <small style={{ color: "#fff", fontWeight: 600, letterSpacing: "0.02em" }}>
+                            <strong style={{ color: "#fff", textDecoration: "underline" }}>Test Environment:</strong>
+                            &nbsp;This website is for demonstration and testing purposes only. Any information you enter here will not be saved to real patient records or used for clinical care. Please do not enter real patient data.
                         </small>
                     </div>
                 </div>
