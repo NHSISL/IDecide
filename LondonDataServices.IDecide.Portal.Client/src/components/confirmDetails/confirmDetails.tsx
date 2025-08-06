@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useStep } from "../context/stepContext";
+import { useStep } from "../../hooks/useStep";
 import { Row, Col, Alert } from "react-bootstrap";
 
 interface ConfirmDetailsProps {

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useState, ReactNode } from "react";
 import { Patient } from "../../models/patients/patient";
 import { PowerOfAttourney } from "../../models/powerOfAttourneys/powerOfAttourney";
 
@@ -65,10 +65,4 @@ export const StepProvider = ({ children }: StepProviderProps) => {
     );
 };
 
-export const useStep = () => {
-    const context = useContext(StepContext);
-    if (!context) {
-        throw new Error("useStep must be used within a StepProvider");
-    }
-    return context;
-};
+export { StepContext };

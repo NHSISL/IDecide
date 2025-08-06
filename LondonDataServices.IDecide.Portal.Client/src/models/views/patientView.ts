@@ -24,7 +24,7 @@ export class PatientView {
         address?: string,
         postcode?: string,
         dateOfBirth?: Date,
-        phoneNumber?: Date,
+        phoneNumber?: string,
         verificationCode?: string,
         notificationPreference?: string,
         createdBy?: string,
