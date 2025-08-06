@@ -2,18 +2,16 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using System;
 using System.IO;
 using System.Text.Json;
 using Attrify.Extensions;
 using Attrify.InvisibleApi.Models;
 using LondonDataServices.IDecide.Core.Brokers.Storages.Sql;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Identity.Web;
 
 namespace LondonDataServices.IDecide.Portal.Server
 {
@@ -63,12 +61,12 @@ namespace LondonDataServices.IDecide.Portal.Server
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddControllers();
-     //     AddProviders(builder.Services, builder.Configuration);
-     //     AddBrokers(builder.Services, builder.Configuration);
-     //     AddFoundationServices(builder.Services);
-     //     AddProcessingServices(builder.Services);
-     //     AddOrchestrationServices(builder.Services, builder.Configuration);
-     //     AddCoordinationServices(builder.Services, builder.Configuration);
+            AddOrchestrationServices(builder.Services, builder.Configuration);
+            //     AddProviders(builder.Services, builder.Configuration);
+            //     AddBrokers(builder.Services, builder.Configuration);
+            //     AddFoundationServices(builder.Services);
+            //     AddProcessingServices(builder.Services);
+            //     AddCoordinationServices(builder.Services, builder.Configuration);
 
             // Register IConfiguration to be available for dependency injection
             builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
@@ -126,7 +124,9 @@ namespace LondonDataServices.IDecide.Portal.Server
         { }
 
         private static void AddOrchestrationServices(IServiceCollection services, IConfiguration configuration)
-        { }
+        {
+            services.AddTransient<IPatientOrchestrationService, PatientOrchestrationService>(); 
+        }
 
         private static void AddCoordinationServices(IServiceCollection services, IConfiguration configuration)
         { }
