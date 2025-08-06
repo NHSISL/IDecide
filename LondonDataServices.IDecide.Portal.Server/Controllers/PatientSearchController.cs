@@ -5,14 +5,16 @@
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
+using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
 using Microsoft.AspNetCore.Mvc;
+using RESTFulSense.Controllers;
 
 namespace LondonDataServices.IDecide.Portal.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class PatientSearchController : ControllerBase
+    public class PatientSearchController : RESTFulController
     {
         private readonly IPatientOrchestrationService patientOrchestrationService;
 
@@ -24,9 +26,29 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
         [HttpPost("PostPatientByDetails")]
         public async ValueTask<ActionResult<Patient>> PostPatientByDetailsAsync([FromBody] PatientLookup patientLookup)
         {
-            Patient patient = await this.patientOrchestrationService.PatientLookupByDetailsAsync(patientLookup);
+            try
+            {
+                Patient patient = await this.patientOrchestrationService.PatientLookupByDetailsAsync(patientLookup);
 
-            return Ok(patient);
+                return Ok(patient);
+            }
+            catch (PatientOrchestrationValidationException patientOrchestrationValidationException)
+            {
+                return BadRequest(patientOrchestrationValidationException.InnerException);
+            }
+            catch (PatientOrchestrationDependencyValidationException
+                patientOrchestrationDependencyValidationException)
+            {
+                return BadRequest(patientOrchestrationDependencyValidationException.InnerException);
+            }
+            catch (PatientOrchestrationDependencyException patientOrchestrationDependencyException)
+            {
+                return InternalServerError(patientOrchestrationDependencyException);
+            }
+            catch (PatientOrchestrationServiceException patientOrchestrationServiceException)
+            {
+                return InternalServerError(patientOrchestrationServiceException);
+            }
         }
     }
 }

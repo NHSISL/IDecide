@@ -2,20 +2,20 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using System.Collections.Generic;
-using System.Linq;
 using System;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
 using LondonDataServices.IDecide.Portal.Server.Controllers;
-using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Tynamix.ObjectFiller;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
+using Xeptions;
+using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
+using RESTFulSense.Controllers;
 
 namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.PatientSearches
 {
-    public partial class PatientSearchControllerTests : ControllerBase
+    public partial class PatientSearchControllerTests : RESTFulController
     {
         private readonly Mock<IPatientOrchestrationService> patientOrchestrationServiceMock;
         private readonly PatientSearchController patientSearchController;
@@ -26,6 +26,40 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Patien
 
             this.patientSearchController = 
                 new PatientSearchController(this.patientOrchestrationServiceMock.Object);
+        }
+
+        public static TheoryData<Xeption> ValidationExceptions()
+        {
+            var someInnerException = new Xeption();
+            string someMessage = GetRandomString();
+
+            return new TheoryData<Xeption>
+            {
+                new PatientOrchestrationValidationException(
+                    message: someMessage,
+                    innerException: someInnerException),
+
+                new PatientOrchestrationDependencyValidationException(
+                    message: someMessage,
+                    innerException: someInnerException)
+            };
+        }
+
+        public static TheoryData<Xeption> ServerExceptions()
+        {
+            var someInnerException = new Xeption();
+            string someMessage = GetRandomString();
+
+            return new TheoryData<Xeption>
+            {
+                new PatientOrchestrationDependencyException(
+                    message: someMessage,
+                    innerException: someInnerException),
+
+                new PatientOrchestrationServiceException(
+                    message: someMessage,
+                    innerException: someInnerException)
+            };
         }
 
         private static int GetRandomNumber() =>

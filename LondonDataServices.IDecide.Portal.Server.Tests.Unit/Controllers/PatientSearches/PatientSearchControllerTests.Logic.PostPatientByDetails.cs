@@ -21,7 +21,6 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Patien
             string randomString = GetRandomString();
             PatientLookup randomPatientLookup = GetRandomSearchPatientLookup(randomString);
             PatientLookup inputPatientLookup = randomPatientLookup;
-            PatientLookup updatedPatientLookup = inputPatientLookup.DeepClone();
             Patient randomPatient = GetRandomPatient(randomString);
             Patient outputPatient = randomPatient.DeepClone();
             Patient expectedPatient = outputPatient.DeepClone();
