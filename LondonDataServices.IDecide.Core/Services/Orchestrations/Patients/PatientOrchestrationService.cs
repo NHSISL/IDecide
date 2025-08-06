@@ -33,5 +33,13 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
 
                 return redactedPatient;
             });
+
+        public async ValueTask<Patient> PatientLookupByNhsNumberAsync(string nhsNumber)
+        {
+            Patient maybePatient = await this.pdsService.PatientLookupByNhsNumberAsync(nhsNumber);
+            Patient redactedPatient = maybePatient.Redact();
+
+            return redactedPatient;
+        }
     }
 }
