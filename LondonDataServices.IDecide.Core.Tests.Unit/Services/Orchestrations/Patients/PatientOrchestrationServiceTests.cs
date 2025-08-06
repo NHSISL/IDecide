@@ -15,23 +15,32 @@ using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
 using System.Collections.Generic;
 using System.Linq;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
+using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
+using LondonDataServices.IDecide.Core.Services.Foundations.Notifications;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Patients
 {
     public partial class PatientOrchestrationServiceTests
     {
-        private readonly Mock<IPdsService> pdsServiceMock = new Mock<IPdsService>();
         private readonly Mock<ILoggingBroker> loggingBrokerMock = new Mock<ILoggingBroker>();
+        private readonly Mock<IPdsService> pdsServiceMock = new Mock<IPdsService>();
+        private readonly Mock<IPatientService> patientServiceMock = new Mock<IPatientService>();
+        private readonly Mock<INotificationService> notificationServiceMock = new Mock<INotificationService>();
         private readonly PatientOrchestrationService patientOrchestrationService;
 
         public PatientOrchestrationServiceTests()
         {
-            this.pdsServiceMock = new Mock<IPdsService>();
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
+            this.pdsServiceMock = new Mock<IPdsService>();
+            this.patientServiceMock = new Mock<IPatientService>();
+            this.notificationServiceMock = new Mock<INotificationService>();
 
             this.patientOrchestrationService = new PatientOrchestrationService(
-                this.pdsServiceMock.Object,
-                this.loggingBrokerMock.Object);
+                loggingBroker: this.loggingBrokerMock.Object,
+                pdsService: this.pdsServiceMock.Object,
+                patientService: this.patientServiceMock.Object,
+                notificationService: this.notificationServiceMock.Object);
+
         }
 
         private static string GetRandomString() =>
