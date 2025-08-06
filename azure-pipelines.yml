@@ -1,4 +1,8 @@
-# azure-pipelines.yml
+# ASP.NET Core (.NET Framework)
+# Build and test ASP.NET Core projects targeting the full .NET Framework.
+# Add steps that publish symbols, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
 trigger:
   tags:
     include:
@@ -28,12 +32,10 @@ steps:
        echo "##vso[build.addbuildtag]Release"
       fi
     displayName: Tag Releases
-
   - task: qetza.replacetokens.replacetokens-task.replacetokens@6
     displayName: 'Replace tokens in **/appsettings.json'
     inputs:
       sources: '**/appsettings.json'
-
   - task: Bash@3
     enabled: true
     displayName: Install Docker
@@ -41,15 +43,23 @@ steps:
       targetType: inline
       script: >-
         sudo apt update
+          
         sudo apt install apt-transport-https ca-certificates curl
         software-properties-common -y
-        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-        sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
+        
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo
+        apt-key add -
+        
+        sudo add-apt-repository "deb [arch=amd64]
+        https://download.docker.com/linux/ubuntu bionic stable"
+        
         sudo apt update
+        
         apt-cache policy docker-ce
+        
         sudo apt install docker-ce -y
+        
         sudo systemctl start docker
-
   - task: Bash@3
     enabled: true
     displayName: Pulling Required Docker Images for SQL Server
@@ -57,12 +67,13 @@ steps:
       targetType: inline
       script: |-
         sudo docker stop sql1
+ 
         sudo docker rm sql1
+ 
         sudo docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=1Password" \
             -p 1433:1433 --name sql1 --hostname sql1 \
             -d \
             mcr.microsoft.com/mssql/server:2022-latest
-
   - task: Bash@3
     enabled: true
     displayName: Docker SQL Connection Test
@@ -70,47 +81,52 @@ steps:
       targetType: inline
       script: |
         CONTAINER_NAME="sql1"
+        # Set the maximum number of retries
         MAX_RETRIES=10
+        # Set the retry interval in seconds
         RETRY_INTERVAL=5
+        # Initialize the retry counter
         RETRY_COUNT=0
+        
         while [[ $RETRY_COUNT -lt $MAX_RETRIES ]]; do
+        
+          # Check if the SQL container is running
           container_status=$(sudo docker inspect -f '{{.State.Status}}' $CONTAINER_NAME)
+        
           if [[ $container_status != "running" ]]; then
+            # The SQL container is not running
             echo "SQL Server container is not running. Retrying...(retry $RETRY_COUNT/$MAX_RETRIES)"
             sleep $RETRY_INTERVAL
             ((RETRY_COUNT++))
             continue
           fi
+        
+          # The SQL container is running
+        
+          # Wait for the SQL container to be ready
           if [[ "$(sudo docker logs $CONTAINER_NAME | grep 'SQL Server is now ready for client connections' | wc -l)" -eq 0 ]]; then
             echo "Waiting for SQL Server log entry stating its ready for connections...(retry $RETRY_COUNT/$MAX_RETRIES)"
             sleep $RETRY_INTERVAL
             ((RETRY_COUNT++))
           else
+            # The SQL container is ready
             echo "SQL Server container is ready!"
             break
           fi
+        
         done
+        
+        # If the retry counter is equal to the maximum number of retries, then the container failed to start
         if [[ $RETRY_COUNT -eq $MAX_RETRIES ]]; then
           echo "SQL Server container is not ready after $MAX_RETRIES retries"
           exit 1
         fi
-
   - task: UseDotNet@2
     displayName: "Install .NET Core SDK"
     inputs:
       version: 9.x
       performMultiLevelLookup: true
-      includePreviewVersions: true
-
-  - script: |
-      echo "PATH: $PATH"
-      dotnet --info
-      dotnet --list-sdks
-    displayName: 'Verify .NET SDKs'
-    env:
-      DOTNET_ROOT: $(Agent.ToolsDirectory)/dotnet
-      PATH: $(Agent.ToolsDirectory)/dotnet:$(PATH)
-
+      includePreviewVersions: true # Required for preview versions
   - task: DotNetCoreCLI@2
     displayName: "Dotnet Restore"
     inputs:
@@ -118,43 +134,28 @@ steps:
       feedsToUse: "select"
       projects: "**/*.csproj"
       includeNuGetOrg: true
-    env:
-      DOTNET_ROOT: $(Agent.ToolsDirectory)/dotnet
-      PATH: $(Agent.ToolsDirectory)/dotnet:$(PATH)
-
   - task: NodeTool@0
     displayName: 'Install Node.js'
     inputs:
       versionSpec: '24.x'
-
   - script: |
-      dotnet --info
       npm ci
       npx playwright install --with-deps
       npx playwright test
     workingDirectory: './LondonDataServices.IDecide.Portal.Client'
     displayName: 'Playwright test'
-    env:
-      DOTNET_ROOT: $(Agent.ToolsDirectory)/dotnet
-      PATH: $(Agent.ToolsDirectory)/dotnet:$(PATH)
 
   - task: Npm@1
     displayName: 'Install client dependencies (patient portal)'
     inputs:
       command: 'install'
       workingDir: 'LondonDataServices.IDecide.Portal.Client'
-    env:
-      DOTNET_ROOT: $(Agent.ToolsDirectory)/dotnet
-      PATH: $(Agent.ToolsDirectory)/dotnet:$(PATH)
 
   - task: Npm@1
     displayName: 'Install client dependencies (back office portal)'
     inputs:
       command: 'install'
       workingDir: 'LondonDataServices.IDecide.Manage.Client'
-    env:
-      DOTNET_ROOT: $(Agent.ToolsDirectory)/dotnet
-      PATH: $(Agent.ToolsDirectory)/dotnet:$(PATH)
 
   - task: DotNetCoreCLI@2
     displayName: "Dotnet Publish Patient Portal"
@@ -165,9 +166,6 @@ steps:
       arguments: "-o $(Build.ArtifactStagingDirectory)/$(Build.BuildId)_publish_output_website_patient_portal"
       zipAfterPublish: true
       modifyOutputPath: false
-    env:
-      DOTNET_ROOT: $(Agent.ToolsDirectory)/dotnet
-      PATH: $(Agent.ToolsDirectory)/dotnet:$(PATH)
 
   - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)_publish_output_website_patient_portal
     displayName: 'Publish Artifact - Patient Portal'
@@ -182,9 +180,6 @@ steps:
       arguments: "-o $(Build.ArtifactStagingDirectory)/$(Build.BuildId)_publish_output_website_backend_portal"
       zipAfterPublish: true
       modifyOutputPath: false
-    env:
-      DOTNET_ROOT: $(Agent.ToolsDirectory)/dotnet
-      PATH: $(Agent.ToolsDirectory)/dotnet:$(PATH)
 
   - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)_publish_output_website_backend_portal
     displayName: 'Publish Artifact - Back Office'
