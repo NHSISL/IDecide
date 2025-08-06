@@ -139,12 +139,12 @@ steps:
     inputs:
       versionSpec: '24.x'
   - script: |
-    dotnet --info
-    npm ci
-    npx playwright install --with-deps
-    npx playwright test
-      workingDirectory: './LondonDataServices.IDecide.Portal.Client'
-      displayName: 'Playwright test'
+      dotnet --info
+      npm ci
+      npx playwright install --with-deps
+      npx playwright test
+    workingDirectory: './LondonDataServices.IDecide.Portal.Client'
+    displayName: 'Playwright test'
     env:
       DOTNET_ROOT: $(Agent.ToolsDirectory)/dotnet
       PATH: $(Agent.ToolsDirectory)/dotnet:$(PATH)
@@ -153,12 +153,18 @@ steps:
     inputs:
       command: 'install'
       workingDir: 'LondonDataServices.IDecide.Portal.Client'
+    env:
+      DOTNET_ROOT: $(Agent.ToolsDirectory)/dotnet
+      PATH: $(Agent.ToolsDirectory)/dotnet:$(PATH)
 
   - task: Npm@1
     displayName: 'Install client dependencies (back office portal)'
     inputs:
       command: 'install'
       workingDir: 'LondonDataServices.IDecide.Manage.Client'
+    env:
+      DOTNET_ROOT: $(Agent.ToolsDirectory)/dotnet
+      PATH: $(Agent.ToolsDirectory)/dotnet:$(PATH)
 
   - task: DotNetCoreCLI@2
     displayName: "Dotnet Publish Patient Portal"
