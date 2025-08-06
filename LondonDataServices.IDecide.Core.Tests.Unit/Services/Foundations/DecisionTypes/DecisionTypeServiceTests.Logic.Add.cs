@@ -32,7 +32,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
             DecisionType expectedDecisionType = storageDecisionType.DeepClone();
 
             this.securityAuditBrokerMock.Setup(broker =>
-                broker.ApplyAddAuditAsync(inputDecisionType))
+                broker.ApplyAddAuditValuesAsync(inputDecisionType))
                     .ReturnsAsync(auditAppliedDecisionType);
 
             this.securityBrokerMock.Setup(broker =>
@@ -55,7 +55,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
             actualDecisionType.Should().BeEquivalentTo(expectedDecisionType);
 
             this.securityAuditBrokerMock.Setup(broker =>
-                broker.ApplyAddAuditAsync(inputDecisionType))
+                broker.ApplyAddAuditValuesAsync(inputDecisionType))
                     .ReturnsAsync(auditAppliedDecisionType);
 
             this.securityBrokerMock.Verify(broker =>

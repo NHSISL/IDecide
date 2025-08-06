@@ -34,7 +34,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                     innerException: failedDecisionTypeStorageException);
 
             this.securityAuditBrokerMock.Setup(broker =>
-                broker.ApplyAddAuditAsync(It.IsAny<DecisionType>()))
+                broker.ApplyAddAuditValuesAsync(It.IsAny<DecisionType>()))
                     .ThrowsAsync(sqlException);
 
             // when
@@ -50,7 +50,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                 .BeEquivalentTo(expectedDecisionTypeDependencyException);
 
             this.securityAuditBrokerMock.Verify(broker =>
-                broker.ApplyAddAuditAsync(It.IsAny<DecisionType>()),
+                broker.ApplyAddAuditValuesAsync(It.IsAny<DecisionType>()),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
@@ -99,7 +99,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                     innerException: alreadyExistsDecisionTypeException);
 
             this.securityAuditBrokerMock.Setup(broker =>
-                broker.ApplyAddAuditAsync(It.IsAny<DecisionType>()))
+                broker.ApplyAddAuditValuesAsync(It.IsAny<DecisionType>()))
                     .ThrowsAsync(duplicateKeyException);
 
             // when
@@ -115,7 +115,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                 .BeEquivalentTo(expectedDecisionTypeDependencyValidationException);
 
             this.securityAuditBrokerMock.Verify(broker =>
-                broker.ApplyAddAuditAsync(It.IsAny<DecisionType>()),
+                broker.ApplyAddAuditValuesAsync(It.IsAny<DecisionType>()),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
@@ -164,7 +164,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                     innerException: invalidDecisionTypeReferenceException);
 
             this.securityAuditBrokerMock.Setup(broker =>
-                broker.ApplyAddAuditAsync(It.IsAny<DecisionType>()))
+                broker.ApplyAddAuditValuesAsync(It.IsAny<DecisionType>()))
                     .ThrowsAsync(foreignKeyConstraintConflictException);
 
             // when
@@ -180,7 +180,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                 .BeEquivalentTo(expectedDecisionTypeValidationException);
 
             this.securityAuditBrokerMock.Verify(broker =>
-                broker.ApplyAddAuditAsync(It.IsAny<DecisionType>()),
+                broker.ApplyAddAuditValuesAsync(It.IsAny<DecisionType>()),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
@@ -227,7 +227,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                     innerException: failedDecisionTypeStorageException);
 
             this.securityAuditBrokerMock.Setup(broker =>
-                broker.ApplyAddAuditAsync(It.IsAny<DecisionType>()))
+                broker.ApplyAddAuditValuesAsync(It.IsAny<DecisionType>()))
                     .ThrowsAsync(databaseUpdateException);
 
             // when
@@ -243,7 +243,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                 .BeEquivalentTo(expectedDecisionTypeDependencyException);
 
             this.securityAuditBrokerMock.Setup(broker =>
-                broker.ApplyAddAuditAsync(It.IsAny<DecisionType>()));
+                broker.ApplyAddAuditValuesAsync(It.IsAny<DecisionType>()));
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
@@ -275,7 +275,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                     innerException: failedDecisionTypeServiceException);
 
             this.securityAuditBrokerMock.Setup(broker =>
-                broker.ApplyAddAuditAsync(It.IsAny<DecisionType>()))
+                broker.ApplyAddAuditValuesAsync(It.IsAny<DecisionType>()))
                     .ThrowsAsync(serviceException);
 
             // when
@@ -291,7 +291,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                 .BeEquivalentTo(expectedDecisionTypeServiceException);
 
             this.securityAuditBrokerMock.Verify(broker =>
-                broker.ApplyAddAuditAsync(It.IsAny<DecisionType>()),
+                broker.ApplyAddAuditValuesAsync(It.IsAny<DecisionType>()),
                     Times.Once);
 
             this.storageBrokerMock.Verify(broker =>

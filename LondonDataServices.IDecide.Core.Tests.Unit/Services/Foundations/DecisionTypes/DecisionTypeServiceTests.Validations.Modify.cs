@@ -114,7 +114,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                     innerException: invalidDecisionTypeException);
 
             this.securityAuditBrokerMock.Setup(broker =>
-                broker.ApplyModifyAuditAsync(invalidDecisionType))
+                broker.ApplyModifyAuditValueAsync(invalidDecisionType))
                     .ReturnsAsync(invalidDecisionType);
 
             this.securityBrokerMock.Setup(broker =>
@@ -134,7 +134,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                 .BeEquivalentTo(expectedDecisionTypeValidationException);
 
             this.securityAuditBrokerMock.Verify(broker =>
-                broker.ApplyModifyAuditAsync(invalidDecisionType),
+                broker.ApplyModifyAuditValueAsync(invalidDecisionType),
                     Times.Once);
 
             this.dateTimeBrokerMock.Verify(broker =>
@@ -188,7 +188,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                     innerException: invalidDecisionTypeException);
 
             this.securityAuditBrokerMock.Setup(broker =>
-                broker.ApplyModifyAuditAsync(invalidDecisionType))
+                broker.ApplyModifyAuditValueAsync(invalidDecisionType))
                     .ReturnsAsync(invalidDecisionType);
 
             this.dateTimeBrokerMock.Setup(broker =>
@@ -212,7 +212,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                 .BeEquivalentTo(expectedDecisionTypeValidationException);
 
             this.securityAuditBrokerMock.Verify(broker =>
-                broker.ApplyModifyAuditAsync(invalidDecisionType),
+                broker.ApplyModifyAuditValueAsync(invalidDecisionType),
                     Times.Once);
 
             this.dateTimeBrokerMock.Verify(broker =>
@@ -271,7 +271,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                     innerException: invalidDecisionTypeException);
 
             this.securityAuditBrokerMock.Setup(broker =>
-                broker.ApplyModifyAuditAsync(randomDecisionType))
+                broker.ApplyModifyAuditValueAsync(randomDecisionType))
                     .ReturnsAsync(randomDecisionType);
 
             this.dateTimeBrokerMock.Setup(broker =>
@@ -295,7 +295,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                 .BeEquivalentTo(expectedDecisionTypeValidatonException);
 
             this.securityAuditBrokerMock.Verify(broker =>
-                broker.ApplyModifyAuditAsync(randomDecisionType),
+                broker.ApplyModifyAuditValueAsync(randomDecisionType),
                     Times.Once);
 
             this.dateTimeBrokerMock.Verify(broker =>
@@ -345,7 +345,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                     innerException: notFoundDecisionTypeException);
 
             this.securityAuditBrokerMock.Setup(broker =>
-                broker.ApplyModifyAuditAsync(nonExistDecisionType))
+                broker.ApplyModifyAuditValueAsync(nonExistDecisionType))
                     .ReturnsAsync(nonExistDecisionType);
 
             this.storageBrokerMock.Setup(broker =>
@@ -373,7 +373,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                 .BeEquivalentTo(expectedDecisionTypeValidationException);
 
             this.securityAuditBrokerMock.Verify(broker =>
-                broker.ApplyModifyAuditAsync(nonExistDecisionType),
+                broker.ApplyModifyAuditValueAsync(nonExistDecisionType),
                     Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
@@ -432,7 +432,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                     innerException: invalidDecisionTypeException);
 
             this.securityAuditBrokerMock.Setup(broker =>
-                broker.ApplyModifyAuditAsync(invalidDecisionType))
+                broker.ApplyModifyAuditValueAsync(invalidDecisionType))
                     .ReturnsAsync(invalidDecisionType);
 
             this.storageBrokerMock.Setup(broker =>
@@ -464,7 +464,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                 .BeEquivalentTo(expectedDecisionTypeValidationException);
 
             this.securityAuditBrokerMock.Verify(broker =>
-                broker.ApplyModifyAuditAsync(invalidDecisionType),
+                broker.ApplyModifyAuditValueAsync(invalidDecisionType),
                     Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
@@ -525,7 +525,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                     innerException: invalidDecisionTypeException);
 
             this.securityAuditBrokerMock.Setup(broker =>
-                broker.ApplyModifyAuditAsync(invalidDecisionType))
+                broker.ApplyModifyAuditValueAsync(invalidDecisionType))
                     .ReturnsAsync(invalidDecisionType);
 
             this.storageBrokerMock.Setup(broker =>
@@ -556,7 +556,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
             actualDecisionTypeValidationException.Should().BeEquivalentTo(expectedDecisionTypeValidationException);
 
             this.securityAuditBrokerMock.Verify(broker =>
-                broker.ApplyModifyAuditAsync(invalidDecisionType),
+                broker.ApplyModifyAuditValueAsync(invalidDecisionType),
                     Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
@@ -615,7 +615,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                     innerException: invalidDecisionTypeException);
 
             this.securityAuditBrokerMock.Setup(broker =>
-                broker.ApplyModifyAuditAsync(invalidDecisionType))
+                broker.ApplyModifyAuditValueAsync(invalidDecisionType))
                     .ReturnsAsync(invalidDecisionType);
 
             this.storageBrokerMock.Setup(broker =>
@@ -643,7 +643,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                 modifyDecisionTypeTask.AsTask);
 
             this.securityAuditBrokerMock.Verify(broker =>
-                broker.ApplyModifyAuditAsync(invalidDecisionType),
+                broker.ApplyModifyAuditValueAsync(invalidDecisionType),
                     Times.Once);
 
             this.dateTimeBrokerMock.Verify(broker =>

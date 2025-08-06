@@ -38,7 +38,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes
         public ValueTask<DecisionType> AddDecisionTypeAsync(DecisionType decisionType) =>
             TryCatch(async () =>
             {
-                decisionType = await this.securityAuditBroker.ApplyAddAuditAsync(decisionType);
+                decisionType = await this.securityAuditBroker.ApplyAddAuditValuesAsync(decisionType);
                 await ValidateDecisionTypeOnAdd(decisionType);
 
                 return await this.storageBroker.InsertDecisionTypeAsync(decisionType);
@@ -63,7 +63,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes
         public ValueTask<DecisionType> ModifyDecisionTypeAsync(DecisionType decisionType) =>
             TryCatch(async () =>
             {
-                decisionType = await this.securityAuditBroker.ApplyModifyAuditAsync(decisionType);
+                decisionType = await this.securityAuditBroker.ApplyModifyAuditValueAsync(decisionType);
 
                 await ValidateDecisionTypeOnModify(decisionType);
 
