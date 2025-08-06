@@ -115,7 +115,7 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                 </div>
             </Col>
             <Col xs={12} md={5} lg={5} className="custom-col-spacing">
-            z
+            
             </Col>
         </Row>
     );
