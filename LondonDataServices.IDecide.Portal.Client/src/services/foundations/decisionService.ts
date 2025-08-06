@@ -1,5 +1,5 @@
 import DecisionBroker from "../../brokers/apiBroker.decisions";
-import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
+import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { Decision } from "../../models/decisions/decision";
 
 export const decisionService = {
@@ -14,9 +14,8 @@ export const decisionService = {
 
                 return broker.PostDecisionAsync(decision);
             },
-            onSuccess: (variables: Decision) => {
+            onSuccess: () => {
                 queryClient.invalidateQueries({ queryKey: ["DecisionGetAll"] });
-                queryClient.invalidateQueries({ queryKey: ["DecisionGetById", { id: variables.id }] });
             }
         });
     },
@@ -29,11 +28,10 @@ export const decisionService = {
                 const date = new Date();
                 decision.updatedDate = date;
 
-                return broker.PutDecisionAsync(decision);
+                return broker.PostDecisionAsync(decision);
             },
-            onSuccess: (data: Decision) => {
+            onSuccess: () => {
                 queryClient.invalidateQueries({ queryKey: ["DecisionGetAll"] });
-                queryClient.invalidateQueries({ queryKey: ["DecisionGetById", { id: data.id }] });
             }
         });
     },

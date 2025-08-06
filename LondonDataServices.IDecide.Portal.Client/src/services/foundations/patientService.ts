@@ -80,7 +80,7 @@ export const patientService = {
         const broker = new PatientBroker();
         return useMutation({
             mutationFn: (request: ConfirmCodeRequest) => {
-                return broker.ConfirmPatientCodeAsync(request.nhsNumber, request.code);
+                return broker.ConfirmPatientCodeAsync(request.nhsNumber!, request.code!);
             }
         });
     },

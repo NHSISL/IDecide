@@ -1,5 +1,5 @@
 ﻿import { Container } from "react-bootstrap";
-import { useStep } from "../components/context/stepContext";
+import { useStep } from "../hooks/useStep";
 import { ConfirmCode } from "../components/confirmCode/confirmCode";
 
 export const ConfirmCodePage = () => {

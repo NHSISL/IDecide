@@ -2,11 +2,14 @@ import { Container, Row, Col } from "react-bootstrap";
 import SearchByDetails from "../components/searchByDetails/searchByDetails";
 
 export const PatientSearchPage = () => {
+    const handleNextStep = () => {
+    };
+
     return (
         <Container fluid className="mt-4">
             <Row className="mb-4 p-2">
                 <Col>
-                    <SearchByDetails/>
+                    <SearchByDetails nextStep={handleNextStep} />
                 </Col>
             </Row>
         </Container>

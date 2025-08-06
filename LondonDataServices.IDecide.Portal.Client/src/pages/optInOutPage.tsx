@@ -1,7 +1,6 @@
-﻿import React from "react";
-import { Container } from "react-bootstrap";
+﻿import { Container } from "react-bootstrap";
 import OptInOptOut from "../components/optInOptOut/optInOptOut";
-import { useStep } from "../components/context/stepContext";
+import { useStep } from "../hooks/useStep";
 
 export const OptInOutPage = () => {
     const { createdPatient } = useStep();

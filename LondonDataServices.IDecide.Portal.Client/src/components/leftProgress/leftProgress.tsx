@@ -1,7 +1,6 @@
 ﻿import { Fieldset, Radios } from "nhsuk-react-components";
 import React from "react";
 import { Container, Row } from "react-bootstrap";
-import { useStep } from "../context/stepContext";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 
@@ -36,8 +35,12 @@ function useIsMobile() {
     return isMobile;
 }
 
-const LeftProgress: React.FC = () => {
-    const { currentStepIndex } = useStep();
+interface LeftProgressProps {
+    currentStepIndex: number;
+    setCurrentStepIndex: React.Dispatch<React.SetStateAction<number>>;
+}
+
+const LeftProgress: React.FC<LeftProgressProps> = ({ currentStepIndex, setCurrentStepIndex }) => {
     const isMobile = useIsMobile();
 
     const isCurrentStep = (idx: number) => idx === currentStepIndex;
@@ -73,8 +76,10 @@ const LeftProgress: React.FC = () => {
                                                 minWidth: 40,
                                                 opacity: isPreviousStep(idx) ? 0.5 : 1,
                                                 borderBottom: isCurrentStep(idx) ? "3px solid #005eb8" : "1px solid #ccc",
-                                                padding: "8px 0"
+                                                padding: "8px 0",
+                                                cursor: isPreviousStep(idx) ? "pointer" : "default"
                                             }}
+                                            onClick={() => isPreviousStep(idx) && setCurrentStepIndex(idx)}
                                         >
                                             {(isPreviousStep(idx) || (isLastStep(idx) && isCurrentStep(idx))) ? (
                                                 <FontAwesomeIcon icon={faCheckCircle} style={{ color: "#006435", fontSize: "1.5rem" }} />
@@ -116,10 +121,11 @@ const LeftProgress: React.FC = () => {
                                                 style={{
                                                     display: "flex",
                                                     alignItems: "center",
-                                                    cursor: "default",
+                                                    cursor: isPreviousStep(idx) ? "pointer" : "default",
                                                     marginBottom: 8,
                                                     color: "black",
                                                 }}
+                                                onClick={() => isPreviousStep(idx) && setCurrentStepIndex(idx)}
                                             >
                                                 <FontAwesomeIcon
                                                     icon={faCheckCircle}

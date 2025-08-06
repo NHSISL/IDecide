@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { useStep } from "../context/stepContext";
 import { Patient } from "../../models/patients/patient";
 import { patientViewService } from "../../services/views/patientViewService";
 import { Row, Col } from "react-bootstrap";
 import { ConfirmCodeRequest } from "../../models/patients/confirmCodeRequest";
+import { useStep } from "../../hooks/useStep";
 
 interface ConfirmCodeProps {
-    createdPatient: Patient;
+    createdPatient: Patient | null;
 }
 
 export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
@@ -27,12 +27,16 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
             setError("Please enter a 5-digit code.");
             return;
         }
+        if (!createdPatient) {
+            setError("No patient found. Please restart the process.");
+            return;
+        }
 
         confirmCodeMutation.mutate(
             { nhsNumber: createdPatient.nhsNumber, code } as ConfirmCodeRequest,
             {
                 onSuccess: () => {
-                    nextStep(undefined, undefined,createdPatient);
+                    nextStep(undefined, undefined, createdPatient);
                 },
                 onError: (error: unknown) => {
                     if (error instanceof Error) {
@@ -84,9 +88,9 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
                         className="nhsuk-button"
                         type="submit"
                         style={{ width: "100%", marginTop: "1.5rem" }}
-                        disabled={confirmCodeMutation.isLoading}
+                        disabled={confirmCodeMutation.isPending}
                     >
-                        {confirmCodeMutation.isLoading ? "Submitting..." : "Submit"}
+                        {confirmCodeMutation.isPending ? "Submitting..." : "Submit"}
                     </button>
                 </form>
             </Col>

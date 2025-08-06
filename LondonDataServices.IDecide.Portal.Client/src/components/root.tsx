@@ -1,10 +1,9 @@
 import { Outlet, useLocation } from "react-router-dom";
 import { Container, Row, Col } from "react-bootstrap";
-import React from "react";
 import LeftProgress from "./leftProgress/leftProgress";
 import FooterComponent from "./layouts/footer";
 import HeaderComponent from "./layouts/header";
-import { useStep } from "./context/stepContext";
+import { useStep } from "../hooks/useStep";
 
 export default function Root() {
     const location = useLocation();

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Alert, Col, Row } from "react-bootstrap";
-import { useStep } from "../context/stepContext";
+import { useStep } from "../../hooks/useStep";
 import { decisionViewService } from "../../services/views/decisionViewService";
 import { Decision } from "../../models/decisions/decision";
 import { isAxiosError } from "../../helpers/axiosErrorHelper";
@@ -57,6 +57,7 @@ export const Confirmation: React.FC<ConfirmationProps> = ({ selectedOption, nhsN
                     message = error;
                 } else if (isAxiosError(error)) {
                     const data = error.response?.data;
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     if (data && typeof data === "object" && "message" in data && typeof (data as any).message === "string") {
                         message = (data as { message: string }).message;
                     }

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useStep } from "../context/stepContext";
+import { useStep } from "../../hooks/useStep";
 import { Patient } from "../../models/patients/patient";
 import { PowerOfAttourney } from "../../models/powerOfAttourneys/powerOfAttourney";
 import { patientViewService } from "../../services/views/patientViewService";
@@ -127,7 +127,6 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
             let poaModel = undefined;
             if (powerOfAttourney) {
                 poaModel = new PowerOfAttourney({
-                    id: "",
                     firstName: poaFirstname,
                     surname: poaSurname,
                     relationship: poaRelationship

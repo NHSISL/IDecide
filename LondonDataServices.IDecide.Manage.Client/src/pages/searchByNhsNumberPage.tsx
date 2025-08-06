@@ -1,6 +1,4 @@
-﻿// LondonDataServices.IDecide.Portal.Client\src\pages\searchByNhsNumberPage.tsx
-import React from "react";
-import SearchByNhsNumber from "../components/SearchNhsNumber/searchByNhsNumber";
+﻿import SearchByNhsNumber from "../components/SearchNhsNumber/searchByNhsNumber";
 import { Card, Container } from "nhsuk-react-components";
 
 
