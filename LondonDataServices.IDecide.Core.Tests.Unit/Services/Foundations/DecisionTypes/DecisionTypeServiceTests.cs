@@ -15,11 +15,11 @@ using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
 using LondonDataServices.IDecide.Core.Models.Securities;
 using Microsoft.Data.SqlClient;
 using Moq;
-using StandardlyTestProject.Api.Services.Foundations.DecisionTypes;
+using LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes;
 using Tynamix.ObjectFiller;
 using Xeptions;
 
-namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionTypes
+namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.DecisionTypes
 {
     public partial class DecisionTypeServiceTests
     {

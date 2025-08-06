@@ -9,10 +9,10 @@ using EFxceptions.Models.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using StandardlyTestProject.Api.Models.Foundations.DecisionTypes.Exceptions;
+using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes.Exceptions;
 using Xeptions;
 
-namespace StandardlyTestProject.Api.Services.Foundations.DecisionTypes
+namespace LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes
 {
     public partial class DecisionTypeService
     {

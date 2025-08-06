@@ -5,7 +5,7 @@
 using System;
 using Xeptions;
 
-namespace StandardlyTestProject.Api.Models.Foundations.DecisionTypes.Exceptions
+namespace LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes.Exceptions
 {
     public class AlreadyExistsDecisionTypeException : Xeption
     {

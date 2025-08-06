@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
 
-namespace StandardlyTestProject.Api.Services.Foundations.DecisionTypes
+namespace LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes
 {
     public interface IDecisionTypeService
     {

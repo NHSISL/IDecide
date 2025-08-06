@@ -9,9 +9,9 @@ using Force.DeepCloner;
 using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
 using LondonDataServices.IDecide.Core.Models.Securities;
 using Moq;
-using StandardlyTestProject.Api.Models.Foundations.DecisionTypes.Exceptions;
+using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes.Exceptions;
 
-namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionTypes
+namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.DecisionTypes
 {
     public partial class DecisionTypeServiceTests
     {

@@ -11,7 +11,7 @@ using LondonDataServices.IDecide.Core.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Brokers.Storages.Sql;
 using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
 
-namespace StandardlyTestProject.Api.Services.Foundations.DecisionTypes
+namespace LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes
 {
     public partial class DecisionTypeService : IDecisionTypeService
     {

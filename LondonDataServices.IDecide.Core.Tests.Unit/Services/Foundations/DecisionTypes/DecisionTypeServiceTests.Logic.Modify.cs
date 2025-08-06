@@ -10,7 +10,7 @@ using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
 using LondonDataServices.IDecide.Core.Models.Securities;
 using Moq;
 
-namespace StandardlyTestProject.Api.Tests.Unit.Services.Foundations.DecisionTypes
+namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.DecisionTypes
 {
     public partial class DecisionTypeServiceTests
     {
