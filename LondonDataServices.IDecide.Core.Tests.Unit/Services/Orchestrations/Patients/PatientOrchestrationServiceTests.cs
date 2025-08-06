@@ -15,23 +15,32 @@ using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
 using System.Collections.Generic;
 using System.Linq;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
+using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
+using LondonDataServices.IDecide.Core.Services.Foundations.Notifications;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Patients
 {
     public partial class PatientOrchestrationServiceTests
     {
-        private readonly Mock<IPdsService> pdsServiceMock = new Mock<IPdsService>();
         private readonly Mock<ILoggingBroker> loggingBrokerMock = new Mock<ILoggingBroker>();
+        private readonly Mock<IPdsService> pdsServiceMock = new Mock<IPdsService>();
+        private readonly Mock<IPatientService> patientServiceMock = new Mock<IPatientService>();
+        private readonly Mock<INotificationService> notificationServiceMock = new Mock<INotificationService>();
         private readonly PatientOrchestrationService patientOrchestrationService;
 
         public PatientOrchestrationServiceTests()
         {
-            this.pdsServiceMock = new Mock<IPdsService>();
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
+            this.pdsServiceMock = new Mock<IPdsService>();
+            this.patientServiceMock = new Mock<IPatientService>();
+            this.notificationServiceMock = new Mock<INotificationService>();
 
             this.patientOrchestrationService = new PatientOrchestrationService(
-                this.pdsServiceMock.Object,
-                this.loggingBrokerMock.Object);
+                loggingBroker: this.loggingBrokerMock.Object,
+                pdsService: this.pdsServiceMock.Object,
+                patientService: this.patientServiceMock.Object,
+                notificationService: this.notificationServiceMock.Object);
+
         }
 
         private static string GetRandomString() =>
@@ -39,6 +48,14 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
         private static int GetRandomNumber() =>
            new IntRange(min: 2, max: 10).GetValue();
+
+        private static string GenerateRandom10DigitNumber()
+        {
+            Random random = new Random();
+            var randomNumber = random.Next(1000000000, 2000000000).ToString();
+
+            return randomNumber;
+        }
 
         private PatientLookup GetRandomSearchPatientLookup(string surname)
         {
@@ -70,6 +87,22 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
                 .OnType<DateTimeOffset?>().Use(dateTimeOffset)
                 .OnProperty(n => n.Surname).Use(inputSurname);
+
+            return filler;
+        }
+
+        private static Patient GetRandomPatientWithNhsNumber(string nhsNumber) =>
+            CreatePatientFillerWithNhsNumber(nhsNumber).Create();
+
+        private static Filler<Patient> CreatePatientFillerWithNhsNumber(string nhsNumber = "1234567890")
+        {
+            DateTimeOffset dateTimeOffset = DateTimeOffset.UtcNow;
+            var filler = new Filler<Patient>();
+
+            filler.Setup()
+                .OnType<DateTimeOffset>().Use(dateTimeOffset)
+                .OnType<DateTimeOffset?>().Use(dateTimeOffset)
+                .OnProperty(n => n.NhsNumber).Use(nhsNumber);
 
             return filler;
         }

@@ -31,6 +31,14 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                 throw await CreateAndLogValidationExceptionAsync(
                     noExactPatientFoundException);
             }
+            catch (InvalidPatientOrchestrationArgumentException invalidPatientOrchestrationArgumentException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(invalidPatientOrchestrationArgumentException);
+            }
+            catch (NullPatientException nullPatientException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(nullPatientException);
+            }
             catch (PdsValidationException pdsValidationException)
             {
                 throw await CreateAndLogDependencyValidationExceptionAsync(
@@ -68,7 +76,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             var patientOrchestrationValidationException =
                 new PatientOrchestrationValidationException(
                     message: "Patient orchestration validation error occurred, " +
-                        "fix the errors and try again.",
+                        "please fix the errors and try again.",
                     innerException: exception);
 
             await this.loggingBroker.LogErrorAsync(patientOrchestrationValidationException);
@@ -82,7 +90,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             var patientOrchestrationDependencyValidationException =
                 new PatientOrchestrationDependencyValidationException(
                     message: "Patient orchestration dependency validation error occurred, " +
-                        "fix the errors and try again.",
+                        "please fix the errors and try again.",
                     innerException: exception.InnerException as Xeption);
 
             await this.loggingBroker.LogErrorAsync(patientOrchestrationDependencyValidationException);
@@ -96,7 +104,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             var patientOrchestrationDependencyException =
                 new PatientOrchestrationDependencyException(
                     message: "Patient orchestration dependency error occurred, " +
-                        "fix the errors and try again.",
+                        "please fix the errors and try again.",
                     innerException: exception.InnerException as Xeption);
 
             await this.loggingBroker.LogErrorAsync(patientOrchestrationDependencyException);

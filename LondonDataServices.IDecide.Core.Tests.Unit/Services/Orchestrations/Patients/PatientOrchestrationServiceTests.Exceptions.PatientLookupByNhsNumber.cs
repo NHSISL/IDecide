@@ -7,7 +7,6 @@ using FluentAssertions;
 using System.Threading.Tasks;
 using System;
 using Xeptions;
-using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
 using Force.DeepCloner;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
@@ -18,17 +17,15 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
     {
         [Theory]
         [MemberData(nameof(DependencyValidationExceptions))]
-        public async Task ShouldThrowDependencyValidationOnLookupByDetailsAndLogItAsync(
+        public async Task ShouldThrowDependencyValidationOnLookupByNhsNumberAndLogItAsync(
             Xeption dependencyValidationException)
         {
             // given
-            string randomString = GetRandomString();
-            string inputSurname = randomString.DeepClone();
-            PatientLookup randomPatientLookup = GetRandomSearchPatientLookup(inputSurname);
-            PatientLookup inputPatientLookup = randomPatientLookup.DeepClone();
+            string randomNhsNumber = GenerateRandom10DigitNumber();
+            string inputNhsNumber = randomNhsNumber.DeepClone();
 
             this.pdsServiceMock.Setup(service =>
-                service.PatientLookupByDetailsAsync(inputPatientLookup))
+                service.PatientLookupByNhsNumberAsync(inputNhsNumber))
                     .ThrowsAsync(dependencyValidationException);
 
             var expectedPatientOrchestrationDependencyValidationException =
@@ -39,7 +36,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             // when
             ValueTask<Patient> patientLookupTask =
-                this.patientOrchestrationService.PatientLookupByDetailsAsync(inputPatientLookup);
+                this.patientOrchestrationService.PatientLookupByNhsNumberAsync(inputNhsNumber);
 
             PatientOrchestrationDependencyValidationException
                 actualPatientOrchestrationDependencyValidationException =
@@ -51,7 +48,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 .Should().BeEquivalentTo(expectedPatientOrchestrationDependencyValidationException);
 
             this.pdsServiceMock.Verify(service =>
-                service.PatientLookupByDetailsAsync(inputPatientLookup),
+                service.PatientLookupByNhsNumberAsync(inputNhsNumber),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
@@ -67,17 +64,15 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
         [Theory]
         [MemberData(nameof(DependencyExceptions))]
-        public async Task ShouldThrowDependencyOnLookupByDetailsAndLogItAsync(
+        public async Task ShouldThrowDependencyOnLookupByNhsNumberAndLogItAsync(
             Xeption dependencyValidationException)
         {
             // given
-            string randomString = GetRandomString();
-            string inputSurname = randomString.DeepClone();
-            PatientLookup randomPatientLookup = GetRandomSearchPatientLookup(inputSurname);
-            PatientLookup inputPatientLookup = randomPatientLookup.DeepClone();
+            string randomNhsNumber = GenerateRandom10DigitNumber();
+            string inputNhsNumber = randomNhsNumber.DeepClone();
 
             this.pdsServiceMock.Setup(service =>
-                service.PatientLookupByDetailsAsync(inputPatientLookup))
+                service.PatientLookupByNhsNumberAsync(inputNhsNumber))
                     .ThrowsAsync(dependencyValidationException);
 
             var expectedPatientOrchestrationDependencyException =
@@ -88,7 +83,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             // when
             ValueTask<Patient> patientLookupTask =
-                this.patientOrchestrationService.PatientLookupByDetailsAsync(inputPatientLookup);
+                this.patientOrchestrationService.PatientLookupByNhsNumberAsync(inputNhsNumber);
 
             PatientOrchestrationDependencyException
                 actualPatientOrchestrationDependencyException =
@@ -100,7 +95,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 .Should().BeEquivalentTo(expectedPatientOrchestrationDependencyException);
 
             this.pdsServiceMock.Verify(service =>
-                service.PatientLookupByDetailsAsync(inputPatientLookup),
+                service.PatientLookupByNhsNumberAsync(inputNhsNumber),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
@@ -115,13 +110,11 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         }
 
         [Fact]
-        public async Task ShouldThrowServiceExceptionOnLookupByDetailsIfServiceErrorOccurredAndLogItAsync()
+        public async Task ShouldThrowServiceExceptionOnLookupByNhsNumberIfServiceErrorOccurredAndLogItAsync()
         {
             // given
-            string randomString = GetRandomString();
-            string inputSurname = randomString.DeepClone();
-            PatientLookup randomPatientLookup = GetRandomSearchPatientLookup(inputSurname);
-            PatientLookup inputPatientLookup = randomPatientLookup.DeepClone();
+            string randomNhsNumber = GenerateRandom10DigitNumber();
+            string inputNhsNumber = randomNhsNumber.DeepClone();
 
             var serviceException = new Exception();
 
@@ -136,12 +129,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     innerException: failedServicePatientOrchestrationException);
 
             this.pdsServiceMock.Setup(service =>
-                service.PatientLookupByDetailsAsync(inputPatientLookup))
+                service.PatientLookupByNhsNumberAsync(inputNhsNumber))
                     .ThrowsAsync(serviceException);
 
             // when
             ValueTask<Patient> patientLookupTask =
-               this.patientOrchestrationService.PatientLookupByDetailsAsync(inputPatientLookup);
+               this.patientOrchestrationService.PatientLookupByNhsNumberAsync(inputNhsNumber);
 
             PatientOrchestrationServiceException
                 actualPatientOrchestrationValidationException =
@@ -153,7 +146,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 expectedPatientOrchestrationServiceException);
 
             this.pdsServiceMock.Verify(service =>
-               service.PatientLookupByDetailsAsync(inputPatientLookup),
+               service.PatientLookupByNhsNumberAsync(inputNhsNumber),
                    Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
