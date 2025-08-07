@@ -7,7 +7,6 @@ using Attrify.InvisibleApi.Models;
 using ISL.Providers.PDS.Abstractions;
 using ISL.Providers.PDS.FakeFHIR.Models;
 using ISL.Providers.PDS.FakeFHIR.Providers.FakeFHIR;
-using ISL.Providers.PDS.FHIR.Providers;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
