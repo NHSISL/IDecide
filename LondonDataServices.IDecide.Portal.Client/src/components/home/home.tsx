@@ -109,7 +109,7 @@ export const Home = () => {
 
     return (
         <div className="home-content" style={{ padding: "1.5rem 0.5rem" }}>
-            <div className="home-box" style={{ maxWidth: 1700, margin: "0 auto", background: "#fff", borderRadius: 8, boxShadow: "0 2px 8px #e0e0e0", padding: "2rem 1.5rem" }}>
+            <div className="home-box" style={{ maxWidth: 1700, margin: "0 auto", borderRadius: 8, boxShadow: "0 2px 8px #e0e0e0", padding: "2rem 1.5rem", background: "rgba(255, 255, 255, 0.70)" }}>
                 <h1 style={{ fontSize: "1.7rem", marginBottom: "0.7rem" }}>Welcome to the OneLondon Data Portal</h1>
                 <p style={{ marginBottom: "0.5rem" }}>OneLondon have developed a world leading resource for health and care improvement known as the London SDE (Secure Data Environment). This is comprised of the LDS (London Data Service) and the LAP (London Analytics Platform).</p>
                 <p style={{ marginBottom: "0.5rem" }}>The data collected from healthcare systems across London by these services can be used for many things all ensuring patient information is shared for improved provision of care. </p>

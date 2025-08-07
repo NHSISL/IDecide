@@ -77,6 +77,6 @@ test.describe('Home Page', () => {
         const header = "Where can I see the privacy Notices for LDS & SDE?";
         const sectionButton = page.getByRole('button', { name: header });
         await sectionButton.click();
-        await expect(page.getByText('You can access our privacy notices on this page of the portal')).toBeVisible();
+        await expect(page.getByText('The SDE privacy notice is here and the LDS Privacy notice is available here.')).toBeVisible();
     });
 });

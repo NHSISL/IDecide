@@ -160,7 +160,7 @@ export const SearchByNhsNumber = ({onIDontKnow,powerOfAttourney = false} : {
     return (
         <Container>
             <Row className="custom-col-spacing">
-                <Col xs={12} md={7} lg={7}>
+                <Col xs={12} md={6} lg={6}>
                     <form autoComplete="off" onSubmit={handleSubmit}>
                         {!powerOfAttourney && (
                             <TextInput
@@ -282,8 +282,8 @@ export const SearchByNhsNumber = ({onIDontKnow,powerOfAttourney = false} : {
                         </div>
                     </form>
                 </Col>
-                <Col xs={12} md={5} lg={5} className="custom-col-spacing">
-                    {powerOfAttourney && (
+                <Col xs={12} md={6} lg={6} className="custom-col-spacing">
+                    {!powerOfAttourney && (
                         <div
                             className="p-4 mb-4"
                             style={{
@@ -295,22 +295,60 @@ export const SearchByNhsNumber = ({onIDontKnow,powerOfAttourney = false} : {
                         >
                             <h2 className="mb-3" style={{ color: "#005eb8" }}>Help & Guidance</h2>
                             <h3 className="mb-3" style={{ color: "#005eb8" }}>
-                                Requesting an Opt-out on someone else's behalf
+                                Entering Your NHS Number
                             </h3>
                             <p>
-                                You can make a request to opt-out on behalf of someone else to stop their personal data being used for secondary purposes if:
-                            </p>
-                            <ul>
-                                <li>The patient is under 13 and you are their parent</li>
-                                <li>The patient is under 13 and you are their appointed guardian</li>
-                                <li>The patient is over 13 and you have power of attorney with the right to act on their behalf.</li>
-                            </ul>
-                            <p>
-                                If you are in these circumstances then please enter your details in this blue box and in every other box use the patient's details.
+                                Your NHS Number is a unique 10-digit number used to identify you within the NHS.
+                                You can find it on your medical card, prescription, GP letter, hospital correspondence, or your NHS app.
                             </p>
                             <p>
-                                If one of these circumstances does not describe you then you cannot opt someone else out. Please click the back button.
+                                Please enter your NHS Number to help us securely find your details.
+                                This helps ensure we match you to the correct records and keep your information safe.
                             </p>
+                            <p>
+                                If you do not know your NHS Number, you can still continue by clicking "I Don't know my NHS Number" below, this will direct you to fill out a small form to find you.
+                            </p>
+                            <p>
+                                Your NHS Number will only be used to look up your details and will not be shared outside the NHS.
+                            </p>
+                        </div>
+                    )}
+                    {powerOfAttourney && (
+                        <div
+                            className="p-4 mb-4"
+                            style={{
+                                background: "#f4f8fb",
+                                border: "1px solid #d1e3f0",
+                                borderRadius: "8px",
+                                boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+                            }}
+                        >
+                            <h2 className="mb-3" style={{ color: "#005eb8" }}>Help & Guidance</h2>
+
+                            <div style={{ marginBottom: "1.5rem" }}>
+                                <h3 style={{ color: "#005eb8" }}>Opt-out Eligibility</h3>
+                                <ul>
+                                    <li>The patient is under 13 and you are their parent</li>
+                                    <li>The patient is under 13 and you are their appointed guardian</li>
+                                    <li>The patient is over 13 and you have power of attorney with the right to act on their behalf.</li>
+                                </ul>
+                                <p>
+                                    If you do not meet one of these criteria, you cannot opt someone else out. Please click the back button.
+                                </p>
+                            </div>
+
+                            <div>
+                                <h3 style={{ color: "#005eb8" }}>Entering NHS Number</h3>
+                                <p>
+                                    The NHS Number is a unique 10-digit number used to identify patients. You can find it on medical cards, prescriptions, GP letters, hospital correspondence, or the NHS app.
+                                </p>
+                                <p>
+                                    Enter the NHS Number of the person you are representing. If you do not know it, click "I Don't know my NHS Number" below to continue.
+                                </p>
+                                <p>
+                                    NHS Numbers are only used to look up details and will not be shared outside the NHS.
+                                </p>
+                            </div>
                         </div>
                     )}
                 </Col>
