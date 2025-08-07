@@ -11,22 +11,23 @@ interface ConfirmationProps {
 
 export const Confirmation: React.FC<ConfirmationProps> = ({ selectedOption, nhsNumber }) => {
     const [prefs, setPrefs] = useState({
-        sms: false,
-        email: false,
-        post: false,
+        SMS: false,
+        Email: false,
+        Post: false,
     });
 
-    const { nextStep } = useStep();
+    const { nextStep, powerOfAttourney } = useStep();
     const createDecisionMutation = decisionViewService.useCreateDecision();
     const [error, setError] = useState<string | null>(null);
 
+    // Only one method can be selected at a time
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, checked } = e.target;
+        const { name } = e.target;
         setPrefs({
-            sms: false,
-            email: false,
-            post: false,
-            [name]: checked,
+            SMS: false,
+            Email: false,
+            Post: false,
+            [name]: true,
         });
     };
 
@@ -67,16 +68,70 @@ export const Confirmation: React.FC<ConfirmationProps> = ({ selectedOption, nhsN
         });
     };
 
+    const selectedMethods = Object.entries(prefs)
+        .filter(([, value]) => value)
+        .map(([key]) => key);
+
     return (
         <>
             <Row className="custom-col-spacing">
                 <Col xs={12} md={6} lg={6}>
-                    <Alert variant="success">
-                        <strong>Selected Option: &nbsp;</strong>
-                        {selectedOption === "optin" ? "Opt-In" : selectedOption === "optout" ? "Opt-Out" : "Not selected"}
-                        <br />
-                        <strong>NHS Number: &nbsp;</strong>
-                        {nhsNumber || "Not provided"}
+                    <Alert variant="info" className="d-flex align-items-center" style={{ marginBottom: "0.75rem", padding: "0.75rem" }}>
+                        <div className="me-2" style={{ fontSize: "1.5rem", color: "#6c757d" }}>
+                        </div>
+
+                        <div>
+                            <div style={{ fontSize: "1rem", marginBottom: "0.25rem", color: "#6c757d", fontWeight: 500 }}>
+                                Your Data Sharing Choice
+                            </div>
+                            <dl className="mb-0" style={{ fontSize: "0.95rem", color: "#6c757d" }}>
+                                <div>
+                                    <dt style={{ display: "inline", fontWeight: 500 }}>Decision:</dt>
+                                    <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
+                                        <strong>{selectedOption === "optin" ? "Opt-In" : selectedOption === "optout" ? "Opt-Out" : "Not selected"}</strong>
+                                    </dd>
+                                </div>
+                                <div>
+                                    <dt style={{ display: "inline", fontWeight: 500 }}>NHS Number: &nbsp;</dt>
+                                    <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
+                                        <strong>{nhsNumber || "Not provided"}</strong>
+                                    </dd>
+                                </div>
+                                <div>
+                                    <dt style={{ display: "inline", fontWeight: 500 }}>Notification Method:</dt>
+                                    <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
+                                        <strong>
+                                            {selectedMethods.length > 0
+                                                ? selectedMethods.join(", ")
+                                                : "None selected"}
+                                        </strong>
+                                    </dd>
+                                </div>
+                            </dl>
+                            {powerOfAttourney && (
+                                <>
+                                    <hr />
+                                    <div style={{ fontSize: "1rem", marginBottom: "0.25rem", color: "#6c757d", fontWeight: 500 }}>
+                                        Power of Attorney Details
+                                    </div>
+                                    <dl className="mb-0" style={{ fontSize: "0.95rem", color: "#6c757d" }}>
+                                        <div>
+                                            <dt style={{ display: "inline", fontWeight: 500 }}>Name of Requester:</dt>
+                                            <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
+                                                <strong>{powerOfAttourney.firstName} {powerOfAttourney.surname}</strong>
+                                            </dd>
+                                        </div>
+                                        <div>
+                                            <dt style={{ display: "inline", fontWeight: 500 }}>Requesters Relationship:</dt>
+                                            <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
+                                                <strong>{powerOfAttourney.relationship}</strong>
+                                            </dd>
+                                        </div>
+                                    </dl>
+                                </>
+                            )}
+                        </div>
+
                     </Alert>
 
                     {error && (
@@ -86,23 +141,20 @@ export const Confirmation: React.FC<ConfirmationProps> = ({ selectedOption, nhsN
                     )}
 
                     <form className="nhsuk-form-group" onSubmit={handleSubmit}>
-                        <p style={{ fontWeight: 500, marginBottom: "1.5rem" }}>
-                            We will notify you when this has been enacted.
-                        </p>
                         <label className="nhsuk-label" style={{ marginBottom: "1rem" }}>
-                            How would you like to receive it:
+                            How would you like to be notified when your data has flowed into The London Data Service:
                         </label>
                         <div className="nhsuk-checkboxes nhsuk-checkboxes--vertical" style={{ marginBottom: "1.5rem" }}>
                             <div className="nhsuk-checkboxes__item">
                                 <input
                                     className="nhsuk-checkboxes__input"
                                     id="sms"
-                                    name="sms"
+                                    name="SMS"
                                     type="checkbox"
-                                    checked={prefs.sms}
+                                    checked={prefs.SMS}
                                     onChange={handleChange}
                                 />
-                                <label className="nhsuk-label nhsuk-checkboxes__label" htmlFor="sms">
+                                <label className="nhsuk-label nhsuk-checkboxes__label" htmlFor="SMS">
                                     SMS
                                 </label>
                             </div>
@@ -110,26 +162,26 @@ export const Confirmation: React.FC<ConfirmationProps> = ({ selectedOption, nhsN
                                 <input
                                     className="nhsuk-checkboxes__input"
                                     id="email"
-                                    name="email"
+                                    name="Email"
                                     type="checkbox"
-                                    checked={prefs.email}
+                                    checked={prefs.Email}
                                     onChange={handleChange}
                                 />
-                                <label className="nhsuk-label nhsuk-checkboxes__label" htmlFor="email">
-                                    EMAIL
+                                <label className="nhsuk-label nhsuk-checkboxes__label" htmlFor="Email">
+                                    Email
                                 </label>
                             </div>
                             <div className="nhsuk-checkboxes__item">
                                 <input
                                     className="nhsuk-checkboxes__input"
                                     id="post"
-                                    name="post"
+                                    name="Post"
                                     type="checkbox"
-                                    checked={prefs.post}
+                                    checked={prefs.Post}
                                     onChange={handleChange}
                                 />
-                                <label className="nhsuk-label nhsuk-checkboxes__label" htmlFor="post">
-                                    POST
+                                <label className="nhsuk-label nhsuk-checkboxes__label" htmlFor="Post">
+                                    Post
                                 </label>
                             </div>
                         </div>
@@ -137,8 +189,6 @@ export const Confirmation: React.FC<ConfirmationProps> = ({ selectedOption, nhsN
                         <button className="nhsuk-button" type="submit" style={{ width: "100%" }}>
                             Save Preferences
                         </button>
-
-                       
                     </form>
                 </Col>
                 <Col xs={12} md={6} lg={6} className="custom-col-spacing">

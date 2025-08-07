@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useStep } from "../../hooks/useStep";
 import { Patient } from "../../models/patients/patient";
 import { PowerOfAttourney } from "../../models/powerOfAttourneys/powerOfAttourney";
 import { patientViewService } from "../../services/views/patientViewService";
 import { TextInput, Select, Card } from "nhsuk-react-components";
 import { Col, Container, Row } from "react-bootstrap";
+import { StepContext } from "../context/stepContext";
 
 interface SearchByDetailsProps {
     onBack: () => void;
@@ -38,6 +39,14 @@ const isValidUKDate = (day: string, month: string, year: string): string | null 
 };
 
 const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttourney }) => {
+    const stepContext = useContext(StepContext);
+
+    useEffect(() => {
+        if (stepContext && typeof stepContext.resetStepContext === "function") {
+            stepContext.resetStepContext();
+        }
+    }, [stepContext]);
+
     // Standard fields
     const [surname, setSurname] = useState("");
     const [postcode, setPostcode] = useState("");
