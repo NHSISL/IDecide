@@ -11,5 +11,6 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
     public interface IPatientOrchestrationService
     {
         ValueTask<Patient> PatientLookupByDetailsAsync(PatientLookup patientLookup);
+        ValueTask<Patient> PatientLookupByNhsNumberAsync(string nhsNumber);
     }
 }

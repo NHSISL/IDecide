@@ -37,4 +37,10 @@
     <Folder Include="Controllers\FrontendConfigurations\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\LondonDataServices.IDecide.Core\LondonDataServices.IDecide.Core.csproj" />
+    <ProjectReference Include="..\LondonDataServices.IDecide.Portal.Client\LondonDataServices.IDecide.Portal.Client.esproj" />
+    <ProjectReference Include="..\LondonDataServices.IDecide.Portal.Server\LondonDataServices.IDecide.Portal.Server.csproj" />
+  </ItemGroup>
+
 </Project>
