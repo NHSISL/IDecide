@@ -6,7 +6,13 @@ using System.IO;
 using System.Text.Json;
 using Attrify.Extensions;
 using Attrify.InvisibleApi.Models;
+using ISL.Providers.Notifications.Abstractions;
+using ISL.Providers.Notifications.GovukNotify.Providers.Notifications;
+using ISL.Providers.PDS.Abstractions;
+using ISL.Providers.PDS.FakeFHIR.Models;
+using ISL.Providers.PDS.FakeFHIR.Providers.FakeFHIR;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
+using LondonDataServices.IDecide.Core.Brokers.Pds;
 using LondonDataServices.IDecide.Core.Brokers.Storages.Sql;
 using LondonDataServices.IDecide.Core.Services.Foundations.Pds;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
@@ -63,10 +69,10 @@ namespace LondonDataServices.IDecide.Portal.Server
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddControllers();
+            AddProviders(builder.Services, builder.Configuration);
             AddBrokers(builder.Services, builder.Configuration);
             AddFoundationServices(builder.Services);
             AddOrchestrationServices(builder.Services, builder.Configuration);
-            //     AddProviders(builder.Services, builder.Configuration);
             //     AddProcessingServices(builder.Services);
             //     AddCoordinationServices(builder.Services, builder.Configuration);
 
@@ -114,11 +120,21 @@ namespace LondonDataServices.IDecide.Portal.Server
         }
 
         private static void AddProviders(IServiceCollection services, IConfiguration configuration)
-        { }
+        {
+            FakeFHIRProviderConfigurations fakeFHIRProviderConfigurations = configuration
+                .GetSection("FakeFHIRProviderConfigurations")
+                    .Get<FakeFHIRProviderConfigurations>();
+
+            services.AddTransient<IPdsAbstractionProvider, PdsAbstractionProvider>();
+            services.AddTransient<INotificationAbstractionProvider, NotificationAbstractionProvider>();
+            services.AddTransient<INotificationProvider, GovukNotifyProvider>();
+            services.AddTransient<IPdsProvider, FakeFHIRProvider>();
+        }
 
         private static void AddBrokers(IServiceCollection services, IConfiguration configuration)
         {
             services.AddTransient<ILoggingBroker, LoggingBroker>();
+            services.AddTransient<IPdsBroker, PdsBroker>();
         }
 
         private static void AddFoundationServices(IServiceCollection services)
