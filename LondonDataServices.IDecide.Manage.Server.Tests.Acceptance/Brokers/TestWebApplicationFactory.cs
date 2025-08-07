@@ -4,10 +4,9 @@
 
 using System.Linq;
 using Attrify.InvisibleApi.Models;
-using ISL.Providers.ReIdentification.Abstractions;
-using ISL.Providers.ReIdentification.OfflineFileSources.Models;
-using ISL.Providers.ReIdentification.OfflineFileSources.Providers.OfflineFileSources;
-using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Tests.Acceptance;
+using ISL.Providers.PDS.Abstractions;
+using ISL.Providers.PDS.FakeFHIR.Models;
+using ISL.Providers.PDS.FakeFHIR.Providers.FakeFHIR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -32,7 +31,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Tests.Accept
             {
                 OverrideSecurityForTesting(services);
 
-                OverrideReIdentificationProviderForTesting(
+                OverrideFhirProviderForTesting(
                     services,
                     context.Configuration);
             });
@@ -79,24 +78,24 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Tests.Accept
             });
         }
 
-        private static void OverrideReIdentificationProviderForTesting(
+        private static void OverrideFhirProviderForTesting(
             IServiceCollection services,
-            IConfiguration configiration)
+            IConfiguration configuration)
         {
-            var reIdentificationDescriptor = services
-                .FirstOrDefault(d => d.ServiceType == typeof(IReIdentificationProvider));
+            var fhirDescriptor = services
+                .FirstOrDefault(d => d.ServiceType == typeof(IPdsProvider));
 
-            if (reIdentificationDescriptor != null)
+            if (fhirDescriptor != null)
             {
-                services.Remove(reIdentificationDescriptor);
+                services.Remove(fhirDescriptor);
             }
 
-            OfflineSourceReIdentificationConfigurations offlineSourceReIdentificationConfigurations = configiration
-                .GetSection("offlineSourceReIdentificationConfigurations")
-                    .Get<OfflineSourceReIdentificationConfigurations>();
+            FakeFHIRProviderConfigurations fakeFHIRProviderConfigurations = configuration
+                 .GetSection("FakeFHIRProviderConfigurations")
+                     .Get<FakeFHIRProviderConfigurations>();
 
-            services.AddSingleton(offlineSourceReIdentificationConfigurations);
-            services.AddTransient<IReIdentificationProvider, OfflineFileSourceReIdentificationProvider>();
+            services.AddSingleton(fakeFHIRProviderConfigurations);
+            services.AddTransient<IPdsProvider, FakeFHIRProvider>();
         }
     }
 }

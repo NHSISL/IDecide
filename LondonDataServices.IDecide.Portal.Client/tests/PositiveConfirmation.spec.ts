@@ -76,16 +76,16 @@ test.describe('PositiveConfirmationPage', () => {
     test('should navigate to confirm code page when enabled button is clicked', async ({ page }) => {
         test.setTimeout(30000);
         const buttons = [
-            page.getByRole('button', { name: /^email$/i }),
-            page.getByRole('button', { name: /^sms$/i }),
-            page.getByRole('button', { name: /^letter$/i }),
+            page.getByRole('button', { name: /^Email$/i }),
+            page.getByRole('button', { name: /^SMS$/i }),
+            page.getByRole('button', { name: /^Letter$/i }),
         ];
 
         for (const btn of buttons) {
             if (await btn.count() > 0 && await btn.isEnabled()) {
                 await btn.click();
                 // Confirm navigation (adjust selector as needed for your confirm code page)
-                await expect(page.getByText(/code/i)).toBeVisible({ timeout: 10000 });
+                await expect(page.getByText(/enter code/i)).toBeVisible({ timeout: 10000 });
                 break; // Only test one navigation per run
             }
         }

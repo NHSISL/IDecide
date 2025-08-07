@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useStep } from "../../hooks/useStep";
 import { Patient } from "../../models/patients/patient";
-import { Row, Col } from "react-bootstrap";
+import { Row, Col, Alert } from "react-bootstrap";
 
 interface OptInOptOutProps {
     createdPatient: Patient | null;
@@ -10,7 +10,7 @@ interface OptInOptOutProps {
 export const OptInOptOut: React.FC<OptInOptOutProps> = ({ createdPatient }) => {
     const [selectedOption, setSelectedOption] = useState<"optout" | "optin" | "">("");
     const [error, setError] = useState("");
-    const { nextStep } = useStep();
+    const { nextStep, powerOfAttourney } = useStep();
 
     if (!createdPatient) {
         return (
@@ -34,6 +34,33 @@ export const OptInOptOut: React.FC<OptInOptOutProps> = ({ createdPatient }) => {
         <>
             <Row className="custom-col-spacing">
                 <Col xs={12} md={12} lg={7}>
+                    {powerOfAttourney && (
+                        <Alert variant="info" className="d-flex align-items-center" style={{ marginBottom: "0.75rem", padding: "0.75rem" }}>
+                            <div className="me-2" style={{ fontSize: "1.5rem", color: "#6c757d" }}>
+                            </div>
+                            <div>
+                                <div style={{ fontSize: "1rem", marginBottom: "0.25rem", color: "#6c757d", fontWeight: 500 }}>
+                                    Power of Attorney Details
+                                </div>
+                                <dl className="mb-0" style={{ fontSize: "0.95rem", color: "#6c757d" }}>
+                                    <div>
+                                        <dt style={{ display: "inline", fontWeight: 500 }}>Name:</dt>
+                                        <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
+                                            <strong>{powerOfAttourney.firstName} {powerOfAttourney.surname}</strong>
+                                        </dd>
+                                    </div>
+                                    <div>
+                                        <dt style={{ display: "inline", fontWeight: 500 }}>Relationship:</dt>
+                                        <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
+                                            <strong>{powerOfAttourney.relationship}</strong>
+                                        </dd>
+                                    </div>
+                                </dl>
+                            </div>
+                        </Alert>
+                    )}
+
+
                     <form onSubmit={handleSubmit}>
                         {/* Opt-Out Card */}
                         <div
@@ -93,7 +120,7 @@ export const OptInOptOut: React.FC<OptInOptOutProps> = ({ createdPatient }) => {
                                 <div>
                                     <strong>Opt-In</strong>
                                     <div id="optin-desc" style={{ marginTop: "0.5rem" }}>
-                                        I do want my personal data to be used in the London Data Service for Direct Care, Research and Commissioning purposes.
+                                        I want my personal data to be used in the London Data Service for Direct Care, Research and Commissioning purposes.
                                     </div>
                                 </div>
                             </label>
