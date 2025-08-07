@@ -19,7 +19,7 @@ export const SearchByNhsNumber = ({onIDontKnow,powerOfAttourney = false} : {
 
     useEffect(() => {
         stepContext?.resetStepContext?.();
-    }, []);
+    }, [stepContext]);
 
     const [nhsNumberInput, setNhsNumberInput] = useState("1234567890");
     const [poaNhsNumberInput, setPoaNhsNumberInput] = useState("");

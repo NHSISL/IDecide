@@ -42,8 +42,10 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
     const stepContext = useContext(StepContext);
 
     useEffect(() => {
-        stepContext?.resetStepContext?.();
-    }, []);
+        if (stepContext && typeof stepContext.resetStepContext === "function") {
+            stepContext.resetStepContext();
+        }
+    }, [stepContext]);
 
     // Standard fields
     const [surname, setSurname] = useState("");

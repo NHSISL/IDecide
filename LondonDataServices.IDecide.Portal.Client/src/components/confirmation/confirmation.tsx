@@ -69,7 +69,7 @@ export const Confirmation: React.FC<ConfirmationProps> = ({ selectedOption, nhsN
     };
 
     const selectedMethods = Object.entries(prefs)
-        .filter(([_, value]) => value)
+        .filter(([, value]) => value)
         .map(([key]) => key);
 
     return (
