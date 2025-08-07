@@ -15,7 +15,8 @@ namespace LondonDataServices.IDecide.Portals.Server.Tests.Acceptance.Apis
         {
             // Given
             List<string> expectedResult = new List<string>
-            { };
+            {
+            };
 
             // When
             string[] actualResult = await this.apiBroker.GetFeaturesAsync();

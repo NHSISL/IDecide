@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Force.DeepCloner;
 using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
+using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Securities;
 using Moq;
-using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes.Exceptions;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.DecisionTypes
 {
@@ -29,6 +29,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                     message: "DecisionType validation errors occurred, please try again.",
                     innerException: nullDecisionTypeException);
 
+            this.securityAuditBrokerMock.Setup(broker =>
+                broker.ApplyAddAuditValuesAsync(nullDecisionType))
+                    .ReturnsAsync(nullDecisionType);
+
             // when
             ValueTask<DecisionType> addDecisionTypeTask =
                 this.decisionTypeService.AddDecisionTypeAsync(nullDecisionType);
@@ -40,6 +44,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
             // then
             actualDecisionTypeValidationException.Should()
                 .BeEquivalentTo(expectedDecisionTypeValidationException);
+
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.ApplyAddAuditValuesAsync(nullDecisionType),
+                    Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
@@ -132,6 +140,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once());
+
+            this.securityBrokerMock.Verify(broker =>
+                broker.GetCurrentUserAsync(),
+                    Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(

@@ -242,8 +242,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
             actualDecisionTypeDependencyException.Should()
                 .BeEquivalentTo(expectedDecisionTypeDependencyException);
 
-            this.securityAuditBrokerMock.Setup(broker =>
-                broker.ApplyAddAuditValuesAsync(It.IsAny<DecisionType>()));
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.ApplyAddAuditValuesAsync(It.IsAny<DecisionType>()),
+                    Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(

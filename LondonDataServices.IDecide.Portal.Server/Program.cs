@@ -8,6 +8,8 @@ using Attrify.Extensions;
 using Attrify.InvisibleApi.Models;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Brokers.Storages.Sql;
+using LondonDataServices.IDecide.Core.Services.Foundations.Notifications;
+using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Services.Foundations.Pds;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
 using Microsoft.AspNetCore.Builder;
@@ -66,9 +68,9 @@ namespace LondonDataServices.IDecide.Portal.Server
             AddBrokers(builder.Services, builder.Configuration);
             AddFoundationServices(builder.Services);
             AddOrchestrationServices(builder.Services, builder.Configuration);
-            //     AddProviders(builder.Services, builder.Configuration);
-            //     AddProcessingServices(builder.Services);
-            //     AddCoordinationServices(builder.Services, builder.Configuration);
+            AddProviders(builder.Services, builder.Configuration);
+            AddProcessingServices(builder.Services);
+            AddCoordinationServices(builder.Services, builder.Configuration);
 
             // Register IConfiguration to be available for dependency injection
             builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
@@ -122,8 +124,10 @@ namespace LondonDataServices.IDecide.Portal.Server
         }
 
         private static void AddFoundationServices(IServiceCollection services)
-        { 
+        {
             services.AddTransient<IPdsService, PdsService>();
+            services.AddTransient<IPatientService, PatientService>();
+            services.AddTransient<INotificationService, NotificationService>();
         }
 
         private static void AddProcessingServices(IServiceCollection services)
@@ -131,7 +135,7 @@ namespace LondonDataServices.IDecide.Portal.Server
 
         private static void AddOrchestrationServices(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddTransient<IPatientOrchestrationService, PatientOrchestrationService>(); 
+            services.AddTransient<IPatientOrchestrationService, PatientOrchestrationService>();
         }
 
         private static void AddCoordinationServices(IServiceCollection services, IConfiguration configuration)

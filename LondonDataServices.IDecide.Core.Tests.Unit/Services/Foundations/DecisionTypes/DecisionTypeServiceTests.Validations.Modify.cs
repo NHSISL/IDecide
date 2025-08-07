@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Force.DeepCloner;
 using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
+using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Securities;
 using Moq;
-using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes.Exceptions;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.DecisionTypes
 {
@@ -27,6 +27,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                     message: "DecisionType validation errors occurred, please try again.",
                     innerException: nullDecisionTypeException);
 
+            this.securityAuditBrokerMock.Setup(broker =>
+                broker.ApplyModifyAuditValueAsync(nullDecisionType))
+                    .ReturnsAsync(nullDecisionType);
+
             // when
             ValueTask<DecisionType> modifyDecisionTypeTask =
                 this.decisionTypeService.ModifyDecisionTypeAsync(nullDecisionType);
@@ -38,6 +42,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
             // then
             actualDecisionTypeValidationException.Should()
                 .BeEquivalentTo(expectedDecisionTypeValidationException);
+
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.ApplyModifyAuditValueAsync(nullDecisionType),
+                    Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
@@ -52,8 +60,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                 broker.UpdateDecisionTypeAsync(It.IsAny<DecisionType>()),
                     Times.Never);
 
-            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.securityAuditBrokerMock.VerifyNoOtherCalls();
+            this.securityBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
 

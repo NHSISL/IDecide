@@ -54,9 +54,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
             // then
             actualDecisionType.Should().BeEquivalentTo(expectedDecisionType);
 
-            this.securityAuditBrokerMock.Setup(broker =>
-                broker.ApplyAddAuditValuesAsync(inputDecisionType))
-                    .ReturnsAsync(auditAppliedDecisionType);
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.ApplyAddAuditValuesAsync(inputDecisionType),
+                    Times.Once);
 
             this.securityBrokerMock.Verify(broker =>
                 broker.GetCurrentUserAsync(),
