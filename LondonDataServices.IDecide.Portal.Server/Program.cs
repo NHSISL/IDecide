@@ -63,9 +63,9 @@ namespace LondonDataServices.IDecide.Portal.Server
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddControllers();
-            AddBrokers(builder.Services, builder.Configuration);
-            AddFoundationServices(builder.Services);
-            AddOrchestrationServices(builder.Services, builder.Configuration);
+            //AddBrokers(builder.Services, builder.Configuration);
+            //AddFoundationServices(builder.Services);
+            //AddOrchestrationServices(builder.Services, builder.Configuration);
             //     AddProviders(builder.Services, builder.Configuration);
             //     AddProcessingServices(builder.Services);
             //     AddCoordinationServices(builder.Services, builder.Configuration);
