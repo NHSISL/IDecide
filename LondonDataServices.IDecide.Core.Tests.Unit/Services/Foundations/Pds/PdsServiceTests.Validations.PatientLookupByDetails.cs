@@ -23,7 +23,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
             var nullPatientLookupException =
                 new NullPatientLookupException(message: "Patient lookup is null.");
 
-
             var expectedPdsValidationException =
                 new PdsValidationException(
                     message: "PDS validation error occurred, " +

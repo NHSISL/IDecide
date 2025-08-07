@@ -11,6 +11,7 @@ using ISL.Providers.Notifications.GovukNotify.Providers.Notifications;
 using ISL.Providers.PDS.Abstractions;
 using ISL.Providers.PDS.FakeFHIR.Models;
 using ISL.Providers.PDS.FakeFHIR.Providers.FakeFHIR;
+using ISL.Providers.PDS.FHIR.Providers;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Brokers.Pds;
 using LondonDataServices.IDecide.Core.Brokers.Storages.Sql;
@@ -121,14 +122,10 @@ namespace LondonDataServices.IDecide.Portal.Server
 
         private static void AddProviders(IServiceCollection services, IConfiguration configuration)
         {
-            FakeFHIRProviderConfigurations fakeFHIRProviderConfigurations = configuration
-                .GetSection("FakeFHIRProviderConfigurations")
-                    .Get<FakeFHIRProviderConfigurations>();
-
             services.AddTransient<IPdsAbstractionProvider, PdsAbstractionProvider>();
             services.AddTransient<INotificationAbstractionProvider, NotificationAbstractionProvider>();
             services.AddTransient<INotificationProvider, GovukNotifyProvider>();
-            services.AddTransient<IPdsProvider, FakeFHIRProvider>();
+            services.AddTransient<IPdsProvider, PdsFHIRProvider>();
         }
 
         private static void AddBrokers(IServiceCollection services, IConfiguration configuration)

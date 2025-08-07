@@ -13,6 +13,8 @@ using ISL.Providers.Notifications.GovukNotify.Providers.Notifications;
 using ISL.Providers.PDS.Abstractions;
 using ISL.Providers.PDS.FakeFHIR.Models;
 using ISL.Providers.PDS.FakeFHIR.Providers.FakeFHIR;
+using ISL.Providers.PDS.FHIR.Models.Brokers.PdsFHIR;
+using ISL.Providers.PDS.FHIR.Providers;
 using ISL.Providers.ReIdentification.Necs.Models.Brokers.Notifications;
 using LondonDataServices.IDecide.Core.Brokers.DateTimes;
 using LondonDataServices.IDecide.Core.Brokers.Identifiers;
@@ -170,18 +172,34 @@ namespace LondonDataServices.IDecide.Manage.Server
                 ApiKey = notificationConfigurations.ApiKey
             };
 
-            FakeFHIRProviderConfigurations fakeFHIRProviderConfigurations = configuration
-                .GetSection("FakeFHIRProviderConfigurations")
-                    .Get<FakeFHIRProviderConfigurations>();
-
             services.AddSingleton(notificationConfigurations);
             services.AddSingleton(notifyConfigurations);
-            services.AddSingleton(fakeFHIRProviderConfigurations);
             services.AddTransient<INotificationAbstractionProvider, NotificationAbstractionProvider>();
             services.AddTransient<INotificationProvider, GovukNotifyProvider>();
             services.AddTransient<IPdsAbstractionProvider, PdsAbstractionProvider>();
-            // TODO change to use FHIRProvider
-            services.AddTransient<IPdsProvider, FakeFHIRProvider>();
+
+            bool fakeFHIRProviderMode = configuration
+                .GetSection("FakeFHIRProviderMode").Get<bool>();
+
+            if (fakeFHIRProviderMode == true)
+            {
+                FakeFHIRProviderConfigurations fakeFHIRProviderConfigurations = configuration
+                .GetSection("FakeFHIRProviderConfigurations")
+                    .Get<FakeFHIRProviderConfigurations>();
+
+                services.AddSingleton(fakeFHIRProviderConfigurations);
+                services.AddTransient<IPdsProvider, FakeFHIRProvider>();
+            }
+            else
+            {
+                PdsFHIRConfigurations pdsFhirConfigurations = configuration
+                .GetSection("pdsFHIRConfigurations")
+                    .Get<PdsFHIRConfigurations>();
+
+                services.AddSingleton(pdsFhirConfigurations);
+                services.AddTransient<IPdsProvider, PdsFHIRProvider>();
+            }
+
         }
 
         private static void AddBrokers(IServiceCollection services, IConfiguration configuration)
