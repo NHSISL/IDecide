@@ -69,7 +69,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
         {
             var pdsValidationException =
                 new PdsValidationException(
-                    message: "PDS validation errors occurred, please try again.",
+                    message: "PDS validation error occurred, please fix the errors and try again.",
                     innerException: exception);
 
             await this.loggingBroker.LogErrorAsync(pdsValidationException);
