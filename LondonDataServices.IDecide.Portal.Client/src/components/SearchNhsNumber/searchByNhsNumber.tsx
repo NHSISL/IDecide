@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useStep } from "../../hooks/useStep";
 import { Patient } from "../../models/patients/patient";
 import { PowerOfAttourney } from "../../models/powerOfAttourneys/powerOfAttourney";
@@ -6,6 +6,7 @@ import { patientViewService } from "../../services/views/patientViewService";
 import { TextInput, Button, Select, Card } from "nhsuk-react-components";
 import { loadRecaptchaScript } from "../../helpers/recaptureLoad";
 import { Container, Row, Col } from "react-bootstrap";
+import { StepContext } from "../context/stepContext";
 
 const RECAPTCHA_SITE_KEY = "6LcOJn4rAAAAAIUdB70R9BqkfPFD-bPYTk6ojRGg";
 
@@ -13,6 +14,13 @@ export const SearchByNhsNumber = ({onIDontKnow,powerOfAttourney = false} : {
     onIDontKnow: (powerOfAttourney: boolean) => void;
     powerOfAttourney?: boolean;
 }) => {
+
+    const stepContext = useContext(StepContext);
+
+    useEffect(() => {
+        stepContext?.resetStepContext?.();
+    }, []);
+
     const [nhsNumberInput, setNhsNumberInput] = useState("1234567890");
     const [poaNhsNumberInput, setPoaNhsNumberInput] = useState("");
     const [poaFirstname, setPoaFirstname] = useState("");

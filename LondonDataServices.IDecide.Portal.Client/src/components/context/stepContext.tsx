@@ -17,6 +17,7 @@ type StepContextType = {
     nhsNumber: string | null;
     powerOfAttourney: PowerOfAttourney | null;
     setPowerOfAttourney: React.Dispatch<React.SetStateAction<PowerOfAttourney | null>>;
+    resetStepContext: () => void;
 };
 
 const StepContext = createContext<StepContextType | undefined>(undefined);
@@ -46,6 +47,15 @@ export const StepProvider = ({ children }: StepProviderProps) => {
         setCurrentStepIndex((i) => i + 1);
     };
 
+    // Add a reset function
+    const resetStepContext = () => {
+        setCurrentStepIndex(0);
+        setCreatedPatient(null);
+        setSelectedOption(null);
+        setNhsNumber(null);
+        setPowerOfAttourney(null);
+    };
+
     return (
         <StepContext.Provider
             value={{
@@ -58,6 +68,7 @@ export const StepProvider = ({ children }: StepProviderProps) => {
                 nhsNumber,
                 powerOfAttourney,
                 setPowerOfAttourney,
+                resetStepContext
             }}
         >
             {children}

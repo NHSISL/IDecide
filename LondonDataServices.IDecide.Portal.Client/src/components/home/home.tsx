@@ -39,7 +39,7 @@ const expandableContent: React.ReactNode[][] = [
     [
         <p key="p1">
             Using this portal you can tell us that you don't want your data used for secondary purposes, such as population health planning and research.
-            To register your details to 'opt-out' click the start button below.
+            To register your details to 'opt-out' click the start button above.
         </p>,
         <p key="p2">
             Telling us that you don't want your data shared with healthcare professionals who will be treating you is a different process.
@@ -48,7 +48,10 @@ const expandableContent: React.ReactNode[][] = [
     ],
     [
         <p key="p3">
-            You can access our privacy notices on this page of the portal [Privacy notice URL]
+            The SDE privacy notice is{' '}
+            <a href="https://healthinnovationnetwork.com/wp-content/uploads/2025/07/OLHDS-LAP-Full-Privacy-Notice.pdf" target="_blank" rel="noopener noreferrer">here</a>{' '}
+            and the LDS Privacy notice is available{' '}
+            <a href="https://healthinnovationnetwork.com/wp-content/uploads/2025/07/OLHDS-LDS-Full-Privacy-Notice.pdf" target="_blank" rel="noopener noreferrer">here</a>.
         </p>
     ]
 ];

@@ -93,7 +93,7 @@ export const OptInOptOut: React.FC<OptInOptOutProps> = ({ createdPatient }) => {
                                 <div>
                                     <strong>Opt-In</strong>
                                     <div id="optin-desc" style={{ marginTop: "0.5rem" }}>
-                                        I do want my personal data to be used in the London Data Service for Direct Care, Research and Commissioning purposes.
+                                        I want my personal data to be used in the London Data Service for Direct Care, Research and Commissioning purposes.
                                     </div>
                                 </div>
                             </label>

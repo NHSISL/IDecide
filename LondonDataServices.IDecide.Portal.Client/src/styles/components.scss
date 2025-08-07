@@ -172,3 +172,16 @@
 .nhsuk-card__heading--feature {
     background: #004F69 !important;
 }
+
+.home-box {
+    max-width: 900px; // Reduce from 1700px
+    background: rgba(255, 255, 255, 0.85); // Add transparency
+    box-shadow: 0 2px 8px #e0e0e0;
+    border-radius: 8px;
+    margin: 2rem auto;
+    padding: 2rem 1.5rem;
+}
+
+.home-content {
+    padding: 3rem 0.5rem; // Increase top/bottom padding
+}
