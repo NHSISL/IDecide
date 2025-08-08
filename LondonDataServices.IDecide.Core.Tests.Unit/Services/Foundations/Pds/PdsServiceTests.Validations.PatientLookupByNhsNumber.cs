@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds.Exceptions;
+using Moq;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
 {
@@ -40,6 +41,18 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
 
             // then
             actualException.Should().BeEquivalentTo(expectedPdsValidationException);
+
+            pdsBrokerMock.Verify(broker =>
+                broker.PatientLookupByNhsNumberAsync(invalidNhsNumber),
+                        Times.Never);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedPdsValidationException))),
+                        Times.Once);
+
+            this.pdsBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
