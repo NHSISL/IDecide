@@ -6,9 +6,11 @@ export class Patient {
     public emailAddress?: string;
     public address?: string;
     public postcode?: string;
-    public code?: string;
-    public codeNotificationDecision?: string;
+    public phoneNumber?: string;
+    public verificationCode?: string;
+    public notificationPreference?: string;
     public dateOfBirth?: Date;
+    public recaptchaToken?: string;
     public createdBy?: string;
     public createdDate?: Date;
     public updatedBy?: string;
@@ -22,9 +24,11 @@ export class Patient {
         this.emailAddress = patient.emailAddress || "";
         this.address = patient.address || "";
         this.postcode = patient.postcode || "";
-        this.code = patient.code || "";
-        this.codeNotificationDecision = patient.codeNotificationDecision || "";
+        this.phoneNumber = patient.phoneNumber || "";
+        this.verificationCode = patient.verificationCode || "";
+        this.notificationPreference = patient.notificationPreference || "";
         this.dateOfBirth = patient.dateOfBirth ? new Date(patient.dateOfBirth) : undefined;
+        this.recaptchaToken = patient.recaptchaToken || "";
         this.createdBy = patient.createdBy || "";
         this.createdDate = patient.createdDate ? new Date(patient.createdDate) : undefined;
         this.updatedBy = patient.updatedBy || "";

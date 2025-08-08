@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Models.Clients.AuditClient.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Audits;
 using LondonDataServices.IDecide.Core.Models.Foundations.Audits.Exceptions;
-using LondonDataServices.IDecide.Core.Services.Audits;
+using LondonDataServices.IDecide.Core.Services.Foundations.Audits;
 using Xeptions;
 
 namespace LondonDataServices.IDecide.Core.Clients.Audits

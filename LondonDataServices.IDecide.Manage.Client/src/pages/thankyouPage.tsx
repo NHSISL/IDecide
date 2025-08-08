@@ -1,5 +1,4 @@
-﻿import React from "react";
-import { Container } from "react-bootstrap";
+﻿import { Container } from "react-bootstrap";
 import Thankyou from "../components/thankyou/thankyou";
 
 export const ThankyouPage = () => {

@@ -1,10 +1,13 @@
 ﻿import { Container } from "react-bootstrap";
-import ConfirmCode from "../components/confirmCode/confirmCode";
+import { useStep } from "../hooks/useStep";
+import { ConfirmCode } from "../components/confirmCode/confirmCode";
 
 export const ConfirmCodePage = () => {
+    const { createdPatient } = useStep();
+
     return (
         <Container>
-            <ConfirmCode />
+            <ConfirmCode createdPatient={createdPatient} />
         </Container>
     );
 };

@@ -19,7 +19,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
         {
             // given
             string randomString = GetRandomString();
-            string inputSurname = randomString;
+            PatientLookup randomPatientLookup = GetRandomSearchPatientLookup(randomString);
+            PatientLookup inputPatientLookup = randomPatientLookup;
             var serviceException = new Exception();
 
             var failedServicePdsException =
@@ -28,61 +29,52 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
                     innerException: serviceException,
                     data: serviceException.Data);
 
-            var expectedpdsServiceException =
+            var expectedPdsServiceException =
                 new PdsServiceException(
                     message: "PDS service error occurred, please contact support.",
                     innerException: failedServicePdsException);
 
             pdsBrokerMock.Setup(broker =>
                 broker.PatientLookupByDetailsAsync(
-                    null,
-                    inputSurname,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null))
+                    string.Empty,
+                    inputPatientLookup.SearchCriteria.Surname,
+                    string.Empty,
+                    string.Empty,
+                    string.Empty,
+                    string.Empty,
+                    string.Empty,
+                    string.Empty,
+                    string.Empty))
                     .ThrowsAsync(serviceException);
 
             // when
-            ValueTask<Patient> patientLookupByDetailsTask =
-                pdsService.PatientLookupByDetailsAsync(
-                    null,
-                    inputSurname,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null);
+            ValueTask<PatientLookup> patientLookupByDetailsTask =
+                pdsService.PatientLookupByDetailsAsync(inputPatientLookup);
 
-           PdsServiceException actualPdsServiceException =
-                await Assert.ThrowsAsync<PdsServiceException>(
-                    testCode: patientLookupByDetailsTask.AsTask);
+            PdsServiceException actualPdsServiceException =
+                 await Assert.ThrowsAsync<PdsServiceException>(
+                     testCode: patientLookupByDetailsTask.AsTask);
 
             // then
             actualPdsServiceException.Should().BeEquivalentTo(
-                expectedpdsServiceException);
+                expectedPdsServiceException);
 
             pdsBrokerMock.Verify(broker =>
                 broker.PatientLookupByDetailsAsync(
-                    null,
-                    inputSurname,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null),
+                    string.Empty,
+                    inputPatientLookup.SearchCriteria.Surname,
+                    string.Empty,
+                    string.Empty,
+                    string.Empty,
+                    string.Empty,
+                    string.Empty,
+                    string.Empty,
+                    string.Empty),
                         Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
-                    expectedpdsServiceException))),
+                    expectedPdsServiceException))),
                         Times.Once);
 
             this.pdsBrokerMock.VerifyNoOtherCalls();

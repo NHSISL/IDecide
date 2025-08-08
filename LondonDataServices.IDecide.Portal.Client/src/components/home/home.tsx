@@ -39,7 +39,7 @@ const expandableContent: React.ReactNode[][] = [
     [
         <p key="p1">
             Using this portal you can tell us that you don't want your data used for secondary purposes, such as population health planning and research.
-            To register your details to 'opt-out' click the start button below.
+            To register your details to 'opt-out' click the start button above.
         </p>,
         <p key="p2">
             Telling us that you don't want your data shared with healthcare professionals who will be treating you is a different process.
@@ -48,7 +48,10 @@ const expandableContent: React.ReactNode[][] = [
     ],
     [
         <p key="p3">
-            You can access our privacy notices on this page of the portal [Privacy notice URL]
+            The SDE privacy notice is{' '}
+            <a href="https://healthinnovationnetwork.com/wp-content/uploads/2025/07/OLHDS-LAP-Full-Privacy-Notice.pdf" target="_blank" rel="noopener noreferrer">here</a>{' '}
+            and the LDS Privacy notice is available{' '}
+            <a href="https://healthinnovationnetwork.com/wp-content/uploads/2025/07/OLHDS-LDS-Full-Privacy-Notice.pdf" target="_blank" rel="noopener noreferrer">here</a>.
         </p>
     ]
 ];
@@ -106,7 +109,7 @@ export const Home = () => {
 
     return (
         <div className="home-content" style={{ padding: "1.5rem 0.5rem" }}>
-            <div className="home-box" style={{ maxWidth: 1700, margin: "0 auto", background: "#fff", borderRadius: 8, boxShadow: "0 2px 8px #e0e0e0", padding: "2rem 1.5rem" }}>
+            <div className="home-box" style={{ maxWidth: 1700, margin: "0 auto", borderRadius: 8, boxShadow: "0 2px 8px #e0e0e0", padding: "2rem 1.5rem", background: "rgba(255, 255, 255, 0.70)" }}>
                 <h1 style={{ fontSize: "1.7rem", marginBottom: "0.7rem" }}>Welcome to the OneLondon Data Portal</h1>
                 <p style={{ marginBottom: "0.5rem" }}>OneLondon have developed a world leading resource for health and care improvement known as the London SDE (Secure Data Environment). This is comprised of the LDS (London Data Service) and the LAP (London Analytics Platform).</p>
                 <p style={{ marginBottom: "0.5rem" }}>The data collected from healthcare systems across London by these services can be used for many things all ensuring patient information is shared for improved provision of care. </p>
@@ -114,7 +117,17 @@ export const Home = () => {
                 <p style={{ marginBottom: "0.7rem" }}>
                     <strong>Click on the Start button below to tell us your data preference</strong>
                 </p>
-                <Button onClick={() => navigate("/optOut")} style={{ margin: "0 0 1rem 0", width: 160, fontWeight: 600 }}>Start</Button>
+                <Button
+                    onClick={() => navigate("/optOut")}
+                    style={{ margin: "0 0 1rem 1rem", width: 260, fontWeight: 600, minHeight: 75 }}>
+                    Start
+                </Button>
+
+                <Button
+                    onClick={() => navigate("/optOut", { state: { powerOfAttourney: true } })}
+                    style={{ margin: "0 0 1rem 1rem", width: 260, fontWeight: 600, minHeight: 75 }}>
+                    Requesting an Opt-out on someone else's behalf
+                </Button>
 
                 {expandableHeaders.map((header, idx) => (
                     <ExpandableSection

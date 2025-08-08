@@ -2,18 +2,35 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using System;
 using System.IO;
 using System.Text.Json;
 using Attrify.Extensions;
 using Attrify.InvisibleApi.Models;
+using ISL.Providers.Notifications.Abstractions;
+using ISL.Providers.Notifications.GovukNotify.Models;
+using ISL.Providers.Notifications.GovukNotify.Providers.Notifications;
+using ISL.Providers.PDS.Abstractions;
+using ISL.Providers.PDS.FakeFHIR.Models;
+using ISL.Providers.PDS.FakeFHIR.Providers.FakeFHIR;
+using ISL.Providers.PDS.FHIR.Models.Brokers.PdsFHIR;
+using ISL.Providers.PDS.FHIR.Providers;
+using LondonDataServices.IDecide.Core.Brokers.DateTimes;
+using LondonDataServices.IDecide.Core.Brokers.Identifiers;
+using LondonDataServices.IDecide.Core.Brokers.Loggings;
+using LondonDataServices.IDecide.Core.Brokers.Notifications;
+using LondonDataServices.IDecide.Core.Brokers.Pds;
+using LondonDataServices.IDecide.Core.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Brokers.Storages.Sql;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using LondonDataServices.IDecide.Core.Models.Brokers.Notifications;
+using LondonDataServices.IDecide.Core.Services.Foundations.Audits;
+using LondonDataServices.IDecide.Core.Services.Foundations.Notifications;
+using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
+using LondonDataServices.IDecide.Core.Services.Foundations.Pds;
+using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Identity.Web;
 
 namespace LondonDataServices.IDecide.Portal.Server
 {
@@ -63,12 +80,12 @@ namespace LondonDataServices.IDecide.Portal.Server
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddControllers();
-     //     AddProviders(builder.Services, builder.Configuration);
-     //     AddBrokers(builder.Services, builder.Configuration);
-     //     AddFoundationServices(builder.Services);
-     //     AddProcessingServices(builder.Services);
-     //     AddOrchestrationServices(builder.Services, builder.Configuration);
-     //     AddCoordinationServices(builder.Services, builder.Configuration);
+            AddProviders(builder.Services, builder.Configuration);
+            AddBrokers(builder.Services, builder.Configuration);
+            AddFoundationServices(builder.Services);
+            AddOrchestrationServices(builder.Services, builder.Configuration);
+            //     AddProcessingServices(builder.Services);
+            //     AddCoordinationServices(builder.Services, builder.Configuration);
 
             // Register IConfiguration to be available for dependency injection
             builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
@@ -114,19 +131,71 @@ namespace LondonDataServices.IDecide.Portal.Server
         }
 
         private static void AddProviders(IServiceCollection services, IConfiguration configuration)
-        { }
+        {
+            NotificationConfigurations notificationConfigurations = configuration
+                .GetSection("NotificationConfigurations")
+                    .Get<NotificationConfigurations>();
+
+            NotifyConfigurations notifyConfigurations = new NotifyConfigurations
+            {
+                ApiKey = notificationConfigurations.ApiKey
+            };
+
+            services.AddSingleton(notificationConfigurations);
+            services.AddSingleton(notifyConfigurations);
+            services.AddTransient<IPdsAbstractionProvider, PdsAbstractionProvider>();
+            services.AddTransient<INotificationAbstractionProvider, NotificationAbstractionProvider>();
+            services.AddTransient<INotificationProvider, GovukNotifyProvider>();
+
+            bool fakeFHIRProviderMode = configuration
+                .GetSection("FakeFHIRProviderMode").Get<bool>();
+
+            if (fakeFHIRProviderMode == true)
+            {
+                FakeFHIRProviderConfigurations fakeFHIRProviderConfigurations = configuration
+                .GetSection("FakeFHIRProviderConfigurations")
+                    .Get<FakeFHIRProviderConfigurations>();
+
+                services.AddSingleton(fakeFHIRProviderConfigurations);
+                services.AddTransient<IPdsProvider, FakeFHIRProvider>();
+            }
+            else
+            {
+                PdsFHIRConfigurations pdsFhirConfigurations = configuration
+                .GetSection("pdsFHIRConfigurations")
+                    .Get<PdsFHIRConfigurations>();
+
+                services.AddSingleton(pdsFhirConfigurations);
+                services.AddTransient<IPdsProvider, PdsFHIRProvider>();
+            }
+        }
 
         private static void AddBrokers(IServiceCollection services, IConfiguration configuration)
-        { }
+        {
+            services.AddTransient<IDateTimeBroker, DateTimeBroker>();
+            services.AddTransient<IIdentifierBroker, IdentifierBroker>();
+            services.AddTransient<ILoggingBroker, LoggingBroker>();
+            services.AddTransient<ISecurityBroker, SecurityBroker>();
+            services.AddTransient<IStorageBroker, StorageBroker>();
+            services.AddTransient<INotificationBroker, NotificationBroker>();
+            services.AddTransient<IPdsBroker, PdsBroker>();
+        }
 
         private static void AddFoundationServices(IServiceCollection services)
-        { }
+        {
+            services.AddTransient<IAuditService, AuditService>();
+            services.AddTransient<IPdsService, PdsService>();
+            services.AddTransient<IPatientService, PatientService>();
+            services.AddTransient<INotificationService, NotificationService>();
+        }
 
         private static void AddProcessingServices(IServiceCollection services)
         { }
 
         private static void AddOrchestrationServices(IServiceCollection services, IConfiguration configuration)
-        { }
+        {
+            services.AddTransient<IPatientOrchestrationService, PatientOrchestrationService>(); 
+        }
 
         private static void AddCoordinationServices(IServiceCollection services, IConfiguration configuration)
         { }

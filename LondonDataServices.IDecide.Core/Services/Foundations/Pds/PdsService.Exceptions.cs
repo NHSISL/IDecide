@@ -5,6 +5,7 @@
 using ISL.Providers.PDS.Abstractions.Models.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds.Exceptions;
+using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
 using System;
 using System.Threading.Tasks;
 using Xeptions;
@@ -13,13 +14,17 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
 {
     public partial class PdsService
     {
-        private delegate ValueTask<Patient> ReturningPatientFunction();
+        private delegate ValueTask<PatientLookup> ReturningPatientLookupFunction();
 
-        private async ValueTask<Patient> TryCatch(ReturningPatientFunction returningPatientFunction)
+        private async ValueTask<PatientLookup> TryCatch(ReturningPatientLookupFunction returningPatientLookupFunction)
         {
             try
             {
-                return await returningPatientFunction();
+                return await returningPatientLookupFunction();
+            }
+            catch (NullPatientLookupException nullPatientLookupException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(nullPatientLookupException);
             }
             catch (PdsProviderValidationException pdsProviderValidationException)
             {
@@ -64,12 +69,12 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
             }
         }
 
-        private async ValueTask<PdsValidationException> CreateAndLogValidationExceptionAsync(
-            Xeption exception)
+        private async ValueTask<PdsValidationException> CreateAndLogValidationExceptionAsync(Xeption exception)
         {
-            var pdsValidationException = new PdsValidationException(
-                message: "PDS validation error occurred, please fix errors and try again.",
-                innerException: exception);
+            var pdsValidationException =
+                new PdsValidationException(
+                    message: "PDS validation error occurred, please fix the errors and try again.",
+                    innerException: exception);
 
             await this.loggingBroker.LogErrorAsync(pdsValidationException);
 

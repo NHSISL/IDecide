@@ -2,20 +2,21 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using Hl7.Fhir.Model;
-using ISL.Providers.PDS.Abstractions.Models;
-using ISL.Providers.PDS.FakeFHIR.Mappers;
-using System.Collections.Generic;
 using System;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Brokers.Pds;
 using LondonDataServices.IDecide.Core.Services.Foundations.Pds;
 using Moq;
 using Tynamix.ObjectFiller;
-using System.Linq;
-using LondonDataServices.IDecide.Core.Mappers;
 using System.Linq.Expressions;
 using Xeptions;
+using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
+using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
+using Hl7.Fhir.Model;
+using ISL.Providers.PDS.Abstractions.Models;
+using ISL.Providers.PDS.FakeFHIR.Mappers;
+using System.Collections.Generic;
+using Patient = LondonDataServices.IDecide.Core.Models.Foundations.Patients.Patient;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
 {
@@ -49,9 +50,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
             return randomNumber;
         }
 
-        private static Patient CreateRandomPatient(string surname)
+        private static Hl7.Fhir.Model.Patient CreateRandomPatient(string surname)
         {
-            var patient = new Patient();
+            var patient = new Hl7.Fhir.Model.Patient();
 
             var nameFiller = new Filler<HumanName>();
             nameFiller.Setup()
@@ -74,9 +75,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
             return patient;
         }
 
-        private static Patient CreateRandomPatientWithNhsNumber(string nhsNumber)
+        private static Hl7.Fhir.Model.Patient CreateRandomPatientWithNhsNumber(string nhsNumber)
         {
-            var patient = new Patient();
+            var patient = new Hl7.Fhir.Model.Patient();
 
             var nameFiller = new Filler<HumanName>();
             nameFiller.Setup()
@@ -108,7 +109,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
                 Timestamp = DateTimeOffset.UtcNow
             };
 
-            Patient patient = CreateRandomPatient(surname);
+            Hl7.Fhir.Model.Patient patient = CreateRandomPatient(surname);
 
             bundle.Entry = new List<Bundle.EntryComponent>{
                 new Bundle.EntryComponent
@@ -127,11 +128,51 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
             return PatientBundleMapper.FromBundle(bundle);
         }
 
-        private Models.Foundations.Pds.Patient CreateRandomLocalPatient(PatientBundle patientBundle)
-        {
-            Models.Foundations.Pds.Patient patient = LocalPatientMapper.FromPatientBundle(patientBundle);
+        private static Patient GetRandomPatient(string inputSurname) =>
+            CreatePatientFiller(inputSurname).Create();
 
-            return patient;
+        private static Filler<Patient> CreatePatientFiller(string inputSurname = "Test")
+        {
+            DateTimeOffset dateTimeOffset = DateTimeOffset.UtcNow;
+            var filler = new Filler<Patient>();
+
+            filler.Setup()
+                .OnType<DateTimeOffset>().Use(dateTimeOffset)
+                .OnType<DateTimeOffset?>().Use(dateTimeOffset)
+                .OnProperty(n => n.Surname).Use(inputSurname);
+
+            return filler;
+        }
+
+        private static Patient GetRandomPatientWithNhsNumber(string nhsNumber) =>
+            CreatePatientFillerWithNhsNumber(nhsNumber).Create();
+
+        private static Filler<Patient> CreatePatientFillerWithNhsNumber(string nhsNumber = "1234567890")
+        {
+            DateTimeOffset dateTimeOffset = DateTimeOffset.UtcNow;
+            var filler = new Filler<Patient>();
+
+            filler.Setup()
+                .OnType<DateTimeOffset>().Use(dateTimeOffset)
+                .OnType<DateTimeOffset?>().Use(dateTimeOffset)
+                .OnProperty(n => n.NhsNumber).Use(nhsNumber);
+
+            return filler;
+        }
+
+        private PatientLookup GetRandomSearchPatientLookup(string surname)
+        {
+            SearchCriteria searchCriteria = new SearchCriteria
+            {
+                Surname = surname
+            };
+
+            PatientLookup randomPatientLookup = new PatientLookup
+            {
+                SearchCriteria = searchCriteria
+            };
+
+            return randomPatientLookup;
         }
 
         private Models.Foundations.Pds.Patient CreateRandomLocalPatient(Patient fhirPatient)

@@ -20,7 +20,16 @@ namespace LondonDataServices.IDecide.Core.Brokers.Storages.Sql
                 .IsRequired();
 
             model
+                .Property(decision => decision.PatientId)
+                .IsRequired();
+
+            model
                 .Property(decision => decision.PatientNhsNumber)
+                .HasMaxLength(255)
+                .IsRequired();
+
+            model
+                .Property(decision => decision.DecisionChoice)
                 .HasMaxLength(255)
                 .IsRequired();
 

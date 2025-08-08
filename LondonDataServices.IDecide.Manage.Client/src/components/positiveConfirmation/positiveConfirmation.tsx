@@ -1,18 +1,16 @@
-import React from "react";
 import { useNavigate } from "react-router-dom";
 
 const PositiveConfirmation = () => {
     const navigate = useNavigate();
 
-    const handleSubmit = (method: "email" | "sms" | "letter") => {
+    const handleSubmit = (method: "Email" | "SMS" | "Letter" | "Agent") => {
         console.log(method);
         // Navigate to confirmCode route
         navigate("/confirmCode");
     };
 
     return (
-        <div className="mt-4">
-            <h2>Confirmation required</h2>
+        <div className="mt-2">
             <p>Please confirm these details are correct before continuing:</p>
             <dl className="nhsuk-summary-list" style={{ marginBottom: "2rem" }}>
                 <div className="nhsuk-summary-list__row">
@@ -48,7 +46,7 @@ const PositiveConfirmation = () => {
                     type="button"
                     className="nhsuk-button"
                     style={{ flex: 1, minWidth: 120 }}
-                    onClick={() => handleSubmit("email")}
+                    onClick={() => handleSubmit("Email")}
                 >
                     Email
                 </button>
@@ -56,17 +54,26 @@ const PositiveConfirmation = () => {
                     type="button"
                     className="nhsuk-button"
                     style={{ flex: 1, minWidth: 120 }}
-                    onClick={() => handleSubmit("sms")}
+                    onClick={() => handleSubmit("SMS")}
                 >
                     SMS
+                </button>
+                <button
+                
+                    type="button"
+                    className="nhsuk-button"
+                    style={{ flex: 1, minWidth: 120 }}
+                    onClick={() => handleSubmit("Letter")}
+                >
+                    Letter
                 </button>
                 <button
                     type="button"
                     className="nhsuk-button"
                     style={{ flex: 1, minWidth: 120 }}
-                    onClick={() => handleSubmit("letter")}
+                    onClick={() => handleSubmit("Agent")}
                 >
-                    Letter
+                    Agent Accept
                 </button>
             </div>
         </div>

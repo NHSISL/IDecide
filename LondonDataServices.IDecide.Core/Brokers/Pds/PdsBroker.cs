@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using Hl7.Fhir.Model;
 using ISL.Providers.PDS.Abstractions;
@@ -56,6 +57,6 @@ namespace LondonDataServices.IDecide.Core.Brokers.Pds
         /// A Patient object containing information on the corresponding patient 
         /// </returns>
         public async ValueTask<Patient> PatientLookupByNhsNumberAsync(string nhsNumber) =>
-            await pdsAbstractionProvider.PatientLookupByNhsNumberAsync(nhsNumber);
+            throw new NotImplementedException();
     }
 }

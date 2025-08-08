@@ -1,5 +1,5 @@
-import React from "react";
 import { useNavigate } from "react-router-dom";
+import { Button } from "nhsuk-react-components";
 
 export const ConfirmDetails = () => {
     const navigate = useNavigate();
@@ -23,7 +23,7 @@ export const ConfirmDetails = () => {
 
     return (
         <div className="mt-4">
-            <h4>Is this you?</h4>
+            <h4>Is this them?</h4>
             <form className="nhsuk-form-group">
                 <dl className="nhsuk-summary-list" style={{ marginBottom: "2rem" }}>
                     <div className="nhsuk-summary-list__row">
@@ -45,32 +45,31 @@ export const ConfirmDetails = () => {
                 </dl>
 
                 <div style={{ display: "flex", gap: "1rem", marginBottom: "0.2rem" }}>
-                    <button
+                    <Button
+                        className="nhsuk-button nhsuk-button--success"
                         type="button"
-                        className="nhsuk-button"
                         style={{ flex: 1 }}
                         onClick={() => handleSubmit("yes")}
                     >
                         Yes
-                    </button>
-                    <button
+                    </Button>
+                    <Button
+                        className="nhsuk-button nhsuk-button--warning"
                         type="button"
-                        className="nhsuk-button nhsuk-button--secondary"
                         style={{ flex: 1 }}
                         onClick={() => handleSubmit("no")}
                     >
                         No
-                    </button>
+                    </Button>
                 </div>
-
-                <button
+                <Button
+                    className="nhsuk-button nhsuk-button--secondary"
                     type="button"
-                    className="nhsuk-button"
                     style={{ width: "100%", marginBottom: 0, borderBottom: "none" }}
                     onClick={() => handleSubmit("use-code")}
                 >
-                    We have already sent you a code. Would you like to use that code to continue?
-                </button>
+                    They have already been sent you a code. Would you like to use that code to continue?
+                </Button>
             </form>
         </div>
     );
