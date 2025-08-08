@@ -5,10 +5,9 @@
 using System.Threading.Tasks;
 using System;
 using Moq;
-using Task = System.Threading.Tasks.Task;
-using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
 using FluentAssertions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds.Exceptions;
+using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
 {

@@ -4,9 +4,8 @@
 
 using System.Threading.Tasks;
 using FluentAssertions;
-using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
+using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds.Exceptions;
-using Task = System.Threading.Tasks.Task;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
 {
@@ -29,7 +28,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
 
             var expectedPdsValidationException =
                 new PdsValidationException(
-                    message: "PDS validation error occurred, please fix errors and try again.",
+                    message: "PDS validation error occurred, please fix the errors and try again.",
                     innerException: invalidArgumentPdsException);
 
             // when

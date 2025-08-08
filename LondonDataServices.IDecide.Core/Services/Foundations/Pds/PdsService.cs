@@ -54,10 +54,15 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
                 return updatedPatientLookup;
             });
 
-        public ValueTask<Patient> PatientLookupByNhsNumberAsync(string nhsNumber)
-        {
-            throw new NotImplementedException();
-        }
+        public ValueTask<Patient> PatientLookupByNhsNumberAsync(string nhsNumber) =>
+            TryCatch(async () =>
+            {
+                ValidatePatientLookupByNhsNumberArguments(nhsNumber);
+                Hl7.Fhir.Model.Patient fhirPatient = await this.pdsBroker.PatientLookupByNhsNumberAsync(nhsNumber);
+                Patient patient = MapToPatientFromFhirPatient(fhirPatient);
+
+                return patient;
+            });
 
         virtual internal List<Patient> MapToPatientsFromPatientBundle(PatientBundle patientBundle) 
         { 

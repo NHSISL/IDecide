@@ -2,10 +2,12 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System.Threading.Tasks;
+using FluentAssertions;
 using Force.DeepCloner;
-using Hl7.Fhir.Model;
+using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
+using LondonDataServices.IDecide.Core.Services.Foundations.Pds;
 using Moq;
-using Task = System.Threading.Tasks.Task;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
 {
@@ -17,18 +19,35 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
             // given
             string randomIdentifier = GenerateRandom10DigitNumber();
             string inputNhsNumber = randomIdentifier.DeepClone();
-            Patient outputFhirPatient = CreateRandomPatient(inputNhsNumber);
-            Models.Foundations.Pds.Patient expectedPatient = CreateRandomLocalPatient(outputFhirPatient);
+            Hl7.Fhir.Model.Patient outputFhirPatient = CreateRandomPatientWithNhsNumber(inputNhsNumber);
+            Patient expectedPatient = GeneratePatientFromFhirPatient(outputFhirPatient);
+
+            var pdsServiceMock = new Mock<PdsService>(
+                this.pdsBrokerMock.Object,
+                this.loggingBrokerMock.Object)
+            { CallBase = true };
+
+            pdsServiceMock.Setup(service =>
+                service.MapToPatientFromFhirPatient(outputFhirPatient))
+                    .Returns(expectedPatient);
 
             this.pdsBrokerMock.Setup(broker =>
                 broker.PatientLookupByNhsNumberAsync(inputNhsNumber))
                         .ReturnsAsync(outputFhirPatient);
 
+            PdsService pdsService = pdsServiceMock.Object;
+
             // when
-            Models.Foundations.Pds.Patient actualPatient = 
-                await this.pdsService.PatientLookupByNhsNumberAsync(inputNhsNumber);
+            Patient actualPatient = 
+                await pdsService.PatientLookupByNhsNumberAsync(inputNhsNumber);
 
             //then
+            actualPatient.Should().BeEquivalentTo(expectedPatient);
+
+            pdsServiceMock.Verify(service =>
+                service.MapToPatientFromFhirPatient(outputFhirPatient),
+                    Times.Once());
+
             this.pdsBrokerMock.Verify(broker =>
                 broker.PatientLookupByNhsNumberAsync(inputNhsNumber),
                         Times.Once);

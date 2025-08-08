@@ -3,6 +3,7 @@
 // ---------------------------------------------------------
 
 using ISL.Providers.PDS.Abstractions.Models.Exceptions;
+using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
@@ -15,6 +16,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
     public partial class PdsService
     {
         private delegate ValueTask<PatientLookup> ReturningPatientLookupFunction();
+        private delegate ValueTask<Patient> ReturningPatientFunction();
 
         private async ValueTask<PatientLookup> TryCatch(ReturningPatientLookupFunction returningPatientLookupFunction)
         {
@@ -25,6 +27,55 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
             catch (NullPatientLookupException nullPatientLookupException)
             {
                 throw await CreateAndLogValidationExceptionAsync(nullPatientLookupException);
+            }
+            catch (PdsProviderValidationException pdsProviderValidationException)
+            {
+                ClientPdsException clientPdsException = new ClientPdsException(
+                    message: "Client PDS error occurred, please contact support.",
+                    innerException: pdsProviderValidationException,
+                    data: pdsProviderValidationException.Data);
+
+                throw await CreateAndLogDependencyValidationExceptionAsync(clientPdsException);
+            }
+            catch (PdsProviderDependencyException pdsProviderDependencyException)
+            {
+                ServerPdsException serverPdsException = new ServerPdsException(
+                    message: "Server PDS error occurred, please contact support.",
+                    innerException: pdsProviderDependencyException,
+                    data: pdsProviderDependencyException.Data);
+
+                throw await CreateAndLogDependencyExceptionAsync(serverPdsException);
+            }
+            catch (PdsProviderServiceException pdsProviderServiceException)
+            {
+                ServerPdsException serverPdsException = new ServerPdsException(
+                    message: "Server PDS error occurred, please contact support.",
+                    innerException: pdsProviderServiceException,
+                    data: pdsProviderServiceException.Data);
+
+                throw await CreateAndLogDependencyExceptionAsync(serverPdsException);
+            }
+            catch (InvalidPdsArgumentException invalidArgumentPdsException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(invalidArgumentPdsException);
+            }
+            catch (Exception exception)
+            {
+                var failedServicePdsException =
+                    new FailedServicePdsException(
+                        message: "Failed PDS service error occurred, please contact support.",
+                        innerException: exception,
+                        data: exception.Data);
+
+                throw await CreateAndLogServiceExceptionAsync(failedServicePdsException);
+            }
+        }
+
+        private async ValueTask<Patient> TryCatch(ReturningPatientFunction returningPatientFunction)
+        {
+            try
+            {
+                return await returningPatientFunction();
             }
             catch (PdsProviderValidationException pdsProviderValidationException)
             {

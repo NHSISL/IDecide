@@ -11,12 +11,12 @@ using Tynamix.ObjectFiller;
 using System.Linq.Expressions;
 using Xeptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
-using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using Hl7.Fhir.Model;
 using ISL.Providers.PDS.Abstractions.Models;
 using ISL.Providers.PDS.FakeFHIR.Mappers;
 using System.Collections.Generic;
 using Patient = LondonDataServices.IDecide.Core.Models.Foundations.Patients.Patient;
+using System.Linq;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
 {
@@ -144,18 +144,22 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
             return filler;
         }
 
-        private static Patient GetRandomPatientWithNhsNumber(string nhsNumber) =>
-            CreatePatientFillerWithNhsNumber(nhsNumber).Create();
+        private static Patient GeneratePatientFromFhirPatient(Hl7.Fhir.Model.Patient fhirPatient) =>
+            CreatePatientFillerFromFhirPatient(fhirPatient).Create();
 
-        private static Filler<Patient> CreatePatientFillerWithNhsNumber(string nhsNumber = "1234567890")
+        private static Filler<Patient> CreatePatientFillerFromFhirPatient(Hl7.Fhir.Model.Patient fhirPatient)
         {
             DateTimeOffset dateTimeOffset = DateTimeOffset.UtcNow;
             var filler = new Filler<Patient>();
+            string givenName = fhirPatient.Name.Select(n => string.Join(' ', n.Given)).First();
+            string surname = fhirPatient.Name.Select(n => n.Family).First();
 
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
                 .OnType<DateTimeOffset?>().Use(dateTimeOffset)
-                .OnProperty(n => n.NhsNumber).Use(nhsNumber);
+                .OnProperty(n => n.NhsNumber).Use(fhirPatient.Id)
+                .OnProperty(n => n.GivenName).Use(givenName)
+                .OnProperty(n => n.Surname).Use(surname);
 
             return filler;
         }
@@ -173,13 +177,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
             };
 
             return randomPatientLookup;
-        }
-
-        private Models.Foundations.Pds.Patient CreateRandomLocalPatient(Patient fhirPatient)
-        {
-            Models.Foundations.Pds.Patient patient = LocalPatientMapper.FromFhirPatient(fhirPatient);
-
-            return patient;
         }
 
         private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
