@@ -77,5 +77,57 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Extensions.Patients
                 ValidationCodeExpiresOn = patient.ValidationCodeExpiresOn
             };
         }
+
+        public Patient GetPatientToRedactWithWhitespace()
+        {
+            return new Patient
+            {
+                Address = " ",
+                DateOfBirth = GetRandomDateTimeOffset(),
+                Email = " ",
+                GivenName = " ",
+                NhsNumber = GenerateRandom10DigitNumber(),
+                Phone = " ",
+                PostCode = " ",
+                Surname = " ",
+                CreatedBy = GetRandomString(),
+                CreatedDate = GetRandomDateTimeOffset(),
+                Decisions = new List<Decision>(),
+                Gender = GetRandomString(),
+                Id = Guid.NewGuid(),
+                RetryCount = 0,
+                Title = GetRandomString(),
+                UpdatedBy = GetRandomString(),
+                UpdatedDate = GetRandomDateTimeOffset(),
+                ValidationCode = GetRandomString(),
+                ValidationCodeExpiresOn = GetRandomDateTimeOffset()
+            };
+        }
+
+        public Patient GetRedactedPatientWithWhitespace(Patient patient)
+        {
+            return new Patient
+            {
+                Address = " ",
+                DateOfBirth = patient.DateOfBirth,
+                Email = " ",
+                GivenName = " ",
+                NhsNumber = patient.NhsNumber,
+                Phone = " ",
+                PostCode = " ",
+                Surname = " ",
+                CreatedBy = patient.CreatedBy,
+                CreatedDate = patient.CreatedDate,
+                Decisions = patient.Decisions,
+                Gender = patient.Gender,
+                Id = patient.Id,
+                RetryCount = patient.RetryCount,
+                Title = patient.Title,
+                UpdatedBy = patient.UpdatedBy,
+                UpdatedDate = patient.UpdatedDate,
+                ValidationCode = patient.ValidationCode,
+                ValidationCodeExpiresOn = patient.ValidationCodeExpiresOn
+            };
+        }
     }
 }
