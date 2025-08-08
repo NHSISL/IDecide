@@ -10,5 +10,6 @@ namespace LondonDataServices.IDecide.Manage.Server.Brokers.Securities
     public interface ISecurityBroker
     {
         ValueTask<User> GetCurrentUserAsync();
+        ValueTask<bool> IsCurrentUserAuthenticatedAsync();
     }
 }
