@@ -1,11 +1,11 @@
-﻿// ---------------------------------------------------------
+// ---------------------------------------------------------
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
-using System;
+using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 
 namespace LondonDataServices.IDecide.Core.Services.Foundations.Patients
 {
