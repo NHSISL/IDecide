@@ -28,5 +28,24 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
             this.pdsBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public void ShouldMapToPatientFromFhirPatientWithWhiteSpace()
+        {
+            // given
+            Hl7.Fhir.Model.Patient fhirPatient = CreateRandomPatient(true);
+            Hl7.Fhir.Model.Patient inputFhirPatient = fhirPatient.DeepClone();
+            Patient mappedPatient = GeneratePatientFromFhirPatient(inputFhirPatient);
+            Patient expectedPatient = mappedPatient.DeepClone();
+
+            // when
+            Patient actualPatient = this.pdsService.MapToPatientFromFhirPatient(inputFhirPatient);
+
+            //then
+            actualPatient.Should().BeEquivalentTo(expectedPatient);
+
+            this.pdsBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }

@@ -50,35 +50,35 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
             return randomNumber;
         }
 
-        private static Hl7.Fhir.Model.Patient CreateRandomPatient(string surname = "Test")
+        private static Hl7.Fhir.Model.Patient CreateRandomPatient(bool withWhiteSpace = false, string surname = "Test")
         {
             var patient = new Hl7.Fhir.Model.Patient();
-            patient.Name = new List<HumanName> { CreateHumanNameFiller().Create() };
+            patient.Name = new List<HumanName> { CreateHumanNameFiller(withWhiteSpace).Create() };
             patient.Gender = AdministrativeGender.Male;
             patient.BirthDate = GetRandomDateTimeOffset().ToString("yyyy-MM-dd");
-            patient.Address = new List<Address> { CreateAddressFiller().Create() };
+            patient.Address = new List<Address> { CreateAddressFiller(withWhiteSpace).Create() };
 
             patient.Telecom = new List<ContactPoint> { 
-                CreateContactPointFiller(ContactPoint.ContactPointSystem.Phone).Create(), 
-                CreateContactPointFiller(ContactPoint.ContactPointSystem.Email).Create()
+                CreateContactPointFiller(ContactPoint.ContactPointSystem.Phone, withWhiteSpace).Create(), 
+                CreateContactPointFiller(ContactPoint.ContactPointSystem.Email, withWhiteSpace).Create()
             };
 
             return patient;
         }
 
-        private static Hl7.Fhir.Model.Patient CreateRandomPatientWithNhsNumber(string nhsNumber)
+        private static Hl7.Fhir.Model.Patient CreateRandomPatientWithNhsNumber(string nhsNumber, bool withWhiteSpace = false)
         {
             var patient = new Hl7.Fhir.Model.Patient();
 
             patient.Id = nhsNumber;
-            patient.Name = new List<HumanName> { CreateHumanNameFiller().Create() };
+            patient.Name = new List<HumanName> { CreateHumanNameFiller(withWhiteSpace).Create() };
             patient.Gender = AdministrativeGender.Male;
             patient.BirthDate = GetRandomDateTimeOffset().ToString("yyyy-MM-dd");
-            patient.Address = new List<Address> { CreateAddressFiller().Create() };
+            patient.Address = new List<Address> { CreateAddressFiller(withWhiteSpace).Create() };
 
             patient.Telecom = new List<ContactPoint> {
-                CreateContactPointFiller(ContactPoint.ContactPointSystem.Phone).Create(),
-                CreateContactPointFiller(ContactPoint.ContactPointSystem.Email).Create()
+                CreateContactPointFiller(ContactPoint.ContactPointSystem.Phone, withWhiteSpace).Create(),
+                CreateContactPointFiller(ContactPoint.ContactPointSystem.Email, withWhiteSpace).Create()
             };
 
             return patient;
@@ -93,7 +93,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
                 Timestamp = DateTimeOffset.UtcNow
             };
 
-            Hl7.Fhir.Model.Patient patient = CreateRandomPatient(surname);
+            Hl7.Fhir.Model.Patient patient = CreateRandomPatient(false, surname);
 
             bundle.Entry = new List<Bundle.EntryComponent>{
                 new Bundle.EntryComponent
@@ -128,12 +128,13 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
             return filler;
         }
 
-        private static Filler<HumanName> CreateHumanNameFiller(string surname = "Test")
+        private static Filler<HumanName> CreateHumanNameFiller(bool withWhiteSpace = false, string surname = "Test")
         {
             var nameFiller = new Filler<HumanName>();
 
             nameFiller.Setup()
                 .OnProperty(n => n.Family).Use(surname)
+                .OnType<string>().Use(withWhiteSpace ? " " : GetRandomString())
                 .OnProperty(n => n.Children).IgnoreIt()
                 .OnProperty(n => n.Extension).IgnoreIt()
                 .OnProperty(n => n.FamilyElement).IgnoreIt()
@@ -148,11 +149,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
             return nameFiller;
         }
 
-        private static Filler<Address> CreateAddressFiller()
+        private static Filler<Address> CreateAddressFiller(bool withWhiteSpace = false)
         {
             var addressFiller = new Filler<Address>();
 
             addressFiller.Setup()
+                .OnType<string>().Use(withWhiteSpace ? " " : GetRandomString())
                 .OnProperty(a => a.Children).IgnoreIt()
                 .OnProperty(a => a.CityElement).IgnoreIt()
                 .OnProperty(a => a.CountryElement).IgnoreIt()
@@ -170,11 +172,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
             return addressFiller;
         }
 
-        private static Filler<ContactPoint> CreateContactPointFiller(ContactPoint.ContactPointSystem contactPointSystem)
+        private static Filler<ContactPoint> CreateContactPointFiller(ContactPoint.ContactPointSystem contactPointSystem, bool withWhiteSpace = false)
         {
             var contactPointFiller = new Filler<ContactPoint>();
 
             contactPointFiller.Setup()
+                .OnType<string>().Use(withWhiteSpace ? " " : GetRandomString())
                 .OnProperty(cp => cp.System).Use(contactPointSystem)
                 .OnProperty(cp => cp.Children).IgnoreIt()
                 .OnProperty(cp => cp.Extension).IgnoreIt()
