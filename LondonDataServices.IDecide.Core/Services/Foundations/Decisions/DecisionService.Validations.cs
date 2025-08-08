@@ -21,9 +21,8 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Decisions
             Validate<InvalidDecisionException>(
                 message: "Invalid decision. Please correct the errors and try again.",
                 (Rule: IsInvalid(decision.Id), Parameter: nameof(Decision.Id)),
-                
-                // TODO: Add more rules as needed
-
+                (Rule: IsInvalid(decision.PatientNhsNumber), Parameter: nameof(Decision.PatientNhsNumber)),
+                (Rule: IsInvalid(decision.DecisionChoice), Parameter: nameof(Decision.DecisionChoice)),
                 (Rule: IsInvalid(decision.CreatedDate), Parameter: nameof(Decision.CreatedDate)),
                 (Rule: IsInvalid(decision.CreatedBy), Parameter: nameof(Decision.CreatedBy)),
                 (Rule: IsInvalid(decision.UpdatedDate), Parameter: nameof(Decision.UpdatedDate)),
@@ -59,9 +58,8 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Decisions
             Validate<InvalidDecisionException>(
                 message: "Invalid decision. Please correct the errors and try again.",
                 (Rule: IsInvalid(decision.Id), Parameter: nameof(Decision.Id)),
-                
-                // TODO: Add more rules as needed
-
+                (Rule: IsInvalid(decision.PatientNhsNumber), Parameter: nameof(Decision.PatientNhsNumber)),
+                (Rule: IsInvalid(decision.DecisionChoice), Parameter: nameof(Decision.DecisionChoice)),
                 (Rule: IsInvalid(decision.CreatedDate), Parameter: nameof(Decision.CreatedDate)),
                 (Rule: IsInvalid(decision.CreatedBy), Parameter: nameof(Decision.CreatedBy)),
                 (Rule: IsInvalid(decision.UpdatedDate), Parameter: nameof(Decision.UpdatedDate)),

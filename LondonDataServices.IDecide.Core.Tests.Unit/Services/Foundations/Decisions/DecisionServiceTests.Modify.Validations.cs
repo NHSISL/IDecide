@@ -79,8 +79,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
 
             var invalidDecision = new Decision
             {
-                // TODO: Add more properties for validation checks as needed
-                // Name = invalidText
+                PatientNhsNumber = invalidText,
+                DecisionChoice = invalidText,
             };
 
             var invalidDecisionException =
@@ -91,10 +91,13 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                 key: nameof(Decision.Id),
                 values: "Id is required");
 
-            // TODO: Add more validation checks as needed
-            // invalidDecisionException.AddData(
-            //     key: nameof(Decision.Name),
-            //     values: "Text is required");
+            invalidDecisionException.AddData(
+                key: nameof(Decision.PatientNhsNumber),
+                values: "Text is required");
+
+            invalidDecisionException.AddData(
+                key: nameof(Decision.DecisionChoice),
+                values: "Text is required");
 
             invalidDecisionException.AddData(
                 key: nameof(Decision.CreatedDate),
