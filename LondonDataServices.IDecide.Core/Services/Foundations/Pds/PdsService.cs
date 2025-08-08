@@ -66,6 +66,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
 
         virtual internal List<Patient> MapToPatientsFromPatientBundle(PatientBundle patientBundle) 
         { 
+            ValidatePatientBundleIsNotNull(patientBundle);
             List<Patient> patients = new List<Patient>();
 
             foreach (Hl7.Fhir.Model.Patient bundlePatient in patientBundle.Patients)

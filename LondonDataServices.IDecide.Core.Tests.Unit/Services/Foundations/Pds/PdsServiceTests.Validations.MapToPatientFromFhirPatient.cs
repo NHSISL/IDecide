@@ -4,7 +4,6 @@
 
 using FluentAssertions;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
-using Moq;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
 {

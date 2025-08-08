@@ -8,6 +8,7 @@ using System;
 using System.Linq;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds.Exceptions;
 using Hl7.Fhir.Model;
+using ISL.Providers.PDS.Abstractions.Models;
 
 namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
 {
@@ -26,6 +27,14 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
             if (patient is null)
             {
                 throw new NullFhirPatientException("FHIR patient is null.");
+            }
+        }
+
+        private static void ValidatePatientBundleIsNotNull(PatientBundle patientBundle)
+        {
+            if (patientBundle is null)
+            {
+                throw new NullPatientBundleException("Patient bundle is null.");
             }
         }
 

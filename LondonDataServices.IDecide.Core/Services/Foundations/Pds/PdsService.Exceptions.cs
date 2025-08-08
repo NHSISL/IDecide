@@ -24,6 +24,10 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
             {
                 return await returningPatientLookupFunction();
             }
+            catch (NullPatientBundleException nullPatientBundleException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(nullPatientBundleException);
+            }
             catch (NullPatientLookupException nullPatientLookupException)
             {
                 throw await CreateAndLogValidationExceptionAsync(nullPatientLookupException);

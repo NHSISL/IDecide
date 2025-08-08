@@ -84,7 +84,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
             return patient;
         }
 
-        private Bundle CreateRandomBundle(string surname)
+        private Bundle CreateRandomBundle(string surname = "Test")
         {
             var bundle = new Bundle
             {
