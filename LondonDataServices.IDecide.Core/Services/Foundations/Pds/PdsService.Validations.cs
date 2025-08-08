@@ -7,6 +7,7 @@ using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
 using System;
 using System.Linq;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds.Exceptions;
+using Hl7.Fhir.Model;
 
 namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
 {
@@ -17,6 +18,14 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
             if (patientLookup is null)
             {
                 throw new NullPatientLookupException("Patient lookup is null.");
+            }
+        }
+
+        private static void ValidateFhirPatientIsNotNull(Patient patient)
+        {
+            if (patient is null)
+            {
+                throw new NullFhirPatientException("FHIR patient is null.");
             }
         }
 

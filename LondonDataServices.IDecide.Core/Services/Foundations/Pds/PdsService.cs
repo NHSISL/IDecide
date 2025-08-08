@@ -79,6 +79,8 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
 
         virtual internal Patient MapToPatientFromFhirPatient(Hl7.Fhir.Model.Patient fhirPatient)
         {
+            ValidateFhirPatientIsNotNull(fhirPatient);
+
             Patient patient = new Patient
             {
                 NhsNumber = fhirPatient.Id,

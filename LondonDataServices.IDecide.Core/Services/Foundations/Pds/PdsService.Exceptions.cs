@@ -28,6 +28,10 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
             {
                 throw await CreateAndLogValidationExceptionAsync(nullPatientLookupException);
             }
+            catch (NullFhirPatientException nullFhirPatientException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(nullFhirPatientException);
+            }
             catch (PdsProviderValidationException pdsProviderValidationException)
             {
                 ClientPdsException clientPdsException = new ClientPdsException(
@@ -76,6 +80,10 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
             try
             {
                 return await returningPatientFunction();
+            }
+            catch (NullFhirPatientException nullFhirPatientException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(nullFhirPatientException);
             }
             catch (PdsProviderValidationException pdsProviderValidationException)
             {
