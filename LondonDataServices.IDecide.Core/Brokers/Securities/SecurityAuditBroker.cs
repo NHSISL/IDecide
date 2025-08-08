@@ -84,8 +84,8 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
         /// <typeparam name="T">The type of the entity.</typeparam>
         /// <param name="entity">The entity to audit.</param>
         /// <returns>The audited entity with add metadata applied.</returns>
-        public ValueTask<T> ApplyAddAuditAsync<T>(T entity) =>
-            this.securityClient.Audits.ApplyAddAuditAsync(entity, claimsPrincipal, securityConfigurations);
+        public ValueTask<T> ApplyAddAuditValuesAsync<T>(T entity) =>
+            this.securityClient.Audits.ApplyAddAuditValuesAsync(entity, claimsPrincipal, securityConfigurations);
 
         /// <summary>
         /// Applies auditing metadata for a modify operation to the specified entity.
@@ -94,8 +94,8 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
         /// <typeparam name="T">The type of the entity.</typeparam>
         /// <param name="entity">The entity to audit.</param>
         /// <returns>The audited entity with modify metadata applied.</returns>
-        public ValueTask<T> ApplyModifyAuditAsync<T>(T entity) =>
-                this.securityClient.Audits.ApplyModifyAuditAsync(entity, claimsPrincipal, securityConfigurations);
+        public ValueTask<T> ApplyModifyAuditValuesAsync<T>(T entity) =>
+                this.securityClient.Audits.ApplyModifyAuditValuesAsync(entity, claimsPrincipal, securityConfigurations);
 
         /// <summary>
         /// Applies auditing metadata for a remove (soft delete) operation to the specified entity.
@@ -103,8 +103,8 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
         /// <typeparam name="T">The type of the entity.</typeparam>
         /// <param name="entity">The entity to audit for removal.</param>
         /// <returns>The audited entity with remove metadata applied.</returns>
-        public ValueTask<T> ApplyRemoveAuditAsync<T>(T entity) =>
-                this.securityClient.Audits.ApplyRemoveAuditAsync(entity, claimsPrincipal, securityConfigurations);
+        public ValueTask<T> ApplyRemoveAuditValuesAsync<T>(T entity) =>
+                this.securityClient.Audits.ApplyRemoveAuditValuesAsync(entity, claimsPrincipal, securityConfigurations);
 
         /// <summary>
         /// Ensures that add audit values (e.g., created by/date) remain unchanged during modify operations.
