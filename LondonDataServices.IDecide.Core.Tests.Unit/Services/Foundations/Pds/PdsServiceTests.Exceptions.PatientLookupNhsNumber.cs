@@ -50,12 +50,11 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
 
             pdsBrokerMock.Verify(broker =>
                 broker.PatientLookupByNhsNumberAsync(inputNhsNumber),
-                        Times.Once);
+                    Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogErrorAsync(It.Is(SameExceptionAs(
-                    expectedpdsServiceException))),
-                        Times.Once);
+                broker.LogErrorAsync(It.Is(SameExceptionAs(expectedpdsServiceException))),
+                    Times.Once);
 
             this.pdsBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();

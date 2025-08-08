@@ -33,7 +33,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
 
             this.pdsBrokerMock.Setup(broker =>
                 broker.PatientLookupByNhsNumberAsync(inputNhsNumber))
-                        .ReturnsAsync(outputFhirPatient);
+                    .ReturnsAsync(outputFhirPatient);
 
             PdsService pdsService = pdsServiceMock.Object;
 
@@ -50,7 +50,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
 
             this.pdsBrokerMock.Verify(broker =>
                 broker.PatientLookupByNhsNumberAsync(inputNhsNumber),
-                        Times.Once);
+                    Times.Once);
 
             this.pdsBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();

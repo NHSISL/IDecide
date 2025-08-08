@@ -47,12 +47,12 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
                     message: "Invalid PDS argument. Please correct the errors and try again.");
 
             foreach ((dynamic rule, string parameter) in validations)
-        {
-                if (rule.Condition)
             {
-                    invalidPdsException.UpsertDataList(
-                        key: parameter,
-                        value: rule.Message);
+                if (rule.Condition)
+                {
+                        invalidPdsException.UpsertDataList(
+                            key: parameter,
+                            value: rule.Message);
                 }
             }
 
