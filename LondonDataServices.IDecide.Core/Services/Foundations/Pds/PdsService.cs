@@ -54,13 +54,19 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
                 return updatedPatientLookup;
             });
 
-        public ValueTask<Patient> PatientLookupByNhsNumberAsync(string nhsNumber)
-        {
-            throw new NotImplementedException();
-        }
+        public ValueTask<Patient> PatientLookupByNhsNumberAsync(string nhsNumber) =>
+            TryCatch(async () =>
+            {
+                ValidatePatientLookupByNhsNumberArguments(nhsNumber);
+                Hl7.Fhir.Model.Patient fhirPatient = await this.pdsBroker.PatientLookupByNhsNumberAsync(nhsNumber);
+                Patient patient = MapToPatientFromFhirPatient(fhirPatient);
+
+                return patient;
+            });
 
         virtual internal List<Patient> MapToPatientsFromPatientBundle(PatientBundle patientBundle) 
         { 
+            ValidatePatientBundleIsNotNull(patientBundle);
             List<Patient> patients = new List<Patient>();
 
             foreach (Hl7.Fhir.Model.Patient bundlePatient in patientBundle.Patients)
@@ -74,6 +80,8 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
 
         virtual internal Patient MapToPatientFromFhirPatient(Hl7.Fhir.Model.Patient fhirPatient)
         {
+            ValidateFhirPatientIsNotNull(fhirPatient);
+
             Patient patient = new Patient
             {
                 NhsNumber = fhirPatient.Id,
