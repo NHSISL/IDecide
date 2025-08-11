@@ -199,7 +199,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
 
-
         [Fact]
         public async Task ShouldThrowValidationExceptionOnModifyIfPatientHasInvalidLengthProperty()
         {
