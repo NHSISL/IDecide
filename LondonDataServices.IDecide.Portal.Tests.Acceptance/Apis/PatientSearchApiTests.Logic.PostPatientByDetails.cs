@@ -25,7 +25,7 @@ namespace LondonDataServices.IDecide.Portals.Server.Tests.Acceptance.Apis
                 await this.apiBroker.PostPatientByDetailsAsync(inputPatientLookup);
 
             // then
-            actualPatient.Should().Be(expectedPatient);
+            actualPatient.Should().BeEquivalentTo(expectedPatient);
         }
     }
 }

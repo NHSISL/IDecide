@@ -54,6 +54,13 @@ namespace LondonDataServices.IDecide.Core.Extensions.Patients
                 if (Regex.IsMatch(token, @"^[A-Za-z]+$"))
                     return token.Length > 0 ? token[0] + new string('*', token.Length - 1) : token;
 
+                if (Regex.IsMatch(token, @"^[A-Za-z0-9]+$"))
+                { 
+                    return token.Length > 0
+                        ? token[0] + new string('*', token.Length - 1)
+                        : token;
+                }
+
                 return token;
             }));
         }

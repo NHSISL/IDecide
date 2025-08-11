@@ -101,14 +101,15 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
         {
             var parts = new[]
             {
-                string.Join(", ", address.Line),
+                string.Join(",", address.Line),
                 address.City,
                 address.District,
-                address.PostalCode,
                 address.Country
             };
 
-            return string.Join(", ", parts.Where(p => !string.IsNullOrWhiteSpace(p)));
+            var addressParts = parts.Where(ap => !string.IsNullOrWhiteSpace(ap)).ToList();
+
+            return string.Join(", ", addressParts);
         }
 
         private static string GetCurrentAddressString(Hl7.Fhir.Model.Patient patient)
