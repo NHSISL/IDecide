@@ -6,10 +6,6 @@ using LondonDataServices.IDecide.Portals.Server.Tests.Acceptance.Brokers;
 using LondonDataServices.IDecide.Portal.Tests.Acceptance.Brokers;
 using LondonDataServices.IDecide.Portal.Server.Models.PatientSearches;
 using Microsoft.Extensions.Configuration;
-using System.Collections.Generic;
-using Patient = LondonDataServices.IDecide.Portal.Server.Models.PatientSearches.Patient;
-using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace LondonDataServices.IDecide.Portals.Server.Tests.Acceptance.Apis
 {
@@ -36,7 +32,7 @@ namespace LondonDataServices.IDecide.Portals.Server.Tests.Acceptance.Apis
             return randomPatientLookup;
         }
 
-        private Patient GetPatient(string surname)
+        private Patient GetPatient()
         {
             var redactedPatient = this.apiBroker.configuration
                 .GetSection("FakeFHIRProviderConfigurations:AcceptanceFakePatientRedactedPatient")

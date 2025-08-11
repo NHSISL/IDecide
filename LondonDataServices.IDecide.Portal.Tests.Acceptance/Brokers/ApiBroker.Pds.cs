@@ -13,5 +13,8 @@ namespace LondonDataServices.IDecide.Portals.Server.Tests.Acceptance.Brokers
 
         public async ValueTask<Patient> PostPatientByDetailsAsync(PatientLookup patientLookup) =>
             await this.apiFactoryClient.PostContentAsync<PatientLookup, Patient>($"{pdsRelativeUrl}/PostPatientByDetails",  patientLookup);
+
+        public async ValueTask<Patient> PostPatientByNhsNumberAsync(string nhsNumber) =>
+            await this.apiFactoryClient.PostContentAsync<string, Patient>($"{pdsRelativeUrl}/PostPatientByNhsNumber", nhsNumber);
     }
 }

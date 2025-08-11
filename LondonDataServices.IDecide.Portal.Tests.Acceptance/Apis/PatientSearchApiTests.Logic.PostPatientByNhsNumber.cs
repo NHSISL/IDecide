@@ -4,7 +4,6 @@
 
 using System.Threading.Tasks;
 using FluentAssertions;
-using Force.DeepCloner;
 using LondonDataServices.IDecide.Portal.Server.Models.PatientSearches;
 
 namespace LondonDataServices.IDecide.Portals.Server.Tests.Acceptance.Apis
@@ -12,17 +11,15 @@ namespace LondonDataServices.IDecide.Portals.Server.Tests.Acceptance.Apis
     public partial class PatientSearchApiTests
     {
         [Fact]
-        public async Task ShouldPostPatientByDetailsAsync()
+        public async Task ShouldPostPatientByNhsNumberAsync()
         {
             // given
-            string inputSurname = "Smith";
-            PatientLookup randomPatientLookup = GetRandomSearchPatientLookup(inputSurname);
-            PatientLookup inputPatientLookup = randomPatientLookup.DeepClone();
+            string inputNhsNumber = "1234567890";
             Patient expectedPatient = GetPatient();
 
             // when
             Patient actualPatient =
-                await this.apiBroker.PostPatientByDetailsAsync(inputPatientLookup);
+                await this.apiBroker.PostPatientByNhsNumberAsync(inputNhsNumber);
 
             // then
             actualPatient.Should().BeEquivalentTo(expectedPatient);
