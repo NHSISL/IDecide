@@ -17,7 +17,7 @@ namespace LondonDataServices.IDecide.Core
             {
                 new KeyValuePair<string, string>(
                     key: "ConnectionStrings:IDecideConnectionString",
-                    value: "Server=(localdb)\\MSSQLLocalDB;Database=ReIdentification;" +
+                    value: "Server=(localdb)\\MSSQLLocalDB;Database=IDecide;" +
                         "Trusted_Connection=True;MultipleActiveResultSets=true"),
             };
 
