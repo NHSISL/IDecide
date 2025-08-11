@@ -21,13 +21,25 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Patients
             Validate<InvalidPatientException>(
                 message: "Invalid patient. Please correct the errors and try again.",
                 (Rule: IsInvalid(patient.Id), Parameter: nameof(Patient.Id)),
-                
-                // TODO: Add more rules as needed
-
+                (Rule: IsInvalid(patient.NhsNumber), Parameter: nameof(Patient.NhsNumber)),
+                (Rule: IsInvalid(patient.GivenName), Parameter: nameof(Patient.GivenName)),
+                (Rule: IsInvalid(patient.Surname), Parameter: nameof(Patient.Surname)),
+                (Rule: IsInvalid(patient.DateOfBirth), Parameter: nameof(Patient.DateOfBirth)),
+                (Rule: IsInvalid(patient.ValidationCode), Parameter: nameof(Patient.ValidationCode)),
+                (Rule: IsInvalid(patient.ValidationCodeExpiresOn), Parameter: nameof(Patient.ValidationCodeExpiresOn)),
+                (Rule: IsInvalid(patient.Gender), Parameter: nameof(Patient.Gender)),
                 (Rule: IsInvalid(patient.CreatedDate), Parameter: nameof(Patient.CreatedDate)),
                 (Rule: IsInvalid(patient.CreatedBy), Parameter: nameof(Patient.CreatedBy)),
                 (Rule: IsInvalid(patient.UpdatedDate), Parameter: nameof(Patient.UpdatedDate)),
                 (Rule: IsInvalid(patient.UpdatedBy), Parameter: nameof(Patient.UpdatedBy)),
+                (Rule: IsGreaterThan(patient.NhsNumber, 10), Parameter: nameof(Patient.NhsNumber)),
+                (Rule: IsGreaterThan(patient.Title, 35), Parameter: nameof(Patient.Title)),
+                (Rule: IsGreaterThan(patient.GivenName, 255), Parameter: nameof(Patient.GivenName)),
+                (Rule: IsGreaterThan(patient.Surname, 255), Parameter: nameof(Patient.Surname)),
+                (Rule: IsGreaterThan(patient.Email, 255), Parameter: nameof(Patient.Email)),
+                (Rule: IsGreaterThan(patient.Phone, 15), Parameter: nameof(Patient.Phone)),
+                (Rule: IsGreaterThan(patient.PostCode, 8), Parameter: nameof(Patient.PostCode)),
+                (Rule: IsGreaterThan(patient.ValidationCode, 5), Parameter: nameof(Patient.ValidationCode)),
                 (Rule: IsGreaterThan(patient.CreatedBy, 255), Parameter: nameof(Patient.CreatedBy)),
                 (Rule: IsGreaterThan(patient.UpdatedBy, 255), Parameter: nameof(Patient.UpdatedBy)),
 
@@ -59,17 +71,29 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Patients
             Validate<InvalidPatientException>(
                 message: "Invalid patient. Please correct the errors and try again.",
                 (Rule: IsInvalid(patient.Id), Parameter: nameof(Patient.Id)),
-                
-                // TODO: Add more rules as needed
-
+                (Rule: IsInvalid(patient.NhsNumber), Parameter: nameof(Patient.NhsNumber)),
+                (Rule: IsInvalid(patient.GivenName), Parameter: nameof(Patient.GivenName)),
+                (Rule: IsInvalid(patient.Surname), Parameter: nameof(Patient.Surname)),
+                (Rule: IsInvalid(patient.DateOfBirth), Parameter: nameof(Patient.DateOfBirth)),
+                (Rule: IsInvalid(patient.ValidationCode), Parameter: nameof(Patient.ValidationCode)),
+                (Rule: IsInvalid(patient.ValidationCodeExpiresOn), Parameter: nameof(Patient.ValidationCodeExpiresOn)),
+                (Rule: IsInvalid(patient.Gender), Parameter: nameof(Patient.Gender)),
                 (Rule: IsInvalid(patient.CreatedDate), Parameter: nameof(Patient.CreatedDate)),
                 (Rule: IsInvalid(patient.CreatedBy), Parameter: nameof(Patient.CreatedBy)),
                 (Rule: IsInvalid(patient.UpdatedDate), Parameter: nameof(Patient.UpdatedDate)),
                 (Rule: IsInvalid(patient.UpdatedBy), Parameter: nameof(Patient.UpdatedBy)),
+                (Rule: IsGreaterThan(patient.NhsNumber, 10), Parameter: nameof(Patient.NhsNumber)),
+                (Rule: IsGreaterThan(patient.Title, 35), Parameter: nameof(Patient.Title)),
+                (Rule: IsGreaterThan(patient.GivenName, 255), Parameter: nameof(Patient.GivenName)),
+                (Rule: IsGreaterThan(patient.Surname, 255), Parameter: nameof(Patient.Surname)),
+                (Rule: IsGreaterThan(patient.Email, 255), Parameter: nameof(Patient.Email)),
+                (Rule: IsGreaterThan(patient.Phone, 15), Parameter: nameof(Patient.Phone)),
+                (Rule: IsGreaterThan(patient.PostCode, 8), Parameter: nameof(Patient.PostCode)),
+                (Rule: IsGreaterThan(patient.ValidationCode, 5), Parameter: nameof(Patient.ValidationCode)),
                 (Rule: IsGreaterThan(patient.CreatedBy, 255), Parameter: nameof(Patient.CreatedBy)),
                 (Rule: IsGreaterThan(patient.UpdatedBy, 255), Parameter: nameof(Patient.UpdatedBy)),
 
-                 (Rule: IsNotSame(
+                (Rule: IsNotSame(
                     first: currentUser.UserId,
                     second: patient.UpdatedBy),
                 Parameter: nameof(Patient.UpdatedBy)),

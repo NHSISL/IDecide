@@ -73,8 +73,11 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
 
             var invalidPatient = new Patient
             {
-                // TODO: Add more properties for validation checks as needed
-                // Name = invalidText
+                NhsNumber = invalidText,
+                GivenName = invalidText,
+                Surname = invalidText,
+                Gender = invalidText,
+                ValidationCode = invalidText,
             };
 
             var invalidPatientException =
@@ -85,10 +88,33 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                 key: nameof(Patient.Id),
                 values: "Id is required");
 
-            // TODO: Add more validation checks as needed
-            // invalidPatientException.AddData(
-            //     key: nameof(Patient.Name),
-            //     values: "Text is required");
+            invalidPatientException.AddData(
+                key: nameof(Patient.NhsNumber),
+                values: "Text is required");
+
+            invalidPatientException.AddData(
+                key: nameof(Patient.GivenName),
+                values: "Text is required");
+
+            invalidPatientException.AddData(
+                key: nameof(Patient.Surname),
+                values: "Text is required");
+
+            invalidPatientException.AddData(
+                key: nameof(Patient.Gender),
+                values: "Text is required");
+
+            invalidPatientException.AddData(
+                key: nameof(Patient.ValidationCode),
+                values: "Text is required");
+
+            invalidPatientException.AddData(
+                key: nameof(Patient.DateOfBirth),
+                values: "Date is required");
+
+            invalidPatientException.AddData(
+                key: nameof(Patient.ValidationCodeExpiresOn),
+                values: "Date is required");
 
             invalidPatientException.AddData(
                 key: nameof(Patient.CreatedDate),
@@ -130,6 +156,112 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
             PatientValidationException actualPatientValidationException =
                 await Assert.ThrowsAsync<PatientValidationException>(() =>
                     addPatientTask.AsTask());
+
+            // then
+            actualPatientValidationException.Should()
+                .BeEquivalentTo(expectedPatientValidationException);
+
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.ApplyAddAuditValuesAsync(invalidPatient),
+                    Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once());
+
+            this.securityBrokerMock.Verify(broker =>
+                broker.GetCurrentUserAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedPatientValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertPatientAsync(It.IsAny<Patient>()),
+                    Times.Never);
+
+            this.securityAuditBrokerMock.VerifyNoOtherCalls();
+            this.securityBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnAddIfPatientHasInvalidLengthProperty()
+        {
+            // given
+            string randomUserId = GetRandomString();
+            User randomUser = CreateRandomUser(userId: randomUserId);
+
+            var invalidPatient = CreateRandomPatient(GetRandomDateTimeOffset(), userId: randomUserId);
+            invalidPatient.NhsNumber = GetRandomStringWithLengthOf(11);
+            invalidPatient.Title = GetRandomStringWithLengthOf(36);
+            invalidPatient.GivenName = GetRandomStringWithLengthOf(256);
+            invalidPatient.Surname = GetRandomStringWithLengthOf(256);
+            invalidPatient.Email = GetRandomStringWithLengthOf(256);
+            invalidPatient.Phone = GetRandomStringWithLengthOf(16);
+            invalidPatient.PostCode = GetRandomStringWithLengthOf(9);
+            invalidPatient.ValidationCode = GetRandomStringWithLengthOf(6);
+
+            var invalidPatientException =
+                new InvalidPatientException(
+                    message: "Invalid patient. Please correct the errors and try again.");
+
+            invalidPatientException.AddData(
+                key: nameof(Patient.NhsNumber),
+                values: $"Text exceed max length of {invalidPatient.NhsNumber.Length - 1} characters");
+
+            invalidPatientException.AddData(
+                key: nameof(Patient.Title),
+                values: $"Text exceed max length of {invalidPatient.Title.Length - 1} characters");
+
+            invalidPatientException.AddData(
+                key: nameof(Patient.GivenName),
+                values: $"Text exceed max length of {invalidPatient.GivenName.Length - 1} characters");
+
+            invalidPatientException.AddData(
+                key: nameof(Patient.Surname),
+                values: $"Text exceed max length of {invalidPatient.Surname.Length - 1} characters");
+
+            invalidPatientException.AddData(
+                key: nameof(Patient.Email),
+                values: $"Text exceed max length of {invalidPatient.Email.Length - 1} characters");
+
+            invalidPatientException.AddData(
+                key: nameof(Patient.Phone),
+                values: $"Text exceed max length of {invalidPatient.Phone.Length - 1} characters");
+
+            invalidPatientException.AddData(
+                key: nameof(Patient.PostCode),
+                values: $"Text exceed max length of {invalidPatient.PostCode.Length - 1} characters");
+
+            invalidPatientException.AddData(
+                key: nameof(Patient.ValidationCode),
+                values: $"Text exceed max length of {invalidPatient.ValidationCode.Length - 1} characters");
+
+            var expectedPatientValidationException =
+                new PatientValidationException(
+                    message: "Patient validation errors occurred, please try again.",
+                    innerException: invalidPatientException);
+
+            this.securityAuditBrokerMock.Setup(broker =>
+                broker.ApplyAddAuditValuesAsync(invalidPatient))
+                    .ReturnsAsync(invalidPatient);
+
+            this.securityBrokerMock.Setup(broker =>
+                broker.GetCurrentUserAsync())
+                    .ReturnsAsync(randomUser);
+
+            // when
+            ValueTask<Patient> addPatientTask =
+                this.patientService.AddPatientAsync(invalidPatient);
+
+            PatientValidationException actualPatientValidationException =
+                await Assert.ThrowsAsync<PatientValidationException>(
+                    addPatientTask.AsTask);
 
             // then
             actualPatientValidationException.Should()
