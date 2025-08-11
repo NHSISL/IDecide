@@ -25,5 +25,20 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Extensions.Patients
             // then
             actualResult.Should().BeEquivalentTo(expectedRedactedPatient);
         }
+
+        [Fact]
+        public void ShouldReturnRedactedPatientWhenRedactWithWhitespace()
+        {
+            // given
+            Patient somePatient = GetPatientToRedactWithWhitespace();
+            Patient inputPatient = somePatient.DeepClone();
+            Patient expectedRedactedPatient = GetRedactedPatientWithWhitespace(inputPatient);
+
+            // when
+            Patient actualResult = inputPatient.Redact();
+
+            // then
+            actualResult.Should().BeEquivalentTo(expectedRedactedPatient);
+        }
     }
 }
