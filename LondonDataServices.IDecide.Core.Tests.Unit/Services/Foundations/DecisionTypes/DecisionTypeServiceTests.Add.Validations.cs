@@ -73,8 +73,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
 
             var invalidDecisionType = new DecisionType
             {
-                // TODO: Add more properties for validation checks as needed
-                // Name = invalidText
+                Name = invalidText
             };
 
             var invalidDecisionTypeException =
@@ -85,10 +84,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                 key: nameof(DecisionType.Id),
                 values: "Id is required");
 
-            // TODO: Add more validation checks as needed
-            // invalidDecisionTypeException.AddData(
-            //     key: nameof(DecisionType.Name),
-            //     values: "Text is required");
+            invalidDecisionTypeException.AddData(
+                key: nameof(DecisionType.Name),
+                values: "Text is required");
 
             invalidDecisionTypeException.AddData(
                 key: nameof(DecisionType.CreatedDate),

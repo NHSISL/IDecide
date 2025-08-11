@@ -21,13 +21,12 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes
             Validate<InvalidDecisionTypeException>(
                 message: "Invalid decisionType. Please correct the errors and try again.",
                 (Rule: IsInvalid(decisionType.Id), Parameter: nameof(DecisionType.Id)),
-                
-                // TODO: Add more rules as needed
-
+                (Rule: IsInvalid(decisionType.Name), Parameter: nameof(DecisionType.Name)),
                 (Rule: IsInvalid(decisionType.CreatedDate), Parameter: nameof(DecisionType.CreatedDate)),
                 (Rule: IsInvalid(decisionType.CreatedBy), Parameter: nameof(DecisionType.CreatedBy)),
                 (Rule: IsInvalid(decisionType.UpdatedDate), Parameter: nameof(DecisionType.UpdatedDate)),
                 (Rule: IsInvalid(decisionType.UpdatedBy), Parameter: nameof(DecisionType.UpdatedBy)),
+                (Rule: IsGreaterThan(decisionType.Name, 255), Parameter: nameof(DecisionType.Name)),
                 (Rule: IsGreaterThan(decisionType.CreatedBy, 255), Parameter: nameof(DecisionType.CreatedBy)),
                 (Rule: IsGreaterThan(decisionType.UpdatedBy, 255), Parameter: nameof(DecisionType.UpdatedBy)),
 
@@ -59,13 +58,12 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes
             Validate<InvalidDecisionTypeException>(
                 message: "Invalid decisionType. Please correct the errors and try again.",
                 (Rule: IsInvalid(decisionType.Id), Parameter: nameof(DecisionType.Id)),
-                
-                // TODO: Add more rules as needed
-
+                (Rule: IsInvalid(decisionType.Name), Parameter: nameof(DecisionType.Name)),
                 (Rule: IsInvalid(decisionType.CreatedDate), Parameter: nameof(DecisionType.CreatedDate)),
                 (Rule: IsInvalid(decisionType.CreatedBy), Parameter: nameof(DecisionType.CreatedBy)),
                 (Rule: IsInvalid(decisionType.UpdatedDate), Parameter: nameof(DecisionType.UpdatedDate)),
                 (Rule: IsInvalid(decisionType.UpdatedBy), Parameter: nameof(DecisionType.UpdatedBy)),
+                (Rule: IsGreaterThan(decisionType.Name, 255), Parameter: nameof(DecisionType.Name)),
                 (Rule: IsGreaterThan(decisionType.CreatedBy, 255), Parameter: nameof(DecisionType.CreatedBy)),
                 (Rule: IsGreaterThan(decisionType.UpdatedBy, 255), Parameter: nameof(DecisionType.UpdatedBy)),
 

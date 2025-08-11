@@ -134,9 +134,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
                 .OnProperty(decisionType => decisionType.CreatedBy).Use(userId)
-                .OnProperty(decisionType => decisionType.UpdatedBy).Use(userId);
-
-            // TODO:  Add IgnoreIt() rules for all navigation properties
+                .OnProperty(decisionType => decisionType.UpdatedBy).Use(userId)
+                .OnProperty(decisionType => decisionType.Decisions).IgnoreIt();
 
             return filler;
         }
