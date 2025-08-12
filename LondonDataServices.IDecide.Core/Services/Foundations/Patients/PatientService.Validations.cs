@@ -117,7 +117,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Patients
             if (maybePatient is null)
             {
                 throw new NotFoundPatientException(
-                    message: $"Couldn't find decision type with patientId: {patientId}.");
+                    message: $"Couldn't find patient with patientId: {patientId}.");
             }
         }
 

@@ -68,7 +68,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
             Patient noPatient = null;
 
             var notFoundPatientException = new NotFoundPatientException(
-                $"Couldn't find decision type with patientId: {somePatientId}.");
+                $"Couldn't find patient with patientId: {somePatientId}.");
 
             var expectedPatientValidationException =
                 new PatientValidationException(
