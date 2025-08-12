@@ -31,9 +31,9 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Tests.Accept
             {
                 OverrideSecurityForTesting(services);
 
-                OverrideFhirProviderForTesting(
-                    services,
-                    context.Configuration);
+                //OverrideFhirProviderForTesting(
+                //    services,
+                //    context.Configuration);
             });
         }
 

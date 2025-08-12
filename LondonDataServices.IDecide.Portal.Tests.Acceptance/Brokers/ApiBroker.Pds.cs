@@ -3,7 +3,8 @@
 // ---------------------------------------------------------
 
 using System.Threading.Tasks;
-using LondonDataServices.IDecide.Portal.Server.Models.PatientSearches;
+using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
+using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
 
 namespace LondonDataServices.IDecide.Portals.Server.Tests.Acceptance.Brokers
 {
@@ -11,7 +12,11 @@ namespace LondonDataServices.IDecide.Portals.Server.Tests.Acceptance.Brokers
     {
         private const string pdsRelativeUrl = "api/PatientSearch";
 
-        public async ValueTask<Patient> PostPatientByDetailsAsync(PatientLookup patientLookup) =>
-            await this.apiFactoryClient.PostContentAsync<PatientLookup, Patient>($"{pdsRelativeUrl}/PostPatientByDetails",  patientLookup);
+        public async ValueTask<Patient> PostPatientByDetailsAsync(PatientLookup patientLookup)
+        {
+            return await this.apiFactoryClient.PostContentAsync<PatientLookup, Patient>(
+                $"{pdsRelativeUrl}/PostPatientByDetails",  patientLookup);
+
+        }
     }
 }

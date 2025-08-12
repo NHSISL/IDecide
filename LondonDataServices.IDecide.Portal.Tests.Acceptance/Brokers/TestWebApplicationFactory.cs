@@ -2,6 +2,8 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System.IO;
+using System;
 using System.Linq;
 using Attrify.InvisibleApi.Models;
 using ISL.Providers.PDS.Abstractions;
@@ -21,9 +23,14 @@ namespace LondonDataServices.IDecide.Portal.Tests.Acceptance.Brokers
         {
             builder.ConfigureAppConfiguration((context, config) =>
             {
+                var testProjectPath = Path.GetFullPath(
+                    Path.Combine(AppContext.BaseDirectory, "..", "..", ".."));
+
                 config
                     .AddJsonFile("appsettings.json", optional: true)
                     .AddJsonFile("appsettings.Development.json", optional: true)
+                    .AddJsonFile(Path.Combine(testProjectPath, "appsettings.json"), optional: true)
+                    .AddJsonFile(Path.Combine(testProjectPath, "appsettings.Acceptance.json"), optional: true)
                     .AddEnvironmentVariables();
             });
 
