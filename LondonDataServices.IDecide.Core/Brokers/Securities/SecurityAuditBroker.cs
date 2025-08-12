@@ -15,7 +15,7 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
     /// Provides security-related functionalities such as user authentication, claim verification, and role checks.
     /// Supports both REST API (using <see cref="IHttpContextAccessor"/>) and Azure Functions (using access token).
     /// </summary>
-    internal class SecurityAuditBroker : ISecurityAuditBroker
+    public class SecurityAuditBroker : ISecurityAuditBroker
     {
         private readonly ClaimsPrincipal claimsPrincipal;
         private readonly ISecurityClient securityClient;
