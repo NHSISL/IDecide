@@ -250,7 +250,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
                 string.Join(", ", address.Line),
                 address.City,
                 address.District,
-                address.PostalCode,
                 address.Country
             };
 

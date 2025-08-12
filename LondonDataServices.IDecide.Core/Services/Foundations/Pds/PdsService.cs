@@ -109,7 +109,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
         {
             var parts = new[]
             {
-                string.Join(",", address.Line),
+                string.Join(", ", address.Line),
                 address.City,
                 address.District,
                 address.Country
