@@ -4,6 +4,8 @@ import { useStep } from "../../hooks/useStep";
 import { decisionViewService } from "../../services/views/decisionViewService";
 import { Decision } from "../../models/decisions/decision";
 import { isAxiosError } from "../../helpers/axiosErrorHelper";
+import { useTranslation } from "react-i18next";
+
 interface ConfirmationProps {
     selectedOption: "optout" | "optin" | null;
     nhsNumber: string | null;
@@ -20,6 +22,7 @@ export const Confirmation: React.FC<ConfirmationProps> = ({ selectedOption, nhsN
     const createDecisionMutation = decisionViewService.useCreateDecision();
     const [error, setError] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const { t } = useTranslation();
 
     // Only one method can be selected at a time
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,7 +39,7 @@ export const Confirmation: React.FC<ConfirmationProps> = ({ selectedOption, nhsN
         e.preventDefault();
 
         if (!nhsNumber || !selectedOption) {
-            setError("NHS number and option are required.");
+            setError(t("ConfirmAndSave.errorMissingNhsOrOption"));
             return;
         }
 
@@ -55,10 +58,10 @@ export const Confirmation: React.FC<ConfirmationProps> = ({ selectedOption, nhsN
             },
             onError: (error: unknown) => {
                 setIsSubmitting(false);
-                let message = "Sorry, we couldn't save your decision. Please try again.";
+                let message = t("ConfirmAndSave.errorSaveFailed");
                 if (error instanceof Error && error.message) {
                     if (error.message === "Network Error") {
-                        message = "Sorry, we couldn't save your decision. Please try again.";
+                        message = t("ConfirmAndSave.errorSaveFailed");
                     } else {
                         message = error.message;
                     }
@@ -94,30 +97,34 @@ export const Confirmation: React.FC<ConfirmationProps> = ({ selectedOption, nhsN
 
                         <div>
                             <div style={{ fontSize: "1rem", marginBottom: "0.25rem", color: "#6c757d", fontWeight: 500 }}>
-                                Your Data Sharing Choice
+                                {t("ConfirmAndSave.yourDataSharingChoice")}
                             </div>
                             <dl className="mb-0" style={{ fontSize: "0.95rem", color: "#6c757d" }}>
                                 <div>
-                                    <dt style={{ display: "inline", fontWeight: 500 }}>Decision:</dt>
+                                    <dt style={{ display: "inline", fontWeight: 500 }}>{t("ConfirmAndSave.decisionLabel")}</dt>
                                     <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
                                         <strong data-testid="decision-value">
-                                            {selectedOption === "optin" ? "Opt-In" : selectedOption === "optout" ? "Opt-Out" : "Not selected"}
+                                            {selectedOption === "optin"
+                                                ? t("ConfirmAndSave.decisionOptIn")
+                                                : selectedOption === "optout"
+                                                    ? t("ConfirmAndSave.decisionOptOut")
+                                                    : t("ConfirmAndSave.decisionNotSelected")}
                                         </strong>
                                     </dd>
                                 </div>
                                 <div>
-                                    <dt style={{ display: "inline", fontWeight: 500 }}>NHS Number: &nbsp;</dt>
+                                    <dt style={{ display: "inline", fontWeight: 500 }}>{t("ConfirmAndSave.nhsNumberLabel")}&nbsp;</dt>
                                     <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
-                                        <strong data-testid="nhs-number-value">{nhsNumber || "Not provided"}</strong>
+                                        <strong data-testid="nhs-number-value">{nhsNumber || t("ConfirmAndSave.nhsNumberNotProvided")}</strong>
                                     </dd>
                                 </div>
                                 <div>
-                                    <dt style={{ display: "inline", fontWeight: 500 }}>Notification Method:</dt>
+                                    <dt style={{ display: "inline", fontWeight: 500 }}>{t("ConfirmAndSave.notificationMethodLabel")}</dt>
                                     <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
                                         <strong data-testid="notification-method-value">
                                             {selectedMethods.length > 0
                                                 ? selectedMethods.join(", ")
-                                                : "None selected"}
+                                                : t("ConfirmAndSave.notificationNoneSelected")}
                                         </strong>
                                     </dd>
                                 </div>
@@ -126,17 +133,17 @@ export const Confirmation: React.FC<ConfirmationProps> = ({ selectedOption, nhsN
                                 <>
                                     <hr />
                                     <div style={{ fontSize: "1rem", marginBottom: "0.25rem", color: "#6c757d", fontWeight: 500 }}>
-                                        Power of Attorney Details
+                                        {t("ConfirmAndSave.powerOfAttorneyDetails")}
                                     </div>
                                     <dl className="mb-0" style={{ fontSize: "0.95rem", color: "#6c757d" }}>
                                         <div>
-                                            <dt style={{ display: "inline", fontWeight: 500 }}>Name of Requester:</dt>
+                                            <dt style={{ display: "inline", fontWeight: 500 }}>{t("ConfirmAndSave.powerOfAttorneyName")}</dt>
                                             <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
                                                 <strong>{powerOfAttourney.firstName} {powerOfAttourney.surname}</strong>
                                             </dd>
                                         </div>
                                         <div>
-                                            <dt style={{ display: "inline", fontWeight: 500 }}>Requesters Relationship:</dt>
+                                            <dt style={{ display: "inline", fontWeight: 500 }}>{t("ConfirmAndSave.powerOfAttorneyRelationship")}</dt>
                                             <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
                                                 <strong>{powerOfAttourney.relationship}</strong>
                                             </dd>
@@ -156,7 +163,7 @@ export const Confirmation: React.FC<ConfirmationProps> = ({ selectedOption, nhsN
 
                     <form className="nhsuk-form-group" onSubmit={handleSubmit} data-testid="confirmation-form">
                         <label className="nhsuk-label" style={{ marginBottom: "1rem" }}>
-                            How would you like to be notified when your data has flowed into The London Data Service:
+                            {t("ConfirmAndSave.howToBeNotifiedLabel")}
                         </label>
                         <div className="nhsuk-checkboxes nhsuk-checkboxes--vertical" style={{ marginBottom: "1.5rem" }}>
                             <div className="nhsuk-checkboxes__item">
@@ -170,7 +177,7 @@ export const Confirmation: React.FC<ConfirmationProps> = ({ selectedOption, nhsN
                                     data-testid="checkbox-sms"
                                 />
                                 <label className="nhsuk-label nhsuk-checkboxes__label" htmlFor="SMS" data-testid="label-sms">
-                                    SMS
+                                    {t("ConfirmAndSave.sms")}
                                 </label>
                             </div>
                             <div className="nhsuk-checkboxes__item">
@@ -184,7 +191,7 @@ export const Confirmation: React.FC<ConfirmationProps> = ({ selectedOption, nhsN
                                     data-testid="checkbox-email"
                                 />
                                 <label className="nhsuk-label nhsuk-checkboxes__label" htmlFor="Email" data-testid="label-email">
-                                    Email
+                                    {t("ConfirmAndSave.email")}
                                 </label>
                             </div>
                             <div className="nhsuk-checkboxes__item">
@@ -198,7 +205,7 @@ export const Confirmation: React.FC<ConfirmationProps> = ({ selectedOption, nhsN
                                     data-testid="checkbox-post"
                                 />
                                 <label className="nhsuk-label nhsuk-checkboxes__label" htmlFor="Post" data-testid="label-post">
-                                    Post
+                                    {t("ConfirmAndSave.post")}
                                 </label>
                             </div>
                         </div>
@@ -211,7 +218,7 @@ export const Confirmation: React.FC<ConfirmationProps> = ({ selectedOption, nhsN
                             disabled={isSubmitting}
                             aria-busy={isSubmitting}
                         >
-                            {isSubmitting ? "Submitting" : "Save Preferences"}
+                            {isSubmitting ? t("ConfirmAndSave.submitting") : t("ConfirmAndSave.savePreferences")}
                         </button>
                     </form>
                 </Col>
@@ -226,25 +233,25 @@ export const Confirmation: React.FC<ConfirmationProps> = ({ selectedOption, nhsN
                         }}
                         data-testid="help-guidance-section"
                     >
-                        <h2 className="mb-3" style={{ color: "#005eb8" }} data-testid="help-guidance-heading">Help & Guidance</h2>
-                        <h3 data-testid="about-this-step-heading">About this step</h3>
+                        <h2 className="mb-3" style={{ color: "#005eb8" }} data-testid="help-guidance-heading">{t("ConfirmAndSave.helpGuidanceTitle")}</h2>
+                        <h3 data-testid="about-this-step-heading">{t("ConfirmAndSave.aboutThisStepTitle")}</h3>
                         <p>
-                            You are about to save your opt-out preference. This means you are choosing how your data will be shared for secondary uses within The London Data Service.
+                            {t("ConfirmAndSave.aboutThisStepDesc1")}
                         </p>
                         <p>
-                            Please select how you would like to be notified when your data has flowed into The London Data Service. You can choose to receive updates by SMS, email, or letter.
+                            {t("ConfirmAndSave.aboutThisStepDesc2")}
                         </p>
                         <ul>
-                            <li><strong>SMS</strong> - a text message will be sent to your mobile phone</li>
-                            <li><strong>Email</strong> - a message will be sent to your registered email address</li>
-                            <li><strong>Letter</strong> - a letter will be sent to your home address (please allow up to 3 days for delivery)</li>
+                            <li><strong>{t("ConfirmAndSave.helpSms")}</strong></li>
+                            <li><strong>{t("ConfirmAndSave.helpEmail")}</strong></li>
+                            <li><strong>{t("ConfirmAndSave.helpLetter")}</strong></li>
                         </ul>
                         <p>
-                            You can return to this site at any time to change your notification preferences.
+                            {t("ConfirmAndSave.helpChangePrefs")}
                         </p>
-                        <h3 data-testid="need-help-heading">Need help?</h3>
+                        <h3 data-testid="need-help-heading">{t("ConfirmAndSave.needHelpTitle")}</h3>
                         <p>
-                            If you have any questions or need assistance, please contact our helpdesk.
+                            {t("ConfirmAndSave.needHelpDesc")}
                         </p>
                     </div>
                 </Col>

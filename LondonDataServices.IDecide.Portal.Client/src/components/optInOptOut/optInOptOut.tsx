@@ -17,7 +17,7 @@ export const OptInOptOut: React.FC<OptInOptOutProps> = ({ createdPatient }) => {
     if (!createdPatient) {
         return (
             <div className="nhsuk-error-message" role="alert">
-                <strong>Error:</strong> Patient information is missing.
+                <strong>Error:</strong> {t("OptOut.errorNoPatient")}
             </div>
         );
     }
@@ -30,7 +30,7 @@ export const OptInOptOut: React.FC<OptInOptOutProps> = ({ createdPatient }) => {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!selectedOption) {
-            setError("Please select an option to continue.");
+            setError(t("OptOut.errorSelectOption"));
             return;
         }
         setError("");
@@ -47,17 +47,17 @@ export const OptInOptOut: React.FC<OptInOptOutProps> = ({ createdPatient }) => {
                             </div>
                             <div>
                                 <div style={{ fontSize: "1rem", marginBottom: "0.25rem", color: "#6c757d", fontWeight: 500 }}>
-                                    Power of Attorney Details
+                                    {t("OptOut.powerOfAttorneyDetails")}
                                 </div>
                                 <dl className="mb-0" style={{ fontSize: "0.95rem", color: "#6c757d" }}>
                                     <div>
-                                        <dt style={{ display: "inline", fontWeight: 500 }}>Name:</dt>
+                                        <dt style={{ display: "inline", fontWeight: 500 }}>{t("OptOut.powerOfAttorneyName")}</dt>
                                         <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
                                             <strong>{powerOfAttourney.firstName} {powerOfAttourney.surname}</strong>
                                         </dd>
                                     </div>
                                     <div>
-                                        <dt style={{ display: "inline", fontWeight: 500 }}>Relationship:</dt>
+                                        <dt style={{ display: "inline", fontWeight: 500 }}>{t("OptOut.powerOfAttorneyRelationship")}</dt>
                                         <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
                                             <strong>{powerOfAttourney.relationship}</strong>
                                         </dd>
@@ -90,13 +90,13 @@ export const OptInOptOut: React.FC<OptInOptOutProps> = ({ createdPatient }) => {
                                     aria-describedby="optout-desc"
                                 />
                                 <div>
-                                    <strong>{t('optOut')}</strong>
+                                    <strong>{t("OptOut.optOutLabel")}</strong>
                                     <div id="optout-desc" style={{ marginTop: "0.5rem" }}>
                                         <div>
-                                            I do not want my personal data to be used in the London Data Service for Research and Commissioning purposes.
+                                            {t("OptOut.optOutDesc1")}
                                         </div>
                                         <div style={{ marginTop: "0.5rem", color: "#505a5f" }}>
-                                            I acknowledge that my data will still reside in the London Data Service for direct care purposes.
+                                            {t("OptOut.optOutDesc2")}
                                         </div>
                                     </div>
                                 </div>
@@ -124,9 +124,9 @@ export const OptInOptOut: React.FC<OptInOptOutProps> = ({ createdPatient }) => {
                                     aria-describedby="optin-desc"
                                 />
                                 <div>
-                                    <strong>{t('optIn')}</strong>
+                                    <strong>{t("OptOut.optInLabel")}</strong>
                                     <div id="optin-desc" style={{ marginTop: "0.5rem" }}>
-                                        I want my personal data to be used in the London Data Service for Direct Care, Research and Commissioning purposes.
+                                        {t("OptOut.optInDesc")}
                                     </div>
                                 </div>
                             </label>
@@ -143,7 +143,7 @@ export const OptInOptOut: React.FC<OptInOptOutProps> = ({ createdPatient }) => {
                             className="nhsuk-button"
                             style={{ width: "100%", marginTop: "0.2rem" }}
                         >
-                            Next
+                            {t("OptOut.nextButton")}
                         </button>
                     </form>
                 </Col>
@@ -157,19 +157,17 @@ export const OptInOptOut: React.FC<OptInOptOutProps> = ({ createdPatient }) => {
                             boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
                         }}
                     >
-                        <h2 className="mb-3" style={{ color: "#005eb8" }}>Help & Guidance</h2>
-                        <h3>Whats does Opt-Out do?</h3>
-                        <p>Choosing to opt out of sharing your data will stop your anonymised health information being used for:</p>
+                        <h2 className="mb-3" style={{ color: "#005eb8" }}>{t("OptOut.helpGuidanceTitle")}</h2>
+                        <h3>{t("OptOut.helpOptOutTitle")}</h3>
+                        <p>{t("OptOut.helpOptOutDesc1")}</p>
                         <ul>
-                            <li>Supporting the provision of direct & proactive healthcare</li>
-                            <li>Planning & Commissioning of Healthcare Services</li>
-                            <li>Assessing & Improving Healthcare Services</li>
-                            <li>Enabling Research</li>
+                            <li>{t("OptOut.helpOptOutList1")}</li>
+                            <li>{t("OptOut.helpOptOutList2")}</li>
+                            <li>{t("OptOut.helpOptOutList3")}</li>
+                            <li>{t("OptOut.helpOptOutList4")}</li>
                         </ul>
                         <p>
-                            Choosing to opt-out of sharing your data for secondary purposes means your personal health information will still
-                            be used to make sure you get the treatment and care you need. For example, your data may be shared if you
-                            need to be referred to hospital or get a prescription.
+                            {t("OptOut.helpOptOutDesc2")}
                         </p>
                     </div>
                 </Col>

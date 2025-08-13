@@ -3,17 +3,19 @@ import { useStep } from "../../hooks/useStep";
 import { patientViewService } from "../../services/views/patientViewService";
 import { GenerateCodeRequest } from "../../models/patients/generateCodeRequest";
 import { Row, Col, Alert } from "react-bootstrap";
+import { useTranslation } from "react-i18next";
 
 interface PositiveConfirmationProps {
     goToConfirmCode: (createdPatient: GenerateCodeRequest) => void;
 }
 
 const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirmCode }) => {
+    const { t } = useTranslation();
     const { createdPatient, powerOfAttourney } = useStep();
     const updatePatient = patientViewService.useUpdatePatient();
 
     if (!createdPatient) {
-        return <div>No patient details available.</div>;
+        return <div>{t("PositiveConfirmation.noPatientDetails")}</div>;
     }
 
     const patientToUpdate = new GenerateCodeRequest(createdPatient);
@@ -52,17 +54,17 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                             </div>
                             <div>
                                 <div style={{ fontSize: "1rem", marginBottom: "0.25rem", color: "#6c757d", fontWeight: 500 }}>
-                                    Power of Attorney Details
+                                    {t("PositiveConfirmation.poaDetailsTitle")}
                                 </div>
                                 <dl className="mb-0" style={{ fontSize: "0.95rem", color: "#6c757d" }}>
                                     <div>
-                                        <dt style={{ display: "inline", fontWeight: 500 }}>Name:</dt>
+                                        <dt style={{ display: "inline", fontWeight: 500 }}>{t("PositiveConfirmation.poaNameLabel")}</dt>
                                         <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
                                             <strong>{powerOfAttourney.firstName} {powerOfAttourney.surname}</strong>
                                         </dd>
                                     </div>
                                     <div>
-                                        <dt style={{ display: "inline", fontWeight: 500 }}>Relationship:</dt>
+                                        <dt style={{ display: "inline", fontWeight: 500 }}>{t("PositiveConfirmation.poaRelationshipLabel")}</dt>
                                         <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
                                             <strong>{powerOfAttourney.relationship}</strong>
                                         </dd>
@@ -72,29 +74,29 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                         </Alert>
                     )}
 
-                    <h2>Confirmation required</h2>
-                    <p>Please confirm these details are correct before continuing:</p>
+                    <h2>{t("PositiveConfirmation.confirmationRequiredTitle")}</h2>
+                    <p>{t("PositiveConfirmation.confirmationRequiredDescription")}</p>
                     <dl className="nhsuk-summary-list" style={{ marginBottom: "2rem" }}>
                         <div className="nhsuk-summary-list__row">
-                            <dt className="nhsuk-summary-list__key">Name</dt>
+                            <dt className="nhsuk-summary-list__key">{t("PositiveConfirmation.summaryName")}</dt>
                             <dd className="nhsuk-summary-list__value">{createdPatient.surname}</dd>
                         </div>
                         <div className="nhsuk-summary-list__row">
-                            <dt className="nhsuk-summary-list__key">Email</dt>
+                            <dt className="nhsuk-summary-list__key">{t("PositiveConfirmation.summaryEmail")}</dt>
                             <dd className="nhsuk-summary-list__value">{createdPatient.emailAddress}</dd>
                         </div>
                         <div className="nhsuk-summary-list__row">
-                            <dt className="nhsuk-summary-list__key">Mobile Number</dt>
+                            <dt className="nhsuk-summary-list__key">{t("PositiveConfirmation.summaryMobile")}</dt>
                             <dd className="nhsuk-summary-list__value">{createdPatient.phoneNumber}</dd>
                         </div>
                         <div className="nhsuk-summary-list__row">
-                            <dt className="nhsuk-summary-list__key">Address</dt>
+                            <dt className="nhsuk-summary-list__key">{t("PositiveConfirmation.summaryAddress")}</dt>
                             <dd className="nhsuk-summary-list__value">{createdPatient.address}</dd>
                         </div>
                     </dl>
 
                     <p style={{ fontWeight: 500, marginBottom: "1rem" }}>
-                        We need to send a code to you, how would you like to receive it:
+                        {t("PositiveConfirmation.chooseMethod")}
                     </p>
                     <div style={{
                         display: "flex",
@@ -109,7 +111,7 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                             onClick={() => handleSubmit("Email")}
                             disabled={!createdPatient.emailAddress}
                         >
-                            Email
+                            {t("PositiveConfirmation.methodEmail")}
                         </button>
                         <button
                             type="button"
@@ -118,7 +120,7 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                             onClick={() => handleSubmit("SMS")}
                             disabled={!createdPatient.phoneNumber}
                         >
-                            SMS
+                            {t("PositiveConfirmation.methodSMS")}
                         </button>
                         <button
                             type="button"
@@ -127,7 +129,7 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                             onClick={() => handleSubmit("Letter")}
                             disabled={!createdPatient.address}
                         >
-                            Letter
+                            {t("PositiveConfirmation.methodLetter")}
                         </button>
                     </div>
                 </div>
@@ -142,21 +144,21 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                         boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
                     }}
                 >
-                    <h2 className="mb-3" style={{ color: "#005eb8" }}>Help & Guidance</h2>
+                    <h2 className="mb-3" style={{ color: "#005eb8" }}>{t("PositiveConfirmation.helpGuidanceTitle")}</h2>
                     <h3 className="mb-3" style={{ color: "#005eb8" }}>
-                        Receiving Your Confirmation Code
+                        {t("PositiveConfirmation.helpReceivingCodeTitle")}
                     </h3>
                     <p>
-                        To keep your information secure, we need to send you a one-time code. This code helps us confirm your identity before you continue.
+                        {t("PositiveConfirmation.helpReceivingCodeDescription1")}
                     </p>
                     <p>
-                        Please choose how you would like to receive your code: by Email, SMS, or Post (letter). Select the option that is most convenient and accessible for you.
+                        {t("PositiveConfirmation.helpReceivingCodeDescription2")}
                     </p>
                     <p>
-                        If you cannot access any of these methods, please contact one of our agents on ........
+                        {t("PositiveConfirmation.helpReceivingCodeDescription3")}
                     </p>
                     <p>
-                        Your details are only used for identification and will not be shared outside the NHS.
+                        {t("PositiveConfirmation.helpReceivingCodeDescription4")}
                     </p>
                 </div>
             </Col>

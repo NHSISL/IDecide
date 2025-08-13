@@ -89,7 +89,7 @@ test.describe('OptInOutPage', () => {
 
     test('should show Help & Guidance section', async ({ page }) => {
         await expect(page.getByRole('heading', { name: /Help & Guidance/i })).toBeVisible();
-        await expect(page.getByText(/Whats does Opt-Out do/i)).toBeVisible();
+        await expect(page.getByText(/What does Opt-Out do/i)).toBeVisible();
         await expect(page.getByText(/Choosing to opt out of sharing your data/i)).toBeVisible();
     });
 });

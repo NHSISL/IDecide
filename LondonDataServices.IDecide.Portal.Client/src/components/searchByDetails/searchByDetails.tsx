@@ -6,39 +6,15 @@ import { patientViewService } from "../../services/views/patientViewService";
 import { TextInput, Select, Card } from "nhsuk-react-components";
 import { Col, Container, Row } from "react-bootstrap";
 import { StepContext } from "../context/stepContext";
+import { useTranslation } from "react-i18next";
 
 interface SearchByDetailsProps {
     onBack: () => void;
     powerOfAttourney?: boolean;
 }
 
-const isValidUKDate = (day: string, month: string, year: string): string | null => {
-    if (!/^\d{2}$/.test(month) || parseInt(month, 10) < 1 || parseInt(month, 10) > 12) {
-        return "Month must be between 01 and 12";
-    }
-    if (!/^\d{1,2}$/.test(day) || !/^\d{4}$/.test(year)) {
-        return "Enter a valid date of birth";
-    }
-    const dayNum = parseInt(day, 10);
-    const monthNum = parseInt(month, 10);
-    const yearNum = parseInt(year, 10);
-
-    if (dayNum < 1 || dayNum > 31) return "Day must be between 1 and 31";
-    if (yearNum < 1900 || yearNum > new Date().getFullYear()) return "Enter a valid year";
-
-    // Check for valid date
-    const date = new Date(yearNum, monthNum - 1, dayNum);
-    if (
-        date.getFullYear() !== yearNum ||
-        date.getMonth() !== monthNum - 1 ||
-        date.getDate() !== dayNum
-    ) {
-        return "Enter a real date of birth";
-    }
-    return null;
-};
-
 const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttourney }) => {
+    const { t } = useTranslation();
     const stepContext = useContext(StepContext);
 
     useEffect(() => {
@@ -94,6 +70,32 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
         });
     };
 
+    const isValidUKDate = (day: string, month: string, year: string): string | null => {
+        if (!/^\d{2}$/.test(month) || parseInt(month, 10) < 1 || parseInt(month, 10) > 12) {
+            return t("SearchByDetails.dobMonthInvalid");
+        }
+        if (!/^\d{1,2}$/.test(day) || !/^\d{4}$/.test(year)) {
+            return t("SearchByDetails.dobInvalid");
+        }
+        const dayNum = parseInt(day, 10);
+        const monthNum = parseInt(month, 10);
+        const yearNum = parseInt(year, 10);
+
+        if (dayNum < 1 || dayNum > 31) return t("SearchByDetails.dobDayInvalid");
+        if (yearNum < 1900 || yearNum > new Date().getFullYear()) return t("SearchByDetails.dobYearInvalid");
+
+        // Check for valid date
+        const date = new Date(yearNum, monthNum - 1, dayNum);
+        if (
+            date.getFullYear() !== yearNum ||
+            date.getMonth() !== monthNum - 1 ||
+            date.getDate() !== dayNum
+        ) {
+            return t("SearchByDetails.dobRealInvalid");
+        }
+        return null;
+    };
+
     const handleMonthChange = (value: string) => {
         const filtered = value.replace(/\D/g, "").slice(0, 2);
         setDobMonth(filtered);
@@ -105,10 +107,10 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
         const newErrors: { [key: string]: string } = {};
 
         // Standard validation
-        if (!surname) newErrors.surname = "Enter your Surname";
-        if (!postcode) newErrors.postcode = "Enter your Postcode";
+        if (!surname) newErrors.surname = t("SearchByDetails.surnameError");
+        if (!postcode) newErrors.postcode = t("SearchByDetails.postcodeError");
         if (!dobDay || !dobMonth || !dobYear) {
-            newErrors.dob = "Enter your Date of Birth";
+            newErrors.dob = t("SearchByDetails.dobError");
         } else {
             const dobError = isValidUKDate(dobDay, dobMonth, dobYear);
             if (dobError) newErrors.dob = dobError;
@@ -116,9 +118,9 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
 
         // PoA validation
         if (powerOfAttourney) {
-            if (!poaFirstname.trim()) newErrors.poaFirstname = "Enter a first name";
-            if (!poaSurname.trim()) newErrors.poaSurname = "Enter a surname";
-            if (!poaRelationship) newErrors.poaRelationship = "Select a relationship";
+            if (!poaFirstname.trim()) newErrors.poaFirstname = t("SearchByDetails.poaFirstnameError");
+            if (!poaSurname.trim()) newErrors.poaSurname = t("SearchByDetails.poaSurnameError");
+            if (!poaRelationship) newErrors.poaRelationship = t("SearchByDetails.poaRelationshipError");
         }
 
         setErrors(newErrors);
@@ -149,7 +151,7 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
                     setLoading(false);
                 },
                 onError: () => {
-                    setErrors({ submit: "Failed to create patient. Please try again." });
+                    setErrors({ submit: t("SearchByDetails.submitError") });
                     setLoading(false);
                 }
             });
@@ -176,7 +178,7 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
                                 fontSize: "1rem",
                                 padding: 0
                             }}
-                            aria-label="Back"
+                            aria-label={t("SearchByDetails.back")}
                         >
                             <svg
                                 className="nhsuk-icon nhsuk-icon__chevron-left"
@@ -190,23 +192,23 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
                             >
                                 <path fill="currentColor" d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
                             </svg>
-                            Back
+                            {t("SearchByDetails.back")}
                         </button>
 
                         <Card cardType="feature">
                             <Card.Content>
-                                <Card.Heading>My Details</Card.Heading>
+                                <Card.Heading>{t("SearchByDetails.myDetails")}</Card.Heading>
 
                                 <div className={`nhsuk-form-group${errors.surname ? " nhsuk-form-group--error" : ""}`}>
                                     <label className="nhsuk-label" htmlFor="surname">
-                                        Surname
+                                        {t("SearchByDetails.surnameLabel")}
                                     </label>
                                     <span className="nhsuk-hint" id="surname-hint">
-                                        For example, Smith or O'Neill
+                                        {t("SearchByDetails.surnameHint")}
                                     </span>
                                     {errors.surname && (
                                         <span className="nhsuk-error-message" id="surname-error">
-                                            <strong>Error:</strong> {errors.surname}
+                                            <strong>{t("SearchByDetails.errorPrefix")}</strong> {errors.surname}
                                         </span>
                                     )}
                                     <input
@@ -227,14 +229,14 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
 
                                 <div className={`nhsuk-form-group${errors.postcode ? " nhsuk-form-group--error" : ""}`}>
                                     <label className="nhsuk-label" htmlFor="postcode">
-                                        Postcode
+                                        {t("SearchByDetails.postcodeLabel")}
                                     </label>
                                     <span className="nhsuk-hint" id="postcode-hint">
-                                        For example, SW1A 2AA
+                                        {t("SearchByDetails.postcodeHint")}
                                     </span>
                                     {errors.postcode && (
                                         <span className="nhsuk-error-message" id="postcode-error">
-                                            <strong>Error:</strong> {errors.postcode}
+                                            <strong>{t("SearchByDetails.errorPrefix")}</strong> {errors.postcode}
                                         </span>
                                     )}
                                     <input
@@ -254,20 +256,20 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
                                 </div>
                                 <fieldset className={`nhsuk-fieldset${errors.dob ? " nhsuk-form-group--error" : ""}`} style={{ marginBottom: "1rem" }}>
                                     <legend className="nhsuk-fieldset__legend nhsuk-label">
-                                        Date of Birth
+                                        {t("SearchByDetails.dobLegend")}
                                     </legend>
                                     <span className="nhsuk-hint" id="dob-hint">
-                                        For example, 31 03 1980
+                                        {t("SearchByDetails.dobHint")}
                                     </span>
                                     {errors.dob && (
                                         <span className="nhsuk-error-message" id="dob-error">
-                                            <strong>Error:</strong> {errors.dob}
+                                            <strong>{t("SearchByDetails.errorPrefix")}</strong> {errors.dob}
                                         </span>
                                     )}
                                     <div className="nhsuk-date-input" id="dob" aria-describedby="dob-hint">
                                         <div className="nhsuk-date-input__item" style={{ display: "inline-block", marginRight: "0.5rem" }}>
                                             <label className="nhsuk-label nhsuk-date-input__label" htmlFor="dob-day">
-                                                Day
+                                                {t("SearchByDetails.dobDayLabel")}
                                             </label>
                                             <input
                                                 className={`nhsuk-input nhsuk-date-input__input${errors.dob ? " nhsuk-input--error" : ""}`}
@@ -288,7 +290,7 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
                                         </div>
                                         <div className="nhsuk-date-input__item" style={{ display: "inline-block", marginRight: "0.5rem" }}>
                                             <label className="nhsuk-label nhsuk-date-input__label" htmlFor="dob-month">
-                                                Month
+                                                {t("SearchByDetails.dobMonthLabel")}
                                             </label>
                                             <input
                                                 className={`nhsuk-input nhsuk-date-input__input${errors.dob ? " nhsuk-input--error" : ""}`}
@@ -306,7 +308,7 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
                                         </div>
                                         <div className="nhsuk-date-input__item" style={{ display: "inline-block" }}>
                                             <label className="nhsuk-label nhsuk-date-input__label" htmlFor="dob-year">
-                                                Year
+                                                {t("SearchByDetails.dobYearLabel")}
                                             </label>
                                             <input
                                                 className={`nhsuk-input nhsuk-date-input__input${errors.dob ? " nhsuk-input--error" : ""}`}
@@ -333,11 +335,11 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
                         {powerOfAttourney && (
                             <Card cardType="feature">
                                 <Card.Content>
-                                    <Card.Heading>My Details (The Requester)</Card.Heading>
+                                    <Card.Heading>{t("SearchByDetails.myDetailsRequester")}</Card.Heading>
                                     <Card.Description>
                                         <div style={{ marginBottom: "1.5rem" }}>
                                             <TextInput
-                                                label="Firstname"
+                                                label={t("SearchByDetails.poaFirstnameLabel")}
                                                 id="poa-firstname"
                                                 name="poa-firstname"
                                                 autoComplete="off"
@@ -347,7 +349,7 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
                                                 style={{ maxWidth: "400px", marginBottom: "1rem" }}
                                             />
                                             <TextInput
-                                                label="Surname"
+                                                label={t("SearchByDetails.poaSurnameLabel")}
                                                 id="poa-surname"
                                                 name="poa-surname"
                                                 autoComplete="off"
@@ -358,10 +360,10 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
                                             />
                                             <div style={{ marginBottom: "1rem" }}>
                                                 <Select
-                                                    label="Relationship"
+                                                    label={t("SearchByDetails.poaRelationshipLabel")}
                                                     id="poa-relationship"
                                                     name="poa-relationship"
-                                                    aria-label="Relationship to the person you are representing"
+                                                    aria-label={t("SearchByDetails.poaRelationshipLabel")}
                                                     aria-required="true"
                                                     required
                                                     value={poaRelationship}
@@ -370,16 +372,16 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
                                                     style={{ maxWidth: "400px", marginBottom: "1rem" }}
                                                 >
                                                     <option value="" disabled>
-                                                        Select relationship
+                                                        {t("SearchByDetails.poaRelationshipSelect")}
                                                     </option>
-                                                    <option value="The patient is under 13 and you are their parent">
-                                                        The patient is under 13 and you are their parent
+                                                    <option value={t("SearchByDetails.poaRelationshipParent")}>
+                                                        {t("SearchByDetails.poaRelationshipParent")}
                                                     </option>
-                                                    <option value="The patient is under 13 and you are their appointed guardian">
-                                                        The patient is under 13 and you are their appointed guardian
+                                                    <option value={t("SearchByDetails.poaRelationshipGuardian")}>
+                                                        {t("SearchByDetails.poaRelationshipGuardian")}
                                                     </option>
-                                                    <option value="The patient is over 13 and you have power of attorney with the right to act on their behalf.">
-                                                        The patient is over 13 and you have power of attorney with the right to act on their behalf.
+                                                    <option value={t("SearchByDetails.poaRelationshipAttorney")}>
+                                                        {t("SearchByDetails.poaRelationshipAttorney")}
                                                     </option>
                                                 </Select>
                                             </div>
@@ -391,12 +393,12 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
 
                         {errors.submit && (
                             <div className="nhsuk-error-message" style={{ marginBottom: "1rem" }} role="alert">
-                                <strong>Error:</strong> {errors.submit}
+                                <strong>{t("SearchByDetails.errorPrefix")}</strong> {errors.submit}
                             </div>
                         )}
 
                         <button className="nhsuk-button" type="submit" style={{ width: "100%" }} disabled={loading}>
-                            {loading ? "Submitting..." : "Search"}
+                            {loading ? t("SearchByDetails.submitting") : t("SearchByDetails.searchButton")}
                         </button>
                     </form>
                 </Col>
@@ -411,23 +413,23 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
                                 boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
                             }}
                         >
-                            <h2 className="mb-3" style={{ color: "#005eb8" }}>Help & Guidance</h2>
+                            <h2 className="mb-3" style={{ color: "#005eb8" }}>{t("SearchByDetails.helpGuidanceTitle")}</h2>
                             <h3 className="mb-3" style={{ color: "#005eb8" }}>
-                                Requesting an Opt-out on someone else's behalf
+                                {t("SearchByDetails.helpGuidanceSubtitle")}
                             </h3>
                             <p>
-                                You can make a request to opt-out on behalf of someone else to stop their personal data being used for secondary purposes if:
+                                {t("SearchByDetails.helpGuidanceText1")}
                             </p>
                             <ul>
-                                <li>The patient is under 13 and you are their parent</li>
-                                <li>The patient is under 13 and you are their appointed guardian</li>
-                                <li>The patient is over 13 and you have power of attorney with the right to act on their behalf.</li>
+                                <li>{t("SearchByDetails.poaRelationshipParent")}</li>
+                                <li>{t("SearchByDetails.poaRelationshipGuardian")}</li>
+                                <li>{t("SearchByDetails.poaRelationshipAttorney")}</li>
                             </ul>
                             <p>
-                                If you are in these circumstances then please enter your details in this blue box and in every other box use the patient's details.
+                                {t("SearchByDetails.helpGuidanceText2")}
                             </p>
                             <p>
-                                If one of these circumstances does not describe you then you cannot opt someone else out. Please click the back button.
+                                {t("SearchByDetails.helpGuidanceText3")}
                             </p>
                         </div>
                     )}

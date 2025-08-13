@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Patient } from "../../models/patients/patient";
 import { patientViewService } from "../../services/views/patientViewService";
 import { Row, Col, Alert } from "react-bootstrap";
@@ -10,6 +11,7 @@ interface ConfirmCodeProps {
 }
 
 export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
+    const { t } = useTranslation();
     const [code, setCode] = useState("");
     const [error, setError] = useState("");
     const { nextStep, powerOfAttourney } = useStep();
@@ -18,18 +20,17 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value.replace(/\D/g, "").slice(0, 5);
         setCode(value);
-        // Do NOT clear error here; only clear on submit
     };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        setError(""); // Clear previous error on submit
+        setError("");
         if (code.length !== 5) {
-            setError("Enter the 5 digit code sent to you");
+            setError(t("ConfirmCode.errorEnterCode"));
             return;
         }
         if (!createdPatient) {
-            setError("No patient found. Please restart the process.");
+            setError(t("ConfirmCode.errorNoPatient"));
             return;
         }
 
@@ -41,10 +42,10 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
                 },
                 onError: (error: unknown) => {
                     if (error instanceof Error) {
-                        setError("Invalid code. Please try again.");
+                        setError(t("ConfirmCode.errorInvalidCode"));
                         window.console.error("Error confirming code:", error.message);
                     } else {
-                        setError("An error occurred. Please try again.");
+                        setError(t("ConfirmCode.errorGeneric"));
                         window.console.error("Error confirming code:", error);
                     }
                 }
@@ -62,17 +63,17 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
                             </div>
                             <div>
                                 <div style={{ fontSize: "1rem", marginBottom: "0.25rem", color: "#6c757d", fontWeight: 500 }}>
-                                    Power of Attorney Details
+                                    {t("ConfirmCode.powerOfAttorneyDetails")}
                                 </div>
                                 <dl className="mb-0" style={{ fontSize: "0.95rem", color: "#6c757d" }}>
                                     <div>
-                                        <dt style={{ display: "inline", fontWeight: 500 }}>Name:</dt>
+                                        <dt style={{ display: "inline", fontWeight: 500 }}>{t("ConfirmCode.powerOfAttorneyName")}</dt>
                                         <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
                                             <strong>{powerOfAttourney.firstName} {powerOfAttourney.surname}</strong>
                                         </dd>
                                     </div>
                                     <div>
-                                        <dt style={{ display: "inline", fontWeight: 500 }}>Relationship:</dt>
+                                        <dt style={{ display: "inline", fontWeight: 500 }}>{t("ConfirmCode.powerOfAttorneyRelationship")}</dt>
                                         <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
                                             <strong>{powerOfAttourney.relationship}</strong>
                                         </dd>
@@ -84,7 +85,7 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
 
                     <form className="nhsuk-form-group" autoComplete="off" onSubmit={handleSubmit} >
                         <label className="nhsuk-label" htmlFor="code">
-                            Enter Code
+                            {t("ConfirmCode.enterCodeLabel")}
                         </label>
                         <input
                             className="nhsuk-input"
@@ -118,7 +119,7 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
                             style={{ width: "70%", marginTop: "1.5rem" }}
                             disabled={confirmCodeMutation.isPending}
                         >
-                            {confirmCodeMutation.isPending ? "Submitting..." : "Submit"}
+                            {confirmCodeMutation.isPending ? t("ConfirmCode.submittingButton") : t("ConfirmCode.submitButton")}
                         </button>
                     </form>
                 </Col>
@@ -132,25 +133,25 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
                             boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
                         }}
                     >
-                        <h2 className="mb-3" style={{ color: "#005eb8" }}>Help & Guidance</h2>
-                        <h3>How do I get my code?</h3>
+                        <h2 className="mb-3" style={{ color: "#005eb8" }}>{t("ConfirmCode.helpGuidanceTitle")}</h2>
+                        <h3>{t("ConfirmCode.helpHowGetCodeTitle")}</h3>
                         <p>
-                            A 5-digit code has been sent to you by one of the following methods:
+                            {t("ConfirmCode.helpHowGetCodeText1")}
                         </p>
                         <ul>
-                            <li><strong>SMS</strong> (text message) to your mobile phone</li>
-                            <li><strong>Email</strong> to your registered email address</li>
-                            <li><strong>Letter</strong> to your home address (please allow up to 3 days for delivery)</li>
+                            <li><strong>{t("ConfirmCode.helpHowGetCodeSMS")}</strong></li>
+                            <li><strong>{t("ConfirmCode.helpHowGetCodeEmail")}</strong></li>
+                            <li><strong>{t("ConfirmCode.helpHowGetCodeLetter")}</strong></li>
                         </ul>
                         <p>
-                            Once you receive your code, please enter it in the box provided. This helps us confirm that the contact details you have provided match our records.
+                            {t("ConfirmCode.helpHowGetCodeText2")}
                         </p>
                         <p>
-                            If you have not received your code, please check your spam or junk email folder, or allow extra time if you are waiting for a letter.
+                            {t("ConfirmCode.helpHowGetCodeText3")}
                         </p>
-                        <h3>What if I enter the wrong code?</h3>
+                        <h3>{t("ConfirmCode.helpWrongCodeTitle")}</h3>
                         <p>
-                            If you enter the wrong code 3 times, you will be prompted to call our helpdesk to complete your opt-in or opt-out request.
+                            {t("ConfirmCode.helpWrongCodeText")}
                         </p>
                     </div>
                 </Col>
