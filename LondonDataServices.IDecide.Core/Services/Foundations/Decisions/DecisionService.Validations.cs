@@ -29,6 +29,9 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Decisions
                 (Rule: IsInvalid(decision.UpdatedBy), Parameter: nameof(Decision.UpdatedBy)),
                 (Rule: IsGreaterThan(decision.CreatedBy, 255), Parameter: nameof(Decision.CreatedBy)),
                 (Rule: IsGreaterThan(decision.UpdatedBy, 255), Parameter: nameof(Decision.UpdatedBy)),
+                (Rule: IsGreaterThan(decision.ResponsiblePersonGivenName, 255), Parameter: nameof(Decision.ResponsiblePersonGivenName)),
+                (Rule: IsGreaterThan(decision.ResponiblePersonSurname, 255), Parameter: nameof(Decision.ResponiblePersonSurname)),
+                (Rule: IsGreaterThan(decision.ResponsiblePersonRelationship, 255), Parameter: nameof(Decision.ResponsiblePersonRelationship)),
 
                 (Rule: IsNotSame(
                     firstDate: decision.UpdatedDate,
@@ -66,8 +69,11 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Decisions
                 (Rule: IsInvalid(decision.UpdatedBy), Parameter: nameof(Decision.UpdatedBy)),
                 (Rule: IsGreaterThan(decision.CreatedBy, 255), Parameter: nameof(Decision.CreatedBy)),
                 (Rule: IsGreaterThan(decision.UpdatedBy, 255), Parameter: nameof(Decision.UpdatedBy)),
+                (Rule: IsGreaterThan(decision.ResponsiblePersonGivenName, 255), Parameter: nameof(Decision.ResponsiblePersonGivenName)),
+                (Rule: IsGreaterThan(decision.ResponiblePersonSurname, 255), Parameter: nameof(Decision.ResponiblePersonSurname)),
+                (Rule: IsGreaterThan(decision.ResponsiblePersonRelationship, 255), Parameter: nameof(Decision.ResponsiblePersonRelationship)),
 
-                 (Rule: IsNotSame(
+                (Rule: IsNotSame(
                     first: currentUser.UserId,
                     second: decision.UpdatedBy),
                 Parameter: nameof(Decision.UpdatedBy)),
