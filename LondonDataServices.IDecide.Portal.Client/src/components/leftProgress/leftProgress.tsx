@@ -3,26 +3,9 @@ import React from "react";
 import { Container, Row } from "react-bootstrap";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckCircle } from '@fortawesome/free-solid-svg-icons';
+import { useTranslation } from "react-i18next";
 
 const steps = ["nhs", "details", "confirm", "choice", "notify", "thanks"];
-
-const stepLabels: Record<string, string> = {
-    nhs: "Provide Your NHS Number",
-    details: "Confirm Your Details",
-    confirm: "Positive Confirmation",
-    choice: "Make Your Choice",
-    notify: "Receive Notifications",
-    thanks: "Complete",
-};
-
-const stepContent: Record<string, React.ReactNode> = {
-    nhs: <p>Your NHS number helps us locate your record quickly and accurately.</p>,
-    details: <p>Make sure your name and date of birth are correct before proceeding.</p>,
-    confirm: <p>Confirmation means you've reviewed and validated the information provided.</p>,
-    choice: <p>Please indicate your preference regarding the opt-out.</p>,
-    notify: <p>Choose how you would like to receive updates about your preferences.</p>,
-    thanks: <p>Process Complete</p>
-};
 
 function useIsMobile() {
     const [isMobile, setIsMobile] = React.useState(false);
@@ -41,11 +24,24 @@ interface LeftProgressProps {
 }
 
 const LeftProgress: React.FC<LeftProgressProps> = ({ currentStepIndex, setCurrentStepIndex }) => {
+    const { t: translate } = useTranslation();
+
     const isMobile = useIsMobile();
 
     const isCurrentStep = (idx: number) => idx === currentStepIndex;
     const isPreviousStep = (idx: number) => idx < currentStepIndex;
     const isLastStep = (idx: number) => idx === steps.length - 1;
+
+    // Get localized labels and content
+    const stepLabels: Record<string, string> = steps.reduce((acc, step) => {
+        acc[step] = translate(`LeftProgress.steps.${step}`);
+        return acc;
+    }, {} as Record<string, string>);
+
+    const stepContent: Record<string, React.ReactNode> = steps.reduce((acc, step) => {
+        acc[step] = <p>{translate(`LeftProgress.content.${step}`)}</p>;
+        return acc;
+    }, {} as Record<string, React.ReactNode>);
 
     return (
         <Container>
@@ -53,7 +49,7 @@ const LeftProgress: React.FC<LeftProgressProps> = ({ currentStepIndex, setCurren
                 <form style={{ padding: 20 }}>
                     <div className="leftProgressPadding">
                         <Fieldset.Legend>
-                            <h2>The Opt-Out Process</h2>
+                            <h2>{translate("LeftProgress.legend")}</h2>
                         </Fieldset.Legend>
 
                         {isMobile ? (
