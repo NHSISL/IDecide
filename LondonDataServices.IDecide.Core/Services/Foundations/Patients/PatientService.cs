@@ -1,39 +1,98 @@
-﻿// ---------------------------------------------------------
+// ---------------------------------------------------------
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
-using System;
+using LondonDataServices.IDecide.Core.Brokers.DateTimes;
+using LondonDataServices.IDecide.Core.Brokers.Loggings;
+using LondonDataServices.IDecide.Core.Brokers.Securities;
+using LondonDataServices.IDecide.Core.Brokers.Storages.Sql;
+using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 
 namespace LondonDataServices.IDecide.Core.Services.Foundations.Patients
 {
-    public class PatientService : IPatientService
+    public partial class PatientService : IPatientService
     {
-        public ValueTask<Patient> AddPatientAsync(Patient patient)
+        private readonly IStorageBroker storageBroker;
+        private readonly IDateTimeBroker dateTimeBroker;
+        private readonly ISecurityBroker securityBroker;
+        private readonly ISecurityAuditBroker securityAuditBroker;
+        private readonly ILoggingBroker loggingBroker;
+
+        public PatientService(
+            IStorageBroker storageBroker,
+            IDateTimeBroker dateTimeBroker,
+            ISecurityBroker securityBroker,
+            ISecurityAuditBroker securityAuditBroker,
+            ILoggingBroker loggingBroker)
         {
-            throw new NotImplementedException();
+            this.storageBroker = storageBroker;
+            this.dateTimeBroker = dateTimeBroker;
+            this.securityBroker = securityBroker;
+            this.securityAuditBroker = securityAuditBroker;
+            this.loggingBroker = loggingBroker;
         }
 
-        public ValueTask<Patient> ModifyPatientAsync(Patient patient)
-        {
-            throw new NotImplementedException();
-        }
+        public ValueTask<Patient> AddPatientAsync(Patient patient) =>
+            TryCatch(async () =>
+            {
+                patient = await this.securityAuditBroker.ApplyAddAuditValuesAsync(patient);
+                await ValidatePatientOnAdd(patient);
 
-        public ValueTask<Patient> RemovePatientByIdAsync(Guid patientId)
-        {
-            throw new NotImplementedException();
-        }
+                return await this.storageBroker.InsertPatientAsync(patient);
+            });
 
-        public ValueTask<IQueryable<Patient>> RetrieveAllPatientsAsync()
-        {
-            throw new NotImplementedException();
-        }
+        public ValueTask<IQueryable<Patient>> RetrieveAllPatientsAsync() =>
+            TryCatch(async () => await this.storageBroker.SelectAllPatientsAsync());
 
-        public ValueTask<Patient> RetrievePatientByIdAsync(Guid patientId)
-        {
-            throw new NotImplementedException();
-        }
+        public ValueTask<Patient> RetrievePatientByIdAsync(Guid patientId) =>
+            TryCatch(async () =>
+            {
+                ValidatePatientId(patientId);
+
+                Patient maybePatient = await this.storageBroker
+                    .SelectPatientByIdAsync(patientId);
+
+                ValidateStoragePatient(maybePatient, patientId);
+
+                return maybePatient;
+            });
+
+        public ValueTask<Patient> ModifyPatientAsync(Patient patient) =>
+            TryCatch(async () =>
+            {
+                patient = await this.securityAuditBroker.ApplyModifyAuditValuesAsync(patient);
+
+                await ValidatePatientOnModify(patient);
+
+                Patient maybePatient =
+                    await this.storageBroker.SelectPatientByIdAsync(patient.Id);
+
+                ValidateStoragePatient(maybePatient, patient.Id);
+
+                patient = await this.securityAuditBroker
+                    .EnsureAddAuditValuesRemainsUnchangedOnModifyAsync(patient, maybePatient);
+
+                ValidateAgainstStoragePatientOnModify(
+                    inputPatient: patient,
+                    storagePatient: maybePatient);
+
+                return await this.storageBroker.UpdatePatientAsync(patient);
+            });
+
+        public ValueTask<Patient> RemovePatientByIdAsync(Guid patientId) =>
+            TryCatch(async () =>
+            {
+                ValidatePatientId(patientId);
+
+                Patient maybePatient = await this.storageBroker
+                    .SelectPatientByIdAsync(patientId);
+
+                ValidateStoragePatient(maybePatient, patientId);
+
+                return await this.storageBroker.DeletePatientAsync(maybePatient);
+            });
     }
 }

@@ -14,6 +14,7 @@ using ISL.Providers.PDS.FakeFHIR.Models;
 using ISL.Providers.PDS.FakeFHIR.Providers.FakeFHIR;
 using ISL.Providers.PDS.FHIR.Models.Brokers.PdsFHIR;
 using ISL.Providers.PDS.FHIR.Providers;
+using ISL.Security.Client.Models.Clients;
 using LondonDataServices.IDecide.Core.Brokers.DateTimes;
 using LondonDataServices.IDecide.Core.Brokers.Identifiers;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
@@ -23,6 +24,8 @@ using LondonDataServices.IDecide.Core.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Brokers.Storages.Sql;
 using LondonDataServices.IDecide.Core.Models.Brokers.Notifications;
 using LondonDataServices.IDecide.Core.Services.Foundations.Audits;
+using LondonDataServices.IDecide.Core.Services.Foundations.Decisions;
+using LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes;
 using LondonDataServices.IDecide.Core.Services.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Services.Foundations.Pds;
@@ -172,9 +175,12 @@ namespace LondonDataServices.IDecide.Portal.Server
 
         private static void AddBrokers(IServiceCollection services, IConfiguration configuration)
         {
+            SecurityConfigurations securityConfigurations = new SecurityConfigurations();
+            services.AddSingleton(securityConfigurations);
             services.AddTransient<IDateTimeBroker, DateTimeBroker>();
             services.AddTransient<IIdentifierBroker, IdentifierBroker>();
             services.AddTransient<ILoggingBroker, LoggingBroker>();
+            services.AddTransient<ISecurityAuditBroker, SecurityAuditBroker>();
             services.AddTransient<ISecurityBroker, SecurityBroker>();
             services.AddTransient<IStorageBroker, StorageBroker>();
             services.AddTransient<INotificationBroker, NotificationBroker>();
@@ -185,6 +191,8 @@ namespace LondonDataServices.IDecide.Portal.Server
         {
             services.AddTransient<IAuditService, AuditService>();
             services.AddTransient<IPdsService, PdsService>();
+            services.AddTransient<IDecisionService, DecisionService>();
+            services.AddTransient<IDecisionTypeService, DecisionTypeService>();
             services.AddTransient<IPatientService, PatientService>();
             services.AddTransient<INotificationService, NotificationService>();
         }
@@ -194,7 +202,7 @@ namespace LondonDataServices.IDecide.Portal.Server
 
         private static void AddOrchestrationServices(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddTransient<IPatientOrchestrationService, PatientOrchestrationService>(); 
+            services.AddTransient<IPatientOrchestrationService, PatientOrchestrationService>();
         }
 
         private static void AddCoordinationServices(IServiceCollection services, IConfiguration configuration)
