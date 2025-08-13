@@ -20,6 +20,9 @@ namespace LondonDataServices.IDecide.Core.Models.Foundations.Decisions
         public DateTimeOffset CreatedDate { get; set; }
         public string UpdatedBy { get; set; }
         public DateTimeOffset UpdatedDate { get; set; }
+        public string? ResponsiblePersonGivenName { get; set; }
+        public string? ResponiblePersonSurname { get; set; }
+        public string? ResponsiblePersonRelationship { get; set; }
 
         [BindNever]
         public DecisionType DecisionType { get; set; } = null!;

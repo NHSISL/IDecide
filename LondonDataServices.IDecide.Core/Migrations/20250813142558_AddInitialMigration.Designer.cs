@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LondonDataServices.IDecide.Core.Migrations
 {
     [DbContext(typeof(StorageBroker))]
-    [Migration("20250811132508_AddInitialMigration")]
+    [Migration("20250813142558_AddInitialMigration")]
     partial class AddInitialMigration
     {
         /// <inheritdoc />
@@ -141,6 +141,18 @@ namespace LondonDataServices.IDecide.Core.Migrations
 
                     b.Property<string>("PatientNhsNumber")
                         .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("ResponiblePersonSurname")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("ResponsiblePersonGivenName")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("ResponsiblePersonRelationship")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
