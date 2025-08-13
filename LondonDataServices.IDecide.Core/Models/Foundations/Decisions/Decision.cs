@@ -21,7 +21,7 @@ namespace LondonDataServices.IDecide.Core.Models.Foundations.Decisions
         public string UpdatedBy { get; set; }
         public DateTimeOffset UpdatedDate { get; set; }
         public string? ResponsiblePersonGivenName { get; set; }
-        public string? ResponiblePersonSurname { get; set; }
+        public string? ResponsiblePersonSurname { get; set; }
         public string? ResponsiblePersonRelationship { get; set; }
 
         [BindNever]
