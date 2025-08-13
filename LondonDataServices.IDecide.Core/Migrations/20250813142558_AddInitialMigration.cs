@@ -98,7 +98,10 @@ namespace LondonDataServices.IDecide.Core.Migrations
                     CreatedBy = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedBy = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
+                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    ResponsiblePersonGivenName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    ResponiblePersonSurname = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    ResponsiblePersonRelationship = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true)
                 },
                 constraints: table =>
                 {

@@ -52,6 +52,21 @@ namespace LondonDataServices.IDecide.Core.Brokers.Storages.Sql
                 .IsRequired();
 
             model
+                .Property(decision => decision.ResponsiblePersonGivenName)
+                .HasMaxLength(255)
+                .IsRequired(false);
+
+            model
+                .Property(decision => decision.ResponiblePersonSurname)
+                .HasMaxLength(255)
+                .IsRequired(false);
+
+            model
+                .Property(decision => decision.ResponsiblePersonRelationship)
+                .HasMaxLength(255)
+                .IsRequired(false);
+
+            model
                .Property(decision => decision.DecisionTypeId)
                 .IsRequired();
 
