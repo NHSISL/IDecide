@@ -8,7 +8,7 @@ interface ConfirmDetailsProps {
 }
 
 export const ConfirmDetails: React.FC<ConfirmDetailsProps> = ({ goToConfirmCode }) => {
-    const { t } = useTranslation();
+    const { t: translate } = useTranslation();
     const { setCurrentStepIndex, nextStep, createdPatient, powerOfAttourney } = useStep();
 
     useEffect(() => {
@@ -23,7 +23,7 @@ export const ConfirmDetails: React.FC<ConfirmDetailsProps> = ({ goToConfirmCode 
     };
 
     if (!createdPatient) {
-        return <div>{t("ConfirmDetails.noPatientDetails")}</div>;
+        return <div>{translate("ConfirmDetails.noPatientDetails")}</div>;
     }
 
     return (
@@ -36,17 +36,17 @@ export const ConfirmDetails: React.FC<ConfirmDetailsProps> = ({ goToConfirmCode 
                             </div>
                             <div>
                                 <div style={{ fontSize: "1rem", marginBottom: "0.25rem", color: "#6c757d", fontWeight: 500 }}>
-                                    {t("ConfirmDetails.powerOfAttorneyDetails")}
+                                    {translate("ConfirmDetails.powerOfAttorneyDetails")}
                                 </div>
                                 <dl className="mb-0" style={{ fontSize: "0.95rem", color: "#6c757d" }}>
                                     <div>
-                                        <dt style={{ display: "inline", fontWeight: 500 }}>{t("ConfirmDetails.powerOfAttorneyName")}:</dt>
+                                        <dt style={{ display: "inline", fontWeight: 500 }}>{translate("ConfirmDetails.powerOfAttorneyName")}:</dt>
                                         <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
                                             <strong>{powerOfAttourney.firstName} {powerOfAttourney.surname}</strong>
                                         </dd>
                                     </div>
                                     <div>
-                                        <dt style={{ display: "inline", fontWeight: 500 }}>{t("ConfirmDetails.powerOfAttorneyRelationship")}:</dt>
+                                        <dt style={{ display: "inline", fontWeight: 500 }}>{translate("ConfirmDetails.powerOfAttorneyRelationship")}:</dt>
                                         <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
                                             <strong>{powerOfAttourney.relationship}</strong>
                                         </dd>
@@ -55,23 +55,23 @@ export const ConfirmDetails: React.FC<ConfirmDetailsProps> = ({ goToConfirmCode 
                             </div>
                         </Alert>
                     )}
-                    <h4 style={{ fontWeight: 700, fontSize: "1.5rem", margin: "1.5rem 0 1rem 0", color: "#212529" }}>{t("ConfirmDetails.isThisYou")}</h4>
+                    <h4 style={{ fontWeight: 700, fontSize: "1.5rem", margin: "1.5rem 0 1rem 0", color: "#212529" }}>{translate("ConfirmDetails.isThisYou")}</h4>
                     <form className="nhsuk-form-group">
                         <dl className="nhsuk-summary-list" style={{ marginBottom: "2rem" }}>
                             <div className="nhsuk-summary-list__row">
-                                <dt className="nhsuk-summary-list__key">{t("ConfirmDetails.name")}</dt>
+                                <dt className="nhsuk-summary-list__key">{translate("ConfirmDetails.name")}</dt>
                                 <dd className="nhsuk-summary-list__value">{createdPatient.firstName + ',' + createdPatient.surname}</dd>
                             </div>
                             <div className="nhsuk-summary-list__row">
-                                <dt className="nhsuk-summary-list__key">{t("ConfirmDetails.email")}</dt>
+                                <dt className="nhsuk-summary-list__key">{translate("ConfirmDetails.email")}</dt>
                                 <dd className="nhsuk-summary-list__value">{createdPatient.emailAddress}</dd>
                             </div>
                             <div className="nhsuk-summary-list__row">
-                                <dt className="nhsuk-summary-list__key">{t("ConfirmDetails.mobileNumber")}</dt>
+                                <dt className="nhsuk-summary-list__key">{translate("ConfirmDetails.mobileNumber")}</dt>
                                 <dd className="nhsuk-summary-list__value">07******084</dd>
                             </div>
                             <div className="nhsuk-summary-list__row">
-                                <dt className="nhsuk-summary-list__key">{t("ConfirmDetails.address")}</dt>
+                                <dt className="nhsuk-summary-list__key">{translate("ConfirmDetails.address")}</dt>
                                 <dd className="nhsuk-summary-list__value">{createdPatient.address}</dd>
                             </div>
                         </dl>
@@ -83,7 +83,7 @@ export const ConfirmDetails: React.FC<ConfirmDetailsProps> = ({ goToConfirmCode 
                                 style={{ flex: 1 }}
                                 onClick={handleYesClick}
                             >
-                                {t("ConfirmDetails.yes")}
+                                {translate("ConfirmDetails.yes")}
                             </button>
                             <button
                                 type="button"
@@ -91,7 +91,7 @@ export const ConfirmDetails: React.FC<ConfirmDetailsProps> = ({ goToConfirmCode 
                                 style={{ flex: 1 }}
                                 onClick={handleNoClick}
                             >
-                                {t("ConfirmDetails.no")}
+                                {translate("ConfirmDetails.no")}
                             </button>
                         </div>
 
@@ -101,7 +101,7 @@ export const ConfirmDetails: React.FC<ConfirmDetailsProps> = ({ goToConfirmCode 
                             style={{ width: "100%", marginBottom: 0, borderBottom: "none" }}
                             onClick={goToConfirmCode}
                         >
-                            {t("ConfirmDetails.useExistingCode")}
+                            {translate("ConfirmDetails.useExistingCode")}
                         </button>
                     </form>
                 </div>
@@ -116,24 +116,24 @@ export const ConfirmDetails: React.FC<ConfirmDetailsProps> = ({ goToConfirmCode 
                         boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
                     }}
                 >
-                    <h2 className="mb-3" style={{ color: "#005eb8" }}>{t("ConfirmDetails.helpGuidance")}</h2>
+                    <h2 className="mb-3" style={{ color: "#005eb8" }}>{translate("ConfirmDetails.helpGuidance")}</h2>
                     <h3 className="mb-3" style={{ color: "#005eb8" }}>
-                        {t("ConfirmDetails.checkingYourDetails")}
+                        {translate("ConfirmDetails.checkingYourDetails")}
                     </h3>
                     <p>
-                        {t("ConfirmDetails.reviewDetails")}
+                        {translate("ConfirmDetails.reviewDetails")}
                     </p>
                     <p>
-                        {t("ConfirmDetails.detailsCorrect")}
+                        {translate("ConfirmDetails.detailsCorrect")}
                     </p>
                     <p>
-                        {t("ConfirmDetails.detailsIncorrect")}
+                        {translate("ConfirmDetails.detailsIncorrect")}
                     </p>
                     <p>
-                        {t("ConfirmDetails.alreadyReceivedCode")}
+                        {translate("ConfirmDetails.alreadyReceivedCode")}
                     </p>
                     <p>
-                        {t("ConfirmDetails.securityInfo")}
+                        {translate("ConfirmDetails.securityInfo")}
                     </p>
                 </div>
             </Col>

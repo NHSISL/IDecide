@@ -11,7 +11,7 @@ interface ConfirmCodeProps {
 }
 
 export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
-    const { t } = useTranslation();
+    const { t: translate } = useTranslation();
     const [code, setCode] = useState("");
     const [error, setError] = useState("");
     const { nextStep, powerOfAttourney } = useStep();
@@ -26,11 +26,11 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
         e.preventDefault();
         setError("");
         if (code.length !== 5) {
-            setError(t("ConfirmCode.errorEnterCode"));
+            setError(translate("ConfirmCode.errorEnterCode"));
             return;
         }
         if (!createdPatient) {
-            setError(t("ConfirmCode.errorNoPatient"));
+            setError(translate("ConfirmCode.errorNoPatient"));
             return;
         }
 
@@ -42,10 +42,10 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
                 },
                 onError: (error: unknown) => {
                     if (error instanceof Error) {
-                        setError(t("ConfirmCode.errorInvalidCode"));
+                        setError(translate("ConfirmCode.errorInvalidCode"));
                         window.console.error("Error confirming code:", error.message);
                     } else {
-                        setError(t("ConfirmCode.errorGeneric"));
+                        setError(translate("ConfirmCode.errorGeneric"));
                         window.console.error("Error confirming code:", error);
                     }
                 }
@@ -63,17 +63,17 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
                             </div>
                             <div>
                                 <div style={{ fontSize: "1rem", marginBottom: "0.25rem", color: "#6c757d", fontWeight: 500 }}>
-                                    {t("ConfirmCode.powerOfAttorneyDetails")}
+                                    {translate("ConfirmCode.powerOfAttorneyDetails")}
                                 </div>
                                 <dl className="mb-0" style={{ fontSize: "0.95rem", color: "#6c757d" }}>
                                     <div>
-                                        <dt style={{ display: "inline", fontWeight: 500 }}>{t("ConfirmCode.powerOfAttorneyName")}</dt>
+                                        <dt style={{ display: "inline", fontWeight: 500 }}>{translate("ConfirmCode.powerOfAttorneyName")}</dt>
                                         <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
                                             <strong>{powerOfAttourney.firstName} {powerOfAttourney.surname}</strong>
                                         </dd>
                                     </div>
                                     <div>
-                                        <dt style={{ display: "inline", fontWeight: 500 }}>{t("ConfirmCode.powerOfAttorneyRelationship")}</dt>
+                                        <dt style={{ display: "inline", fontWeight: 500 }}>{translate("ConfirmCode.powerOfAttorneyRelationship")}</dt>
                                         <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
                                             <strong>{powerOfAttourney.relationship}</strong>
                                         </dd>
@@ -85,7 +85,7 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
 
                     <form className="nhsuk-form-group" autoComplete="off" onSubmit={handleSubmit} >
                         <label className="nhsuk-label" htmlFor="code">
-                            {t("ConfirmCode.enterCodeLabel")}
+                            {translate("ConfirmCode.enterCodeLabel")}
                         </label>
                         <input
                             className="nhsuk-input"
@@ -119,7 +119,7 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
                             style={{ width: "70%", marginTop: "1.5rem" }}
                             disabled={confirmCodeMutation.isPending}
                         >
-                            {confirmCodeMutation.isPending ? t("ConfirmCode.submittingButton") : t("ConfirmCode.submitButton")}
+                            {confirmCodeMutation.isPending ? translate("ConfirmCode.submittingButton") : translate("ConfirmCode.submitButton")}
                         </button>
                     </form>
                 </Col>
@@ -133,25 +133,25 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
                             boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
                         }}
                     >
-                        <h2 className="mb-3" style={{ color: "#005eb8" }}>{t("ConfirmCode.helpGuidanceTitle")}</h2>
-                        <h3>{t("ConfirmCode.helpHowGetCodeTitle")}</h3>
+                        <h2 className="mb-3" style={{ color: "#005eb8" }}>{translate("ConfirmCode.helpGuidanceTitle")}</h2>
+                        <h3>{translate("ConfirmCode.helpHowGetCodeTitle")}</h3>
                         <p>
-                            {t("ConfirmCode.helpHowGetCodeText1")}
+                            {translate("ConfirmCode.helpHowGetCodeText1")}
                         </p>
                         <ul>
-                            <li><strong>{t("ConfirmCode.helpHowGetCodeSMS")}</strong></li>
-                            <li><strong>{t("ConfirmCode.helpHowGetCodeEmail")}</strong></li>
-                            <li><strong>{t("ConfirmCode.helpHowGetCodeLetter")}</strong></li>
+                            <li><strong>{translate("ConfirmCode.helpHowGetCodeSMS")}</strong></li>
+                            <li><strong>{translate("ConfirmCode.helpHowGetCodeEmail")}</strong></li>
+                            <li><strong>{translate("ConfirmCode.helpHowGetCodeLetter")}</strong></li>
                         </ul>
                         <p>
-                            {t("ConfirmCode.helpHowGetCodeText2")}
+                            {translate("ConfirmCode.helpHowGetCodeText2")}
                         </p>
                         <p>
-                            {t("ConfirmCode.helpHowGetCodeText3")}
+                            {translate("ConfirmCode.helpHowGetCodeText3")}
                         </p>
-                        <h3>{t("ConfirmCode.helpWrongCodeTitle")}</h3>
+                        <h3>{translate("ConfirmCode.helpWrongCodeTitle")}</h3>
                         <p>
-                            {t("ConfirmCode.helpWrongCodeText")}
+                            {translate("ConfirmCode.helpWrongCodeText")}
                         </p>
                     </div>
                 </Col>

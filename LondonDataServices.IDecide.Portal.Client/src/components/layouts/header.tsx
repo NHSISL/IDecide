@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 
 const HeaderComponent: React.FC = () => {
     const { configuration } = useFrontendConfiguration();
-    const { t } = useTranslation();
+    const { t: translate } = useTranslation();
 
     useEffect(() => {
         if (configuration?.bannerColour) {
@@ -34,9 +34,9 @@ const HeaderComponent: React.FC = () => {
                     <div className="test-env-banner">
                         <small style={{ color: "#fff", fontWeight: 600, letterSpacing: "0.02em" }}>
                             <strong style={{ color: "#fff", textDecoration: "underline" }}>
-                                {t("DevEnvironmentWarning.bannerTitle")}
+                                {translate("DevEnvironmentWarning.bannerTitle")}
                             </strong>
-                            &nbsp;{t("DevEnvironmentWarning.bannerMessage")}
+                            &nbsp;{translate("DevEnvironmentWarning.bannerMessage")}
                         </small>
                     </div>
                 </div>

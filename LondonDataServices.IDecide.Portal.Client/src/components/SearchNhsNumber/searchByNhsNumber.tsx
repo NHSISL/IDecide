@@ -15,7 +15,7 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
     onIDontKnow: (powerOfAttourney: boolean) => void;
     powerOfAttourney?: boolean;
 }) => {
-    const { t } = useTranslation();
+    const { t: translate } = useTranslation();
     const stepContext = useContext(StepContext);
 
     useEffect(() => {
@@ -53,10 +53,10 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
                 waitForGrecaptcha();
             })
             .catch(() => {
-                if (isMounted) setError(t("SearchBySHSNumber.errorRecaptchaLoad"));
+                if (isMounted) setError(translate("SearchBySHSNumber.errorRecaptchaLoad"));
             });
         return () => { isMounted = false; };
-    }, [t]);
+    }, [translate]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value.replace(/\D/g, "").slice(0, 10);
@@ -86,19 +86,19 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
     const validatePoaFields = () => {
         let valid = true;
         if (poaNhsNumberInput.length !== 10) {
-            setPoaNhsNumberError(t("SearchBySHSNumber.errorNhsNumber"));
+            setPoaNhsNumberError(translate("SearchBySHSNumber.errorNhsNumber"));
             valid = false;
         }
         if (!poaFirstname.trim()) {
-            setPoaFirstnameError(t("SearchBySHSNumber.errorFirstname"));
+            setPoaFirstnameError(translate("SearchBySHSNumber.errorFirstname"));
             valid = false;
         }
         if (!poaSurname.trim()) {
-            setPoaSurnameError(t("SearchBySHSNumber.errorSurname"));
+            setPoaSurnameError(translate("SearchBySHSNumber.errorSurname"));
             valid = false;
         }
         if (!poaRelationship) {
-            setPoaRelationshipError(t("SearchBySHSNumber.errorRelationship"));
+            setPoaRelationshipError(translate("SearchBySHSNumber.errorRelationship"));
             valid = false;
         }
         return valid;
@@ -116,13 +116,13 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
             if (!validatePoaFields()) return;
         } else {
             if (nhsNumberInput.length !== 10) {
-                setError(t("SearchBySHSNumber.errorNhsNumber"));
+                setError(translate("SearchBySHSNumber.errorNhsNumber"));
                 return;
             }
         }
 
         if (!recaptchaReady || typeof grecaptcha === "undefined") {
-            setError(t("SearchBySHSNumber.errorRecaptchaNotReady"));
+            setError(translate("SearchBySHSNumber.errorRecaptchaNotReady"));
             return;
         }
         setLoading(true);
@@ -147,13 +147,13 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
                         setLoading(false);
                     },
                     onError: () => {
-                        setError(t("SearchBySHSNumber.errorCreatePatient"));
+                        setError(translate("SearchBySHSNumber.errorCreatePatient"));
                         setLoading(false);
                     }
                 });
             });
         } catch {
-            setError(t("SearchBySHSNumber.errorRecaptchaFailed"));
+            setError(translate("SearchBySHSNumber.errorRecaptchaFailed"));
             setLoading(false);
         }
     };
@@ -165,8 +165,8 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
                     <form autoComplete="off" onSubmit={handleSubmit}>
                         {!powerOfAttourney && (
                             <TextInput
-                                label={t("SearchBySHSNumber.nhsNumberLabel")}
-                                hint={t("SearchBySHSNumber.nhsNumberHint")}
+                                label={translate("SearchBySHSNumber.nhsNumberLabel")}
+                                hint={translate("SearchBySHSNumber.nhsNumberHint")}
                                 id="nhs-number"
                                 name="nhs-number"
                                 inputMode="numeric"
@@ -184,9 +184,9 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
                             <div style={{ marginBottom: "1.5rem" }}>
                                 <Card cardType="feature">
                                     <Card.Content>
-                                        <Card.Heading>{t("SearchBySHSNumber.poaNhsNumberLabel")}</Card.Heading>
+                                        <Card.Heading>{translate("SearchBySHSNumber.poaNhsNumberLabel")}</Card.Heading>
                                         <TextInput
-                                            label={t("SearchBySHSNumber.nhsNumberLabel")}
+                                            label={translate("SearchBySHSNumber.nhsNumberLabel")}
                                             id="poa-nhs-number"
                                             name="poa-nhs-number"
                                             inputMode="numeric"
@@ -203,9 +203,9 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
 
                                 <Card cardType="feature">
                                     <Card.Content>
-                                        <Card.Heading>{t("SearchBySHSNumber.poaMyDetailsHeading")}</Card.Heading>
+                                        <Card.Heading>{translate("SearchBySHSNumber.poaMyDetailsHeading")}</Card.Heading>
                                         <TextInput
-                                            label={t("SearchBySHSNumber.poaFirstnameLabel")}
+                                            label={translate("SearchBySHSNumber.poaFirstnameLabel")}
                                             id="poa-firstname"
                                             name="poa-firstname"
                                             autoComplete="off"
@@ -215,7 +215,7 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
                                             style={{ maxWidth: "400px", marginBottom: "1rem" }}
                                         />
                                         <TextInput
-                                            label={t("SearchBySHSNumber.poaSurnameLabel")}
+                                            label={translate("SearchBySHSNumber.poaSurnameLabel")}
                                             id="poa-surname"
                                             name="poa-surname"
                                             autoComplete="off"
@@ -226,10 +226,10 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
                                         />
                                         <div style={{ marginBottom: "1rem" }}>
                                             <Select
-                                                label={t("SearchBySHSNumber.poaRelationshipLabel")}
+                                                label={translate("SearchBySHSNumber.poaRelationshipLabel")}
                                                 id="poa-relationship"
                                                 name="poa-relationship"
-                                                aria-label={t("SearchBySHSNumber.poaRelationshipLabel")}
+                                                aria-label={translate("SearchBySHSNumber.poaRelationshipLabel")}
                                                 aria-required="true"
                                                 required
                                                 value={poaRelationship}
@@ -238,16 +238,16 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
                                                 style={{ maxWidth: "400px", marginBottom: "1rem" }}
                                             >
                                                 <option value="" disabled>
-                                                    {t("SearchBySHSNumber.poaRelationshipSelect")}
+                                                    {translate("SearchBySHSNumber.poaRelationshipSelect")}
                                                 </option>
-                                                <option value={t("SearchBySHSNumber.poaRelationshipOptions.parent")}>
-                                                    {t("SearchBySHSNumber.poaRelationshipOptions.parent")}
+                                                <option value={translate("SearchBySHSNumber.poaRelationshipOptions.parent")}>
+                                                    {translate("SearchBySHSNumber.poaRelationshipOptions.parent")}
                                                 </option>
-                                                <option value={t("SearchBySHSNumber.poaRelationshipOptions.guardian")}>
-                                                    {t("SearchBySHSNumber.poaRelationshipOptions.guardian")}
+                                                <option value={translate("SearchBySHSNumber.poaRelationshipOptions.guardian")}>
+                                                    {translate("SearchBySHSNumber.poaRelationshipOptions.guardian")}
                                                 </option>
-                                                <option value={t("SearchBySHSNumber.poaRelationshipOptions.attorney")}>
-                                                    {t("SearchBySHSNumber.poaRelationshipOptions.attorney")}
+                                                <option value={translate("SearchBySHSNumber.poaRelationshipOptions.attorney")}>
+                                                    {translate("SearchBySHSNumber.poaRelationshipOptions.attorney")}
                                                 </option>
                                             </Select>
                                         </div>
@@ -270,7 +270,7 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
                                         : nhsNumberInput.length !== 10)
                                 }
                             >
-                                {loading ? t("SearchBySHSNumber.submittingButton") : t("SearchBySHSNumber.submitButton")}
+                                {loading ? translate("SearchBySHSNumber.submittingButton") : translate("SearchBySHSNumber.submitButton")}
                             </Button>
                             <Button
                                 type="button"
@@ -278,7 +278,7 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
                                 onClick={() => onIDontKnow(powerOfAttourney)}
                                 disabled={loading}
                             >
-                                {t("SearchBySHSNumber.idontknowButton")}
+                                {translate("SearchBySHSNumber.idontknowButton")}
                             </Button>
                         </div>
                     </form>
@@ -294,14 +294,14 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
                                 boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
                             }}
                         >
-                            <h2 className="mb-3" style={{ color: "#005eb8" }}>{t("SearchBySHSNumber.helpGuidanceTitle")}</h2>
+                            <h2 className="mb-3" style={{ color: "#005eb8" }}>{translate("SearchBySHSNumber.helpGuidanceTitle")}</h2>
                             <h3 className="mb-3" style={{ color: "#005eb8" }}>
-                                {t("SearchBySHSNumber.helpGuidanceNhsNumberHeading")}
+                                {translate("SearchBySHSNumber.helpGuidanceNhsNumberHeading")}
                             </h3>
-                            <p>{t("SearchBySHSNumber.helpGuidanceNhsNumberText1")}</p>
-                            <p>{t("SearchBySHSNumber.helpGuidanceNhsNumberText2")}</p>
-                            <p>{t("SearchBySHSNumber.helpGuidanceNhsNumberText3")}</p>
-                            <p>{t("SearchBySHSNumber.helpGuidanceNhsNumberText4")}</p>
+                            <p>{translate("SearchBySHSNumber.helpGuidanceNhsNumberText1")}</p>
+                            <p>{translate("SearchBySHSNumber.helpGuidanceNhsNumberText2")}</p>
+                            <p>{translate("SearchBySHSNumber.helpGuidanceNhsNumberText3")}</p>
+                            <p>{translate("SearchBySHSNumber.helpGuidanceNhsNumberText4")}</p>
                         </div>
                     )}
                     {powerOfAttourney && (
@@ -314,23 +314,23 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
                                 boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
                             }}
                         >
-                            <h2 className="mb-3" style={{ color: "#005eb8" }}>{t("SearchBySHSNumber.helpGuidanceTitle")}</h2>
+                            <h2 className="mb-3" style={{ color: "#005eb8" }}>{translate("SearchBySHSNumber.helpGuidanceTitle")}</h2>
 
                             <div style={{ marginBottom: "1.5rem" }}>
-                                <h3 style={{ color: "#005eb8" }}>{t("SearchBySHSNumber.helpGuidanceEligibilityHeading")}</h3>
+                                <h3 style={{ color: "#005eb8" }}>{translate("SearchBySHSNumber.helpGuidanceEligibilityHeading")}</h3>
                                 <ul>
-                                    <li>{t("SearchBySHSNumber.helpGuidanceEligibilityList.parent")}</li>
-                                    <li>{t("SearchBySHSNumber.helpGuidanceEligibilityList.guardian")}</li>
-                                    <li>{t("SearchBySHSNumber.helpGuidanceEligibilityList.attorney")}</li>
+                                    <li>{translate("SearchBySHSNumber.helpGuidanceEligibilityList.parent")}</li>
+                                    <li>{translate("SearchBySHSNumber.helpGuidanceEligibilityList.guardian")}</li>
+                                    <li>{translate("SearchBySHSNumber.helpGuidanceEligibilityList.attorney")}</li>
                                 </ul>
-                                <p>{t("SearchBySHSNumber.helpGuidanceEligibilityText")}</p>
+                                <p>{translate("SearchBySHSNumber.helpGuidanceEligibilityText")}</p>
                             </div>
 
                             <div>
-                                <h3 style={{ color: "#005eb8" }}>{t("SearchBySHSNumber.helpGuidancePoaNhsNumberHeading")}</h3>
-                                <p>{t("SearchBySHSNumber.helpGuidancePoaNhsNumberText1")}</p>
-                                <p>{t("SearchBySHSNumber.helpGuidancePoaNhsNumberText2")}</p>
-                                <p>{t("SearchBySHSNumber.helpGuidancePoaNhsNumberText3")}</p>
+                                <h3 style={{ color: "#005eb8" }}>{translate("SearchBySHSNumber.helpGuidancePoaNhsNumberHeading")}</h3>
+                                <p>{translate("SearchBySHSNumber.helpGuidancePoaNhsNumberText1")}</p>
+                                <p>{translate("SearchBySHSNumber.helpGuidancePoaNhsNumberText2")}</p>
+                                <p>{translate("SearchBySHSNumber.helpGuidancePoaNhsNumberText3")}</p>
                             </div>
                         </div>
                     )}

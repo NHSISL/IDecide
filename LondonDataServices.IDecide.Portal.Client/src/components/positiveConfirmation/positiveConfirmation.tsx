@@ -10,12 +10,12 @@ interface PositiveConfirmationProps {
 }
 
 const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirmCode }) => {
-    const { t } = useTranslation();
+    const { t: translate } = useTranslation();
     const { createdPatient, powerOfAttourney } = useStep();
     const updatePatient = patientViewService.useUpdatePatient();
 
     if (!createdPatient) {
-        return <div>{t("PositiveConfirmation.noPatientDetails")}</div>;
+        return <div>{translate("PositiveConfirmation.noPatientDetails")}</div>;
     }
 
     const patientToUpdate = new GenerateCodeRequest(createdPatient);
@@ -54,17 +54,17 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                             </div>
                             <div>
                                 <div style={{ fontSize: "1rem", marginBottom: "0.25rem", color: "#6c757d", fontWeight: 500 }}>
-                                    {t("PositiveConfirmation.poaDetailsTitle")}
+                                    {translate("PositiveConfirmation.poaDetailsTitle")}
                                 </div>
                                 <dl className="mb-0" style={{ fontSize: "0.95rem", color: "#6c757d" }}>
                                     <div>
-                                        <dt style={{ display: "inline", fontWeight: 500 }}>{t("PositiveConfirmation.poaNameLabel")}</dt>
+                                        <dt style={{ display: "inline", fontWeight: 500 }}>{translate("PositiveConfirmation.poaNameLabel")}</dt>
                                         <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
                                             <strong>{powerOfAttourney.firstName} {powerOfAttourney.surname}</strong>
                                         </dd>
                                     </div>
                                     <div>
-                                        <dt style={{ display: "inline", fontWeight: 500 }}>{t("PositiveConfirmation.poaRelationshipLabel")}</dt>
+                                        <dt style={{ display: "inline", fontWeight: 500 }}>{translate("PositiveConfirmation.poaRelationshipLabel")}</dt>
                                         <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
                                             <strong>{powerOfAttourney.relationship}</strong>
                                         </dd>
@@ -74,29 +74,29 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                         </Alert>
                     )}
 
-                    <h2>{t("PositiveConfirmation.confirmationRequiredTitle")}</h2>
-                    <p>{t("PositiveConfirmation.confirmationRequiredDescription")}</p>
+                    <h2>{translate("PositiveConfirmation.confirmationRequiredTitle")}</h2>
+                    <p>{translate("PositiveConfirmation.confirmationRequiredDescription")}</p>
                     <dl className="nhsuk-summary-list" style={{ marginBottom: "2rem" }}>
                         <div className="nhsuk-summary-list__row">
-                            <dt className="nhsuk-summary-list__key">{t("PositiveConfirmation.summaryName")}</dt>
+                            <dt className="nhsuk-summary-list__key">{translate("PositiveConfirmation.summaryName")}</dt>
                             <dd className="nhsuk-summary-list__value">{createdPatient.surname}</dd>
                         </div>
                         <div className="nhsuk-summary-list__row">
-                            <dt className="nhsuk-summary-list__key">{t("PositiveConfirmation.summaryEmail")}</dt>
+                            <dt className="nhsuk-summary-list__key">{translate("PositiveConfirmation.summaryEmail")}</dt>
                             <dd className="nhsuk-summary-list__value">{createdPatient.emailAddress}</dd>
                         </div>
                         <div className="nhsuk-summary-list__row">
-                            <dt className="nhsuk-summary-list__key">{t("PositiveConfirmation.summaryMobile")}</dt>
+                            <dt className="nhsuk-summary-list__key">{translate("PositiveConfirmation.summaryMobile")}</dt>
                             <dd className="nhsuk-summary-list__value">{createdPatient.phoneNumber}</dd>
                         </div>
                         <div className="nhsuk-summary-list__row">
-                            <dt className="nhsuk-summary-list__key">{t("PositiveConfirmation.summaryAddress")}</dt>
+                            <dt className="nhsuk-summary-list__key">{translate("PositiveConfirmation.summaryAddress")}</dt>
                             <dd className="nhsuk-summary-list__value">{createdPatient.address}</dd>
                         </div>
                     </dl>
 
                     <p style={{ fontWeight: 500, marginBottom: "1rem" }}>
-                        {t("PositiveConfirmation.chooseMethod")}
+                        {translate("PositiveConfirmation.chooseMethod")}
                     </p>
                     <div style={{
                         display: "flex",
@@ -111,7 +111,7 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                             onClick={() => handleSubmit("Email")}
                             disabled={!createdPatient.emailAddress}
                         >
-                            {t("PositiveConfirmation.methodEmail")}
+                            {translate("PositiveConfirmation.methodEmail")}
                         </button>
                         <button
                             type="button"
@@ -120,7 +120,7 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                             onClick={() => handleSubmit("SMS")}
                             disabled={!createdPatient.phoneNumber}
                         >
-                            {t("PositiveConfirmation.methodSMS")}
+                            {translate("PositiveConfirmation.methodSMS")}
                         </button>
                         <button
                             type="button"
@@ -129,7 +129,7 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                             onClick={() => handleSubmit("Letter")}
                             disabled={!createdPatient.address}
                         >
-                            {t("PositiveConfirmation.methodLetter")}
+                            {translate("PositiveConfirmation.methodLetter")}
                         </button>
                     </div>
                 </div>
@@ -144,21 +144,21 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                         boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
                     }}
                 >
-                    <h2 className="mb-3" style={{ color: "#005eb8" }}>{t("PositiveConfirmation.helpGuidanceTitle")}</h2>
+                    <h2 className="mb-3" style={{ color: "#005eb8" }}>{translate("PositiveConfirmation.helpGuidanceTitle")}</h2>
                     <h3 className="mb-3" style={{ color: "#005eb8" }}>
-                        {t("PositiveConfirmation.helpReceivingCodeTitle")}
+                        {translate("PositiveConfirmation.helpReceivingCodeTitle")}
                     </h3>
                     <p>
-                        {t("PositiveConfirmation.helpReceivingCodeDescription1")}
+                        {translate("PositiveConfirmation.helpReceivingCodeDescription1")}
                     </p>
                     <p>
-                        {t("PositiveConfirmation.helpReceivingCodeDescription2")}
+                        {translate("PositiveConfirmation.helpReceivingCodeDescription2")}
                     </p>
                     <p>
-                        {t("PositiveConfirmation.helpReceivingCodeDescription3")}
+                        {translate("PositiveConfirmation.helpReceivingCodeDescription3")}
                     </p>
                     <p>
-                        {t("PositiveConfirmation.helpReceivingCodeDescription4")}
+                        {translate("PositiveConfirmation.helpReceivingCodeDescription4")}
                     </p>
                 </div>
             </Col>

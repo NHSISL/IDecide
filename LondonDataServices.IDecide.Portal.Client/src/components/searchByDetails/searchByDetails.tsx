@@ -14,7 +14,7 @@ interface SearchByDetailsProps {
 }
 
 const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttourney }) => {
-    const { t } = useTranslation();
+    const { t: translate } = useTranslation();
     const stepContext = useContext(StepContext);
 
     useEffect(() => {
@@ -72,17 +72,17 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
 
     const isValidUKDate = (day: string, month: string, year: string): string | null => {
         if (!/^\d{2}$/.test(month) || parseInt(month, 10) < 1 || parseInt(month, 10) > 12) {
-            return t("SearchByDetails.dobMonthInvalid");
+            return translate("SearchByDetails.dobMonthInvalid");
         }
         if (!/^\d{1,2}$/.test(day) || !/^\d{4}$/.test(year)) {
-            return t("SearchByDetails.dobInvalid");
+            return translate("SearchByDetails.dobInvalid");
         }
         const dayNum = parseInt(day, 10);
         const monthNum = parseInt(month, 10);
         const yearNum = parseInt(year, 10);
 
-        if (dayNum < 1 || dayNum > 31) return t("SearchByDetails.dobDayInvalid");
-        if (yearNum < 1900 || yearNum > new Date().getFullYear()) return t("SearchByDetails.dobYearInvalid");
+        if (dayNum < 1 || dayNum > 31) return translate("SearchByDetails.dobDayInvalid");
+        if (yearNum < 1900 || yearNum > new Date().getFullYear()) return translate("SearchByDetails.dobYearInvalid");
 
         // Check for valid date
         const date = new Date(yearNum, monthNum - 1, dayNum);
@@ -91,7 +91,7 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
             date.getMonth() !== monthNum - 1 ||
             date.getDate() !== dayNum
         ) {
-            return t("SearchByDetails.dobRealInvalid");
+            return translate("SearchByDetails.dobRealInvalid");
         }
         return null;
     };
@@ -107,10 +107,10 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
         const newErrors: { [key: string]: string } = {};
 
         // Standard validation
-        if (!surname) newErrors.surname = t("SearchByDetails.surnameError");
-        if (!postcode) newErrors.postcode = t("SearchByDetails.postcodeError");
+        if (!surname) newErrors.surname = translate("SearchByDetails.surnameError");
+        if (!postcode) newErrors.postcode = translate("SearchByDetails.postcodeError");
         if (!dobDay || !dobMonth || !dobYear) {
-            newErrors.dob = t("SearchByDetails.dobError");
+            newErrors.dob = translate("SearchByDetails.dobError");
         } else {
             const dobError = isValidUKDate(dobDay, dobMonth, dobYear);
             if (dobError) newErrors.dob = dobError;
@@ -118,9 +118,9 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
 
         // PoA validation
         if (powerOfAttourney) {
-            if (!poaFirstname.trim()) newErrors.poaFirstname = t("SearchByDetails.poaFirstnameError");
-            if (!poaSurname.trim()) newErrors.poaSurname = t("SearchByDetails.poaSurnameError");
-            if (!poaRelationship) newErrors.poaRelationship = t("SearchByDetails.poaRelationshipError");
+            if (!poaFirstname.trim()) newErrors.poaFirstname = translate("SearchByDetails.poaFirstnameError");
+            if (!poaSurname.trim()) newErrors.poaSurname = translate("SearchByDetails.poaSurnameError");
+            if (!poaRelationship) newErrors.poaRelationship = translate("SearchByDetails.poaRelationshipError");
         }
 
         setErrors(newErrors);
@@ -151,7 +151,7 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
                     setLoading(false);
                 },
                 onError: () => {
-                    setErrors({ submit: t("SearchByDetails.submitError") });
+                    setErrors({ submit: translate("SearchByDetails.submitError") });
                     setLoading(false);
                 }
             });
@@ -178,7 +178,7 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
                                 fontSize: "1rem",
                                 padding: 0
                             }}
-                            aria-label={t("SearchByDetails.back")}
+                            aria-label={translate("SearchByDetails.back")}
                         >
                             <svg
                                 className="nhsuk-icon nhsuk-icon__chevron-left"
@@ -192,23 +192,23 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
                             >
                                 <path fill="currentColor" d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
                             </svg>
-                            {t("SearchByDetails.back")}
+                            {translate("SearchByDetails.back")}
                         </button>
 
                         <Card cardType="feature">
                             <Card.Content>
-                                <Card.Heading>{t("SearchByDetails.myDetails")}</Card.Heading>
+                                <Card.Heading>{translate("SearchByDetails.myDetails")}</Card.Heading>
 
                                 <div className={`nhsuk-form-group${errors.surname ? " nhsuk-form-group--error" : ""}`}>
                                     <label className="nhsuk-label" htmlFor="surname">
-                                        {t("SearchByDetails.surnameLabel")}
+                                        {translate("SearchByDetails.surnameLabel")}
                                     </label>
                                     <span className="nhsuk-hint" id="surname-hint">
-                                        {t("SearchByDetails.surnameHint")}
+                                        {translate("SearchByDetails.surnameHint")}
                                     </span>
                                     {errors.surname && (
                                         <span className="nhsuk-error-message" id="surname-error">
-                                            <strong>{t("SearchByDetails.errorPrefix")}</strong> {errors.surname}
+                                            <strong>{translate("SearchByDetails.errorPrefix")}</strong> {errors.surname}
                                         </span>
                                     )}
                                     <input
@@ -229,14 +229,14 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
 
                                 <div className={`nhsuk-form-group${errors.postcode ? " nhsuk-form-group--error" : ""}`}>
                                     <label className="nhsuk-label" htmlFor="postcode">
-                                        {t("SearchByDetails.postcodeLabel")}
+                                        {translate("SearchByDetails.postcodeLabel")}
                                     </label>
                                     <span className="nhsuk-hint" id="postcode-hint">
-                                        {t("SearchByDetails.postcodeHint")}
+                                        {translate("SearchByDetails.postcodeHint")}
                                     </span>
                                     {errors.postcode && (
                                         <span className="nhsuk-error-message" id="postcode-error">
-                                            <strong>{t("SearchByDetails.errorPrefix")}</strong> {errors.postcode}
+                                            <strong>{translate("SearchByDetails.errorPrefix")}</strong> {errors.postcode}
                                         </span>
                                     )}
                                     <input
@@ -256,20 +256,20 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
                                 </div>
                                 <fieldset className={`nhsuk-fieldset${errors.dob ? " nhsuk-form-group--error" : ""}`} style={{ marginBottom: "1rem" }}>
                                     <legend className="nhsuk-fieldset__legend nhsuk-label">
-                                        {t("SearchByDetails.dobLegend")}
+                                        {translate("SearchByDetails.dobLegend")}
                                     </legend>
                                     <span className="nhsuk-hint" id="dob-hint">
-                                        {t("SearchByDetails.dobHint")}
+                                        {translate("SearchByDetails.dobHint")}
                                     </span>
                                     {errors.dob && (
                                         <span className="nhsuk-error-message" id="dob-error">
-                                            <strong>{t("SearchByDetails.errorPrefix")}</strong> {errors.dob}
+                                            <strong>{translate("SearchByDetails.errorPrefix")}</strong> {errors.dob}
                                         </span>
                                     )}
                                     <div className="nhsuk-date-input" id="dob" aria-describedby="dob-hint">
                                         <div className="nhsuk-date-input__item" style={{ display: "inline-block", marginRight: "0.5rem" }}>
                                             <label className="nhsuk-label nhsuk-date-input__label" htmlFor="dob-day">
-                                                {t("SearchByDetails.dobDayLabel")}
+                                                {translate("SearchByDetails.dobDayLabel")}
                                             </label>
                                             <input
                                                 className={`nhsuk-input nhsuk-date-input__input${errors.dob ? " nhsuk-input--error" : ""}`}
@@ -290,7 +290,7 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
                                         </div>
                                         <div className="nhsuk-date-input__item" style={{ display: "inline-block", marginRight: "0.5rem" }}>
                                             <label className="nhsuk-label nhsuk-date-input__label" htmlFor="dob-month">
-                                                {t("SearchByDetails.dobMonthLabel")}
+                                                {translate("SearchByDetails.dobMonthLabel")}
                                             </label>
                                             <input
                                                 className={`nhsuk-input nhsuk-date-input__input${errors.dob ? " nhsuk-input--error" : ""}`}
@@ -308,7 +308,7 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
                                         </div>
                                         <div className="nhsuk-date-input__item" style={{ display: "inline-block" }}>
                                             <label className="nhsuk-label nhsuk-date-input__label" htmlFor="dob-year">
-                                                {t("SearchByDetails.dobYearLabel")}
+                                                {translate("SearchByDetails.dobYearLabel")}
                                             </label>
                                             <input
                                                 className={`nhsuk-input nhsuk-date-input__input${errors.dob ? " nhsuk-input--error" : ""}`}
@@ -335,11 +335,11 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
                         {powerOfAttourney && (
                             <Card cardType="feature">
                                 <Card.Content>
-                                    <Card.Heading>{t("SearchByDetails.myDetailsRequester")}</Card.Heading>
+                                    <Card.Heading>{translate("SearchByDetails.myDetailsRequester")}</Card.Heading>
                                     <Card.Description>
                                         <div style={{ marginBottom: "1.5rem" }}>
                                             <TextInput
-                                                label={t("SearchByDetails.poaFirstnameLabel")}
+                                                label={translate("SearchByDetails.poaFirstnameLabel")}
                                                 id="poa-firstname"
                                                 name="poa-firstname"
                                                 autoComplete="off"
@@ -349,7 +349,7 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
                                                 style={{ maxWidth: "400px", marginBottom: "1rem" }}
                                             />
                                             <TextInput
-                                                label={t("SearchByDetails.poaSurnameLabel")}
+                                                label={translate("SearchByDetails.poaSurnameLabel")}
                                                 id="poa-surname"
                                                 name="poa-surname"
                                                 autoComplete="off"
@@ -360,10 +360,10 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
                                             />
                                             <div style={{ marginBottom: "1rem" }}>
                                                 <Select
-                                                    label={t("SearchByDetails.poaRelationshipLabel")}
+                                                    label={translate("SearchByDetails.poaRelationshipLabel")}
                                                     id="poa-relationship"
                                                     name="poa-relationship"
-                                                    aria-label={t("SearchByDetails.poaRelationshipLabel")}
+                                                    aria-label={translate("SearchByDetails.poaRelationshipLabel")}
                                                     aria-required="true"
                                                     required
                                                     value={poaRelationship}
@@ -372,16 +372,16 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
                                                     style={{ maxWidth: "400px", marginBottom: "1rem" }}
                                                 >
                                                     <option value="" disabled>
-                                                        {t("SearchByDetails.poaRelationshipSelect")}
+                                                        {translate("SearchByDetails.poaRelationshipSelect")}
                                                     </option>
-                                                    <option value={t("SearchByDetails.poaRelationshipParent")}>
-                                                        {t("SearchByDetails.poaRelationshipParent")}
+                                                    <option value={translate("SearchByDetails.poaRelationshipParent")}>
+                                                        {translate("SearchByDetails.poaRelationshipParent")}
                                                     </option>
-                                                    <option value={t("SearchByDetails.poaRelationshipGuardian")}>
-                                                        {t("SearchByDetails.poaRelationshipGuardian")}
+                                                    <option value={translate("SearchByDetails.poaRelationshipGuardian")}>
+                                                        {translate("SearchByDetails.poaRelationshipGuardian")}
                                                     </option>
-                                                    <option value={t("SearchByDetails.poaRelationshipAttorney")}>
-                                                        {t("SearchByDetails.poaRelationshipAttorney")}
+                                                    <option value={translate("SearchByDetails.poaRelationshipAttorney")}>
+                                                        {translate("SearchByDetails.poaRelationshipAttorney")}
                                                     </option>
                                                 </Select>
                                             </div>
@@ -393,12 +393,12 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
 
                         {errors.submit && (
                             <div className="nhsuk-error-message" style={{ marginBottom: "1rem" }} role="alert">
-                                <strong>{t("SearchByDetails.errorPrefix")}</strong> {errors.submit}
+                                <strong>{translate("SearchByDetails.errorPrefix")}</strong> {errors.submit}
                             </div>
                         )}
 
                         <button className="nhsuk-button" type="submit" style={{ width: "100%" }} disabled={loading}>
-                            {loading ? t("SearchByDetails.submitting") : t("SearchByDetails.searchButton")}
+                            {loading ? translate("SearchByDetails.submitting") : translate("SearchByDetails.searchButton")}
                         </button>
                     </form>
                 </Col>
@@ -413,23 +413,23 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
                                 boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
                             }}
                         >
-                            <h2 className="mb-3" style={{ color: "#005eb8" }}>{t("SearchByDetails.helpGuidanceTitle")}</h2>
+                            <h2 className="mb-3" style={{ color: "#005eb8" }}>{translate("SearchByDetails.helpGuidanceTitle")}</h2>
                             <h3 className="mb-3" style={{ color: "#005eb8" }}>
-                                {t("SearchByDetails.helpGuidanceSubtitle")}
+                                {translate("SearchByDetails.helpGuidanceSubtitle")}
                             </h3>
                             <p>
-                                {t("SearchByDetails.helpGuidanceText1")}
+                                {translate("SearchByDetails.helpGuidanceText1")}
                             </p>
                             <ul>
-                                <li>{t("SearchByDetails.poaRelationshipParent")}</li>
-                                <li>{t("SearchByDetails.poaRelationshipGuardian")}</li>
-                                <li>{t("SearchByDetails.poaRelationshipAttorney")}</li>
+                                <li>{translate("SearchByDetails.poaRelationshipParent")}</li>
+                                <li>{translate("SearchByDetails.poaRelationshipGuardian")}</li>
+                                <li>{translate("SearchByDetails.poaRelationshipAttorney")}</li>
                             </ul>
                             <p>
-                                {t("SearchByDetails.helpGuidanceText2")}
+                                {translate("SearchByDetails.helpGuidanceText2")}
                             </p>
                             <p>
-                                {t("SearchByDetails.helpGuidanceText3")}
+                                {translate("SearchByDetails.helpGuidanceText3")}
                             </p>
                         </div>
                     )}

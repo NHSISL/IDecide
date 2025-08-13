@@ -54,43 +54,43 @@ const ExpandableSection: React.FC<ExpandableSectionProps> = ({
 );
 
 export const Home = () => {
-    const { t } = useTranslation();
+    const { t: translate } = useTranslation();
     const navigate = useNavigate();
     const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
 
     const expandableHeaders = [
-        t("homepage.expandableHeaders.section1"),
-        t("homepage.expandableHeaders.section2"),
-        t("homepage.expandableHeaders.section3"),
-        t("homepage.expandableHeaders.section4")
+        translate("homepage.expandableHeaders.section1"),
+        translate("homepage.expandableHeaders.section2"),
+        translate("homepage.expandableHeaders.section3"),
+        translate("homepage.expandableHeaders.section4")
     ];
 
     const expandableContent: React.ReactNode[][] = [
         [
-            <p key="p1">{t("homepage.expandableContent.section1.p1")}</p>,
-            <p key="p2">{t("homepage.expandableContent.section1.p2")}</p>
+            <p key="p1">{translate("homepage.expandableContent.section1.p1")}</p>,
+            <p key="p2">{translate("homepage.expandableContent.section1.p2")}</p>
         ],
         [
-            <p key="p1">{t("homepage.expandableContent.section2.p1")}</p>,
-            <p key="p2">{t("homepage.expandableContent.section2.p2")}</p>
+            <p key="p1">{translate("homepage.expandableContent.section2.p1")}</p>,
+            <p key="p2">{translate("homepage.expandableContent.section2.p2")}</p>
         ],
         [
-            <p key="p1">{t("homepage.expandableContent.section3.p1")}</p>,
+            <p key="p1">{translate("homepage.expandableContent.section3.p1")}</p>,
             <p key="p2">
-                {t("homepage.expandableContent.section3.p2").split("NELondonicb.oneLondon.opt-out@nhs.net")[0]}
+                {translate("homepage.expandableContent.section3.p2").split("NELondonicb.oneLondon.opt-out@nhs.net")[0]}
                 <a href="mailto:NELondonicb.oneLondon.opt-out@nhs.net">NELondonicb.oneLondon.opt-out@nhs.net</a>
-                {t("homepage.expandableContent.section3.p2").split("NELondonicb.oneLondon.opt-out@nhs.net")[1]}
+                {translate("homepage.expandableContent.section3.p2").split("NELondonicb.oneLondon.opt-out@nhs.net")[1]}
             </p>
         ],
         [
             <p key="p3">
-                {t("homepage.expandableContent.section4.p1")}{' '}
+                {translate("homepage.expandableContent.section4.p1")}{' '}
                 <a href="https://healthinnovationnetwork.com/wp-content/uploads/2025/07/OLHDS-LAP-Full-Privacy-Notice.pdf" target="_blank" rel="noopener noreferrer">
-                    {t("homepage.expandableContent.section4.p1LinkText")}
+                    {translate("homepage.expandableContent.section4.p1LinkText")}
                 </a>{' '}
-                {t("homepage.expandableContent.section4.p2")}{' '}
+                {translate("homepage.expandableContent.section4.p2")}{' '}
                 <a href="https://healthinnovationnetwork.com/wp-content/uploads/2025/07/OLHDS-LDS-Full-Privacy-Notice.pdf" target="_blank" rel="noopener noreferrer">
-                    {t("homepage.expandableContent.section4.p2LinkText")}
+                    {translate("homepage.expandableContent.section4.p2LinkText")}
                 </a>.
             </p>
         ]
@@ -104,23 +104,23 @@ export const Home = () => {
                     <LanguageSelector />
                 </div>
 
-                <h1 style={{ fontSize: "1.7rem", marginBottom: "0.7rem" }}>{t("homepage.title")}</h1>
-                <p style={{ marginBottom: "0.5rem" }}>{t("homepage.intro1")}</p>
-                <p style={{ marginBottom: "0.5rem" }}>{t("homepage.intro2")}</p>
-                <p style={{ marginBottom: "0.5rem" }}>{t("homepage.intro3")}</p>
+                <h1 style={{ fontSize: "1.7rem", marginBottom: "0.7rem" }}>{translate("homepage.title")}</h1>
+                <p style={{ marginBottom: "0.5rem" }}>{translate("homepage.intro1")}</p>
+                <p style={{ marginBottom: "0.5rem" }}>{translate("homepage.intro2")}</p>
+                <p style={{ marginBottom: "0.5rem" }}>{translate("homepage.intro3")}</p>
                 <p style={{ marginBottom: "0.7rem" }}>
-                    <strong>{t("homepage.intro4")}</strong>
+                    <strong>{translate("homepage.intro4")}</strong>
                 </p>
                 <Button
                     onClick={() => navigate("/optOut")}
                     style={{ margin: "0 0 1rem 1rem", width: 260, fontWeight: 600, minHeight: 75 }}>
-                    {t("homepage.startButton")}
+                    {translate("homepage.startButton")}
                 </Button>
 
                 <Button
                     onClick={() => navigate("/optOut", { state: { powerOfAttourney: true } })}
                     style={{ margin: "0 0 1rem 1rem", width: 260, fontWeight: 600, minHeight: 75 }}>
-                    {t("homepage.startButtonOther")}
+                    {translate("homepage.startButtonOther")}
                 </Button>
 
                 {expandableHeaders.map((header, idx) => (
@@ -133,10 +133,10 @@ export const Home = () => {
                     />
                 ))}
                 <div style={{ marginTop: "1rem", background: "#f0f4f5", padding: "0.7rem 1rem", borderRadius: "6px", fontSize: "0.97rem" }}>
-                    <strong>{t("homepage.beforeYouStartTitle")}</strong>
+                    <strong>{translate("homepage.beforeYouStartTitle")}</strong>
                     <ul style={{ marginTop: "0.3rem", paddingLeft: "1.1rem" }}>
-                        <li>{t("homepage.beforeYouStartList1")}</li>
-                        <li>{t("homepage.beforeYouStartList2")}</li>
+                        <li>{translate("homepage.beforeYouStartList1")}</li>
+                        <li>{translate("homepage.beforeYouStartList2")}</li>
                     </ul>
                 </div>
             </div>

@@ -12,12 +12,12 @@ export const OptInOptOut: React.FC<OptInOptOutProps> = ({ createdPatient }) => {
     const [selectedOption, setSelectedOption] = useState<"optout" | "optin" | "">("");
     const [error, setError] = useState("");
     const { nextStep, powerOfAttourney } = useStep();
-    const { t } = useTranslation();
+    const { t: translate } = useTranslation();
 
     if (!createdPatient) {
         return (
             <div className="nhsuk-error-message" role="alert">
-                <strong>Error:</strong> {t("OptOut.errorNoPatient")}
+                <strong>Error:</strong> {translate("OptOut.errorNoPatient")}
             </div>
         );
     }
@@ -30,7 +30,7 @@ export const OptInOptOut: React.FC<OptInOptOutProps> = ({ createdPatient }) => {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!selectedOption) {
-            setError(t("OptOut.errorSelectOption"));
+            setError(translate("OptOut.errorSelectOption"));
             return;
         }
         setError("");
@@ -47,17 +47,17 @@ export const OptInOptOut: React.FC<OptInOptOutProps> = ({ createdPatient }) => {
                             </div>
                             <div>
                                 <div style={{ fontSize: "1rem", marginBottom: "0.25rem", color: "#6c757d", fontWeight: 500 }}>
-                                    {t("OptOut.powerOfAttorneyDetails")}
+                                    {translate("OptOut.powerOfAttorneyDetails")}
                                 </div>
                                 <dl className="mb-0" style={{ fontSize: "0.95rem", color: "#6c757d" }}>
                                     <div>
-                                        <dt style={{ display: "inline", fontWeight: 500 }}>{t("OptOut.powerOfAttorneyName")}</dt>
+                                        <dt style={{ display: "inline", fontWeight: 500 }}>{translate("OptOut.powerOfAttorneyName")}</dt>
                                         <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
                                             <strong>{powerOfAttourney.firstName} {powerOfAttourney.surname}</strong>
                                         </dd>
                                     </div>
                                     <div>
-                                        <dt style={{ display: "inline", fontWeight: 500 }}>{t("OptOut.powerOfAttorneyRelationship")}</dt>
+                                        <dt style={{ display: "inline", fontWeight: 500 }}>{translate("OptOut.powerOfAttorneyRelationship")}</dt>
                                         <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
                                             <strong>{powerOfAttourney.relationship}</strong>
                                         </dd>
@@ -90,13 +90,13 @@ export const OptInOptOut: React.FC<OptInOptOutProps> = ({ createdPatient }) => {
                                     aria-describedby="optout-desc"
                                 />
                                 <div>
-                                    <strong>{t("OptOut.optOutLabel")}</strong>
+                                    <strong>{translate("OptOut.optOutLabel")}</strong>
                                     <div id="optout-desc" style={{ marginTop: "0.5rem" }}>
                                         <div>
-                                            {t("OptOut.optOutDesc1")}
+                                            {translate("OptOut.optOutDesc1")}
                                         </div>
                                         <div style={{ marginTop: "0.5rem", color: "#505a5f" }}>
-                                            {t("OptOut.optOutDesc2")}
+                                            {translate("OptOut.optOutDesc2")}
                                         </div>
                                     </div>
                                 </div>
@@ -124,9 +124,9 @@ export const OptInOptOut: React.FC<OptInOptOutProps> = ({ createdPatient }) => {
                                     aria-describedby="optin-desc"
                                 />
                                 <div>
-                                    <strong>{t("OptOut.optInLabel")}</strong>
+                                    <strong>{translate("OptOut.optInLabel")}</strong>
                                     <div id="optin-desc" style={{ marginTop: "0.5rem" }}>
-                                        {t("OptOut.optInDesc")}
+                                        {translate("OptOut.optInDesc")}
                                     </div>
                                 </div>
                             </label>
@@ -143,7 +143,7 @@ export const OptInOptOut: React.FC<OptInOptOutProps> = ({ createdPatient }) => {
                             className="nhsuk-button"
                             style={{ width: "100%", marginTop: "0.2rem" }}
                         >
-                            {t("OptOut.nextButton")}
+                            {translate("OptOut.nextButton")}
                         </button>
                     </form>
                 </Col>
@@ -157,17 +157,17 @@ export const OptInOptOut: React.FC<OptInOptOutProps> = ({ createdPatient }) => {
                             boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
                         }}
                     >
-                        <h2 className="mb-3" style={{ color: "#005eb8" }}>{t("OptOut.helpGuidanceTitle")}</h2>
-                        <h3>{t("OptOut.helpOptOutTitle")}</h3>
-                        <p>{t("OptOut.helpOptOutDesc1")}</p>
+                        <h2 className="mb-3" style={{ color: "#005eb8" }}>{translate("OptOut.helpGuidanceTitle")}</h2>
+                        <h3>{translate("OptOut.helpOptOutTitle")}</h3>
+                        <p>{translate("OptOut.helpOptOutDesc1")}</p>
                         <ul>
-                            <li>{t("OptOut.helpOptOutList1")}</li>
-                            <li>{t("OptOut.helpOptOutList2")}</li>
-                            <li>{t("OptOut.helpOptOutList3")}</li>
-                            <li>{t("OptOut.helpOptOutList4")}</li>
+                            <li>{translate("OptOut.helpOptOutList1")}</li>
+                            <li>{translate("OptOut.helpOptOutList2")}</li>
+                            <li>{translate("OptOut.helpOptOutList3")}</li>
+                            <li>{translate("OptOut.helpOptOutList4")}</li>
                         </ul>
                         <p>
-                            {t("OptOut.helpOptOutDesc2")}
+                            {translate("OptOut.helpOptOutDesc2")}
                         </p>
                     </div>
                 </Col>

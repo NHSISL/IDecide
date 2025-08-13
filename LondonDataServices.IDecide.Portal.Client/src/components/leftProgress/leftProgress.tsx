@@ -24,7 +24,7 @@ interface LeftProgressProps {
 }
 
 const LeftProgress: React.FC<LeftProgressProps> = ({ currentStepIndex, setCurrentStepIndex }) => {
-    const { t } = useTranslation();
+    const { t: translate } = useTranslation();
 
     const isMobile = useIsMobile();
 
@@ -34,12 +34,12 @@ const LeftProgress: React.FC<LeftProgressProps> = ({ currentStepIndex, setCurren
 
     // Get localized labels and content
     const stepLabels: Record<string, string> = steps.reduce((acc, step) => {
-        acc[step] = t(`LeftProgress.steps.${step}`);
+        acc[step] = translate(`LeftProgress.steps.${step}`);
         return acc;
     }, {} as Record<string, string>);
 
     const stepContent: Record<string, React.ReactNode> = steps.reduce((acc, step) => {
-        acc[step] = <p>{t(`LeftProgress.content.${step}`)}</p>;
+        acc[step] = <p>{translate(`LeftProgress.content.${step}`)}</p>;
         return acc;
     }, {} as Record<string, React.ReactNode>);
 
@@ -49,7 +49,7 @@ const LeftProgress: React.FC<LeftProgressProps> = ({ currentStepIndex, setCurren
                 <form style={{ padding: 20 }}>
                     <div className="leftProgressPadding">
                         <Fieldset.Legend>
-                            <h2>{t("LeftProgress.legend")}</h2>
+                            <h2>{translate("LeftProgress.legend")}</h2>
                         </Fieldset.Legend>
 
                         {isMobile ? (

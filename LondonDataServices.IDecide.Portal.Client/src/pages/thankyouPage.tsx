@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 
 export const ThankyouPage = () => {
     const navigate = useNavigate();
-    const { t } = useTranslation();
+    const { t: translate } = useTranslation();
 
     const handleReturnHome = () => {
         navigate("/");
@@ -15,19 +15,19 @@ export const ThankyouPage = () => {
             <Row className="custom-col-spacing">
                 <Col xs={12} md={7} lg={7}>
                     <Alert variant="success" style={{ fontSize: "1.25rem" }}>
-                        <h2 style={{ marginBottom: "1rem" }}>{t("ThankyouScreen.title")}</h2>
+                        <h2 style={{ marginBottom: "1rem" }}>{translate("ThankyouScreen.title")}</h2>
                         <p>
-                            {t("ThankyouScreen.preferencesSaved")}
+                            {translate("ThankyouScreen.preferencesSaved")}
                         </p>
                         <p>
-                            {t("ThankyouScreen.appreciation")}
+                            {translate("ThankyouScreen.appreciation")}
                         </p>
                         <p>
-                            {t("ThankyouScreen.safeToClose")}
+                            {translate("ThankyouScreen.safeToClose")}
                         </p>
                         <div style={{ display: "flex", marginTop: 24 }}>
                             <Button variant="primary" onClick={handleReturnHome}>
-                                {t("ThankyouScreen.returnHome")}
+                                {translate("ThankyouScreen.returnHome")}
                             </Button>
                         </div>
                     </Alert>
