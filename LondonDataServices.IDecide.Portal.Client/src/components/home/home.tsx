@@ -3,58 +3,8 @@ import { Button } from "nhsuk-react-components";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlusCircle, faMinusCircle } from "@fortawesome/free-solid-svg-icons";
-
-const expandableHeaders = [
-    "What is the London Data Service?",
-    "How will the London Data Service and the London Analytics Platform use my data?",
-    "How do I stop LDS & SDE using my data?",
-    "Where can I see the privacy Notices for LDS & SDE?"
-];
-
-const expandableContent: React.ReactNode[][] = [
-    [
-        <p key="p1">
-            The London Data Service securely collects patient information from a range of healthcare locations around London such as GP surgeries and hospitals.
-            It then organises and stores this information ready to be used by other approved systems.
-        </p>,
-        <p key="p2">
-            This securely stored data about patients using London's healthcare services can be distributed to analytics and care platforms throughout London such as the
-            London Care Record or the London Analytics Platform.
-        </p>
-    ],
-    [
-        <p key="p1">
-            Both systems will only share identifiable data - data which can be used to tell someone who you are - with services that use your data for
-            directly providing healthcare services to you.
-        </p>,
-        <p key="p2">
-            Both systems provide data to 'secondary' services that use patient data for healthcare planning & design, population health management and healthcare research.
-            This information is incredibly useful for providers across London to understand healthcare needs of Londoners. It helps us in designing NHS services,
-            forecast demand and understand local neighbourhood needs compared to London as a whole. Research projects into particular conditions including how
-            illnesses progress and possible treatments is another important service that use this data and can benefit Londoners and the health of the UK as a whole.
-            These secondary services will only ever be sent de-identified data - data that does not include information which could tell someone who you are
-            (such as names, addresses and dates of birth).
-        </p>
-    ],
-    [
-        <p key="p1">
-            Using this portal you can tell us that you don't want your data used for secondary purposes, such as population health planning and research.
-            To register your details to 'opt-out' click the start button above.
-        </p>,
-        <p key="p2">
-            Telling us that you don't want your data shared with healthcare professionals who will be treating you is a different process.
-            To do that please e-mail <a href="mailto:NELondonicb.oneLondon.opt-out@nhs.net">NELondonicb.oneLondon.opt-out@nhs.net</a> and make the subject of the e-mail "Dissent from data sharing for direct care".
-        </p>
-    ],
-    [
-        <p key="p3">
-            The SDE privacy notice is{' '}
-            <a href="https://healthinnovationnetwork.com/wp-content/uploads/2025/07/OLHDS-LAP-Full-Privacy-Notice.pdf" target="_blank" rel="noopener noreferrer">here</a>{' '}
-            and the LDS Privacy notice is available{' '}
-            <a href="https://healthinnovationnetwork.com/wp-content/uploads/2025/07/OLHDS-LDS-Full-Privacy-Notice.pdf" target="_blank" rel="noopener noreferrer">here</a>.
-        </p>
-    ]
-];
+import { useTranslation } from "react-i18next";
+import LanguageSelector from "../languageSwitcher/languageSelector";
 
 interface ExpandableSectionProps {
     header: string;
@@ -104,29 +54,73 @@ const ExpandableSection: React.FC<ExpandableSectionProps> = ({
 );
 
 export const Home = () => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+
+    const expandableHeaders = [
+        t("homepage.expandableHeaders.section1"),
+        t("homepage.expandableHeaders.section2"),
+        t("homepage.expandableHeaders.section3"),
+        t("homepage.expandableHeaders.section4")
+    ];
+
+    const expandableContent: React.ReactNode[][] = [
+        [
+            <p key="p1">{t("homepage.expandableContent.section1.p1")}</p>,
+            <p key="p2">{t("homepage.expandableContent.section1.p2")}</p>
+        ],
+        [
+            <p key="p1">{t("homepage.expandableContent.section2.p1")}</p>,
+            <p key="p2">{t("homepage.expandableContent.section2.p2")}</p>
+        ],
+        [
+            <p key="p1">{t("homepage.expandableContent.section3.p1")}</p>,
+            <p key="p2">
+                {t("homepage.expandableContent.section3.p2").split("NELondonicb.oneLondon.opt-out@nhs.net")[0]}
+                <a href="mailto:NELondonicb.oneLondon.opt-out@nhs.net">NELondonicb.oneLondon.opt-out@nhs.net</a>
+                {t("homepage.expandableContent.section3.p2").split("NELondonicb.oneLondon.opt-out@nhs.net")[1]}
+            </p>
+        ],
+        [
+            <p key="p3">
+                {t("homepage.expandableContent.section4.p1")}{' '}
+                <a href="https://healthinnovationnetwork.com/wp-content/uploads/2025/07/OLHDS-LAP-Full-Privacy-Notice.pdf" target="_blank" rel="noopener noreferrer">
+                    {t("homepage.expandableContent.section4.p1LinkText")}
+                </a>{' '}
+                {t("homepage.expandableContent.section4.p2")}{' '}
+                <a href="https://healthinnovationnetwork.com/wp-content/uploads/2025/07/OLHDS-LDS-Full-Privacy-Notice.pdf" target="_blank" rel="noopener noreferrer">
+                    {t("homepage.expandableContent.section4.p2LinkText")}
+                </a>.
+            </p>
+        ]
+    ];
 
     return (
         <div className="home-content" style={{ padding: "1.5rem 0.5rem" }}>
             <div className="home-box" style={{ maxWidth: 1700, margin: "0 auto", borderRadius: 8, boxShadow: "0 2px 8px #e0e0e0", padding: "2rem 1.5rem", background: "rgba(255, 255, 255, 0.70)" }}>
-                <h1 style={{ fontSize: "1.7rem", marginBottom: "0.7rem" }}>Welcome to the OneLondon Data Portal</h1>
-                <p style={{ marginBottom: "0.5rem" }}>OneLondon have developed a world leading resource for health and care improvement known as the London SDE (Secure Data Environment). This is comprised of the LDS (London Data Service) and the LAP (London Analytics Platform).</p>
-                <p style={{ marginBottom: "0.5rem" }}>The data collected from healthcare systems across London by these services can be used for many things all ensuring patient information is shared for improved provision of care. </p>
-                <p style={{ marginBottom: "0.5rem" }}>This portal is where you can tell us if you don't want your data used by LDS or LAP for anything other than your personal healthcare. By clicking the start button below you will be taken through a process to exercise your right to request that we do not use your data for anything other than care provided to you by healthcare professionals. If you ever want to change that decision in the future you can go through the same process to tell us we can use your data. </p>
+
+                <div style={{ position: "absolute", top: 5, right: 5 }}>
+                    <LanguageSelector />
+                </div>
+
+                <h1 style={{ fontSize: "1.7rem", marginBottom: "0.7rem" }}>{t("homepage.title")}</h1>
+                <p style={{ marginBottom: "0.5rem" }}>{t("homepage.intro1")}</p>
+                <p style={{ marginBottom: "0.5rem" }}>{t("homepage.intro2")}</p>
+                <p style={{ marginBottom: "0.5rem" }}>{t("homepage.intro3")}</p>
                 <p style={{ marginBottom: "0.7rem" }}>
-                    <strong>Click on the Start button below to tell us your data preference</strong>
+                    <strong>{t("homepage.intro4")}</strong>
                 </p>
                 <Button
                     onClick={() => navigate("/optOut")}
                     style={{ margin: "0 0 1rem 1rem", width: 260, fontWeight: 600, minHeight: 75 }}>
-                    Start
+                    {t("homepage.startButton")}
                 </Button>
 
                 <Button
                     onClick={() => navigate("/optOut", { state: { powerOfAttourney: true } })}
                     style={{ margin: "0 0 1rem 1rem", width: 260, fontWeight: 600, minHeight: 75 }}>
-                    Requesting an Opt-out on someone else's behalf
+                    {t("homepage.startButtonOther")}
                 </Button>
 
                 {expandableHeaders.map((header, idx) => (
@@ -139,14 +133,10 @@ export const Home = () => {
                     />
                 ))}
                 <div style={{ marginTop: "1rem", background: "#f0f4f5", padding: "0.7rem 1rem", borderRadius: "6px", fontSize: "0.97rem" }}>
-                    <strong>Before you start</strong>
+                    <strong>{t("homepage.beforeYouStartTitle")}</strong>
                     <ul style={{ marginTop: "0.3rem", paddingLeft: "1.1rem" }}>
-                        <li>
-                            You'll need your 10-digit NHS Number or your Full name, Postcode &amp; Date Of Birth so that we can identify you.
-                        </li>
-                        <li>
-                            We will be sending an e-mail, SMS text message or letter to the contact details you have registered with your GP. This will help us confirm we are speaking with the right person. You should be confident that your GP has your up-to-date contact details.
-                        </li>
+                        <li>{t("homepage.beforeYouStartList1")}</li>
+                        <li>{t("homepage.beforeYouStartList2")}</li>
                     </ul>
                 </div>
             </div>

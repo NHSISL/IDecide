@@ -1,0 +1,106 @@
+{
+  "homepage": {
+    "title": "Bienvenue sur le portail de données OneLondon",
+    "intro1": "OneLondon a développé une ressource de pointe pour l'amélioration de la santé et des soins appelée SDE de Londres (Environnement de Données Sécurisées). Celle-ci comprend le LDS (Service de Données de Londres) et le LAP (Plateforme d'Analytique de Londres).",
+    "intro2": "Les données collectées auprès des systèmes de santé à travers Londres par ces services peuvent être utilisées à de nombreuses fins, toutes garantissant que les informations des patients sont partagées pour améliorer la prestation des soins.",
+    "intro3": "Ce portail vous permet de nous indiquer si vous ne souhaitez pas que vos données soient utilisées par le LDS ou le LAP à d'autres fins que vos soins personnels. En cliquant sur le bouton Démarrer ci-dessous, vous serez guidé à travers un processus pour exercer votre droit de demander que nous n'utilisions pas vos données à d'autres fins que les soins qui vous sont fournis par des professionnels de santé. Si vous souhaitez changer cette décision à l'avenir, vous pouvez suivre le même processus pour nous indiquer que nous pouvons utiliser vos données.",
+    "intro4": "Cliquez sur le bouton Démarrer ci-dessous pour nous indiquer votre préférence concernant vos données",
+    "startButton": "Démarrer",
+    "startButtonOther": "Demander un refus au nom de quelqu'un d'autre",
+    "beforeYouStartTitle": "Avant de commencer",
+    "beforeYouStartList1": "Vous aurez besoin de votre numéro NHS à 10 chiffres ou de votre nom complet, code postal et date de naissance afin que nous puissions vous identifier.",
+    "beforeYouStartList2": "Nous enverrons un e-mail, un SMS ou une lettre aux coordonnées que vous avez enregistrées auprès de votre médecin généraliste. Cela nous aidera à confirmer que nous parlons à la bonne personne. Vous devez vous assurer que votre médecin dispose de vos coordonnées à jour.",
+    "expandableHeaders": {
+      "section1": "Qu'est-ce que le Service de Données de Londres ?",
+      "section2": "Comment le Service de Données de Londres et la Plateforme d'Analytique de Londres utiliseront-ils mes données ?",
+      "section3": "Comment puis-je empêcher LDS & SDE d'utiliser mes données ?",
+      "section4": "Où puis-je consulter les avis de confidentialité pour LDS & SDE ?"
+    },
+    "expandableContent": {
+      "section1": {
+        "p1": "Le Service de Données de Londres collecte de manière sécurisée les informations des patients provenant de divers établissements de santé à Londres, tels que les cabinets de médecins généralistes et les hôpitaux. Il organise et stocke ensuite ces informations pour qu'elles soient utilisées par d'autres systèmes approuvés.",
+        "p2": "Ces données stockées en toute sécurité sur les patients utilisant les services de santé londoniens peuvent être distribuées à des plateformes d'analyse et de soins à travers Londres, telles que le Dossier de Soins de Londres ou la Plateforme d'Analytique de Londres."
+      },
+      "section2": {
+        "p1": "Les deux systèmes ne partageront des données identifiables - des données permettant de savoir qui vous êtes - qu'avec des services qui utilisent vos données pour vous fournir directement des soins de santé.",
+        "p2": "Les deux systèmes fournissent des données à des services 'secondaires' qui utilisent les données des patients pour la planification et la conception des soins de santé, la gestion de la santé de la population et la recherche médicale. Ces informations sont extrêmement utiles pour les prestataires de soins à Londres afin de comprendre les besoins de santé des Londoniens. Elles nous aident à concevoir les services du NHS, à prévoir la demande et à comprendre les besoins des quartiers locaux par rapport à l'ensemble de Londres. Les projets de recherche sur des conditions particulières, y compris la progression des maladies et les traitements possibles, sont un autre service important qui utilise ces données et peut bénéficier aux Londoniens et à la santé du Royaume-Uni dans son ensemble. Ces services secondaires ne recevront jamais que des données désidentifiées - des données qui n'incluent pas d'informations permettant de savoir qui vous êtes (comme les noms, adresses et dates de naissance)."
+      },
+      "section3": {
+        "p1": "Grâce à ce portail, vous pouvez nous indiquer que vous ne souhaitez pas que vos données soient utilisées à des fins secondaires, telles que la planification de la santé de la population et la recherche. Pour enregistrer vos détails afin de 'refuser', cliquez sur le bouton Démarrer ci-dessus.",
+        "p2": "Nous indiquer que vous ne souhaitez pas que vos données soient partagées avec les professionnels de santé qui vous soigneront est un processus différent. Pour cela, veuillez envoyer un e-mail à NELondonicb.oneLondon.opt-out@nhs.net et mettre comme objet de l'e-mail « Opposition au partage de données pour les soins directs »."
+      },
+      "section4": {
+        "p1": "L'avis de confidentialité SDE est",
+        "p1LinkText": "ici",
+        "p2": "et l'avis de confidentialité LDS est disponible",
+        "p2LinkText": "ici"
+      }
+    }
+  },
+  "LeftProgress": {
+    "legend": "Le processus d'opposition",
+    "steps": {
+      "nhs": "Fournissez votre numéro NHS",
+      "details": "Confirmez vos informations",
+      "confirm": "Confirmation positive",
+      "choice": "Faites votre choix",
+      "notify": "Recevez des notifications",
+      "thanks": "Terminé"
+    },
+    "content": {
+      "nhs": "Votre numéro NHS nous aide à retrouver votre dossier rapidement et avec précision.",
+      "details": "Assurez-vous que votre nom et votre date de naissance sont corrects avant de continuer.",
+      "confirm": "La confirmation signifie que vous avez vérifié et validé les informations fournies.",
+      "choice": "Veuillez indiquer votre préférence concernant l'opposition.",
+      "notify": "Choisissez comment vous souhaitez recevoir des mises à jour concernant vos préférences.",
+      "thanks": "Processus terminé"
+    }
+  },
+  "SearchBySHSNumber": {
+    "nhsNumberLabel": "Numéro NHS",
+    "nhsNumberHint": "Vous pouvez trouver votre numéro NHS sur les courriers de votre médecin généraliste ou de l'hôpital, les ordonnances, ou dans l'application NHS.",
+    "poaNhsNumberLabel": "Numéro NHS de la personne que vous représentez",
+    "poaMyDetailsHeading": "Mes informations (le demandeur)",
+    "poaFirstnameLabel": "Prénom",
+    "poaSurnameLabel": "Nom de famille",
+    "poaRelationshipLabel": "Lien de parenté",
+    "poaRelationshipSelect": "Sélectionnez le lien de parenté",
+    "poaRelationshipOptions": {
+      "parent": "Le patient a moins de 13 ans et vous êtes son parent",
+      "guardian": "Le patient a moins de 13 ans et vous êtes son tuteur désigné",
+      "attorney": "Le patient a plus de 13 ans et vous avez une procuration vous permettant d'agir en son nom."
+    },
+    "submitButton": "Rechercher",
+    "submittingButton": "Envoi en cours...",
+    "idontknowButton": "Je ne connais pas mon numéro NHS",
+    "errorNhsNumber": "Veuillez entrer un numéro NHS à 10 chiffres",
+    "errorFirstname": "Veuillez entrer un prénom",
+    "errorSurname": "Veuillez entrer un nom de famille",
+    "errorRelationship": "Veuillez sélectionner un lien de parenté",
+    "errorRecaptchaLoad": "Échec du chargement de reCAPTCHA. Veuillez actualiser et réessayer.",
+    "errorRecaptchaNotReady": "reCAPTCHA n'est pas prêt. Veuillez réessayer plus tard.",
+    "errorRecaptchaFailed": "Échec de reCAPTCHA. Veuillez réessayer.",
+    "errorCreatePatient": "Échec de la création du patient. Veuillez réessayer.",
+    "helpGuidanceTitle": "Aide & Conseils",
+    "helpGuidanceNhsNumberHeading": "Saisie de votre numéro NHS",
+    "helpGuidanceNhsNumberText1": "Votre numéro NHS est un numéro unique à 10 chiffres utilisé pour vous identifier au sein du NHS. Vous pouvez le trouver sur votre carte médicale, ordonnance, courrier du médecin généraliste, correspondance hospitalière ou dans votre application NHS.",
+    "helpGuidanceNhsNumberText2": "Veuillez entrer votre numéro NHS pour nous aider à retrouver vos informations en toute sécurité. Cela nous permet de vous associer aux bons dossiers et de protéger vos données.",
+    "helpGuidanceNhsNumberText3": "Si vous ne connaissez pas votre numéro NHS, vous pouvez continuer en cliquant sur « Je ne connais pas mon numéro NHS » ci-dessous, cela vous dirigera vers un petit formulaire pour vous retrouver.",
+    "helpGuidanceNhsNumberText4": "Votre numéro NHS ne sera utilisé que pour retrouver vos informations et ne sera pas partagé en dehors du NHS.",
+    "helpGuidanceEligibilityHeading": "Critères d'éligibilité pour l'opposition",
+    "helpGuidanceEligibilityList": {
+      "parent": "Le patient a moins de 13 ans et vous êtes son parent",
+      "guardian": "Le patient a moins de 13 ans et vous êtes son tuteur désigné",
+      "attorney": "Le patient a plus de 13 ans et vous avez une procuration vous permettant d'agir en son nom."
+    },
+    "helpGuidanceEligibilityText": "Si vous ne remplissez pas l'un de ces critères, vous ne pouvez pas demander l'opposition pour quelqu'un d'autre. Veuillez cliquer sur le bouton retour.",
+    "helpGuidancePoaNhsNumberHeading": "Saisie du numéro NHS",
+    "helpGuidancePoaNhsNumberText1": "Le numéro NHS est un numéro unique à 10 chiffres utilisé pour identifier les patients. Vous pouvez le trouver sur les cartes médicales, ordonnances, courriers du médecin généraliste, correspondance hospitalière ou dans l'application NHS.",
+    "helpGuidancePoaNhsNumberText2": "Entrez le numéro NHS de la personne que vous représentez. Si vous ne le connaissez pas, cliquez sur « Je ne connais pas mon numéro NHS » ci-dessous pour continuer.",
+    "helpGuidancePoaNhsNumberText3": "Les numéros NHS sont uniquement utilisés pour retrouver les informations et ne seront pas partagés en dehors du NHS."
+  },
+  "optIn": "Accepter",
+  "optOut": "Refuser",
+  "next": "Suivant",
+  "errorSelectOption": "Veuillez sélectionner une option pour continuer"
+}

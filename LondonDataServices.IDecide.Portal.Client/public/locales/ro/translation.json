@@ -1,0 +1,106 @@
+{
+  "homepage": {
+    "title": "Bine ați venit pe portalul de date OneLondon",
+    "intro1": "OneLondon a dezvoltat o resursă de vârf pentru îmbunătățirea sănătății și îngrijirii, numită SDE Londra (Mediu de Date Securizate). Aceasta include LDS (Serviciul de Date Londra) și LAP (Platforma Analitică Londra).",
+    "intro2": "Datele colectate din sistemele de sănătate din Londra prin aceste servicii pot fi utilizate în diverse scopuri, toate asigurând că informațiile pacienților sunt partajate pentru a îmbunătăți furnizarea serviciilor medicale.",
+    "intro3": "Acest portal vă permite să ne comunicați dacă nu doriți ca datele dumneavoastră să fie utilizate de LDS sau LAP în alte scopuri decât îngrijirea personală. Dând click pe butonul Începeți de mai jos, veți fi ghidat printr-un proces pentru a vă exercita dreptul de a solicita să nu vă folosim datele în alte scopuri decât îngrijirea oferită de profesioniștii din domeniul sănătății. Dacă doriți să schimbați această decizie în viitor, puteți urma același proces pentru a ne comunica că putem folosi datele dumneavoastră.",
+    "intro4": "Faceți click pe butonul Începeți de mai jos pentru a ne comunica preferința dumneavoastră privind datele personale",
+    "startButton": "Începeți",
+    "startButtonOther": "Solicitați refuzul în numele altcuiva",
+    "beforeYouStartTitle": "Înainte de a începe",
+    "beforeYouStartList1": "Veți avea nevoie de numărul NHS din 10 cifre sau de numele complet, codul poștal și data nașterii pentru a vă putea identifica.",
+    "beforeYouStartList2": "Vom trimite un e-mail, SMS sau scrisoare la datele de contact pe care le aveți înregistrate la medicul dumneavoastră de familie. Acest lucru ne ajută să confirmăm că vorbim cu persoana corectă. Asigurați-vă că medicul dumneavoastră are datele de contact actualizate.",
+    "expandableHeaders": {
+      "section1": "Ce este Serviciul de Date Londra?",
+      "section2": "Cum vor folosi Serviciul de Date Londra și Platforma Analitică Londra datele mele?",
+      "section3": "Cum pot împiedica LDS & SDE să-mi folosească datele?",
+      "section4": "Unde pot consulta politicile de confidențialitate pentru LDS & SDE?"
+    },
+    "expandableContent": {
+      "section1": {
+        "p1": "Serviciul de Date Londra colectează în siguranță informațiile pacienților din diverse unități medicale din Londra, cum ar fi cabinetele medicilor de familie și spitalele. Aceste informații sunt organizate și stocate pentru a fi utilizate de alte sisteme aprobate.",
+        "p2": "Datele stocate în siguranță despre pacienții care folosesc serviciile medicale londoneze pot fi distribuite către platforme de analiză și îngrijire din Londra, precum Dosarul de Îngrijire Londra sau Platforma Analitică Londra."
+      },
+      "section2": {
+        "p1": "Ambele sisteme vor partaja date identificabile – date care permit să se afle cine sunteți – doar cu serviciile care vă folosesc datele pentru a vă oferi direct îngrijire medicală.",
+        "p2": "Ambele sisteme furnizează date către servicii „secundare” care utilizează datele pacienților pentru planificarea și proiectarea serviciilor medicale, gestionarea sănătății populației și cercetare medicală. Aceste informații sunt extrem de utile pentru furnizorii de servicii medicale din Londra pentru a înțelege nevoile de sănătate ale londonezilor. Ne ajută să proiectăm serviciile NHS, să anticipăm cererea și să înțelegem nevoile cartierelor locale comparativ cu Londra în ansamblu. Proiectele de cercetare privind anumite afecțiuni, inclusiv evoluția bolilor și tratamentele posibile, reprezintă un alt serviciu important care utilizează aceste date și poate aduce beneficii londonezilor și sănătății din Regatul Unit. Aceste servicii secundare vor primi doar date de-identificate – date care nu includ informații care permit identificarea dumneavoastră (cum ar fi numele, adresa și data nașterii)."
+      },
+      "section3": {
+        "p1": "Prin acest portal, puteți să ne comunicați că nu doriți ca datele dumneavoastră să fie folosite în scopuri secundare, cum ar fi planificarea sănătății populației și cercetarea. Pentru a vă înregistra detaliile pentru „refuz”, faceți click pe butonul Începeți de mai sus.",
+        "p2": "Să ne comunicați că nu doriți ca datele dumneavoastră să fie partajate cu profesioniștii medicali care vă vor îngriji este un proces diferit. Pentru aceasta, vă rugăm să trimiteți un e-mail la NELondonicb.oneLondon.opt-out@nhs.net cu subiectul „Opoziție la partajarea datelor pentru îngrijirea directă”."
+      },
+      "section4": {
+        "p1": "Politica de confidențialitate SDE este",
+        "p1LinkText": "aici",
+        "p2": "și politica de confidențialitate LDS este disponibilă",
+        "p2LinkText": "aici"
+      }
+    }
+  },
+  "LeftProgress": {
+    "legend": "Procesul de opoziție",
+    "steps": {
+      "nhs": "Furnizați numărul NHS",
+      "details": "Confirmați informațiile",
+      "confirm": "Confirmare pozitivă",
+      "choice": "Faceți alegerea",
+      "notify": "Primiți notificări",
+      "thanks": "Finalizat"
+    },
+    "content": {
+      "nhs": "Numărul NHS vă ajută să vă găsim dosarul rapid și precis.",
+      "details": "Asigurați-vă că numele și data nașterii sunt corecte înainte de a continua.",
+      "confirm": "Confirmarea înseamnă că ați verificat și validat informațiile furnizate.",
+      "choice": "Vă rugăm să indicați preferința privind opoziția.",
+      "notify": "Alegeți cum doriți să primiți actualizări privind preferințele dumneavoastră.",
+      "thanks": "Proces finalizat"
+    }
+  },
+  "SearchBySHSNumber": {
+    "nhsNumberLabel": "Număr NHS",
+    "nhsNumberHint": "Puteți găsi numărul NHS pe scrisorile de la medicul de familie sau spital, pe rețete sau în aplicația NHS.",
+    "poaNhsNumberLabel": "Numărul NHS al persoanei pe care o reprezentați",
+    "poaMyDetailsHeading": "Datele mele (solicitantul)",
+    "poaFirstnameLabel": "Prenume",
+    "poaSurnameLabel": "Nume de familie",
+    "poaRelationshipLabel": "Relație",
+    "poaRelationshipSelect": "Selectați relația",
+    "poaRelationshipOptions": {
+      "parent": "Pacientul are sub 13 ani și sunteți părintele său",
+      "guardian": "Pacientul are sub 13 ani și sunteți tutorele desemnat",
+      "attorney": "Pacientul are peste 13 ani și aveți procură pentru a acționa în numele său."
+    },
+    "submitButton": "Căutați",
+    "submittingButton": "Se trimite...",
+    "idontknowButton": "Nu cunosc numărul NHS",
+    "errorNhsNumber": "Vă rugăm să introduceți un număr NHS din 10 cifre",
+    "errorFirstname": "Vă rugăm să introduceți un prenume",
+    "errorSurname": "Vă rugăm să introduceți un nume de familie",
+    "errorRelationship": "Vă rugăm să selectați o relație",
+    "errorRecaptchaLoad": "Eroare la încărcarea reCAPTCHA. Vă rugăm să reîmprospătați și să încercați din nou.",
+    "errorRecaptchaNotReady": "reCAPTCHA nu este gata. Vă rugăm să încercați mai târziu.",
+    "errorRecaptchaFailed": "Eroare reCAPTCHA. Vă rugăm să încercați din nou.",
+    "errorCreatePatient": "Eroare la crearea pacientului. Vă rugăm să încercați din nou.",
+    "helpGuidanceTitle": "Ajutor & Sfaturi",
+    "helpGuidanceNhsNumberHeading": "Introducerea numărului NHS",
+    "helpGuidanceNhsNumberText1": "Numărul NHS este un număr unic din 10 cifre folosit pentru a vă identifica în cadrul NHS. Îl puteți găsi pe cardul medical, rețetă, scrisoare de la medicul de familie, corespondență spitalicească sau în aplicația NHS.",
+    "helpGuidanceNhsNumberText2": "Vă rugăm să introduceți numărul NHS pentru a ne ajuta să vă găsim informațiile în siguranță. Acest lucru ne permite să vă asociem cu dosarele corecte și să vă protejăm datele.",
+    "helpGuidanceNhsNumberText3": "Dacă nu cunoașteți numărul NHS, puteți continua făcând click pe „Nu cunosc numărul NHS” mai jos, veți fi direcționat către un formular scurt pentru identificare.",
+    "helpGuidanceNhsNumberText4": "Numărul NHS va fi folosit doar pentru a vă găsi informațiile și nu va fi partajat în afara NHS.",
+    "helpGuidanceEligibilityHeading": "Criterii de eligibilitate pentru opoziție",
+    "helpGuidanceEligibilityList": {
+      "parent": "Pacientul are sub 13 ani și sunteți părintele său",
+      "guardian": "Pacientul are sub 13 ani și sunteți tutorele desemnat",
+      "attorney": "Pacientul are peste 13 ani și aveți procură pentru a acționa în numele său."
+    },
+    "helpGuidanceEligibilityText": "Dacă nu îndepliniți unul dintre aceste criterii, nu puteți solicita opoziția pentru altcineva. Vă rugăm să faceți click pe butonul de revenire.",
+    "helpGuidancePoaNhsNumberHeading": "Introducerea numărului NHS",
+    "helpGuidancePoaNhsNumberText1": "Numărul NHS este un număr unic din 10 cifre folosit pentru identificarea pacienților. Îl puteți găsi pe carduri medicale, rețete, scrisori de la medicul de familie, corespondență spitalicească sau în aplicația NHS.",
+    "helpGuidancePoaNhsNumberText2": "Introduceți numărul NHS al persoanei pe care o reprezentați. Dacă nu îl cunoașteți, faceți click pe „Nu cunosc numărul NHS” mai jos pentru a continua.",
+    "helpGuidancePoaNhsNumberText3": "Numerele NHS sunt folosite doar pentru a găsi informațiile și nu vor fi partajate în afara NHS."
+  },
+  "optIn": "Accept",
+  "optOut": "Refuz",
+  "next": "Următorul",
+  "errorSelectOption": "Vă rugăm să selectați o opțiune pentru a continua"
+}

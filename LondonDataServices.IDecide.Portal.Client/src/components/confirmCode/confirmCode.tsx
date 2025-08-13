@@ -10,7 +10,7 @@ interface ConfirmCodeProps {
 }
 
 export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
-    const [code, setCode] = useState("12345");
+    const [code, setCode] = useState("");
     const [error, setError] = useState("");
     const { nextStep, powerOfAttourney } = useStep();
     const confirmCodeMutation = patientViewService.useConfirmCode();
@@ -18,13 +18,14 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value.replace(/\D/g, "").slice(0, 5);
         setCode(value);
-        if (error) setError("");
+        // Do NOT clear error here; only clear on submit
     };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        setError(""); // Clear previous error on submit
         if (code.length !== 5) {
-            setError("Please enter a 5-digit code.");
+            setError("Enter the 5 digit code sent to you");
             return;
         }
         if (!createdPatient) {
@@ -41,8 +42,6 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
                 onError: (error: unknown) => {
                     if (error instanceof Error) {
                         setError("Invalid code. Please try again.");
-                        // Logging is fine, but don't import 'console' directly
-                        // Use window.console if needed, or remove
                         window.console.error("Error confirming code:", error.message);
                     } else {
                         setError("An error occurred. Please try again.");
@@ -83,7 +82,6 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
                         </Alert>
                     )}
 
-
                     <form className="nhsuk-form-group" autoComplete="off" onSubmit={handleSubmit} >
                         <label className="nhsuk-label" htmlFor="code">
                             Enter Code
@@ -94,7 +92,6 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
                             name="code"
                             type="text"
                             inputMode="numeric"
-                            pattern="\d{5}"
                             maxLength={5}
                             autoComplete="one-time-code"
                             value={code}
@@ -110,7 +107,7 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
                                 style={{ marginTop: "0.5rem" }}
                                 role="alert"
                             >
-                                <strong>Error:</strong> {error}
+                                {error}
                             </div>
                         )}
                         <br />

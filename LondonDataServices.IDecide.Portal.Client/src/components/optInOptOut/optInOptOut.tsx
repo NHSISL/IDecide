@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useStep } from "../../hooks/useStep";
 import { Patient } from "../../models/patients/patient";
 import { Row, Col, Alert } from "react-bootstrap";
+import { useTranslation } from 'react-i18next';
 
 interface OptInOptOutProps {
     createdPatient: Patient | null;
@@ -11,6 +12,7 @@ export const OptInOptOut: React.FC<OptInOptOutProps> = ({ createdPatient }) => {
     const [selectedOption, setSelectedOption] = useState<"optout" | "optin" | "">("");
     const [error, setError] = useState("");
     const { nextStep, powerOfAttourney } = useStep();
+    const { t } = useTranslation();
 
     if (!createdPatient) {
         return (
@@ -19,6 +21,11 @@ export const OptInOptOut: React.FC<OptInOptOutProps> = ({ createdPatient }) => {
             </div>
         );
     }
+
+    const handleOptionChange = (option: "optout" | "optin") => {
+        setSelectedOption(option);
+        if (error) setError("");
+    };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -60,7 +67,6 @@ export const OptInOptOut: React.FC<OptInOptOutProps> = ({ createdPatient }) => {
                         </Alert>
                     )}
 
-
                     <form onSubmit={handleSubmit}>
                         {/* Opt-Out Card */}
                         <div
@@ -79,12 +85,12 @@ export const OptInOptOut: React.FC<OptInOptOutProps> = ({ createdPatient }) => {
                                     name="opt"
                                     value="optout"
                                     checked={selectedOption === "optout"}
-                                    onChange={() => setSelectedOption("optout")}
+                                    onChange={() => handleOptionChange("optout")}
                                     style={{ marginRight: "1rem", marginTop: "0.2rem" }}
                                     aria-describedby="optout-desc"
                                 />
                                 <div>
-                                    <strong>Opt-Out</strong>
+                                    <strong>{t('optOut')}</strong>
                                     <div id="optout-desc" style={{ marginTop: "0.5rem" }}>
                                         <div>
                                             I do not want my personal data to be used in the London Data Service for Research and Commissioning purposes.
@@ -113,12 +119,12 @@ export const OptInOptOut: React.FC<OptInOptOutProps> = ({ createdPatient }) => {
                                     name="opt"
                                     value="optin"
                                     checked={selectedOption === "optin"}
-                                    onChange={() => setSelectedOption("optin")}
+                                    onChange={() => handleOptionChange("optin")}
                                     style={{ marginRight: "1rem", marginTop: "0.2rem" }}
                                     aria-describedby="optin-desc"
                                 />
                                 <div>
-                                    <strong>Opt-In</strong>
+                                    <strong>{t('optIn')}</strong>
                                     <div id="optin-desc" style={{ marginTop: "0.5rem" }}>
                                         I want my personal data to be used in the London Data Service for Direct Care, Research and Commissioning purposes.
                                     </div>

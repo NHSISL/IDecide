@@ -1,0 +1,106 @@
+{
+  "homepage": {
+    "title": "Welcome to the OneLondon Data Portal",
+    "intro1": "OneLondon have developed a world leading resource for health and care improvement known as the London SDE (Secure Data Environment). This is comprised of the LDS (London Data Service) and the LAP (London Analytics Platform).",
+    "intro2": "The data collected from healthcare systems across London by these services can be used for many things all ensuring patient information is shared for improved provision of care.",
+    "intro3": "This portal is where you can tell us if you don't want your data used by LDS or LAP for anything other than your personal healthcare. By clicking the start button below you will be taken through a process to exercise your right to request that we do not use your data for anything other than care provided to you by healthcare professionals. If you ever want to change that decision in the future you can go through the same process to tell us we can use your data.",
+    "intro4": "Click on the Start button below to tell us your data preference",
+    "startButton": "Start",
+    "startButtonOther": "Requesting an Opt-out on someone else's behalf",
+    "beforeYouStartTitle": "Before you start",
+    "beforeYouStartList1": "You'll need your 10-digit NHS Number or your Full name, Postcode & Date Of Birth so that we can identify you.",
+    "beforeYouStartList2": "We will be sending an e-mail, SMS text message or letter to the contact details you have registered with your GP. This will help us confirm we are speaking with the right person. You should be confident that your GP has your up-to-date contact details.",
+    "expandableHeaders": {
+      "section1": "What is the London Data Service?",
+      "section2": "How will the London Data Service and the London Analytics Platform use my data?",
+      "section3": "How do I stop LDS & SDE using my data?",
+      "section4": "Where can I see the privacy Notices for LDS & SDE?"
+    },
+    "expandableContent": {
+      "section1": {
+        "p1": "The London Data Service securely collects patient information from a range of healthcare locations around London such as GP surgeries and hospitals. It then organises and stores this information ready to be used by other approved systems.",
+        "p2": "This securely stored data about patients using London's healthcare services can be distributed to analytics and care platforms throughout London such as the London Care Record or the London Analytics Platform."
+      },
+      "section2": {
+        "p1": "Both systems will only share identifiable data - data which can be used to tell someone who you are - with services that use your data for directly providing healthcare services to you.",
+        "p2": "Both systems provide data to 'secondary' services that use patient data for healthcare planning & design, population health management and healthcare research. This information is incredibly useful for providers across London to understand healthcare needs of Londoners. It helps us in designing NHS services, forecast demand and understand local neighbourhood needs compared to London as a whole. Research projects into particular conditions including how illnesses progress and possible treatments is another important service that use this data and can benefit Londoners and the health of the UK as a whole. These secondary services will only ever be sent de-identified data - data that does not include information which could tell someone who you are (such as names, addresses and dates of birth)."
+      },
+      "section3": {
+        "p1": "Using this portal you can tell us that you don't want your data used for secondary purposes, such as population health planning and research. To register your details to 'opt-out' click the start button above.",
+        "p2": "Telling us that you don't want your data shared with healthcare professionals who will be treating you is a different process. To do that please e-mail NELondonicb.oneLondon.opt-out@nhs.net and make the subject of the e-mail \"Dissent from data sharing for direct care\"."
+      },
+      "section4": {
+        "p1": "The SDE privacy notice is",
+        "p1LinkText": "here",
+        "p2": "and the LDS Privacy notice is available",
+        "p2LinkText": "here"
+      }
+    }
+  },
+  "LeftProgress": {
+    "legend": "The Opt-Out Process",
+    "steps": {
+      "nhs": "Provide Your NHS Number",
+      "details": "Confirm Your Details",
+      "confirm": "Positive Confirmation",
+      "choice": "Make Your Choice",
+      "notify": "Receive Notifications",
+      "thanks": "Complete"
+    },
+    "content": {
+      "nhs": "Your NHS number helps us locate your record quickly and accurately.",
+      "details": "Make sure your name and date of birth are correct before proceeding.",
+      "confirm": "Confirmation means you've reviewed and validated the information provided.",
+      "choice": "Please indicate your preference regarding the opt-out.",
+      "notify": "Choose how you would like to receive updates about your preferences.",
+      "thanks": "Process Complete"
+    }
+  },
+  "SearchBySHSNumber": {
+    "nhsNumberLabel": "NHS Number",
+    "nhsNumberHint": "You can find your NHS Number on letters from your GP or hospital, prescriptions, or in the NHS App.",
+    "poaNhsNumberLabel": "NHS Number of the Person You Are Representing",
+    "poaMyDetailsHeading": "My Details (The Requester)",
+    "poaFirstnameLabel": "Firstname",
+    "poaSurnameLabel": "Surname",
+    "poaRelationshipLabel": "Relationship",
+    "poaRelationshipSelect": "Select relationship",
+    "poaRelationshipOptions": {
+      "parent": "The patient is under 13 and you are their parent",
+      "guardian": "The patient is under 13 and you are their appointed guardian",
+      "attorney": "The patient is over 13 and you have power of attorney with the right to act on their behalf."
+    },
+    "submitButton": "Search",
+    "submittingButton": "Submitting...",
+    "idontknowButton": "I Don't know my NHS Number",
+    "errorNhsNumber": "Enter a 10-digit NHS Number",
+    "errorFirstname": "Enter a first name",
+    "errorSurname": "Enter a surname",
+    "errorRelationship": "Select a relationship",
+    "errorRecaptchaLoad": "Failed to load reCAPTCHA. Please refresh and try again.",
+    "errorRecaptchaNotReady": "reCAPTCHA is not ready. Please try again later.",
+    "errorRecaptchaFailed": "reCAPTCHA failed. Please try again.",
+    "errorCreatePatient": "Failed to create patient. Please try again.",
+    "helpGuidanceTitle": "Help & Guidance",
+    "helpGuidanceNhsNumberHeading": "Entering Your NHS Number",
+    "helpGuidanceNhsNumberText1": "Your NHS Number is a unique 10-digit number used to identify you within the NHS. You can find it on your medical card, prescription, GP letter, hospital correspondence, or your NHS app.",
+    "helpGuidanceNhsNumberText2": "Please enter your NHS Number to help us securely find your details. This helps ensure we match you to the correct records and keep your information safe.",
+    "helpGuidanceNhsNumberText3": "If you do not know your NHS Number, you can still continue by clicking \"I Don't know my NHS Number\" below, this will direct you to fill out a small form to find you.",
+    "helpGuidanceNhsNumberText4": "Your NHS Number will only be used to look up your details and will not be shared outside the NHS.",
+    "helpGuidanceEligibilityHeading": "Opt-out Eligibility",
+    "helpGuidanceEligibilityList": {
+      "parent": "The patient is under 13 and you are their parent",
+      "guardian": "The patient is under 13 and you are their appointed guardian",
+      "attorney": "The patient is over 13 and you have power of attorney with the right to act on their behalf."
+    },
+    "helpGuidanceEligibilityText": "If you do not meet one of these criteria, you cannot opt someone else out. Please click the back button.",
+    "helpGuidancePoaNhsNumberHeading": "Entering NHS Number",
+    "helpGuidancePoaNhsNumberText1": "The NHS Number is a unique 10-digit number used to identify patients. You can find it on medical cards, prescriptions, GP letters, hospital correspondence, or the NHS app.",
+    "helpGuidancePoaNhsNumberText2": "Enter the NHS Number of the person you are representing. If you do not know it, click \"I Don't know my NHS Number\" below to continue.",
+    "helpGuidancePoaNhsNumberText3": "NHS Numbers are only used to look up details and will not be shared outside the NHS."
+  },
+  "optIn": "Opt-In",
+  "optOut": "Opt-Out",
+  "next": "Next",
+  "errorSelectOption": "Please select an option to continue"
+}
