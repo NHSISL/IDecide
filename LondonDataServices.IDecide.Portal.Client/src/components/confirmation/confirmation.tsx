@@ -69,6 +69,7 @@ export const Confirmation: React.FC<ConfirmationProps> = ({ selectedOption, nhsN
                     message = error;
                 } else if (isAxiosError(error)) {
                     const data = error.response?.data;
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     if (data && typeof data === "object" && "message" in data && typeof (data as any).message === "string") {
                         message = (data as { message: string }).message;
                     }
