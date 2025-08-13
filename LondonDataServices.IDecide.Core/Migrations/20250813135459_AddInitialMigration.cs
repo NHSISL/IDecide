@@ -17,6 +17,9 @@ namespace LondonDataServices.IDecide.Core.Migrations
             migrationBuilder.EnsureSchema(
                 name: "Decision");
 
+            migrationBuilder.EnsureSchema(
+                name: "PowerOfAttorney");
+
             migrationBuilder.CreateTable(
                 name: "Audits",
                 schema: "Audit",
@@ -117,6 +120,31 @@ namespace LondonDataServices.IDecide.Core.Migrations
                         principalColumn: "Id");
                 });
 
+            migrationBuilder.CreateTable(
+                name: "PowersOfAttorney",
+                schema: "PowerOfAttorney",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PatientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Surname = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Telephone = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    RelationshipType = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PowersOfAttorney", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PowersOfAttorney_Patients_PatientId",
+                        column: x => x.PatientId,
+                        principalSchema: "Decision",
+                        principalTable: "Patients",
+                        principalColumn: "Id");
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Audits_AuditType",
                 schema: "Audit",
@@ -146,6 +174,13 @@ namespace LondonDataServices.IDecide.Core.Migrations
                 schema: "Decision",
                 table: "Decisions",
                 column: "PatientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PowersOfAttorney_PatientId",
+                schema: "PowerOfAttorney",
+                table: "PowersOfAttorney",
+                column: "PatientId",
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -158,6 +193,10 @@ namespace LondonDataServices.IDecide.Core.Migrations
             migrationBuilder.DropTable(
                 name: "Decisions",
                 schema: "Decision");
+
+            migrationBuilder.DropTable(
+                name: "PowersOfAttorney",
+                schema: "PowerOfAttorney");
 
             migrationBuilder.DropTable(
                 name: "DecisionTypes",

@@ -10,6 +10,7 @@ using LondonDataServices.IDecide.Core.Models.Foundations.Audits;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
+using LondonDataServices.IDecide.Core.Models.Foundations.PowersOfAttorney;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using STX.EFCore.Client.Clients;
@@ -50,6 +51,7 @@ namespace LondonDataServices.IDecide.Core.Brokers.Storages.Sql
             AddDecisionTypeConfigurations(modelBuilder.Entity<DecisionType>());
             AddDecisionConfigurations(modelBuilder.Entity<Decision>());
             AddPatientConfigurations(modelBuilder.Entity<Patient>());
+            AddPowerOfAttorneyConfigurations(modelBuilder.Entity<PowerOfAttorney>());
         }
 
         private async ValueTask<T> InsertAsync<T>(T @object) where T : class =>

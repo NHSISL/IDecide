@@ -4,6 +4,7 @@
 
 using System;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
+using LondonDataServices.IDecide.Core.Models.Foundations.PowersOfAttorney;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Collections.Generic;
 
@@ -32,5 +33,8 @@ namespace LondonDataServices.IDecide.Core.Models.Foundations.Patients
 
         [BindNever]
         public List<Decision> Decisions { get; set; } = new List<Decision>();
+
+        [BindNever]
+        public PowerOfAttorney PowerOfAttorney { get; set; } = null!;
     }
 }

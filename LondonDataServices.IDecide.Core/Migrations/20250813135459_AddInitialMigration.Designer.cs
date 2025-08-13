@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LondonDataServices.IDecide.Core.Migrations
 {
     [DbContext(typeof(StorageBroker))]
-    [Migration("20250811132508_AddInitialMigration")]
+    [Migration("20250813135459_AddInitialMigration")]
     partial class AddInitialMigration
     {
         /// <inheritdoc />
@@ -243,6 +243,53 @@ namespace LondonDataServices.IDecide.Core.Migrations
                     b.ToTable("Patients", "Decision");
                 });
 
+            modelBuilder.Entity("LondonDataServices.IDecide.Core.Models.Foundations.PowersOfAttorney.PowerOfAttorney", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<Guid>("PatientId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("RelationshipType")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Surname")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Telephone")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PatientId")
+                        .IsUnique();
+
+                    b.ToTable("PowersOfAttorney", "PowerOfAttorney");
+                });
+
             modelBuilder.Entity("LondonDataServices.IDecide.Core.Models.Foundations.Decisions.Decision", b =>
                 {
                     b.HasOne("LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes.DecisionType", "DecisionType")
@@ -262,6 +309,17 @@ namespace LondonDataServices.IDecide.Core.Migrations
                     b.Navigation("Patient");
                 });
 
+            modelBuilder.Entity("LondonDataServices.IDecide.Core.Models.Foundations.PowersOfAttorney.PowerOfAttorney", b =>
+                {
+                    b.HasOne("LondonDataServices.IDecide.Core.Models.Foundations.Patients.Patient", "Patient")
+                        .WithOne("PowerOfAttorney")
+                        .HasForeignKey("LondonDataServices.IDecide.Core.Models.Foundations.PowersOfAttorney.PowerOfAttorney", "PatientId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Patient");
+                });
+
             modelBuilder.Entity("LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes.DecisionType", b =>
                 {
                     b.Navigation("Decisions");
@@ -270,6 +328,8 @@ namespace LondonDataServices.IDecide.Core.Migrations
             modelBuilder.Entity("LondonDataServices.IDecide.Core.Models.Foundations.Patients.Patient", b =>
                 {
                     b.Navigation("Decisions");
+
+                    b.Navigation("PowerOfAttorney");
                 });
 #pragma warning restore 612, 618
         }
