@@ -128,6 +128,7 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
         }
         setLoading(true);
         try {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: "submit" }).then((token: string) => {
                 const nhsNumberToUse = powerOfAttourney ? poaNhsNumberInput : nhsNumberInput;
                 const searchCriteria = new SearchCriteria({ nhsNumber: nhsNumberToUse });
