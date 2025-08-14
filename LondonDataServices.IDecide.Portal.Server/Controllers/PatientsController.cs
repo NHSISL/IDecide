@@ -1,8 +1,12 @@
-﻿using LondonDataServices.IDecide.Portal.Server.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
+using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
+using LondonDataServices.IDecide.Portal.Server.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using System;
 
 namespace LondonDataServices.IDecide.Portal.Server.Controllers
 {
@@ -17,23 +21,56 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
             this.configuration = configuration;
         }
 
+        public class PatientLookup
+        {
+            public SearchCriteria SearchCriteria { get; set; }
+            public List<Patient> Patients { get; set; }
+        }
+
         public class Patient
         {
-            public string Id { get; set; }
+            public Guid Id { get; set; }
             public string NhsNumber { get; set; }
-            public string FirstName { get; set; }
+            public string Title { get; set; }
+            public string GivenName { get; set; }
             public string Surname { get; set; }
-            public string EmailAddress { get; set; }
-            public string PhoneNumber { get; set; }
+            public DateTimeOffset DateOfBirth { get; set; }
+            public string Gender { get; set; }
+            public string Email { get; set; }
+            public string Phone { get; set; }
             public string Address { get; set; }
-            public string Postcode { get; set; }
-            public string NotificationPreference { get; set; }
-            public string VerificationCode { get; set; }
-            public DateTime DateOfBirth { get; set; }
+            public string PostCode { get; set; }
+            public string ValidationCode { get; set; }
+            public DateTimeOffset ValidationCodeExpiresOn { get; set; }
+            public int RetryCount { get; set; }
             public string CreatedBy { get; set; }
-            public DateTime CreatedDate { get; set; }
+            public DateTimeOffset CreatedDate { get; set; }
             public string UpdatedBy { get; set; }
-            public DateTime UpdatedDate { get; set; }
+            public DateTimeOffset UpdatedDate { get; set; }
+        }
+
+        public class SearchCriteria
+        {
+            public string NhsNumber { get; set; } = string.Empty;
+            public string FirstName { get; set; } = string.Empty;
+            public string Surname { get; set; } = string.Empty;
+            public string Gender { get; set; } = string.Empty;
+            public string Postcode { get; set; } = string.Empty;
+            public string DateOfBirth { get; set; } = string.Empty;
+            public string DateOfDeath { get; set; } = string.Empty;
+            public string RegisteredGpPractice { get; set; } = string.Empty;
+            public string Email { get; set; } = string.Empty;
+            public string PhoneNumber { get; set; } = string.Empty;
+        }
+
+        public class PatientSearchCriteria
+        {
+            public string NhsNumber { get; set; }
+            public string FirstName { get; set; } = string.Empty;
+            public string Surname { get; set; } = string.Empty;
+            public string Gender { get; set; } = string.Empty;
+            public string Postcode { get; set; } = string.Empty;
+            public string DateOfBirth { get; set; } = string.Empty;
         }
 
         public class GenerateCodeRequest
@@ -53,44 +90,46 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
 
         //recapture
         [HttpPost("PostPatientByNhsNumber")]
-        public ActionResult<Patient> GetPatientByNhsNumber([FromBody] Patient patient)
+        public async ValueTask<ActionResult<Patient>> PostPatientByNhsNumberAsync([FromBody] PatientLookup patientLookup)
         {
             var createdPatient = new Patient
             {
-                Id = Guid.NewGuid().ToString(),
-                NhsNumber = "1234567890",
-                FirstName = "D****",
+                Id = Guid.NewGuid(),
+                NhsNumber = patientLookup.SearchCriteria.NhsNumber,
+                GivenName = "D****",
                 Surname = "H****",
-                EmailAddress = "",
-                PhoneNumber = "07*******84",
+                Gender = "Male",
+                Email = "",
+                DateOfBirth = new DateTime(1990, 5, 15),
                 Address = "9 T** W*********, S**********, S*****",
-                Postcode = "CR2 0**",
-                DateOfBirth = patient?.DateOfBirth == default ? new DateTime(1990, 5, 15) : patient.DateOfBirth,
-                VerificationCode = "",
-                NotificationPreference = ""               
+                Phone = "07*******84",
+                ValidationCode = "",
             };
+
+            await Task.CompletedTask;
 
             return Ok(createdPatient);
         }
 
         //recapture
         [HttpPost("PostPatientByDetails")]
-        public ActionResult<Patient> GetPatientByDetails([FromBody] Patient patient)
+        public async ValueTask<ActionResult<Patient>> GetPatientByDetails([FromBody] PatientLookup patientLookup)
         {
             var createdPatient = new Patient
             {
-                Id = Guid.NewGuid().ToString(),
-                NhsNumber = "1234567890",
-                FirstName = "D****",
+                Id = Guid.NewGuid(),
+                NhsNumber = patientLookup.SearchCriteria.NhsNumber,
+                GivenName = "D****",
                 Surname = "H****",
-                EmailAddress = "d****.h***s@googlemail.com",
-                PhoneNumber = "07*******84",
+                Gender = "Male",
+                Email = "",
+                DateOfBirth = new DateTime(1990, 5, 15),
                 Address = "9 T** W*********, S**********, S*****",
-                Postcode = "CR2 0**",
-                DateOfBirth = patient?.DateOfBirth == default ? new DateTime(1990, 5, 15) : patient.DateOfBirth,
-                VerificationCode = "",
-                NotificationPreference = ""
+                Phone = "07*******84",
+                ValidationCode = "",
             };
+
+            await Task.CompletedTask;
 
             return Ok(createdPatient);
         }

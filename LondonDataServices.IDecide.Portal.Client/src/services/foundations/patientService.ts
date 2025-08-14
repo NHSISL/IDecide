@@ -3,41 +3,26 @@ import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { Patient } from "../../models/patients/patient";
 import { GenerateCodeRequest } from "../../models/patients/generateCodeRequest";
 import { ConfirmCodeRequest } from "../../models/patients/confirmCodeRequest";
+import { PatientLookup } from "../../models/patients/patientLookup";
 
 export const patientService = {
 
     useCreatePatientByNhsNumber: () => {
         const broker = new PatientBroker();
-        const queryClient = useQueryClient();
 
         return useMutation({
-            mutationFn: (patient: Patient) => {
-                const date = new Date();
-                patient.createdDate = patient.updatedDate = date;
-               
-                return broker.PostPatientNhsNumberAsync(patient);
+            mutationFn: (patientLookup: PatientLookup) => {
+                return broker.PostPatientNhsNumberAsync(patientLookup);
             },
-            onSuccess: (variables: Patient) => {
-                queryClient.invalidateQueries({ queryKey: ["PatientGetAll"] });
-                queryClient.invalidateQueries({ queryKey: ["PatientGetById", { id: variables.id }] });
-            }
         });
     },
 
     useCreatePatientByDetails: () => {
         const broker = new PatientBroker();
-        const queryClient = useQueryClient();
 
         return useMutation({
-            mutationFn: (patient: Patient) => {
-                const date = new Date();
-                patient.createdDate = patient.updatedDate = date;
-
-                return broker.PostPatientDetailsAsync(patient);
-            },
-            onSuccess: (variables: Patient) => {
-                queryClient.invalidateQueries({ queryKey: ["PatientGetAll"] });
-                queryClient.invalidateQueries({ queryKey: ["PatientGetById", { id: variables.id }] });
+            mutationFn: (patientLookup: PatientLookup) => {
+                return broker.PostPatientDetailsAsync(patientLookup);
             }
         });
     },

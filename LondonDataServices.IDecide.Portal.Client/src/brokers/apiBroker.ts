@@ -28,7 +28,7 @@ class ApiBroker {
                 "Content-Type": 'multipart/form-data'
             }
         });
-    }
+    }s
 
     public async PutAsync(relativeUrl: string, data: unknown) {
         const url = relativeUrl;
