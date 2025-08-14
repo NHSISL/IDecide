@@ -4,8 +4,11 @@
 
 using System.Threading.Tasks;
 using FluentAssertions;
+using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications.Exceptions;
+using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
+using Moq;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifications
 {
@@ -35,17 +38,50 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
 
             // then
             actualNotificationValidationException.Should().BeEquivalentTo(expectedNotificationValidationException);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedNotificationValidationException))),
+                        Times.Once);
+
             this.notificationBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
         }
 
-        [Fact]
-        public async Task ShouldThrowValidationExceptionOnSendCodeNotificationIfNotificationInfoIsInvalidAndLogItAsync()
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData(" ")]
+        public async Task ShouldThrowValidationExceptionOnSendCodeNotificationIfNotificationInfoIsInvalidAndLogItAsync(
+            string invalidText)
         {
             // given
             var invalidNotificationInfo = new NotificationInfo
             {
-                Patient = null,
-                Decision = null
+                Patient = new Patient
+                {
+                    NhsNumber = invalidText,
+                    Title = invalidText,
+                    GivenName = invalidText,
+                    Surname = invalidText,
+                    Gender = invalidText,
+                    Email = invalidText,
+                    Phone = invalidText,
+                    Address = invalidText,
+                    PostCode = invalidText,
+                    ValidationCode = invalidText,
+                },
+                Decision =
+                {
+                    DecisionChoice = invalidText,
+                    ResponsiblePersonGivenName = invalidText,
+                    ResponiblePersonSurname = invalidText,
+                    ResponsiblePersonRelationship = invalidText,
+                    DecisionType = new DecisionType
+                    {
+                        Name = invalidText
+                    }
+                }
             };
 
             var invalidNotificationInfoException =
@@ -53,12 +89,60 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                     message: "Invalid notification info. Please correct the errors and try again.");
 
             invalidNotificationInfoException.AddData(
-                key: nameof(NotificationInfo.Patient),
-                values: "Patient is required");
+                key: nameof(NotificationInfo.Patient.NhsNumber),
+                values: "Text is required");
 
             invalidNotificationInfoException.AddData(
-                key: nameof(NotificationInfo.Decision),
-                values: "Decision is required");
+                key: nameof(NotificationInfo.Patient.Title),
+                values: "Text is required");
+
+            invalidNotificationInfoException.AddData(
+                key: nameof(NotificationInfo.Patient.GivenName),
+                values: "Text is required");
+
+            invalidNotificationInfoException.AddData(
+                key: nameof(NotificationInfo.Patient.Surname),
+                values: "Text is required");
+
+            invalidNotificationInfoException.AddData(
+                key: nameof(NotificationInfo.Patient.DateOfBirth),
+                values: "Date is required");
+
+            invalidNotificationInfoException.AddData(
+                key: nameof(NotificationInfo.Patient.Gender),
+                values: "Text is required");
+
+            invalidNotificationInfoException.AddData(
+                key: nameof(NotificationInfo.Patient.Email),
+                values: "Text is required");
+
+            invalidNotificationInfoException.AddData(
+                key: nameof(NotificationInfo.Patient.Phone),
+                values: "Text is required");
+
+            invalidNotificationInfoException.AddData(
+                key: nameof(NotificationInfo.Patient.Address),
+                values: "Text is required");
+
+            invalidNotificationInfoException.AddData(
+                key: nameof(NotificationInfo.Patient.PostCode),
+                values: "Text is required");
+
+            invalidNotificationInfoException.AddData(
+                key: nameof(NotificationInfo.Patient.ValidationCode),
+                values: "Text is required");
+
+            invalidNotificationInfoException.AddData(
+                key: nameof(NotificationInfo.Patient.ValidationCodeExpiresOn),
+                values: "Date is required");
+
+            invalidNotificationInfoException.AddData(
+                key: nameof(NotificationInfo.Decision.DecisionChoice),
+                values: "Text is required");
+
+            invalidNotificationInfoException.AddData(
+                key: nameof(NotificationInfo.Decision.DecisionType.Name),
+                values: "Text is required");
 
             var expectedNotificationValidationException =
                 new NotificationValidationException(
@@ -75,7 +159,14 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
 
             // then
             actualNotificationValidationException.Should().BeEquivalentTo(expectedNotificationValidationException);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedNotificationValidationException))),
+                        Times.Once);
+
             this.notificationBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
