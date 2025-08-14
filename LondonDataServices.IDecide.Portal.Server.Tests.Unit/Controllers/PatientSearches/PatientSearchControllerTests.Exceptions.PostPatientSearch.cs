@@ -31,18 +31,18 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Patien
                 new ActionResult<Patient>(expectedBadRequestObjectResult);
 
             this.patientOrchestrationServiceMock.Setup(service =>
-                service.PatientLookupByDetailsAsync(inputPatientLookup))
+                service.PatientLookupAsync(inputPatientLookup))
                     .ThrowsAsync(validationException);
 
             // when
             ActionResult<Patient> actualActionResult =
-                await this.patientSearchController.PostPatientByDetailsAsync(inputPatientLookup);
+                await this.patientSearchController.PostPatientSearchAsync(inputPatientLookup);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
 
             this.patientOrchestrationServiceMock.Verify(service =>
-                service.PatientLookupByDetailsAsync(inputPatientLookup),
+                service.PatientLookupAsync(inputPatientLookup),
                     Times.Once);
 
             this.patientOrchestrationServiceMock.VerifyNoOtherCalls();
@@ -65,18 +65,18 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Patien
                 new ActionResult<Patient>(expectedBadRequestObjectResult);
 
             this.patientOrchestrationServiceMock.Setup(service =>
-                service.PatientLookupByDetailsAsync(inputPatientLookup))
+                service.PatientLookupAsync(inputPatientLookup))
                     .ThrowsAsync(validationException);
 
             // when
             ActionResult<Patient> actualActionResult =
-                await this.patientSearchController.PostPatientByDetailsAsync(inputPatientLookup);
+                await this.patientSearchController.PostPatientSearchAsync(inputPatientLookup);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
 
             this.patientOrchestrationServiceMock.Verify(service =>
-                service.PatientLookupByDetailsAsync(inputPatientLookup),
+                service.PatientLookupAsync(inputPatientLookup),
                     Times.Once);
 
             this.patientOrchestrationServiceMock.VerifyNoOtherCalls();
