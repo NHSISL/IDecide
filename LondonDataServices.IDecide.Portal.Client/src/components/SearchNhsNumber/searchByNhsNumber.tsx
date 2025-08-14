@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { useStep } from "../../hooks/useStep";
-import { Patient } from "../../models/patients/patient";
 import { PowerOfAttourney } from "../../models/powerOfAttourneys/powerOfAttourney";
 import { patientViewService } from "../../services/views/patientViewService";
 import { TextInput, Button, Select, Card } from "nhsuk-react-components";
 import { loadRecaptchaScript } from "../../helpers/recaptureLoad";
 import { Container, Row, Col } from "react-bootstrap";
 import { StepContext } from "../context/stepContext";
+import { PatientLookup } from "../../models/patients/patientLookup";
+import { SearchCriteria } from "../../models/searchCriterias/searchCriteria";
 
 const RECAPTCHA_SITE_KEY = "6LcOJn4rAAAAAIUdB70R9BqkfPFD-bPYTk6ojRGg";
 
@@ -127,9 +128,10 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
         }
         setLoading(true);
         try {
-            grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: "submit" }).then((token: string) => {
+            grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: "submit" }).then(() => {
                 const nhsNumberToUse = powerOfAttourney ? poaNhsNumberInput : nhsNumberInput;
-                const patientToCreate = new Patient({ id: "", nhsNumber: nhsNumberToUse, recaptchaToken: token });
+                const searchCriteria = new SearchCriteria({ nhsNumber: nhsNumberToUse });
+                const patientLookup = new PatientLookup(searchCriteria, []);
 
                 let poaModel = undefined;
                 if (powerOfAttourney) {
@@ -140,7 +142,7 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
                     });
                 }
 
-                addPatient.mutate(patientToCreate, {
+                addPatient.mutate(patientLookup, {
                     onSuccess: (createdPatient) => {
                         setCreatedPatient(createdPatient);
                         nextStep(undefined, nhsNumberToUse, createdPatient, poaModel);

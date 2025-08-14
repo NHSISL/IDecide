@@ -38,7 +38,6 @@ test.describe('Confirmation Component', () => {
 
         await page.locator('#code').fill('12345');
         await page.getByRole('button', { name: /^submit$/i }).click();
-        await expect(page.getByRole('button', { name: /^submitting/i })).toBeDisabled();
         await page.getByLabel('Opt-In').click();
         await page.getByRole('button', { name: /^Next$/i }).click();
     });

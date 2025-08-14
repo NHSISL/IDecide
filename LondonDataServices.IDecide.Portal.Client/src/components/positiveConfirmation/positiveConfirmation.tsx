@@ -83,11 +83,11 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                         </div>
                         <div className="nhsuk-summary-list__row">
                             <dt className="nhsuk-summary-list__key">{translate("PositiveConfirmation.summaryEmail")}</dt>
-                            <dd className="nhsuk-summary-list__value">{createdPatient.emailAddress}</dd>
+                            <dd className="nhsuk-summary-list__value">{createdPatient.email}</dd>
                         </div>
                         <div className="nhsuk-summary-list__row">
                             <dt className="nhsuk-summary-list__key">{translate("PositiveConfirmation.summaryMobile")}</dt>
-                            <dd className="nhsuk-summary-list__value">{createdPatient.phoneNumber}</dd>
+                            <dd className="nhsuk-summary-list__value">{createdPatient.phone}</dd>
                         </div>
                         <div className="nhsuk-summary-list__row">
                             <dt className="nhsuk-summary-list__key">{translate("PositiveConfirmation.summaryAddress")}</dt>
@@ -109,7 +109,7 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                             className="nhsuk-button"
                             style={{ flex: 1, minWidth: 120 }}
                             onClick={() => handleSubmit("Email")}
-                            disabled={!createdPatient.emailAddress}
+                            disabled={!createdPatient.email}
                         >
                             {translate("PositiveConfirmation.methodEmail")}
                         </button>
@@ -118,7 +118,7 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                             className="nhsuk-button"
                             style={{ flex: 1, minWidth: 120 }}
                             onClick={() => handleSubmit("SMS")}
-                            disabled={!createdPatient.phoneNumber}
+                            disabled={!createdPatient.phone}
                         >
                             {translate("PositiveConfirmation.methodSMS")}
                         </button>

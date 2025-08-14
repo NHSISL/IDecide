@@ -7,6 +7,8 @@ import { TextInput, Select, Card } from "nhsuk-react-components";
 import { Col, Container, Row } from "react-bootstrap";
 import { StepContext } from "../context/stepContext";
 import { useTranslation } from "react-i18next";
+import { PatientLookup } from "../../models/patients/patientLookup";
+import { SearchCriteria } from "../../models/searchCriterias/searchCriteria";
 
 interface SearchByDetailsProps {
     onBack: () => void;
@@ -128,12 +130,8 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
         if (Object.keys(newErrors).length === 0) {
             setLoading(true);
             const dateOfBirth = new Date(`${dobYear}-${dobMonth}-${dobDay}`);
-            const patientToCreate = new Patient({
-                id: "",
-                surname,
-                postcode,
-                dateOfBirth,
-            });
+            const searchCriteria = new SearchCriteria({ surname: surname, postcode: postcode, dateOfBirth: dateOfBirth.toString() });
+            const patientLookup = new PatientLookup(searchCriteria, []);
 
             let poaModel = undefined;
             if (powerOfAttourney) {
@@ -144,7 +142,7 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
                 });
             }
 
-            addPatient.mutate(patientToCreate, {
+            addPatient.mutate(patientLookup, {
                 onSuccess: (createdPatient: Patient) => {
                     setCreatedPatient(createdPatient);
                     nextStep(undefined, undefined, createdPatient, poaModel);
