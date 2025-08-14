@@ -22,7 +22,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
 
             var expectedNotificationValidationException =
                 new NotificationValidationException(
-                    message: "Notification info validation errors occurred, please try again.",
+                    message: "Notification validation errors occurred, please try again.",
                     innerException: nullNotificationInfoException);
 
             // when

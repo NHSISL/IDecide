@@ -5,12 +5,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Brokers.Notifications;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
-using LondonDataServices.IDecide.Core.Models.Securities;
 using LondonDataServices.IDecide.Core.Services.Foundations.Notifications;
 using Moq;
 using Tynamix.ObjectFiller;
@@ -23,6 +23,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
         private readonly Mock<INotificationBroker> notificationBrokerMock;
         private readonly NotificationService notificationService;
         private readonly NotificationConfig notificationConfig;
+        private readonly Mock<ILoggingBroker> loggingBroker;
 
         public NotificationServiceTests()
         {
@@ -35,27 +36,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                 LetterCodeTemplateId = GetRandomString()
             };
 
+            this.loggingBroker = new Mock<ILoggingBroker>();
+
             this.notificationService = new NotificationService(
-                this.notificationBrokerMock.Object, this.notificationConfig);
-        }
-
-        private User CreateRandomUser(string userId = "")
-        {
-            userId = string.IsNullOrWhiteSpace(userId) ? GetRandomStringWithLengthOf(255) : userId;
-
-            return new User(
-                userId: userId,
-                givenName: GetRandomString(),
-                surname: GetRandomString(),
-                displayName: GetRandomString(),
-                email: GetRandomString(),
-                jobTitle: GetRandomString(),
-                roles: new List<string> { GetRandomString() },
-
-                claims: new List<System.Security.Claims.Claim>
-                {
-                    new System.Security.Claims.Claim(type: GetRandomString(), value: GetRandomString())
-                });
+                this.notificationBrokerMock.Object, this.notificationConfig, this.loggingBroker.Object);
         }
 
         private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
