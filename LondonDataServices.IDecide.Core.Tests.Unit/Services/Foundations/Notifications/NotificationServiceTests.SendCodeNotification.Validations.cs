@@ -4,6 +4,7 @@
 
 using System.Threading.Tasks;
 using FluentAssertions;
+using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications.Exceptions;
@@ -71,7 +72,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                     PostCode = invalidText,
                     ValidationCode = invalidText,
                 },
-                Decision =
+                Decision = new Decision
                 {
                     DecisionChoice = invalidText,
                     ResponsiblePersonGivenName = invalidText,
@@ -135,6 +136,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
             invalidNotificationInfoException.AddData(
                 key: nameof(NotificationInfo.Patient.ValidationCodeExpiresOn),
                 values: "Date is required");
+
+            invalidNotificationInfoException.AddData(
+                key: nameof(NotificationInfo.Patient.NotificationPreference),
+                values: "Value is required");
 
             invalidNotificationInfoException.AddData(
                 key: nameof(NotificationInfo.Decision.DecisionChoice),
