@@ -134,8 +134,6 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
                 const searchCriteria = new SearchCriteria({ nhsNumber: nhsNumberToUse });
                 const patientLookup = new PatientLookup(searchCriteria, []);
 
-                //const patientToCreate = new Patient({nhsNumber: nhsNumberToUse, recaptchaToken: token });
-
                 let poaModel = undefined;
                 if (powerOfAttourney) {
                     poaModel = new PowerOfAttourney({
