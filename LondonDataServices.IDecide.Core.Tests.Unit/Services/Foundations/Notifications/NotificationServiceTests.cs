@@ -23,7 +23,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
         private readonly Mock<INotificationBroker> notificationBrokerMock;
         private readonly NotificationService notificationService;
         private readonly NotificationConfig notificationConfig;
-        private readonly Mock<ILoggingBroker> loggingBroker;
+        private readonly Mock<ILoggingBroker> loggingBrokerMock;
 
         public NotificationServiceTests()
         {
@@ -36,10 +36,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                 LetterCodeTemplateId = GetRandomString()
             };
 
-            this.loggingBroker = new Mock<ILoggingBroker>();
+            this.loggingBrokerMock = new Mock<ILoggingBroker>();
 
             this.notificationService = new NotificationService(
-                this.notificationBrokerMock.Object, this.notificationConfig, this.loggingBroker.Object);
+                this.notificationBrokerMock.Object, this.notificationConfig, this.loggingBrokerMock.Object);
         }
 
         private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>

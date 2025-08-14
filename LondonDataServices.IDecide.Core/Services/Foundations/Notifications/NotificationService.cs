@@ -46,14 +46,23 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                     { "patient.validationCode", notificationInfo.Patient.ValidationCode },
                     { "patient.validationCodeExpiresOn", notificationInfo.Patient.ValidationCodeExpiresOn },
                     { "decision.decisionChoice", notificationInfo.Decision.DecisionChoice },
-                    { "decision.responsiblePersonGivenName", notificationInfo.Decision.ResponsiblePersonGivenName },
-                    { "decision.responsiblePersonSurname", notificationInfo.Decision.ResponiblePersonSurname },
-                    {
-                        "decision.responsiblePersonRelationship",
-                        notificationInfo.Decision.ResponsiblePersonRelationship
-                    },
                     { "decision.decisionType.name", notificationInfo.Decision.DecisionType.Name }
                 };
+
+                AddIfNotNull(
+                    personalisation,
+                    "decision.responsiblePersonGivenName",
+                    notificationInfo.Decision.ResponsiblePersonGivenName);
+
+                AddIfNotNull(
+                    personalisation,
+                    "decision.responsiblePersonSurname",
+                    notificationInfo.Decision.ResponiblePersonSurname);
+
+                AddIfNotNull(
+                    personalisation,
+                    "decision.responsiblePersonRelationship",
+                    notificationInfo.Decision.ResponsiblePersonRelationship);
 
                 switch (notificationInfo.Patient.NotificationPreference)
                 {
@@ -78,5 +87,11 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                         break;
                 }
             });
+
+        private static void AddIfNotNull(Dictionary<string, dynamic> personalisation, string key, object value)
+        {
+            if (value != null)
+                personalisation.Add(key, value);
+        }
     }
 }
