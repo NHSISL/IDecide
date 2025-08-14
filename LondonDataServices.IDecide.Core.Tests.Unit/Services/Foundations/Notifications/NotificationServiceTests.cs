@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using LondonDataServices.IDecide.Core.Brokers.Notifications;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
+using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Securities;
@@ -21,13 +22,21 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
     {
         private readonly Mock<INotificationBroker> notificationBrokerMock;
         private readonly NotificationService notificationService;
+        private readonly NotificationConfig notificationConfig;
 
         public NotificationServiceTests()
         {
             this.notificationBrokerMock = new Mock<INotificationBroker>();
 
+            this.notificationConfig = new NotificationConfig
+            {
+                EmailCodeTemplateId = GetRandomString(),
+                SmsCodeTemplateId = GetRandomString(),
+                LetterCodeTemplateId = GetRandomString()
+            };
+
             this.notificationService = new NotificationService(
-                notificationBroker: this.notificationBrokerMock.Object);
+                this.notificationBrokerMock.Object, this.notificationConfig);
         }
 
         private User CreateRandomUser(string userId = "")
@@ -107,7 +116,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
                 .OnProperty(decision => decision.CreatedBy).Use(userId)
                 .OnProperty(decision => decision.UpdatedBy).Use(userId)
-                .OnProperty(decision => decision.DecisionType).IgnoreIt();
+                .OnProperty(decision => decision.DecisionType).Use(new DecisionType
+                {
+                    Name = GetRandomString()
+                });
 
             return filler;
         }
@@ -133,6 +145,30 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                 .OnProperty(patient => patient.Decisions).IgnoreIt();
 
             return filler;
+        }
+
+        public Dictionary<string, dynamic> GetPersonalisation(NotificationInfo notificationInfo)
+        {
+            return new Dictionary<string, dynamic>
+            {
+                { "patient.nhsNumber", notificationInfo.Patient.NhsNumber },
+                { "patient.title", notificationInfo.Patient.Title },
+                { "patient.givenName", notificationInfo.Patient.GivenName },
+                { "patient.surname", notificationInfo.Patient.Surname },
+                { "patient.dateOfBirth", notificationInfo.Patient.DateOfBirth },
+                { "patient.gender", notificationInfo.Patient.Gender },
+                { "patient.email", notificationInfo.Patient.Email },
+                { "patient.phone", notificationInfo.Patient.Phone },
+                { "patient.address", notificationInfo.Patient.Address },
+                { "patient.postCode", notificationInfo.Patient.PostCode },
+                { "patient.validationCode", notificationInfo.Patient.ValidationCode },
+                { "patient.validationCodeExpiresOn", notificationInfo.Patient.ValidationCodeExpiresOn },
+                { "decision.decisionChoice", notificationInfo.Decision.DecisionChoice },
+                { "decision.responsiblePersonGivenName", notificationInfo.Decision.ResponsiblePersonGivenName },
+                { "decision.responsiblePersonSurname", notificationInfo.Decision.ResponiblePersonSurname },
+                { "decision.responsiblePersonRelationship", notificationInfo.Decision.ResponsiblePersonRelationship },
+                { "decision.decisionType.name", notificationInfo.Decision.DecisionType.Name }
+            };
         }
     }
 }
