@@ -57,11 +57,26 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             return randomNumber;
         }
 
-        private PatientLookup GetRandomSearchPatientLookup(string surname)
+        private PatientLookup GetRandomSearchPatientLookupWithNoNhsNumber(string surname)
         {
             SearchCriteria searchCriteria = new SearchCriteria
             {
                 Surname = surname
+            };
+
+            PatientLookup randomPatientLookup = new PatientLookup
+            {
+                SearchCriteria = searchCriteria
+            };
+
+            return randomPatientLookup;
+        }
+
+        private PatientLookup GetRandomSearchPatientLookupWithNhsNumber(string nhsNumber)
+        {
+            SearchCriteria searchCriteria = new SearchCriteria
+            {
+                NhsNumber = nhsNumber
             };
 
             PatientLookup randomPatientLookup = new PatientLookup

@@ -33,29 +33,31 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             this.notificationService = notificationService;
         }
 
-        public ValueTask<Patient> PatientLookupByDetailsAsync(PatientLookup patientLookup) =>
+        public ValueTask<Patient> PatientLookupAsync(PatientLookup patientLookup) =>
             TryCatch(async () =>
             {
                 ValidatePatientLookupIsNotNull(patientLookup);
 
-                PatientLookup responsePatientLookup =
+                if (string.IsNullOrWhiteSpace(patientLookup.SearchCriteria.NhsNumber))
+                {
+                    PatientLookup responsePatientLookup =
                     await this.pdsService.PatientLookupByDetailsAsync(patientLookup);
 
-                ValidatePatientLookupPatientIsExactMatch(responsePatientLookup);
-                Patient redactedPatient = responsePatientLookup.Patients.First().Redact();
+                    ValidatePatientLookupPatientIsExactMatch(responsePatientLookup);
+                    Patient redactedPatient = responsePatientLookup.Patients.First().Redact();
 
-                return redactedPatient;
-            });
+                    return redactedPatient;
+                }
+                else
+                {
+                    var nhsNumber = patientLookup.SearchCriteria.NhsNumber;
+                    ValidatePatientLookupByNhsNumberArguments(nhsNumber);
+                    Patient maybePatient = await this.pdsService.PatientLookupByNhsNumberAsync(nhsNumber);
+                    ValidatePatientIsNotNull(maybePatient);
+                    Patient redactedPatient = maybePatient.Redact();
 
-        public ValueTask<Patient> PatientLookupByNhsNumberAsync(string nhsNumber) =>
-            TryCatch(async () =>
-            {
-                ValidatePatientLookupByNhsNumberArguments(nhsNumber);
-                Patient maybePatient = await this.pdsService.PatientLookupByNhsNumberAsync(nhsNumber);
-                ValidatePatientIsNotNull(maybePatient);
-                Patient redactedPatient = maybePatient.Redact();
-
-                return redactedPatient;
+                    return redactedPatient;
+                }
             });
     }
 }

@@ -17,12 +17,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
     public partial class PatientOrchestrationServiceTests
     {
         [Fact]
-        public async Task ShouldPatientLookupByDetailsAsync()
+        public async Task ShouldPatientLookupUsingByDetailsWhenNoNhsNumberProvidedAsync()
         {
             // given
             string randomString = GetRandomString();
             string inputSurname = randomString.DeepClone();
-            PatientLookup randomPatientLookup = GetRandomSearchPatientLookup(inputSurname);
+            PatientLookup randomPatientLookup = GetRandomSearchPatientLookupWithNoNhsNumber(inputSurname);
             PatientLookup inputPatientLookup = randomPatientLookup.DeepClone();
             PatientLookup updatedPatientLookup = randomPatientLookup.DeepClone();
             updatedPatientLookup.Patients = new List<Patient> { GetRandomPatient(inputSurname) };
@@ -38,13 +38,47 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             // when
             Patient actualPatient = 
-                await this.patientOrchestrationService.PatientLookupByDetailsAsync(inputPatientLookup);
+                await this.patientOrchestrationService.PatientLookupAsync(inputPatientLookup);
 
             //then
             actualPatient.Should().BeEquivalentTo(expectedPatient);
 
             this.pdsServiceMock.Verify(service =>
                 service.PatientLookupByDetailsAsync(inputPatientLookup),
+                    Times.Once);
+
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.pdsServiceMock.VerifyNoOtherCalls();
+            this.patientServiceMock.VerifyNoOtherCalls();
+            this.notificationServiceMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldPatientLookupUsingByNhsNumberWhenNhsNumberProvidedAsync()
+        {
+            // given
+            string randomNhsNumber = GenerateRandom10DigitNumber();
+            string inputNhsNumber = randomNhsNumber.DeepClone();
+            PatientLookup randomPatientLookup = GetRandomSearchPatientLookupWithNhsNumber(inputNhsNumber);
+            PatientLookup inputPatientLookup = randomPatientLookup.DeepClone();
+            Patient outputPatient = GetRandomPatientWithNhsNumber(inputNhsNumber);
+            Patient patientToRedact = outputPatient.DeepClone();
+            Patient redactedPatient = patientToRedact.Redact();
+            Patient expectedPatient = redactedPatient.DeepClone();
+
+            this.pdsServiceMock.Setup(service =>
+                service.PatientLookupByNhsNumberAsync(inputNhsNumber))
+                    .ReturnsAsync(outputPatient);
+
+            // when
+            Patient actualPatient =
+                await this.patientOrchestrationService.PatientLookupAsync(inputPatientLookup);
+
+            //then
+            actualPatient.Should().BeEquivalentTo(expectedPatient);
+
+            this.pdsServiceMock.Verify(service =>
+                service.PatientLookupByNhsNumberAsync(inputNhsNumber),
                     Times.Once);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();

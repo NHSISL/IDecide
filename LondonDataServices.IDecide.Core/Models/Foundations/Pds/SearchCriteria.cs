@@ -6,6 +6,7 @@ namespace LondonDataServices.IDecide.Core.Models.Foundations.Pds
 {
     public class SearchCriteria
     {
+        public string NhsNumber { get; set; } = string.Empty;
         public string FirstName { get; set; } = string.Empty;
         public string Surname { get; set; } = string.Empty;
         public string Gender { get; set; } = string.Empty;
