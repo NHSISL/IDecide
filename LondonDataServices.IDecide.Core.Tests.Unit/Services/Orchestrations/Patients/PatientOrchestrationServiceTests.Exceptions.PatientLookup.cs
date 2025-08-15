@@ -122,7 +122,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             string inputSurname = randomString.DeepClone();
             PatientLookup randomPatientLookup = GetRandomSearchPatientLookupWithNoNhsNumber(inputSurname);
             PatientLookup inputPatientLookup = randomPatientLookup.DeepClone();
-
             var serviceException = new Exception();
 
             var failedServicePatientOrchestrationException =

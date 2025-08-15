@@ -57,7 +57,6 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                     Patient redactedPatient = maybePatient.Redact();
 
                     return redactedPatient;
-
                 }
             });
     }

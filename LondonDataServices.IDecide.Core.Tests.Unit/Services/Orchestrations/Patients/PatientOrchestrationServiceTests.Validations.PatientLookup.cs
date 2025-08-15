@@ -24,7 +24,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             var nullPatientLookupException =
                 new NullPatientLookupException(message: "Patient lookup is null.");
 
-
             var expectedPatientOrchestrationValidationException =
                 new PatientOrchestrationValidationException(
                     message: "Patient orchestration validation error occurred, " +
@@ -169,7 +168,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         }
 
         [Theory]
-        [InlineData("1234")]
+        [InlineData("123456789")]
+        [InlineData("01234567890")]
         public async Task ShouldThrowValidationExceptionOnPatientLookupByNhsNumberAsync(string invalidNhsNumber)
         {
             // given
@@ -194,7 +194,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 patientOrchestrationService.PatientLookupAsync(inputPatientLookup);
 
             PatientOrchestrationValidationException actualException =
-                await Assert.ThrowsAsync<PatientOrchestrationValidationException>(patientLookupByNhsNumberAction.AsTask);
+                await Assert.ThrowsAsync<PatientOrchestrationValidationException>(
+                    patientLookupByNhsNumberAction.AsTask);
 
             // then
             actualException.Should().BeEquivalentTo(expectedPatientOrchestrationValidationException);
