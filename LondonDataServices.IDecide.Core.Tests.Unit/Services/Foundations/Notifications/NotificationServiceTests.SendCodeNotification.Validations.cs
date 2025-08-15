@@ -71,6 +71,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                     Address = invalidText,
                     PostCode = invalidText,
                     ValidationCode = invalidText,
+                    NotificationPreference = (NotificationPreference)999, // Invalid enum value
                 },
                 Decision = new Decision
                 {
@@ -189,7 +190,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
 
             var invalidArgumentsNotificationException =
                 new InvalidArgumentsNotificationException(
-                    message: "Invalid notification info. Please correct the errors and try again.");
+                    message: "Invalid notification arguments. Please correct the errors and try again.");
 
             invalidArgumentsNotificationException.AddData(
                 key: nameof(NotificationConfig.EmailCodeTemplateId),
@@ -235,7 +236,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
 
             var invalidArgumentsNotificationException =
                 new InvalidArgumentsNotificationException(
-                    message: "Invalid notification info. Please correct the errors and try again.");
+                    message: "Invalid notification arguments. Please correct the errors and try again.");
 
             invalidArgumentsNotificationException.AddData(
                 key: nameof(NotificationConfig.SmsCodeTemplateId),
@@ -281,7 +282,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
 
             var invalidArgumentsNotificationException =
                 new InvalidArgumentsNotificationException(
-                    message: "Invalid notification info. Please correct the errors and try again.");
+                    message: "Invalid notification arguments. Please correct the errors and try again.");
 
             invalidArgumentsNotificationException.AddData(
                 key: nameof(NotificationConfig.LetterCodeTemplateId),

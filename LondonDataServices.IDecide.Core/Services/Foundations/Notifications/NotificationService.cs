@@ -67,23 +67,37 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                 switch (notificationInfo.Patient.NotificationPreference)
                 {
                     case NotificationPreference.Email:
+                        await ValidateSendEmailInputsOnSendCode(
+                           notificationInfo.Patient.Email,
+                           this.notificationConfig.EmailCodeTemplateId,
+                           personalisation);
+
                         await this.notificationBroker.SendEmailAsync(
                             notificationInfo.Patient.Email,
                             this.notificationConfig.EmailCodeTemplateId,
                             personalisation);
+
                         break;
 
                     case NotificationPreference.Sms:
+                        await ValidateSendSmsInputsOnSendCode(
+                           this.notificationConfig.SmsCodeTemplateId, personalisation);
+
                         await this.notificationBroker.SendSmsAsync(
                             this.notificationConfig.SmsCodeTemplateId,
                             personalisation);
+
                         break;
 
                     case NotificationPreference.Letter:
+                        await ValidateSendLetterInputsOnSendCode(
+                           this.notificationConfig.LetterCodeTemplateId, personalisation);
+
                         await this.notificationBroker.SendLetterAsync(
                             this.notificationConfig.LetterCodeTemplateId,
                             personalisation,
                             string.Empty);
+
                         break;
                 }
             });

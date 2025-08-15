@@ -26,6 +26,10 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
             {
                 throw await CreateAndLogValidationException(invalidNotificationDecisionException);
             }
+            catch (InvalidArgumentsNotificationException invalidArgumentsNotificationException)
+            {
+                throw await CreateAndLogValidationException(invalidArgumentsNotificationException);
+            }
         }
 
         private async ValueTask<NotificationValidationException> CreateAndLogValidationException(Xeption exception)

@@ -3,6 +3,7 @@
 // ---------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications.Exceptions;
@@ -68,7 +69,44 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                 (Rule: IsInvalid(
                     notificationInfo.Decision.DecisionType.Name),
                     Parameter: nameof(NotificationInfo.Decision.DecisionType.Name)));
+        }
 
+        private async ValueTask ValidateSendEmailInputsOnSendCode(
+            string email,
+            string emailCodeTemplateId,
+            Dictionary<string, dynamic> personalisation)
+        {
+            Validate<InvalidArgumentsNotificationException>(
+                message: "Invalid notification arguments. Please correct the errors and try again.",
+                (Rule: IsInvalid(email), Parameter: nameof(email)),
+                (Rule: IsInvalid(emailCodeTemplateId), Parameter: nameof(NotificationConfig.EmailCodeTemplateId)),
+                (Rule: IsInvalid(personalisation), Parameter: nameof(personalisation)));
+        }
+
+        private async ValueTask ValidateSendSmsInputsOnSendCode(
+            string smsCodeTemplateId,
+            Dictionary<string, dynamic> personalisation)
+        {
+            Validate<InvalidArgumentsNotificationException>(
+                message: "Invalid notification arguments. Please correct the errors and try again.",
+
+                (Rule: IsInvalid(smsCodeTemplateId),
+                    Parameter: nameof(NotificationConfig.SmsCodeTemplateId)),
+
+                (Rule: IsInvalid(personalisation), Parameter: nameof(personalisation)));
+        }
+
+        private async ValueTask ValidateSendLetterInputsOnSendCode(
+            string letterCodeTemplateId,
+            Dictionary<string, dynamic> personalisation)
+        {
+            Validate<InvalidArgumentsNotificationException>(
+                message: "Invalid notification arguments. Please correct the errors and try again.",
+
+                (Rule: IsInvalid(letterCodeTemplateId),
+                    Parameter: nameof(NotificationConfig.LetterCodeTemplateId)),
+
+                (Rule: IsInvalid(personalisation), Parameter: nameof(personalisation)));
         }
 
         private static void ValidateNotificationInfoIsNotNull(NotificationInfo notificationInfo)
@@ -93,8 +131,14 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
 
         private static dynamic IsInvalid(NotificationPreference notificationPreference) => new
         {
-            Condition = notificationPreference == default,
+            Condition = !Enum.IsDefined(typeof(NotificationPreference), notificationPreference),
             Message = "Value is required"
+        };
+
+        private static dynamic IsInvalid(Dictionary<string, dynamic> personalisation) => new
+        {
+            Condition = personalisation is null,
+            Message = "Dictionary is invalid"
         };
 
         private static void Validate<T>(string message, params (dynamic Rule, string Parameter)[] validations)
