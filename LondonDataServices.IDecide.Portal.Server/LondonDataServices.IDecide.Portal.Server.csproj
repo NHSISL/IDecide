@@ -16,6 +16,20 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Content Remove="appsettings.Acceptance.json" />
+	  <Content Remove="appsettings.Development.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="appsettings.Development.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Include="appsettings.Acceptance.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Attrify" Version="0.0.0.2" />
 		<PackageReference Include="FluentAssertions" Version="7.2.0" />
 		<PackageReference Include="ISL.Providers.PDS.Abstractions" Version="1.0.0.4" />

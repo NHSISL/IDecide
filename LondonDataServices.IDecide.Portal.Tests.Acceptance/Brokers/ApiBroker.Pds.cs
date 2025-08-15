@@ -12,10 +12,10 @@ namespace LondonDataServices.IDecide.Portals.Server.Tests.Acceptance.Brokers
     {
         private const string pdsRelativeUrl = "api/PatientSearch";
 
-        public async ValueTask<Patient> PostPatientByDetailsAsync(PatientLookup patientLookup)
+        public async ValueTask<Patient> PostPatientSearchAsync(PatientLookup patientLookup)
         {
             return await this.apiFactoryClient.PostContentAsync<PatientLookup, Patient>(
-                $"{pdsRelativeUrl}/PostPatientByDetails",  patientLookup);
+                $"{pdsRelativeUrl}/PostPatientSearch",  patientLookup);
 
         }
     }

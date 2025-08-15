@@ -13,7 +13,7 @@ namespace LondonDataServices.IDecide.Portals.Server.Tests.Acceptance.Apis
     public partial class PatientSearchApiTests
     {
         [Fact]
-        public async Task ShouldPostPatientByDetailsAsync()
+        public async Task ShouldPostPatientAsync()
         {
             // given
             string inputSurname = "Smith";
@@ -23,7 +23,7 @@ namespace LondonDataServices.IDecide.Portals.Server.Tests.Acceptance.Apis
 
             // when
             Patient actualPatient =
-                await this.apiBroker.PostPatientByDetailsAsync(inputPatientLookup);
+                await this.apiBroker.PostPatientSearchAsync(inputPatientLookup);
 
             // then
             actualPatient.Should().BeEquivalentTo(expectedPatient);

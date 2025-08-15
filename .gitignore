@@ -421,3 +421,4 @@ FodyWeavers.xsd
 /Documentation/*.dtmp
 /LondonDataServices.IDecide.Portal.Tests.Acceptance/appsettings.Acceptance.json
 /LondonDataServices.IDecide.Manage.Server.Tests.Acceptance/appsettings.Acceptance.json
+/LondonDataServices.IDecide.Portal.Server/appsettings.Acceptance.json
