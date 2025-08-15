@@ -41,10 +41,6 @@
 		<Content Update="appsettings.Development.json">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
-
-		<None Include="appsettings.Acceptance.json">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
 	</ItemGroup>
 
 </Project>
