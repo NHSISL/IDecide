@@ -23,40 +23,12 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
             this.patientOrchestrationService = patientOrchestrationService;
         }
 
-        [HttpPost("PostPatientByDetails")]
-        public async ValueTask<ActionResult<Patient>> PostPatientByDetailsAsync([FromBody] PatientLookup patientLookup)
+        [HttpPost("PostPatientSearch")]
+        public async ValueTask<ActionResult<Patient>> PostPatientSearchAsync([FromBody] PatientLookup patientLookup)
         {
             try
             {
-                Patient patient = await this.patientOrchestrationService.PatientLookupByDetailsAsync(patientLookup);
-
-                return Ok(patient);
-            }
-            catch (PatientOrchestrationValidationException patientOrchestrationValidationException)
-            {
-                return BadRequest(patientOrchestrationValidationException.InnerException);
-            }
-            catch (PatientOrchestrationDependencyValidationException
-                patientOrchestrationDependencyValidationException)
-            {
-                return BadRequest(patientOrchestrationDependencyValidationException.InnerException);
-            }
-            catch (PatientOrchestrationDependencyException patientOrchestrationDependencyException)
-            {
-                return InternalServerError(patientOrchestrationDependencyException);
-            }
-            catch (PatientOrchestrationServiceException patientOrchestrationServiceException)
-            {
-                return InternalServerError(patientOrchestrationServiceException);
-            }
-        }
-
-        [HttpPost("PostPatientByNhsNumber")]
-        public async ValueTask<ActionResult<Patient>> PostPatientByNhsNumberAsync([FromBody] string nhsNumber)
-        {
-            try
-            {
-                Patient patient = await this.patientOrchestrationService.PatientLookupByNhsNumberAsync(nhsNumber);
+                Patient patient = await this.patientOrchestrationService.PatientLookupAsync(patientLookup);
 
                 return Ok(patient);
             }
