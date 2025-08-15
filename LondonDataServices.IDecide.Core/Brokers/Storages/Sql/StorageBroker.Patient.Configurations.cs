@@ -26,8 +26,7 @@ namespace LondonDataServices.IDecide.Core.Brokers.Storages.Sql
 
             model
                 .Property(patient => patient.Title)
-                .HasMaxLength(255)
-                .IsRequired();
+                .HasMaxLength(35);
 
             model
                 .Property(patient => patient.GivenName)
@@ -45,28 +44,20 @@ namespace LondonDataServices.IDecide.Core.Brokers.Storages.Sql
 
             model
                .Property(patient => patient.Gender)
-               .HasMaxLength(255)
+               .HasMaxLength(50)
                .IsRequired();
 
             model
                .Property(patient => patient.Email)
-               .HasMaxLength(255)
-               .IsRequired();
+               .HasMaxLength(255);
 
             model
                .Property(patient => patient.Phone)
-               .HasMaxLength(255)
-               .IsRequired();
-
-            model
-               .Property(patient => patient.Address)
-               .HasMaxLength(255)
-               .IsRequired();
+               .HasMaxLength(15);
 
             model
                .Property(patient => patient.PostCode)
-               .HasMaxLength(255)
-               .IsRequired();
+               .HasMaxLength(8);
 
             model
                 .Property(patient => patient.ValidationCode)
@@ -79,6 +70,7 @@ namespace LondonDataServices.IDecide.Core.Brokers.Storages.Sql
 
             model
                 .Property(patient => patient.RetryCount)
+                .HasDefaultValue(0)
                 .IsRequired();
 
             model

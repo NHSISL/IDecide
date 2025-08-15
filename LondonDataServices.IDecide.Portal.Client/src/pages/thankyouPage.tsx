@@ -1,8 +1,10 @@
 ﻿import { Container, Alert, Button, Col, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export const ThankyouPage = () => {
     const navigate = useNavigate();
+    const { t: translate } = useTranslation();
 
     const handleReturnHome = () => {
         navigate("/");
@@ -13,19 +15,19 @@ export const ThankyouPage = () => {
             <Row className="custom-col-spacing">
                 <Col xs={12} md={7} lg={7}>
                     <Alert variant="success" style={{ fontSize: "1.25rem" }}>
-                        <h2 style={{ marginBottom: "1rem" }}>Thank You!</h2>
+                        <h2 style={{ marginBottom: "1rem" }}>{translate("ThankyouScreen.title")}</h2>
                         <p>
-                            Your preferences have been saved and your request is complete.
+                            {translate("ThankyouScreen.preferencesSaved")}
                         </p>
                         <p>
-                            We appreciate your time. You will be notified when your preferences have been enacted.
+                            {translate("ThankyouScreen.appreciation")}
                         </p>
                         <p>
-                            You may now safely close this window or browser tab.
+                            {translate("ThankyouScreen.safeToClose")}
                         </p>
                         <div style={{ display: "flex", marginTop: 24 }}>
                             <Button variant="primary" onClick={handleReturnHome}>
-                                Return Home
+                                {translate("ThankyouScreen.returnHome")}
                             </Button>
                         </div>
                     </Alert>

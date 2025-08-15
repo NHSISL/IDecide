@@ -12,15 +12,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LondonDataServices.IDecide.Core.Migrations
 {
     [DbContext(typeof(StorageBroker))]
-    [Migration("20250730121924_AddDecisionTypeAndDecision")]
-    partial class AddDecisionTypeAndDecision
+    [Migration("20250813142558_AddInitialMigration")]
+    partial class AddInitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.6")
+                .HasAnnotation("ProductVersion", "9.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -136,8 +136,23 @@ namespace LondonDataServices.IDecide.Core.Migrations
                     b.Property<Guid>("DecisionTypeId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("PatientId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("PatientNhsNumber")
                         .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("ResponiblePersonSurname")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("ResponsiblePersonGivenName")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("ResponsiblePersonRelationship")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
@@ -153,7 +168,91 @@ namespace LondonDataServices.IDecide.Core.Migrations
 
                     b.HasIndex("DecisionTypeId");
 
+                    b.HasIndex("PatientId");
+
                     b.ToTable("Decisions", "Decision");
+                });
+
+            modelBuilder.Entity("LondonDataServices.IDecide.Core.Models.Foundations.Patients.Patient", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset>("DateOfBirth")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("GivenName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("NhsNumber")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("Phone")
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)");
+
+                    b.Property<string>("PostCode")
+                        .HasMaxLength(8)
+                        .HasColumnType("nvarchar(8)");
+
+                    b.Property<int>("RetryCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<string>("Surname")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(35)
+                        .HasColumnType("nvarchar(35)");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTimeOffset>("UpdatedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("ValidationCode")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
+
+                    b.Property<DateTimeOffset>("ValidationCodeExpiresOn")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Patients", "Decision");
                 });
 
             modelBuilder.Entity("LondonDataServices.IDecide.Core.Models.Foundations.Decisions.Decision", b =>
@@ -164,10 +263,23 @@ namespace LondonDataServices.IDecide.Core.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.HasOne("LondonDataServices.IDecide.Core.Models.Foundations.Patients.Patient", "Patient")
+                        .WithMany("Decisions")
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.Navigation("DecisionType");
+
+                    b.Navigation("Patient");
                 });
 
             modelBuilder.Entity("LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes.DecisionType", b =>
+                {
+                    b.Navigation("Decisions");
+                });
+
+            modelBuilder.Entity("LondonDataServices.IDecide.Core.Models.Foundations.Patients.Patient", b =>
                 {
                     b.Navigation("Decisions");
                 });

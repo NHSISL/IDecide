@@ -1,12 +1,14 @@
 import React, { useEffect } from "react";
 import { useStep } from "../../hooks/useStep";
 import { Row, Col, Alert } from "react-bootstrap";
+import { useTranslation } from "react-i18next";
 
 interface ConfirmDetailsProps {
     goToConfirmCode: () => void;
 }
 
 export const ConfirmDetails: React.FC<ConfirmDetailsProps> = ({ goToConfirmCode }) => {
+    const { t: translate } = useTranslation();
     const { setCurrentStepIndex, nextStep, createdPatient, powerOfAttourney } = useStep();
 
     useEffect(() => {
@@ -21,7 +23,7 @@ export const ConfirmDetails: React.FC<ConfirmDetailsProps> = ({ goToConfirmCode 
     };
 
     if (!createdPatient) {
-        return <div>No patient details available.</div>;
+        return <div>{translate("ConfirmDetails.noPatientDetails")}</div>;
     }
 
     return (
@@ -34,17 +36,17 @@ export const ConfirmDetails: React.FC<ConfirmDetailsProps> = ({ goToConfirmCode 
                             </div>
                             <div>
                                 <div style={{ fontSize: "1rem", marginBottom: "0.25rem", color: "#6c757d", fontWeight: 500 }}>
-                                    Power of Attorney Details
+                                    {translate("ConfirmDetails.powerOfAttorneyDetails")}
                                 </div>
                                 <dl className="mb-0" style={{ fontSize: "0.95rem", color: "#6c757d" }}>
                                     <div>
-                                        <dt style={{ display: "inline", fontWeight: 500 }}>Name:</dt>
+                                        <dt style={{ display: "inline", fontWeight: 500 }}>{translate("ConfirmDetails.powerOfAttorneyName")}:</dt>
                                         <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
                                             <strong>{powerOfAttourney.firstName} {powerOfAttourney.surname}</strong>
                                         </dd>
                                     </div>
                                     <div>
-                                        <dt style={{ display: "inline", fontWeight: 500 }}>Relationship:</dt>
+                                        <dt style={{ display: "inline", fontWeight: 500 }}>{translate("ConfirmDetails.powerOfAttorneyRelationship")}:</dt>
                                         <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
                                             <strong>{powerOfAttourney.relationship}</strong>
                                         </dd>
@@ -53,23 +55,23 @@ export const ConfirmDetails: React.FC<ConfirmDetailsProps> = ({ goToConfirmCode 
                             </div>
                         </Alert>
                     )}
-                    <h4 style={{ fontWeight: 700, fontSize: "1.5rem", margin: "1.5rem 0 1rem 0", color: "#212529" }}>Is this you?</h4>
+                    <h4 style={{ fontWeight: 700, fontSize: "1.5rem", margin: "1.5rem 0 1rem 0", color: "#212529" }}>{translate("ConfirmDetails.isThisYou")}</h4>
                     <form className="nhsuk-form-group">
                         <dl className="nhsuk-summary-list" style={{ marginBottom: "2rem" }}>
                             <div className="nhsuk-summary-list__row">
-                                <dt className="nhsuk-summary-list__key">Name</dt>
-                                <dd className="nhsuk-summary-list__value">{createdPatient.firstName + ',' + createdPatient.surname}</dd>
+                                <dt className="nhsuk-summary-list__key">{translate("ConfirmDetails.name")}</dt>
+                                <dd className="nhsuk-summary-list__value">{createdPatient.givenName + ',' + createdPatient.surname}</dd>
                             </div>
                             <div className="nhsuk-summary-list__row">
-                                <dt className="nhsuk-summary-list__key">Email</dt>
-                                <dd className="nhsuk-summary-list__value">{createdPatient.emailAddress}</dd>
+                                <dt className="nhsuk-summary-list__key">{translate("ConfirmDetails.email")}</dt>
+                                <dd className="nhsuk-summary-list__value">{createdPatient.email}</dd>
                             </div>
                             <div className="nhsuk-summary-list__row">
-                                <dt className="nhsuk-summary-list__key">Mobile Number</dt>
+                                <dt className="nhsuk-summary-list__key">{translate("ConfirmDetails.mobileNumber")}</dt>
                                 <dd className="nhsuk-summary-list__value">07******084</dd>
                             </div>
                             <div className="nhsuk-summary-list__row">
-                                <dt className="nhsuk-summary-list__key">Address</dt>
+                                <dt className="nhsuk-summary-list__key">{translate("ConfirmDetails.address")}</dt>
                                 <dd className="nhsuk-summary-list__value">{createdPatient.address}</dd>
                             </div>
                         </dl>
@@ -81,7 +83,7 @@ export const ConfirmDetails: React.FC<ConfirmDetailsProps> = ({ goToConfirmCode 
                                 style={{ flex: 1 }}
                                 onClick={handleYesClick}
                             >
-                                Yes
+                                {translate("ConfirmDetails.yes")}
                             </button>
                             <button
                                 type="button"
@@ -89,7 +91,7 @@ export const ConfirmDetails: React.FC<ConfirmDetailsProps> = ({ goToConfirmCode 
                                 style={{ flex: 1 }}
                                 onClick={handleNoClick}
                             >
-                                No
+                                {translate("ConfirmDetails.no")}
                             </button>
                         </div>
 
@@ -99,7 +101,7 @@ export const ConfirmDetails: React.FC<ConfirmDetailsProps> = ({ goToConfirmCode 
                             style={{ width: "100%", marginBottom: 0, borderBottom: "none" }}
                             onClick={goToConfirmCode}
                         >
-                            We have already been sent a code. Would you like to use that code to continue?
+                            {translate("ConfirmDetails.useExistingCode")}
                         </button>
                     </form>
                 </div>
@@ -114,27 +116,26 @@ export const ConfirmDetails: React.FC<ConfirmDetailsProps> = ({ goToConfirmCode 
                         boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
                     }}
                 >
-                    <h2 className="mb-3" style={{ color: "#005eb8" }}>Help & Guidance</h2>
+                    <h2 className="mb-3" style={{ color: "#005eb8" }}>{translate("ConfirmDetails.helpGuidance")}</h2>
                     <h3 className="mb-3" style={{ color: "#005eb8" }}>
-                        Checking Your Details
+                        {translate("ConfirmDetails.checkingYourDetails")}
                     </h3>
                     <p>
-                        Please review the details shown on this page. Some information, such as your mobile number, may be partially hidden for your privacy.
+                        {translate("ConfirmDetails.reviewDetails")}
                     </p>
                     <p>
-                        If these details are correct and belong to you, click <strong>Yes</strong> to continue.
+                        {translate("ConfirmDetails.detailsCorrect")}
                     </p>
                     <p>
-                        If these details do not match you, click <strong>No</strong> to return and try searching again with your NHS Number.
+                        {translate("ConfirmDetails.detailsIncorrect")}
                     </p>
                     <p>
-                        If you have already received a code by SMS, email, or post, you can use it now by clicking the button below to go straight to the code confirmation page.
+                        {translate("ConfirmDetails.alreadyReceivedCode")}
                     </p>
                     <p>
-                        This process helps us keep your information secure and ensures only you can access your records.
+                        {translate("ConfirmDetails.securityInfo")}
                     </p>
                 </div>
-
             </Col>
         </Row>
     );

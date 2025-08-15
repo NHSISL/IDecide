@@ -1,20 +1,22 @@
 import React, { useState, useEffect, useContext } from "react";
+import { useTranslation } from "react-i18next";
 import { useStep } from "../../hooks/useStep";
-import { Patient } from "../../models/patients/patient";
 import { PowerOfAttourney } from "../../models/powerOfAttourneys/powerOfAttourney";
 import { patientViewService } from "../../services/views/patientViewService";
 import { TextInput, Button, Select, Card } from "nhsuk-react-components";
 import { loadRecaptchaScript } from "../../helpers/recaptureLoad";
 import { Container, Row, Col } from "react-bootstrap";
 import { StepContext } from "../context/stepContext";
+import { PatientLookup } from "../../models/patients/patientLookup";
+import { SearchCriteria } from "../../models/searchCriterias/searchCriteria";
 
 const RECAPTCHA_SITE_KEY = "6LcOJn4rAAAAAIUdB70R9BqkfPFD-bPYTk6ojRGg";
 
-export const SearchByNhsNumber = ({onIDontKnow,powerOfAttourney = false} : {
+export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
     onIDontKnow: (powerOfAttourney: boolean) => void;
     powerOfAttourney?: boolean;
 }) => {
-
+    const { t: translate } = useTranslation();
     const stepContext = useContext(StepContext);
 
     useEffect(() => {
@@ -52,10 +54,10 @@ export const SearchByNhsNumber = ({onIDontKnow,powerOfAttourney = false} : {
                 waitForGrecaptcha();
             })
             .catch(() => {
-                if (isMounted) setError("Failed to load reCAPTCHA. Please refresh and try again.");
+                if (isMounted) setError(translate("SearchBySHSNumber.errorRecaptchaLoad"));
             });
         return () => { isMounted = false; };
-    }, []);
+    }, [translate]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value.replace(/\D/g, "").slice(0, 10);
@@ -85,19 +87,19 @@ export const SearchByNhsNumber = ({onIDontKnow,powerOfAttourney = false} : {
     const validatePoaFields = () => {
         let valid = true;
         if (poaNhsNumberInput.length !== 10) {
-            setPoaNhsNumberError("Enter a 10-digit NHS Number");
+            setPoaNhsNumberError(translate("SearchBySHSNumber.errorNhsNumber"));
             valid = false;
         }
         if (!poaFirstname.trim()) {
-            setPoaFirstnameError("Enter a first name");
+            setPoaFirstnameError(translate("SearchBySHSNumber.errorFirstname"));
             valid = false;
         }
         if (!poaSurname.trim()) {
-            setPoaSurnameError("Enter a surname");
+            setPoaSurnameError(translate("SearchBySHSNumber.errorSurname"));
             valid = false;
         }
         if (!poaRelationship) {
-            setPoaRelationshipError("Select a relationship");
+            setPoaRelationshipError(translate("SearchBySHSNumber.errorRelationship"));
             valid = false;
         }
         return valid;
@@ -115,20 +117,21 @@ export const SearchByNhsNumber = ({onIDontKnow,powerOfAttourney = false} : {
             if (!validatePoaFields()) return;
         } else {
             if (nhsNumberInput.length !== 10) {
-                setError("Enter a 10-digit NHS Number");
+                setError(translate("SearchBySHSNumber.errorNhsNumber"));
                 return;
             }
         }
 
         if (!recaptchaReady || typeof grecaptcha === "undefined") {
-            setError("reCAPTCHA is not ready. Please try again later.");
+            setError(translate("SearchBySHSNumber.errorRecaptchaNotReady"));
             return;
         }
         setLoading(true);
         try {
-            grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: "submit" }).then((token: string) => {
+            grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: "submit" }).then(() => {
                 const nhsNumberToUse = powerOfAttourney ? poaNhsNumberInput : nhsNumberInput;
-                const patientToCreate = new Patient({ id: "", nhsNumber: nhsNumberToUse, recaptchaToken: token });
+                const searchCriteria = new SearchCriteria({ nhsNumber: nhsNumberToUse });
+                const patientLookup = new PatientLookup(searchCriteria, []);
 
                 let poaModel = undefined;
                 if (powerOfAttourney) {
@@ -139,20 +142,20 @@ export const SearchByNhsNumber = ({onIDontKnow,powerOfAttourney = false} : {
                     });
                 }
 
-                addPatient.mutate(patientToCreate, {
+                addPatient.mutate(patientLookup, {
                     onSuccess: (createdPatient) => {
                         setCreatedPatient(createdPatient);
                         nextStep(undefined, nhsNumberToUse, createdPatient, poaModel);
                         setLoading(false);
                     },
                     onError: () => {
-                        setError("Failed to create patient. Please try again.");
+                        setError(translate("SearchBySHSNumber.errorCreatePatient"));
                         setLoading(false);
                     }
                 });
             });
         } catch {
-            setError("reCAPTCHA failed. Please try again.");
+            setError(translate("SearchBySHSNumber.errorRecaptchaFailed"));
             setLoading(false);
         }
     };
@@ -164,8 +167,8 @@ export const SearchByNhsNumber = ({onIDontKnow,powerOfAttourney = false} : {
                     <form autoComplete="off" onSubmit={handleSubmit}>
                         {!powerOfAttourney && (
                             <TextInput
-                                label="NHS Number"
-                                hint="It's on your National Insurance card, benefit letter, payslip or P60."
+                                label={translate("SearchBySHSNumber.nhsNumberLabel")}
+                                hint={translate("SearchBySHSNumber.nhsNumberHint")}
                                 id="nhs-number"
                                 name="nhs-number"
                                 inputMode="numeric"
@@ -183,9 +186,9 @@ export const SearchByNhsNumber = ({onIDontKnow,powerOfAttourney = false} : {
                             <div style={{ marginBottom: "1.5rem" }}>
                                 <Card cardType="feature">
                                     <Card.Content>
-                                        <Card.Heading>NHS Number of the Person You Are Representing</Card.Heading>
+                                        <Card.Heading>{translate("SearchBySHSNumber.poaNhsNumberLabel")}</Card.Heading>
                                         <TextInput
-                                            label="NHS Number"
+                                            label={translate("SearchBySHSNumber.nhsNumberLabel")}
                                             id="poa-nhs-number"
                                             name="poa-nhs-number"
                                             inputMode="numeric"
@@ -202,9 +205,9 @@ export const SearchByNhsNumber = ({onIDontKnow,powerOfAttourney = false} : {
 
                                 <Card cardType="feature">
                                     <Card.Content>
-                                        <Card.Heading>My Details (The Requester)</Card.Heading>
+                                        <Card.Heading>{translate("SearchBySHSNumber.poaMyDetailsHeading")}</Card.Heading>
                                         <TextInput
-                                            label="Firstname"
+                                            label={translate("SearchBySHSNumber.poaFirstnameLabel")}
                                             id="poa-firstname"
                                             name="poa-firstname"
                                             autoComplete="off"
@@ -214,7 +217,7 @@ export const SearchByNhsNumber = ({onIDontKnow,powerOfAttourney = false} : {
                                             style={{ maxWidth: "400px", marginBottom: "1rem" }}
                                         />
                                         <TextInput
-                                            label="Surname"
+                                            label={translate("SearchBySHSNumber.poaSurnameLabel")}
                                             id="poa-surname"
                                             name="poa-surname"
                                             autoComplete="off"
@@ -225,10 +228,10 @@ export const SearchByNhsNumber = ({onIDontKnow,powerOfAttourney = false} : {
                                         />
                                         <div style={{ marginBottom: "1rem" }}>
                                             <Select
-                                                label="Relationship"
+                                                label={translate("SearchBySHSNumber.poaRelationshipLabel")}
                                                 id="poa-relationship"
                                                 name="poa-relationship"
-                                                aria-label="Relationship to the person you are representing"
+                                                aria-label={translate("SearchBySHSNumber.poaRelationshipLabel")}
                                                 aria-required="true"
                                                 required
                                                 value={poaRelationship}
@@ -237,16 +240,16 @@ export const SearchByNhsNumber = ({onIDontKnow,powerOfAttourney = false} : {
                                                 style={{ maxWidth: "400px", marginBottom: "1rem" }}
                                             >
                                                 <option value="" disabled>
-                                                    Select relationship
+                                                    {translate("SearchBySHSNumber.poaRelationshipSelect")}
                                                 </option>
-                                                <option value="The patient is under 13 and you are their parent">
-                                                    The patient is under 13 and you are their parent
+                                                <option value={translate("SearchBySHSNumber.poaRelationshipOptions.parent")}>
+                                                    {translate("SearchBySHSNumber.poaRelationshipOptions.parent")}
                                                 </option>
-                                                <option value="The patient is under 13 and you are their appointed guardian">
-                                                    The patient is under 13 and you are their appointed guardian
+                                                <option value={translate("SearchBySHSNumber.poaRelationshipOptions.guardian")}>
+                                                    {translate("SearchBySHSNumber.poaRelationshipOptions.guardian")}
                                                 </option>
-                                                <option value="The patient is over 13 and you have power of attorney with the right to act on their behalf.">
-                                                    The patient is over 13 and you have power of attorney with the right to act on their behalf.
+                                                <option value={translate("SearchBySHSNumber.poaRelationshipOptions.attorney")}>
+                                                    {translate("SearchBySHSNumber.poaRelationshipOptions.attorney")}
                                                 </option>
                                             </Select>
                                         </div>
@@ -269,7 +272,7 @@ export const SearchByNhsNumber = ({onIDontKnow,powerOfAttourney = false} : {
                                         : nhsNumberInput.length !== 10)
                                 }
                             >
-                                {loading ? "Submitting..." : "Search"}
+                                {loading ? translate("SearchBySHSNumber.submittingButton") : translate("SearchBySHSNumber.submitButton")}
                             </Button>
                             <Button
                                 type="button"
@@ -277,7 +280,7 @@ export const SearchByNhsNumber = ({onIDontKnow,powerOfAttourney = false} : {
                                 onClick={() => onIDontKnow(powerOfAttourney)}
                                 disabled={loading}
                             >
-                                I Don't know my NHS Number
+                                {translate("SearchBySHSNumber.idontknowButton")}
                             </Button>
                         </div>
                     </form>
@@ -293,24 +296,14 @@ export const SearchByNhsNumber = ({onIDontKnow,powerOfAttourney = false} : {
                                 boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
                             }}
                         >
-                            <h2 className="mb-3" style={{ color: "#005eb8" }}>Help & Guidance</h2>
+                            <h2 className="mb-3" style={{ color: "#005eb8" }}>{translate("SearchBySHSNumber.helpGuidanceTitle")}</h2>
                             <h3 className="mb-3" style={{ color: "#005eb8" }}>
-                                Entering Your NHS Number
+                                {translate("SearchBySHSNumber.helpGuidanceNhsNumberHeading")}
                             </h3>
-                            <p>
-                                Your NHS Number is a unique 10-digit number used to identify you within the NHS.
-                                You can find it on your medical card, prescription, GP letter, hospital correspondence, or your NHS app.
-                            </p>
-                            <p>
-                                Please enter your NHS Number to help us securely find your details.
-                                This helps ensure we match you to the correct records and keep your information safe.
-                            </p>
-                            <p>
-                                If you do not know your NHS Number, you can still continue by clicking "I Don't know my NHS Number" below, this will direct you to fill out a small form to find you.
-                            </p>
-                            <p>
-                                Your NHS Number will only be used to look up your details and will not be shared outside the NHS.
-                            </p>
+                            <p>{translate("SearchBySHSNumber.helpGuidanceNhsNumberText1")}</p>
+                            <p>{translate("SearchBySHSNumber.helpGuidanceNhsNumberText2")}</p>
+                            <p>{translate("SearchBySHSNumber.helpGuidanceNhsNumberText3")}</p>
+                            <p>{translate("SearchBySHSNumber.helpGuidanceNhsNumberText4")}</p>
                         </div>
                     )}
                     {powerOfAttourney && (
@@ -323,31 +316,23 @@ export const SearchByNhsNumber = ({onIDontKnow,powerOfAttourney = false} : {
                                 boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
                             }}
                         >
-                            <h2 className="mb-3" style={{ color: "#005eb8" }}>Help & Guidance</h2>
+                            <h2 className="mb-3" style={{ color: "#005eb8" }}>{translate("SearchBySHSNumber.helpGuidanceTitle")}</h2>
 
                             <div style={{ marginBottom: "1.5rem" }}>
-                                <h3 style={{ color: "#005eb8" }}>Opt-out Eligibility</h3>
+                                <h3 style={{ color: "#005eb8" }}>{translate("SearchBySHSNumber.helpGuidanceEligibilityHeading")}</h3>
                                 <ul>
-                                    <li>The patient is under 13 and you are their parent</li>
-                                    <li>The patient is under 13 and you are their appointed guardian</li>
-                                    <li>The patient is over 13 and you have power of attorney with the right to act on their behalf.</li>
+                                    <li>{translate("SearchBySHSNumber.helpGuidanceEligibilityList.parent")}</li>
+                                    <li>{translate("SearchBySHSNumber.helpGuidanceEligibilityList.guardian")}</li>
+                                    <li>{translate("SearchBySHSNumber.helpGuidanceEligibilityList.attorney")}</li>
                                 </ul>
-                                <p>
-                                    If you do not meet one of these criteria, you cannot opt someone else out. Please click the back button.
-                                </p>
+                                <p>{translate("SearchBySHSNumber.helpGuidanceEligibilityText")}</p>
                             </div>
 
                             <div>
-                                <h3 style={{ color: "#005eb8" }}>Entering NHS Number</h3>
-                                <p>
-                                    The NHS Number is a unique 10-digit number used to identify patients. You can find it on medical cards, prescriptions, GP letters, hospital correspondence, or the NHS app.
-                                </p>
-                                <p>
-                                    Enter the NHS Number of the person you are representing. If you do not know it, click "I Don't know my NHS Number" below to continue.
-                                </p>
-                                <p>
-                                    NHS Numbers are only used to look up details and will not be shared outside the NHS.
-                                </p>
+                                <h3 style={{ color: "#005eb8" }}>{translate("SearchBySHSNumber.helpGuidancePoaNhsNumberHeading")}</h3>
+                                <p>{translate("SearchBySHSNumber.helpGuidancePoaNhsNumberText1")}</p>
+                                <p>{translate("SearchBySHSNumber.helpGuidancePoaNhsNumberText2")}</p>
+                                <p>{translate("SearchBySHSNumber.helpGuidancePoaNhsNumberText3")}</p>
                             </div>
                         </div>
                     )}
