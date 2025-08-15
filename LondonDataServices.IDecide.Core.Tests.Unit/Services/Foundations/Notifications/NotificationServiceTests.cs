@@ -5,6 +5,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
+using ISL.Providers.Notifications.Abstractions.Models.Exceptions;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Brokers.Notifications;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
@@ -44,6 +46,18 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
 
         private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
             actualException => actualException.SameExceptionAs(expectedException);
+
+        private static NotificationProviderValidationException GetNotificationProviderValidationException() =>
+            (NotificationProviderValidationException)RuntimeHelpers.GetUninitializedObject(
+                typeof(NotificationProviderValidationException));
+
+        private static NotificationProviderDependencyException GetNotificationProviderDependencyException() =>
+            (NotificationProviderDependencyException)RuntimeHelpers.GetUninitializedObject(
+                typeof(NotificationProviderDependencyException));
+
+        private static NotificationProviderServiceException GetNotificationProviderServiceException() =>
+            (NotificationProviderServiceException)RuntimeHelpers.GetUninitializedObject(
+                typeof(NotificationProviderServiceException));
 
         private static string GetRandomString() =>
             new MnemonicString(wordCount: GetRandomNumber()).GetValue();
