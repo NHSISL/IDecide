@@ -177,6 +177,92 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
         }
 
         [Fact]
+        public async Task ShouldThrowValidationExceptionOnModifyIfDecisionHasInvalidLengthProperty()
+        {
+            // given
+            string randomUserId = GetRandomString();
+            User randomUser = CreateRandomUser(userId: randomUserId);
+
+            var invalidDecision = CreateRandomModifyDecision(GetRandomDateTimeOffset(), userId: randomUserId);
+            invalidDecision.PatientNhsNumber = GetRandomStringWithLengthOf(11);
+            invalidDecision.ResponsiblePersonGivenName = GetRandomStringWithLengthOf(256);
+            invalidDecision.ResponsiblePersonSurname = GetRandomStringWithLengthOf(256);
+            invalidDecision.ResponsiblePersonRelationship = GetRandomStringWithLengthOf(256);
+
+            var invalidDecisionException =
+                new InvalidDecisionException(
+                    message: "Invalid decision. Please correct the errors and try again.");
+
+            invalidDecisionException.AddData(
+                key: nameof(Decision.PatientNhsNumber),
+                values: $"Text exceed max length of {invalidDecision.PatientNhsNumber.Length - 1} characters");
+
+            invalidDecisionException.AddData(
+                key: nameof(Decision.ResponsiblePersonGivenName),
+                values: $"Text exceed max length of {invalidDecision.ResponsiblePersonGivenName?.Length - 1} characters");
+
+            invalidDecisionException.AddData(
+                key: nameof(Decision.ResponsiblePersonSurname),
+                values: $"Text exceed max length of {invalidDecision.ResponsiblePersonSurname?.Length - 1} characters");
+
+            invalidDecisionException.AddData(
+                key: nameof(Decision.ResponsiblePersonRelationship),
+                values: $"Text exceed max length of {invalidDecision.ResponsiblePersonRelationship?.Length - 1} characters");
+
+            var expectedDecisionValidationException =
+                new DecisionValidationException(
+                    message: "Decision validation errors occurred, please try again.",
+                    innerException: invalidDecisionException);
+
+            this.securityAuditBrokerMock.Setup(broker =>
+                broker.ApplyModifyAuditValuesAsync(invalidDecision))
+                    .ReturnsAsync(invalidDecision);
+
+            this.securityBrokerMock.Setup(broker =>
+                broker.GetCurrentUserAsync())
+                    .ReturnsAsync(randomUser);
+
+            // when
+            ValueTask<Decision> modidyDecisionAsync =
+                this.decisionService.ModifyDecisionAsync(invalidDecision);
+
+            DecisionValidationException actualDecisionValidationException =
+                await Assert.ThrowsAsync<DecisionValidationException>(
+                    modidyDecisionAsync.AsTask);
+
+            // then
+            actualDecisionValidationException.Should()
+                .BeEquivalentTo(expectedDecisionValidationException);
+
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.ApplyModifyAuditValuesAsync(invalidDecision),
+                    Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once());
+
+            this.securityBrokerMock.Verify(broker =>
+                broker.GetCurrentUserAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedDecisionValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertDecisionAsync(It.IsAny<Decision>()),
+                    Times.Never);
+
+            this.securityAuditBrokerMock.VerifyNoOtherCalls();
+            this.securityBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
         public async Task ShouldThrowValidationExceptionOnModifyIfUpdatedDateIsSameAsCreatedDateAndLogItAsync()
         {
             // given
