@@ -133,7 +133,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
 
         public Dictionary<string, dynamic> GetPersonalisation(NotificationInfo notificationInfo)
         {
-            return new Dictionary<string, dynamic>
+            var personalisation = new Dictionary<string, dynamic>
             {
                 { "patient.nhsNumber", notificationInfo.Patient.NhsNumber },
                 { "patient.title", notificationInfo.Patient.Title },
@@ -148,11 +148,25 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                 { "patient.validationCode", notificationInfo.Patient.ValidationCode },
                 { "patient.validationCodeExpiresOn", notificationInfo.Patient.ValidationCodeExpiresOn },
                 { "decision.decisionChoice", notificationInfo.Decision.DecisionChoice },
-                { "decision.responsiblePersonGivenName", notificationInfo.Decision.ResponsiblePersonGivenName },
-                { "decision.responsiblePersonSurname", notificationInfo.Decision.ResponiblePersonSurname },
-                { "decision.responsiblePersonRelationship", notificationInfo.Decision.ResponsiblePersonRelationship },
                 { "decision.decisionType.name", notificationInfo.Decision.DecisionType.Name }
             };
+
+            if (!string.IsNullOrWhiteSpace(notificationInfo.Decision.ResponsiblePersonGivenName))
+
+                personalisation.Add(
+                    "decision.responsiblePersonGivenName", notificationInfo.Decision.ResponsiblePersonGivenName);
+
+            if (!string.IsNullOrWhiteSpace(notificationInfo.Decision.ResponiblePersonSurname))
+
+                personalisation.Add(
+                    "decision.responsiblePersonSurname", notificationInfo.Decision.ResponiblePersonSurname);
+
+            if (!string.IsNullOrWhiteSpace(notificationInfo.Decision.ResponsiblePersonRelationship))
+
+                personalisation.Add(
+                    "decision.responsiblePersonRelationship", notificationInfo.Decision.ResponsiblePersonRelationship);
+
+            return personalisation;
         }
     }
 }

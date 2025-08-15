@@ -28,24 +28,33 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
             switch (notificationPreference)
             {
                 case NotificationPreference.Email:
+                    this.notificationConfig.EmailCodeTemplateId = GetRandomString();
+
                     this.notificationBrokerMock.Setup(broker =>
                             broker.SendEmailAsync(
                                 inputNotificationInfo.Patient.Email, this.notificationConfig.EmailCodeTemplateId, personalisation))
                         .ReturnsAsync(result);
+
                     break;
 
                 case NotificationPreference.Sms:
+                    this.notificationConfig.SmsCodeTemplateId = GetRandomString();
+
                     this.notificationBrokerMock.Setup(broker =>
                             broker.SendSmsAsync(
                                 this.notificationConfig.SmsCodeTemplateId, personalisation))
                         .ReturnsAsync(result);
+
                     break;
 
                 case NotificationPreference.Letter:
+                    this.notificationConfig.LetterCodeTemplateId = GetRandomString();
+
                     this.notificationBrokerMock.Setup(broker =>
                             broker.SendLetterAsync(
                                 this.notificationConfig.LetterCodeTemplateId, personalisation, string.Empty))
                         .ReturnsAsync(result);
+
                     break;
             }
 
