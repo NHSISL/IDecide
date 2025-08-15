@@ -10,7 +10,6 @@ namespace LondonDataServices.IDecide.Core.Models.Foundations.Notifications.Excep
     {
         public NullNotificationInfoException(string message)
             : base(message: message)
-        {
-        }
+        { }
     }
 }

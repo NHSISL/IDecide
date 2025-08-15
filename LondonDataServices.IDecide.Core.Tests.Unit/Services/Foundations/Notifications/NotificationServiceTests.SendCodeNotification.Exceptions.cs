@@ -55,8 +55,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
             actualException.Should().BeEquivalentTo(expectedNotificationDependencyValidationException);
 
             this.loggingBrokerMock.Verify(broker =>
-                    broker.LogErrorAsync(It.Is(SameExceptionAs(
-                        expectedNotificationDependencyValidationException))),
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedNotificationDependencyValidationException))),
                 Times.Once);
 
             this.notificationBrokerMock.Verify(broker =>
@@ -107,8 +107,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
             actualException.Should().BeEquivalentTo(expectedNotificationDependencyException);
 
             this.loggingBrokerMock.Verify(broker =>
-                    broker.LogErrorAsync(It.Is(SameExceptionAs(
-                        expectedNotificationDependencyException))),
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedNotificationDependencyException))),
                 Times.Once);
 
             this.notificationBrokerMock.Verify(broker =>
@@ -161,8 +161,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
             actualException.Should().BeEquivalentTo(expectedNotificationServiceException);
 
             this.loggingBrokerMock.Verify(broker =>
-                    broker.LogErrorAsync(It.Is(SameExceptionAs(
-                        expectedNotificationServiceException))),
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedNotificationServiceException))),
                 Times.Once);
 
             this.notificationBrokerMock.Verify(broker =>

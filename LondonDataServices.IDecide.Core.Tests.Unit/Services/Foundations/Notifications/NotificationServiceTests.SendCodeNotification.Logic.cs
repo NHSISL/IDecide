@@ -31,8 +31,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                     this.notificationConfig.EmailCodeTemplateId = GetRandomString();
 
                     this.notificationBrokerMock.Setup(broker =>
-                            broker.SendEmailAsync(
-                                inputNotificationInfo.Patient.Email, this.notificationConfig.EmailCodeTemplateId, personalisation))
+                        broker.SendEmailAsync(
+                            inputNotificationInfo.Patient.Email,
+                            this.notificationConfig.EmailCodeTemplateId,
+                            personalisation))
                         .ReturnsAsync(result);
 
                     break;
@@ -41,8 +43,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                     this.notificationConfig.SmsCodeTemplateId = GetRandomString();
 
                     this.notificationBrokerMock.Setup(broker =>
-                            broker.SendSmsAsync(
-                                this.notificationConfig.SmsCodeTemplateId, personalisation))
+                        broker.SendSmsAsync(
+                            this.notificationConfig.SmsCodeTemplateId, personalisation))
                         .ReturnsAsync(result);
 
                     break;
@@ -51,8 +53,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                     this.notificationConfig.LetterCodeTemplateId = GetRandomString();
 
                     this.notificationBrokerMock.Setup(broker =>
-                            broker.SendLetterAsync(
-                                this.notificationConfig.LetterCodeTemplateId, personalisation, string.Empty))
+                        broker.SendLetterAsync(
+                            this.notificationConfig.LetterCodeTemplateId, personalisation, string.Empty))
                         .ReturnsAsync(result);
 
                     break;
@@ -66,22 +68,24 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
             {
                 case NotificationPreference.Email:
                     this.notificationBrokerMock.Verify(broker =>
-                            broker.SendEmailAsync(
-                                inputNotificationInfo.Patient.Email, this.notificationConfig.EmailCodeTemplateId, personalisation),
+                        broker.SendEmailAsync(
+                            inputNotificationInfo.Patient.Email,
+                            this.notificationConfig.EmailCodeTemplateId,
+                            personalisation),
                         Times.Once);
                     break;
 
                 case NotificationPreference.Sms:
                     this.notificationBrokerMock.Verify(broker =>
-                            broker.SendSmsAsync(
-                                this.notificationConfig.SmsCodeTemplateId, personalisation),
+                        broker.SendSmsAsync(
+                            this.notificationConfig.SmsCodeTemplateId, personalisation),
                         Times.Once);
                     break;
 
                 case NotificationPreference.Letter:
                     this.notificationBrokerMock.Verify(broker =>
-                            broker.SendLetterAsync(
-                                notificationConfig.LetterCodeTemplateId, personalisation, string.Empty),
+                        broker.SendLetterAsync(
+                            notificationConfig.LetterCodeTemplateId, personalisation, string.Empty),
                         Times.Once);
                     break;
             }

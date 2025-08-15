@@ -20,7 +20,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
             Validate<InvalidNotificationInfoException>(
                 message: "Invalid notification info. Please correct the errors and try again.",
 
-(Rule: IsInvalid(
+                (Rule: IsInvalid(
                     notificationInfo.Patient.NhsNumber),
                     Parameter: nameof(NotificationInfo.Patient.NhsNumber)),
 
