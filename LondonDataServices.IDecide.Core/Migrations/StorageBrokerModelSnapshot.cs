@@ -209,6 +209,9 @@ namespace LondonDataServices.IDecide.Core.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
+                    b.Property<int>("NotificationPreference")
+                        .HasColumnType("int");
+
                     b.Property<string>("Phone")
                         .HasMaxLength(15)
                         .HasColumnType("nvarchar(15)");
