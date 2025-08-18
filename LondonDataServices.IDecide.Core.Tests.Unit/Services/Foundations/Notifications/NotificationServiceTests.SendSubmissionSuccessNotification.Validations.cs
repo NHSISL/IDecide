@@ -176,5 +176,52 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
             this.notificationBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData(" ")]
+        public async Task
+            ShouldThrowValidationExceptionOnSendSubmissionSuccessNotificationIfSendEmailInputIsInvalidAndLogItAsync(
+                string invalidText)
+        {
+            // given
+            NotificationInfo randomNotificationInfo = CreateRandomNotificationInfo();
+            randomNotificationInfo.Patient.NotificationPreference = NotificationPreference.Email;
+            NotificationInfo inputNotificationInfo = randomNotificationInfo;
+            this.notificationConfig.EmailSubmissionSuccessTemplateId = invalidText;
+
+            var invalidArgumentsNotificationException =
+                new InvalidArgumentsNotificationException(
+                    message: "Invalid notification arguments. Please correct the errors and try again.");
+
+            invalidArgumentsNotificationException.AddData(
+                key: nameof(NotificationConfig.EmailCodeTemplateId),
+                values: "Text is required");
+
+            var expectedNotificationValidationException =
+                new NotificationValidationException(
+                    message: "Notification validation errors occurred, please try again.",
+                    innerException: invalidArgumentsNotificationException);
+
+            // when
+            ValueTask sendCodeNotificationTask =
+                this.notificationService.SendSubmissionSuccessNotificationAsync(inputNotificationInfo);
+
+            NotificationValidationException actualNotificationValidationException =
+                await Assert.ThrowsAsync<NotificationValidationException>(
+                    () => sendCodeNotificationTask.AsTask());
+
+            // then
+            actualNotificationValidationException.Should().BeEquivalentTo(expectedNotificationValidationException);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedNotificationValidationException))),
+                        Times.Once);
+
+            this.notificationBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
