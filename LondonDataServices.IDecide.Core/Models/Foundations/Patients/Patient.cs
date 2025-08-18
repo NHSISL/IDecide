@@ -3,9 +3,10 @@
 // ---------------------------------------------------------
 
 using System;
-using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Collections.Generic;
+using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
+using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace LondonDataServices.IDecide.Core.Models.Foundations.Patients
 {
@@ -25,6 +26,7 @@ namespace LondonDataServices.IDecide.Core.Models.Foundations.Patients
         public string ValidationCode { get; set; }
         public DateTimeOffset ValidationCodeExpiresOn { get; set; }
         public int RetryCount { get; set; }
+        public NotificationPreference NotificationPreference { get; set; }
         public string CreatedBy { get; set; }
         public DateTimeOffset CreatedDate { get; set; }
         public string UpdatedBy { get; set; }

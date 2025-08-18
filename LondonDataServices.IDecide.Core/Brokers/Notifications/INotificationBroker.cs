@@ -24,7 +24,19 @@ namespace LondonDataServices.IDecide.Core.Brokers.Notifications
             Dictionary<string, dynamic> personalisation);
 
         /// <summary>
-        /// Sends a SMS using the specified template ID and personalisation items.
+        /// Sends an email using the specified template ID and personalisation items.
+        /// </summary>
+        /// <returns>A string representing the unique identifier of the sent email.</returns>
+        /// <exception cref="NotificationValidationProviderException" />
+        /// <exception cref="NotificationDependencyProviderException" />
+        /// <exception cref="NotificationServiceProviderException" />
+        ValueTask<string> SendEmailAsync(
+            string toEmail,
+            string templateId,
+            Dictionary<string, dynamic> personalisation);
+
+        /// <summary>
+        /// Sends an SMS using the specified template ID and personalisation items.
         /// </summary>
         /// <returns>A string representing the unique identifier of the sent SMS.</returns>
         /// <exception cref="NotificationValidationProviderException" />

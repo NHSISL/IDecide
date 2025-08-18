@@ -75,6 +75,7 @@ namespace LondonDataServices.IDecide.Core.Migrations
                     ValidationCode = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
                     ValidationCodeExpiresOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     RetryCount = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
+                    NotificationPreference = table.Column<int>(type: "int", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedBy = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
@@ -92,7 +93,7 @@ namespace LondonDataServices.IDecide.Core.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PatientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    PatientNhsNumber = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    PatientNhsNumber = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     DecisionTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     DecisionChoice = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
@@ -100,7 +101,7 @@ namespace LondonDataServices.IDecide.Core.Migrations
                     UpdatedBy = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     ResponsiblePersonGivenName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    ResponiblePersonSurname = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    ResponsiblePersonSurname = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     ResponsiblePersonRelationship = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true)
                 },
                 constraints: table =>

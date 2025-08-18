@@ -25,7 +25,7 @@ namespace LondonDataServices.IDecide.Core.Brokers.Storages.Sql
 
             model
                 .Property(decision => decision.PatientNhsNumber)
-                .HasMaxLength(255)
+                .HasMaxLength(10)
                 .IsRequired();
 
             model
@@ -57,7 +57,7 @@ namespace LondonDataServices.IDecide.Core.Brokers.Storages.Sql
                 .IsRequired(false);
 
             model
-                .Property(decision => decision.ResponiblePersonSurname)
+                .Property(decision => decision.ResponsiblePersonSurname)
                 .HasMaxLength(255)
                 .IsRequired(false);
 

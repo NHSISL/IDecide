@@ -138,18 +138,18 @@ namespace LondonDataServices.IDecide.Core.Migrations
 
                     b.Property<string>("PatientNhsNumber")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("ResponiblePersonSurname")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<string>("ResponsiblePersonGivenName")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("ResponsiblePersonRelationship")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("ResponsiblePersonSurname")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
@@ -208,6 +208,9 @@ namespace LondonDataServices.IDecide.Core.Migrations
                         .IsRequired()
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
+
+                    b.Property<int>("NotificationPreference")
+                        .HasColumnType("int");
 
                     b.Property<string>("Phone")
                         .HasMaxLength(15)

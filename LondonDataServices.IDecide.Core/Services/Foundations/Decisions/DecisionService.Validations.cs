@@ -22,11 +22,25 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Decisions
                 message: "Invalid decision. Please correct the errors and try again.",
                 (Rule: IsInvalid(decision.Id), Parameter: nameof(Decision.Id)),
                 (Rule: IsInvalid(decision.PatientNhsNumber), Parameter: nameof(Decision.PatientNhsNumber)),
+
+                (Rule: IsGreaterThan(decision.PatientNhsNumber, 10),
+                    Parameter: nameof(Decision.PatientNhsNumber)),
+
                 (Rule: IsInvalid(decision.DecisionChoice), Parameter: nameof(Decision.DecisionChoice)),
                 (Rule: IsInvalid(decision.CreatedDate), Parameter: nameof(Decision.CreatedDate)),
                 (Rule: IsInvalid(decision.CreatedBy), Parameter: nameof(Decision.CreatedBy)),
                 (Rule: IsInvalid(decision.UpdatedDate), Parameter: nameof(Decision.UpdatedDate)),
                 (Rule: IsInvalid(decision.UpdatedBy), Parameter: nameof(Decision.UpdatedBy)),
+
+                (Rule: IsGreaterThan(decision.ResponsiblePersonGivenName, 255),
+                    Parameter: nameof(Decision.ResponsiblePersonGivenName)),
+
+                (Rule: IsGreaterThan(decision.ResponsiblePersonSurname, 255),
+                    Parameter: nameof(Decision.ResponsiblePersonSurname)),
+                
+                (Rule: IsGreaterThan(decision.ResponsiblePersonRelationship, 255),
+                    Parameter: nameof(Decision.ResponsiblePersonRelationship)),
+
                 (Rule: IsGreaterThan(decision.CreatedBy, 255), Parameter: nameof(Decision.CreatedBy)),
                 (Rule: IsGreaterThan(decision.UpdatedBy, 255), Parameter: nameof(Decision.UpdatedBy)),
 
@@ -59,6 +73,10 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Decisions
                 message: "Invalid decision. Please correct the errors and try again.",
                 (Rule: IsInvalid(decision.Id), Parameter: nameof(Decision.Id)),
                 (Rule: IsInvalid(decision.PatientNhsNumber), Parameter: nameof(Decision.PatientNhsNumber)),
+
+                (Rule: IsGreaterThan(decision.PatientNhsNumber, 10),
+                    Parameter: nameof(Decision.PatientNhsNumber)),
+
                 (Rule: IsInvalid(decision.DecisionChoice), Parameter: nameof(Decision.DecisionChoice)),
                 (Rule: IsInvalid(decision.CreatedDate), Parameter: nameof(Decision.CreatedDate)),
                 (Rule: IsInvalid(decision.CreatedBy), Parameter: nameof(Decision.CreatedBy)),
@@ -67,7 +85,16 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Decisions
                 (Rule: IsGreaterThan(decision.CreatedBy, 255), Parameter: nameof(Decision.CreatedBy)),
                 (Rule: IsGreaterThan(decision.UpdatedBy, 255), Parameter: nameof(Decision.UpdatedBy)),
 
-                 (Rule: IsNotSame(
+                (Rule: IsGreaterThan(decision.ResponsiblePersonGivenName, 255),
+                    Parameter: nameof(Decision.ResponsiblePersonGivenName)),
+
+                (Rule: IsGreaterThan(decision.ResponsiblePersonSurname, 255),
+                    Parameter: nameof(Decision.ResponsiblePersonSurname)),
+
+                (Rule: IsGreaterThan(decision.ResponsiblePersonRelationship, 255),
+                    Parameter: nameof(Decision.ResponsiblePersonRelationship)),
+
+                (Rule: IsNotSame(
                     first: currentUser.UserId,
                     second: decision.UpdatedBy),
                 Parameter: nameof(Decision.UpdatedBy)),
