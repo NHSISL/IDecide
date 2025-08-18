@@ -102,9 +102,66 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                 }
             });
 
-        public ValueTask SendSubmissionSuccessNotificationAsync(NotificationInfo notificationInfo)
+        public async ValueTask SendSubmissionSuccessNotificationAsync(NotificationInfo notificationInfo)
         {
-            throw new System.NotImplementedException();
+            Dictionary<string, dynamic> personalisation = new Dictionary<string, dynamic>
+                {
+                    { "patient.nhsNumber", notificationInfo.Patient.NhsNumber },
+                    { "patient.title", notificationInfo.Patient.Title },
+                    { "patient.givenName", notificationInfo.Patient.GivenName },
+                    { "patient.surname", notificationInfo.Patient.Surname },
+                    { "patient.dateOfBirth", notificationInfo.Patient.DateOfBirth },
+                    { "patient.gender", notificationInfo.Patient.Gender },
+                    { "patient.email", notificationInfo.Patient.Email },
+                    { "patient.phone", notificationInfo.Patient.Phone },
+                    { "patient.address", notificationInfo.Patient.Address },
+                    { "patient.postCode", notificationInfo.Patient.PostCode },
+                    { "patient.validationCode", notificationInfo.Patient.ValidationCode },
+                    { "patient.validationCodeExpiresOn", notificationInfo.Patient.ValidationCodeExpiresOn },
+                    { "decision.decisionChoice", notificationInfo.Decision.DecisionChoice },
+                    { "decision.decisionType.name", notificationInfo.Decision.DecisionType.Name }
+                };
+
+            AddIfNotNull(
+                personalisation,
+                "decision.responsiblePersonGivenName",
+                notificationInfo.Decision.ResponsiblePersonGivenName);
+
+            AddIfNotNull(
+                personalisation,
+                "decision.responsiblePersonSurname",
+                notificationInfo.Decision.ResponsiblePersonSurname);
+
+            AddIfNotNull(
+                personalisation,
+                "decision.responsiblePersonRelationship",
+                notificationInfo.Decision.ResponsiblePersonRelationship);
+
+            switch (notificationInfo.Patient.NotificationPreference)
+            {
+                case NotificationPreference.Email:
+                    await this.notificationBroker.SendEmailAsync(
+                        notificationInfo.Patient.Email,
+                        this.notificationConfig.EmailSubmissionSuccessTemplateId,
+                        personalisation);
+
+                    break;
+
+                case NotificationPreference.Sms:
+                    await this.notificationBroker.SendSmsAsync(
+                        this.notificationConfig.SmsSubmissionSuccessTemplateId,
+                        personalisation);
+
+                    break;
+
+                case NotificationPreference.Letter:
+                    await this.notificationBroker.SendLetterAsync(
+                        this.notificationConfig.LetterSubmissionSuccessTemplateId,
+                        personalisation,
+                        string.Empty);
+
+                    break;
+            }
         }
 
         private static void AddIfNotNull(Dictionary<string, dynamic> personalisation, string key, object value)
