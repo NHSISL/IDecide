@@ -62,6 +62,15 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
             (NotificationProviderServiceException)RuntimeHelpers.GetUninitializedObject(
                 typeof(NotificationProviderServiceException));
 
+        public static TheoryData<Xeption> DependencyExceptions()
+        {
+            return
+            [
+                GetNotificationProviderDependencyException(),
+                GetNotificationProviderServiceException()
+            ];
+        }
+
         private static string GetRandomString() =>
             new MnemonicString(wordCount: GetRandomNumber()).GetValue();
 

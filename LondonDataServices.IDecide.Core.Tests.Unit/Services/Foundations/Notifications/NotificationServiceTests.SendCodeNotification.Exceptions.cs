@@ -175,14 +175,5 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.notificationBrokerMock.VerifyNoOtherCalls();
         }
-
-        public static TheoryData<Xeption> DependencyExceptions()
-        {
-            return
-            [
-                GetNotificationProviderDependencyException(),
-                GetNotificationProviderServiceException()
-            ];
-        }
     }
 }
