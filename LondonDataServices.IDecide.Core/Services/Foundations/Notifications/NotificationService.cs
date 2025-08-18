@@ -84,8 +84,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                            this.notificationConfig.SmsCodeTemplateId, personalisation);
 
                         await this.notificationBroker.SendSmsAsync(
-                            this.notificationConfig.SmsCodeTemplateId,
-                            personalisation);
+                            this.notificationConfig.SmsCodeTemplateId, personalisation);
 
                         break;
 
@@ -156,9 +155,11 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                         break;
 
                     case NotificationPreference.Sms:
+                        await ValidateSendSmsInputsOnSendSubmissionSuccess(
+                            this.notificationConfig.SmsSubmissionSuccessTemplateId, personalisation);
+
                         await this.notificationBroker.SendSmsAsync(
-                            this.notificationConfig.SmsSubmissionSuccessTemplateId,
-                            personalisation);
+                            this.notificationConfig.SmsSubmissionSuccessTemplateId, personalisation);
 
                         break;
 

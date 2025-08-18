@@ -253,7 +253,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
 
             // when
             ValueTask sendCodeNotificationTask =
-                this.notificationService.SendCodeNotificationAsync(inputNotificationInfo);
+                this.notificationService.SendSubmissionSuccessNotificationAsync(inputNotificationInfo);
 
             NotificationValidationException actualNotificationValidationException =
                 await Assert.ThrowsAsync<NotificationValidationException>(
