@@ -68,7 +68,6 @@ namespace LondonDataServices.IDecide.Portal.Server
                 .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
 
-
             builder.Services.AddSwaggerGen(configuration =>
             {
                 // Add an OAuth2 security definition for Azure AD
