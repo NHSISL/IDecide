@@ -35,7 +35,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
             {
                 EmailCodeTemplateId = GetRandomString(),
                 SmsCodeTemplateId = GetRandomString(),
-                LetterCodeTemplateId = GetRandomString()
+                LetterCodeTemplateId = GetRandomString(),
+                EmailSubmissionSuccessTemplateId = GetRandomString(),
+                SmsSubmissionSuccessTemplateId = GetRandomString(),
+                LetterSubmissionSuccessTemplateId = GetRandomString()
             };
 
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
@@ -78,14 +81,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
         private static Decision CreateRandomDecision() =>
             CreateDecisionFiller(dateTimeOffset: GetRandomDateTimeOffset()).Create();
 
-        private static Decision CreateRandomDecision(DateTimeOffset dateTimeOffset, string userId = "") =>
-            CreateDecisionFiller(dateTimeOffset, userId).Create();
-
         private static Patient CreateRandomPatient() =>
             CreatePatientFiller(dateTimeOffset: GetRandomDateTimeOffset()).Create();
-
-        private static Patient CreateRandomPatient(DateTimeOffset dateTimeOffset, string userId = "") =>
-            CreatePatientFiller(dateTimeOffset, userId).Create();
 
         private static NotificationInfo CreateRandomNotificationInfo()
         {
@@ -93,15 +90,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
             {
                 Decision = CreateRandomDecision(),
                 Patient = CreateRandomPatient()
-            };
-        }
-
-        private static NotificationInfo CreateRandomNotificationInfo(DateTimeOffset dateTimeOffset, string userId = "")
-        {
-            return new NotificationInfo
-            {
-                Decision = CreateRandomDecision(dateTimeOffset, userId),
-                Patient = CreateRandomPatient(dateTimeOffset, userId)
             };
         }
 
