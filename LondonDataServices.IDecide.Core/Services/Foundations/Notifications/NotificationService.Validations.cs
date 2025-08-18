@@ -13,7 +13,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
 {
     public partial class NotificationService
     {
-        private async ValueTask ValidateNotificationInfoOnSendCode(NotificationInfo notificationInfo)
+        private async ValueTask ValidateNotificationInfo(NotificationInfo notificationInfo)
         {
             ValidateNotificationInfoIsNotNull(notificationInfo);
 
