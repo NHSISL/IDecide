@@ -102,6 +102,11 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                 }
             });
 
+        public ValueTask SendSubmissionSuccessNotificationAsync(NotificationInfo notificationInfo)
+        {
+            throw new System.NotImplementedException();
+        }
+
         private static void AddIfNotNull(Dictionary<string, dynamic> personalisation, string key, object value)
         {
             if (value != null)
