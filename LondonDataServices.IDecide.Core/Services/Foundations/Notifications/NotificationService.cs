@@ -29,7 +29,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
         public ValueTask SendCodeNotificationAsync(NotificationInfo notificationInfo) =>
             TryCatch(async () =>
             {
-                await ValidateNotificationInfoOnSendCode(notificationInfo);
+                await ValidateNotificationInfo(notificationInfo);
 
                 Dictionary<string, dynamic> personalisation = new Dictionary<string, dynamic>
                 {
@@ -84,8 +84,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                            this.notificationConfig.SmsCodeTemplateId, personalisation);
 
                         await this.notificationBroker.SendSmsAsync(
-                            this.notificationConfig.SmsCodeTemplateId,
-                            personalisation);
+                            this.notificationConfig.SmsCodeTemplateId, personalisation);
 
                         break;
 
@@ -95,6 +94,81 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
 
                         await this.notificationBroker.SendLetterAsync(
                             this.notificationConfig.LetterCodeTemplateId,
+                            personalisation,
+                            string.Empty);
+
+                        break;
+                }
+            });
+
+        public ValueTask SendSubmissionSuccessNotificationAsync(NotificationInfo notificationInfo) =>
+            TryCatch(async () =>
+            {
+                await ValidateNotificationInfo(notificationInfo);
+
+                Dictionary<string, dynamic> personalisation = new Dictionary<string, dynamic>
+                {
+                    { "patient.nhsNumber", notificationInfo.Patient.NhsNumber },
+                    { "patient.title", notificationInfo.Patient.Title },
+                    { "patient.givenName", notificationInfo.Patient.GivenName },
+                    { "patient.surname", notificationInfo.Patient.Surname },
+                    { "patient.dateOfBirth", notificationInfo.Patient.DateOfBirth },
+                    { "patient.gender", notificationInfo.Patient.Gender },
+                    { "patient.email", notificationInfo.Patient.Email },
+                    { "patient.phone", notificationInfo.Patient.Phone },
+                    { "patient.address", notificationInfo.Patient.Address },
+                    { "patient.postCode", notificationInfo.Patient.PostCode },
+                    { "patient.validationCode", notificationInfo.Patient.ValidationCode },
+                    { "patient.validationCodeExpiresOn", notificationInfo.Patient.ValidationCodeExpiresOn },
+                    { "decision.decisionChoice", notificationInfo.Decision.DecisionChoice },
+                    { "decision.decisionType.name", notificationInfo.Decision.DecisionType.Name }
+                };
+
+                AddIfNotNull(
+                    personalisation,
+                    "decision.responsiblePersonGivenName",
+                    notificationInfo.Decision.ResponsiblePersonGivenName);
+
+                AddIfNotNull(
+                    personalisation,
+                    "decision.responsiblePersonSurname",
+                    notificationInfo.Decision.ResponsiblePersonSurname);
+
+                AddIfNotNull(
+                    personalisation,
+                    "decision.responsiblePersonRelationship",
+                    notificationInfo.Decision.ResponsiblePersonRelationship);
+
+                switch (notificationInfo.Patient.NotificationPreference)
+                {
+                    case NotificationPreference.Email:
+                        await ValidateSendEmailInputsOnSendSubmissionSuccess(
+                            notificationInfo.Patient.Email,
+                            this.notificationConfig.EmailSubmissionSuccessTemplateId,
+                            personalisation);
+
+                        await this.notificationBroker.SendEmailAsync(
+                            notificationInfo.Patient.Email,
+                            this.notificationConfig.EmailSubmissionSuccessTemplateId,
+                            personalisation);
+
+                        break;
+
+                    case NotificationPreference.Sms:
+                        await ValidateSendSmsInputsOnSendSubmissionSuccess(
+                            this.notificationConfig.SmsSubmissionSuccessTemplateId, personalisation);
+
+                        await this.notificationBroker.SendSmsAsync(
+                            this.notificationConfig.SmsSubmissionSuccessTemplateId, personalisation);
+
+                        break;
+
+                    case NotificationPreference.Letter:
+                        await ValidateSendLetterInputsOnSendSubmissionSuccess(
+                            this.notificationConfig.LetterSubmissionSuccessTemplateId, personalisation);
+
+                        await this.notificationBroker.SendLetterAsync(
+                            this.notificationConfig.LetterSubmissionSuccessTemplateId,
                             personalisation,
                             string.Empty);
 
