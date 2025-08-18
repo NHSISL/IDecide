@@ -33,6 +33,14 @@ namespace LondonDataServices.IDecide.Core.Brokers.Notifications
             Dictionary<string, dynamic> personalisation) =>
             await notificationAbstractionProvider.SendEmailAsync(toEmail, subject, body, personalisation);
 
+        public ValueTask<string> SendEmailAsync(
+            string toEmail,
+            string templateId,
+            Dictionary<string, dynamic> personalisation)
+        {
+            throw new System.NotImplementedException();
+        }
+
         /// <summary>
         /// Sends a SMS using the specified template ID and personalisation items.
         /// </summary>

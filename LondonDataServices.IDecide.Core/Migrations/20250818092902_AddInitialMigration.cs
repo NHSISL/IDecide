@@ -75,6 +75,7 @@ namespace LondonDataServices.IDecide.Core.Migrations
                     ValidationCode = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
                     ValidationCodeExpiresOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     RetryCount = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
+                    NotificationPreference = table.Column<int>(type: "int", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedBy = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),

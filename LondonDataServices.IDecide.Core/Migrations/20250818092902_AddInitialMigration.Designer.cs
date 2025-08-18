@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LondonDataServices.IDecide.Core.Migrations
 {
     [DbContext(typeof(StorageBroker))]
-    [Migration("20250813165246_AddInitialMigration")]
+    [Migration("20250818092902_AddInitialMigration")]
     partial class AddInitialMigration
     {
         /// <inheritdoc />
@@ -211,6 +211,9 @@ namespace LondonDataServices.IDecide.Core.Migrations
                         .IsRequired()
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
+
+                    b.Property<int>("NotificationPreference")
+                        .HasColumnType("int");
 
                     b.Property<string>("Phone")
                         .HasMaxLength(15)
