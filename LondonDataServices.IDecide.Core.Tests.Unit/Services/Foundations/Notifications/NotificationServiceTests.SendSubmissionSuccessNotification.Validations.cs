@@ -31,12 +31,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                     innerException: nullNotificationInfoException);
 
             // when
-            ValueTask sendCodeNotificationTask =
+            ValueTask sendSubmissionSuccessNotificationTask =
                 this.notificationService.SendSubmissionSuccessNotificationAsync(nullNotificationInfo);
 
             NotificationValidationException actualNotificationValidationException =
                 await Assert.ThrowsAsync<NotificationValidationException>(
-                    () => sendCodeNotificationTask.AsTask());
+                    () => sendSubmissionSuccessNotificationTask.AsTask());
 
             // then
             actualNotificationValidationException.Should().BeEquivalentTo(expectedNotificationValidationException);
@@ -158,12 +158,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                     innerException: invalidArgumentsNotificationException);
 
             // when
-            ValueTask sendCodeNotificationTask =
+            ValueTask sendSubmissionSuccessNotificationTask =
                 this.notificationService.SendSubmissionSuccessNotificationAsync(invalidNotificationInfo);
 
             NotificationValidationException actualNotificationValidationException =
                 await Assert.ThrowsAsync<NotificationValidationException>(
-                    () => sendCodeNotificationTask.AsTask());
+                    () => sendSubmissionSuccessNotificationTask.AsTask());
 
             // then
             actualNotificationValidationException.Should().BeEquivalentTo(expectedNotificationValidationException);
@@ -205,12 +205,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                     innerException: invalidArgumentsNotificationException);
 
             // when
-            ValueTask sendCodeNotificationTask =
+            ValueTask sendSubmissionSuccessNotificationTask =
                 this.notificationService.SendSubmissionSuccessNotificationAsync(inputNotificationInfo);
 
             NotificationValidationException actualNotificationValidationException =
                 await Assert.ThrowsAsync<NotificationValidationException>(
-                    () => sendCodeNotificationTask.AsTask());
+                    () => sendSubmissionSuccessNotificationTask.AsTask());
 
             // then
             actualNotificationValidationException.Should().BeEquivalentTo(expectedNotificationValidationException);
@@ -252,12 +252,59 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                     innerException: invalidArgumentsNotificationException);
 
             // when
-            ValueTask sendCodeNotificationTask =
+            ValueTask sendSubmissionSuccessNotificationTask =
                 this.notificationService.SendSubmissionSuccessNotificationAsync(inputNotificationInfo);
 
             NotificationValidationException actualNotificationValidationException =
                 await Assert.ThrowsAsync<NotificationValidationException>(
-                    () => sendCodeNotificationTask.AsTask());
+                    () => sendSubmissionSuccessNotificationTask.AsTask());
+
+            // then
+            actualNotificationValidationException.Should().BeEquivalentTo(expectedNotificationValidationException);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedNotificationValidationException))),
+                        Times.Once);
+
+            this.notificationBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData(" ")]
+        public async Task
+            ShouldThrowValidationExceptionOnSendSubmissionSuccessNotificationIfSendLetterInputIsInvalidAndLogItAsync(
+                string invalidText)
+        {
+            // given
+            NotificationInfo randomNotificationInfo = CreateRandomNotificationInfo();
+            randomNotificationInfo.Patient.NotificationPreference = NotificationPreference.Letter;
+            NotificationInfo inputNotificationInfo = randomNotificationInfo;
+            this.notificationConfig.LetterSubmissionSuccessTemplateId = invalidText;
+
+            var invalidArgumentsNotificationException =
+                new InvalidArgumentsNotificationException(
+                    message: "Invalid notification arguments. Please correct the errors and try again.");
+
+            invalidArgumentsNotificationException.AddData(
+                key: nameof(NotificationConfig.LetterSubmissionSuccessTemplateId),
+                values: "Text is required");
+
+            var expectedNotificationValidationException =
+                new NotificationValidationException(
+                    message: "Notification validation errors occurred, please try again.",
+                    innerException: invalidArgumentsNotificationException);
+
+            // when
+            ValueTask sendSubmissionSuccessNotificationTask =
+                this.notificationService.SendSubmissionSuccessNotificationAsync(inputNotificationInfo);
+
+            NotificationValidationException actualNotificationValidationException =
+                await Assert.ThrowsAsync<NotificationValidationException>(
+                    () => sendSubmissionSuccessNotificationTask.AsTask());
 
             // then
             actualNotificationValidationException.Should().BeEquivalentTo(expectedNotificationValidationException);
