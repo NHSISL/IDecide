@@ -137,6 +137,19 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                 (Rule: IsInvalid(personalisation), Parameter: nameof(personalisation)));
         }
 
+        private async ValueTask ValidateSendLetterInputsOnSendSubmissionSuccess(
+            string letterSubmissionSuccessTemplateId,
+            Dictionary<string, dynamic> personalisation)
+        {
+            Validate<InvalidArgumentsNotificationException>(
+                message: "Invalid notification arguments. Please correct the errors and try again.",
+
+                (Rule: IsInvalid(letterSubmissionSuccessTemplateId),
+                    Parameter: nameof(NotificationConfig.LetterSubmissionSuccessTemplateId)),
+
+                (Rule: IsInvalid(personalisation), Parameter: nameof(personalisation)));
+        }
+
         private static void ValidateNotificationInfoIsNotNull(NotificationInfo notificationInfo)
         {
             if (notificationInfo is null)
