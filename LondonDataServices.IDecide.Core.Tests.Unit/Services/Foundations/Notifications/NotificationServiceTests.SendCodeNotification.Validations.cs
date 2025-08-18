@@ -57,6 +57,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
             string invalidText)
         {
             // given
+            NotificationPreference invalidNotificationPreference = (NotificationPreference)999;
+            
             var invalidNotificationInfo = new NotificationInfo
             {
                 Patient = new Patient
@@ -71,7 +73,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                     Address = invalidText,
                     PostCode = invalidText,
                     ValidationCode = invalidText,
-                    NotificationPreference = (NotificationPreference)999, // Invalid enum value
+                    NotificationPreference = invalidNotificationPreference,
                 },
                 Decision = new Decision
                 {
