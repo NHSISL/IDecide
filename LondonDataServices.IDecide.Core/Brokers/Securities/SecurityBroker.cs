@@ -3,13 +3,12 @@
 // ---------------------------------------------------------
 
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Models.Securities;
 using ISL.Security.Client.Clients;
-using ISL.Security.Client.Models.Clients;
 using Microsoft.AspNetCore.Http;
+using ISL.Providers.Captcha.Abstractions;
 
 namespace LondonDataServices.IDecide.Core.Brokers.Securities
 {
@@ -21,6 +20,7 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
     {
         private readonly ClaimsPrincipal claimsPrincipal;
         private readonly ISecurityClient securityClient;
+        private readonly ICaptchaAbstractionProvider captchaAbstractionProvider;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SecurityBroker"/> class 
@@ -54,6 +54,17 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
         {
             this.claimsPrincipal = claimsPrincipal;
             this.securityClient = new SecurityClient();
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SecurityBroker"/> class 
+        /// using <see cref="ICaptchaAbstractionProvider"/>.
+        /// This constructor is intended for usage with the ReCaptcha functionality.
+        /// </summary>
+        /// <param name="captchaAbstractionProvider">Provides the captcha provider to use.</param>
+        public SecurityBroker(ICaptchaAbstractionProvider captchaAbstractionProvider)
+        {
+            this.captchaAbstractionProvider = captchaAbstractionProvider;
         }
 
         /// <summary>
@@ -120,5 +131,14 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
 
             return new ClaimsPrincipal(identity);
         }
+
+        /// <summary>
+        /// Validates the Captcha request
+        /// </summary>
+        /// <param name="captchaToken">The captcha token to check.</param>
+        /// <param name="userIp">An optional ip address for the requesting user.</param>
+        /// <returns>True if the user request is successfully validated; otherwise, false.</returns>
+        public async ValueTask<bool> ValidateCaptchaAsync(string captchaToken, string userIp = "") =>
+            await this.captchaAbstractionProvider.ValidateCaptchaAsync(captchaToken, userIp);
     }
 }
