@@ -23,6 +23,7 @@ using LondonDataServices.IDecide.Core.Brokers.Pds;
 using LondonDataServices.IDecide.Core.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Brokers.Storages.Sql;
 using LondonDataServices.IDecide.Core.Models.Brokers.Notifications;
+using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Services.Foundations.Audits;
 using LondonDataServices.IDecide.Core.Services.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes;
@@ -144,8 +145,12 @@ namespace LondonDataServices.IDecide.Portal.Server
                 ApiKey = notificationConfigurations.ApiKey
             };
 
+            NotificationConfig notificationConfig = configuration.GetSection("NotificationConfig")
+                .Get<NotificationConfig>();
+
             services.AddSingleton(notificationConfigurations);
             services.AddSingleton(notifyConfigurations);
+            services.AddSingleton(notificationConfig);
             services.AddTransient<IPdsAbstractionProvider, PdsAbstractionProvider>();
             services.AddTransient<INotificationAbstractionProvider, NotificationAbstractionProvider>();
             services.AddTransient<INotificationProvider, GovukNotifyProvider>();
