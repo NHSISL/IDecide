@@ -58,11 +58,11 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SecurityBroker"/> class 
-        /// using <see cref="ICaptchaAbstractionProvider"/>.
+        /// using <see cref="CaptchaAbstractionProvider"/>.
         /// This constructor is intended for usage with the ReCaptcha functionality.
         /// </summary>
         /// <param name="captchaAbstractionProvider">Provides the captcha provider to use.</param>
-        public SecurityBroker(ICaptchaAbstractionProvider captchaAbstractionProvider)
+        public SecurityBroker(CaptchaAbstractionProvider captchaAbstractionProvider)
         {
             this.captchaAbstractionProvider = captchaAbstractionProvider;
         }
