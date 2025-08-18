@@ -77,7 +77,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                 {
                     DecisionChoice = invalidText,
                     ResponsiblePersonGivenName = invalidText,
-                    ResponiblePersonSurname = invalidText,
+                    ResponsiblePersonSurname = invalidText,
                     ResponsiblePersonRelationship = invalidText,
                     DecisionType = new DecisionType
                     {
@@ -86,74 +86,74 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                 }
             };
 
-            var invalidNotificationInfoException =
-                new InvalidNotificationInfoException(
-                    message: "Invalid notification info. Please correct the errors and try again.");
+            var invalidArgumentsNotificationException =
+                new InvalidArgumentsNotificationException(
+                    message: "Invalid notification arguments. Please correct the errors and try again.");
 
-            invalidNotificationInfoException.AddData(
+            invalidArgumentsNotificationException.AddData(
                 key: nameof(NotificationInfo.Patient.NhsNumber),
                 values: "Text is required");
 
-            invalidNotificationInfoException.AddData(
+            invalidArgumentsNotificationException.AddData(
                 key: nameof(NotificationInfo.Patient.Title),
                 values: "Text is required");
 
-            invalidNotificationInfoException.AddData(
+            invalidArgumentsNotificationException.AddData(
                 key: nameof(NotificationInfo.Patient.GivenName),
                 values: "Text is required");
 
-            invalidNotificationInfoException.AddData(
+            invalidArgumentsNotificationException.AddData(
                 key: nameof(NotificationInfo.Patient.Surname),
                 values: "Text is required");
 
-            invalidNotificationInfoException.AddData(
+            invalidArgumentsNotificationException.AddData(
                 key: nameof(NotificationInfo.Patient.DateOfBirth),
                 values: "Date is required");
 
-            invalidNotificationInfoException.AddData(
+            invalidArgumentsNotificationException.AddData(
                 key: nameof(NotificationInfo.Patient.Gender),
                 values: "Text is required");
 
-            invalidNotificationInfoException.AddData(
+            invalidArgumentsNotificationException.AddData(
                 key: nameof(NotificationInfo.Patient.Email),
                 values: "Text is required");
 
-            invalidNotificationInfoException.AddData(
+            invalidArgumentsNotificationException.AddData(
                 key: nameof(NotificationInfo.Patient.Phone),
                 values: "Text is required");
 
-            invalidNotificationInfoException.AddData(
+            invalidArgumentsNotificationException.AddData(
                 key: nameof(NotificationInfo.Patient.Address),
                 values: "Text is required");
 
-            invalidNotificationInfoException.AddData(
+            invalidArgumentsNotificationException.AddData(
                 key: nameof(NotificationInfo.Patient.PostCode),
                 values: "Text is required");
 
-            invalidNotificationInfoException.AddData(
+            invalidArgumentsNotificationException.AddData(
                 key: nameof(NotificationInfo.Patient.ValidationCode),
                 values: "Text is required");
 
-            invalidNotificationInfoException.AddData(
+            invalidArgumentsNotificationException.AddData(
                 key: nameof(NotificationInfo.Patient.ValidationCodeExpiresOn),
                 values: "Date is required");
 
-            invalidNotificationInfoException.AddData(
+            invalidArgumentsNotificationException.AddData(
                 key: nameof(NotificationInfo.Patient.NotificationPreference),
                 values: "Value is required");
 
-            invalidNotificationInfoException.AddData(
+            invalidArgumentsNotificationException.AddData(
                 key: nameof(NotificationInfo.Decision.DecisionChoice),
                 values: "Text is required");
 
-            invalidNotificationInfoException.AddData(
+            invalidArgumentsNotificationException.AddData(
                 key: nameof(NotificationInfo.Decision.DecisionType.Name),
                 values: "Text is required");
 
             var expectedNotificationValidationException =
                 new NotificationValidationException(
                     message: "Notification validation errors occurred, please try again.",
-                    innerException: invalidNotificationInfoException);
+                    innerException: invalidArgumentsNotificationException);
 
             // when
             ValueTask sendCodeNotificationTask =

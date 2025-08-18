@@ -17,8 +17,8 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
         {
             ValidateNotificationInfoIsNotNull(notificationInfo);
 
-            Validate<InvalidNotificationInfoException>(
-                message: "Invalid notification info. Please correct the errors and try again.",
+            Validate<InvalidArgumentsNotificationException>(
+                message: "Invalid notification arguments. Please correct the errors and try again.",
 
                 (Rule: IsInvalid(
                     notificationInfo.Patient.NhsNumber),

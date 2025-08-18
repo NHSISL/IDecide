@@ -57,7 +57,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                 AddIfNotNull(
                     personalisation,
                     "decision.responsiblePersonSurname",
-                    notificationInfo.Decision.ResponiblePersonSurname);
+                    notificationInfo.Decision.ResponsiblePersonSurname);
 
                 AddIfNotNull(
                     personalisation,
