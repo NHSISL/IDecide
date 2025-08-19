@@ -239,6 +239,9 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                         break;
 
                     case NotificationPreference.Letter:
+                        await ValidateSendLetterInputsOnSendSubscriberUsage(
+                            this.notificationConfig.LetterSubscriberUsageTemplateId, personalisation);
+
                         await this.notificationBroker.SendLetterAsync(
                             this.notificationConfig.LetterSubscriberUsageTemplateId,
                             personalisation,
