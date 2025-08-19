@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -109,6 +110,60 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
                     expectedNotificationDependencyException))),
+                Times.Once);
+
+            this.notificationBrokerMock.Verify(broker =>
+                broker.SendEmailAsync(
+                    It.IsAny<string>(),
+                    It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, dynamic>>()),
+                Times.Once);
+
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.notificationBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnSendSubscriberUsageNotificationAndLogItAsync()
+        {
+            // given
+            NotificationInfo randomNotificationInfo = CreateRandomNotificationInfo();
+            randomNotificationInfo.Patient.NotificationPreference = NotificationPreference.Email;
+            NotificationInfo inputNotificationInfo = randomNotificationInfo;
+
+            Exception exception = new Exception();
+
+            var failedServiceNotificationException =
+                new FailedServiceNotificationException(
+                    message: "Failed service notification error occurred, contact support.",
+                    innerException: exception,
+                    data: exception.Data);
+
+            var expectedNotificationServiceException = new NotificationServiceException(
+                message: "Notification service error occurred, contact support.",
+                innerException: failedServiceNotificationException);
+
+            this.notificationBrokerMock.Setup(broker =>
+                broker.SendEmailAsync(
+                    It.IsAny<string>(),
+                    It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, dynamic>>()))
+                .ThrowsAsync(exception);
+
+            // when
+            ValueTask sendSubscriberUsageNotificationTask =
+                this.notificationService.SendSubscriberUsageNotificationAsync(inputNotificationInfo);
+
+            NotificationServiceException actualException =
+                await Assert.ThrowsAsync<NotificationServiceException>(
+                    sendSubscriberUsageNotificationTask.AsTask);
+
+            // then
+            actualException.Should().BeEquivalentTo(expectedNotificationServiceException);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedNotificationServiceException))),
                 Times.Once);
 
             this.notificationBrokerMock.Verify(broker =>
