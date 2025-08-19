@@ -217,6 +217,11 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                 switch (notificationInfo.Patient.NotificationPreference)
                 {
                     case NotificationPreference.Email:
+                        await ValidateSendEmailInputsOnSendSubscriberUsage(
+                            notificationInfo.Patient.Email,
+                            this.notificationConfig.EmailSubscriberUsageTemplateId,
+                            personalisation);
+
                         await this.notificationBroker.SendEmailAsync(
                             notificationInfo.Patient.Email,
                             this.notificationConfig.EmailSubscriberUsageTemplateId,
