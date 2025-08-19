@@ -230,6 +230,9 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                         break;
 
                     case NotificationPreference.Sms:
+                        await ValidateSendSmsInputsOnSendSubscriberUsage(
+                            this.notificationConfig.SmsSubscriberUsageTemplateId, personalisation);
+
                         await this.notificationBroker.SendSmsAsync(
                             this.notificationConfig.SmsSubscriberUsageTemplateId, personalisation);
 

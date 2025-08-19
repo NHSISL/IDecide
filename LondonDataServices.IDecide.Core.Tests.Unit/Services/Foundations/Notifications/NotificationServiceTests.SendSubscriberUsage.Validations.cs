@@ -231,8 +231,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
         [InlineData("")]
         [InlineData(" ")]
         public async Task
-    ShouldThrowValidationExceptionOnSendSubscriberUsageNotificationIfSendSmsInputIsInvalidAndLogItAsync(
-        string invalidText)
+            ShouldThrowValidationExceptionOnSendSubscriberUsageNotificationIfSendSmsInputIsInvalidAndLogItAsync(
+                string invalidText)
         {
             // given
             NotificationInfo randomNotificationInfo = CreateRandomNotificationInfo();
