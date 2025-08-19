@@ -22,7 +22,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
             randomNotificationInfo.Patient.NotificationPreference = notificationPreference;
             NotificationInfo inputNotificationInfo = randomNotificationInfo;
             Dictionary<string, dynamic> personalisation = GetPersonalisation(inputNotificationInfo);
-
             string result = GetRandomString();
 
             switch (notificationPreference)
