@@ -38,7 +38,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                 LetterCodeTemplateId = GetRandomString(),
                 EmailSubmissionSuccessTemplateId = GetRandomString(),
                 SmsSubmissionSuccessTemplateId = GetRandomString(),
-                LetterSubmissionSuccessTemplateId = GetRandomString()
+                LetterSubmissionSuccessTemplateId = GetRandomString(),
+                EmailSubscriberUsageTemplateId = GetRandomString(),
+                SmsSubscriberUsageTemplateId = GetRandomString(),
+                LetterSubscriberUsageTemplateId = GetRandomString()
             };
 
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
