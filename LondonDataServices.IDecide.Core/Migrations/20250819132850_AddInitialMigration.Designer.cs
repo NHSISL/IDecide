@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LondonDataServices.IDecide.Core.Migrations
 {
     [DbContext(typeof(StorageBroker))]
-    [Migration("20250818092902_AddInitialMigration")]
+    [Migration("20250819132850_AddInitialMigration")]
     partial class AddInitialMigration
     {
         /// <inheritdoc />
@@ -80,6 +80,41 @@ namespace LondonDataServices.IDecide.Core.Migrations
                     b.HasIndex("LogLevel");
 
                     b.ToTable("Audits", "Audit");
+                });
+
+            modelBuilder.Entity("LondonDataServices.IDecide.Core.Models.Foundations.Consumers.Consumer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTimeOffset>("UpdatedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Consumers", "Consumer");
                 });
 
             modelBuilder.Entity("LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes.DecisionType", b =>

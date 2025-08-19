@@ -79,6 +79,41 @@ namespace LondonDataServices.IDecide.Core.Migrations
                     b.ToTable("Audits", "Audit");
                 });
 
+            modelBuilder.Entity("LondonDataServices.IDecide.Core.Models.Foundations.Consumers.Consumer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTimeOffset>("UpdatedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Consumers", "Consumer");
+                });
+
             modelBuilder.Entity("LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes.DecisionType", b =>
                 {
                     b.Property<Guid>("Id")
