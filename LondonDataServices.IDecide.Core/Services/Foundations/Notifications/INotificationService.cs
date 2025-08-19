@@ -11,5 +11,6 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
     {
         ValueTask SendCodeNotificationAsync(NotificationInfo notificationInfo);
         ValueTask SendSubmissionSuccessNotificationAsync(NotificationInfo notificationInfo);
+        ValueTask SendSubscriberUsageNotificationAsync(NotificationInfo notificationInfo);
     }
 }

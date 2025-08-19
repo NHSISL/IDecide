@@ -63,7 +63,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
             }
 
             // when
-            await this.notificationService.SendCodeNotificationAsync(notificationInfo: inputNotificationInfo);
+            await this.notificationService.SendSubscriberUsageNotificationAsync(notificationInfo: inputNotificationInfo);
 
             // then
             switch (notificationPreference)
