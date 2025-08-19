@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using EFxceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Audits;
+using LondonDataServices.IDecide.Core.Models.Foundations.Consumers;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
@@ -47,6 +48,7 @@ namespace LondonDataServices.IDecide.Core.Brokers.Storages.Sql
         private static void AddConfigurations(ModelBuilder modelBuilder)
         {
             AddAuditConfigurations(modelBuilder.Entity<Audit>());
+            AddConsumerConfigurations(modelBuilder.Entity<Consumer>());
             AddDecisionTypeConfigurations(modelBuilder.Entity<DecisionType>());
             AddDecisionConfigurations(modelBuilder.Entity<Decision>());
             AddPatientConfigurations(modelBuilder.Entity<Patient>());
