@@ -33,9 +33,12 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Consumers
             this.loggingBroker = loggingBroker;
         }
 
-        public ValueTask<Consumer> AddConsumerAsync(Consumer consumer)
+        public async ValueTask<Consumer> AddConsumerAsync(Consumer consumer)
         {
-            throw new System.NotImplementedException();
+            consumer = await this.securityAuditBroker.ApplyAddAuditValuesAsync(consumer);
+            await ValidateConsumerOnAdd(consumer);
+
+            return await this.storageBroker.InsertConsumerAsync(consumer);
         }
     }
 }
