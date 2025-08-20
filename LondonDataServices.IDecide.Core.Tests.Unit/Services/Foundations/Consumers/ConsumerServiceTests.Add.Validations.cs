@@ -5,6 +5,7 @@
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Force.DeepCloner;
 using LondonDataServices.IDecide.Core.Models.Foundations.Consumers;
 using LondonDataServices.IDecide.Core.Models.Foundations.Consumers.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Securities;
@@ -252,6 +253,82 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
             invalidConsumerException.AddData(
                 key: nameof(Consumer.UpdatedDate),
                 values: $"Date is not the same as {nameof(Consumer.CreatedDate)}");
+
+            var expectedConsumerValidationException =
+                new ConsumerValidationException(
+                    message: "Consumer validation errors occurred, please try again.",
+                    innerException: invalidConsumerException);
+
+            this.securityAuditBrokerMock.Setup(broker =>
+                broker.ApplyAddAuditValuesAsync(invalidConsumer))
+                    .ReturnsAsync(invalidConsumer);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTimeOffset);
+
+            this.securityBrokerMock.Setup(broker =>
+                broker.GetCurrentUserAsync())
+                    .ReturnsAsync(randomUser);
+
+            // when
+            ValueTask<Consumer> addConsumerTask =
+                this.consumerService.AddConsumerAsync(invalidConsumer);
+
+            ConsumerValidationException actualConsumerValidationException =
+                await Assert.ThrowsAsync<ConsumerValidationException>(() =>
+                    addConsumerTask.AsTask());
+
+            // then
+            actualConsumerValidationException.Should()
+                .BeEquivalentTo(expectedConsumerValidationException);
+
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.ApplyAddAuditValuesAsync(invalidConsumer),
+                    Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once());
+
+            this.securityBrokerMock.Verify(broker =>
+                broker.GetCurrentUserAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedConsumerValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertConsumerAsync(It.IsAny<Consumer>()),
+                    Times.Never);
+
+            this.securityAuditBrokerMock.VerifyNoOtherCalls();
+            this.securityBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnAddIfCreateAndUpdateUsersIsNotSameAndLogItAsync()
+        {
+            // given
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            string randomUserId = GetRandomString();
+            User randomUser = CreateRandomUser(userId: randomUserId);
+            Consumer randomConsumer = CreateRandomConsumer(randomDateTimeOffset, userId: randomUserId);
+            Consumer invalidConsumer = randomConsumer.DeepClone();
+            invalidConsumer.UpdatedBy = Guid.NewGuid().ToString();
+
+            var invalidConsumerException =
+                new InvalidConsumerException(
+                    message: "Invalid consumer. Please correct the errors and try again.");
+
+            invalidConsumerException.AddData(
+                key: nameof(Consumer.UpdatedBy),
+                values: $"Text is not the same as {nameof(Consumer.CreatedBy)}");
 
             var expectedConsumerValidationException =
                 new ConsumerValidationException(
