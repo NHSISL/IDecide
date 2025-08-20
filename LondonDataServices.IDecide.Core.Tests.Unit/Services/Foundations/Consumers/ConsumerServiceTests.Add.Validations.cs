@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Consumers;
@@ -197,6 +198,85 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
             ConsumerValidationException actualConsumerValidationException =
                 await Assert.ThrowsAsync<ConsumerValidationException>(
                     addConsumerTask.AsTask);
+
+            // then
+            actualConsumerValidationException.Should()
+                .BeEquivalentTo(expectedConsumerValidationException);
+
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.ApplyAddAuditValuesAsync(invalidConsumer),
+                    Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once());
+
+            this.securityBrokerMock.Verify(broker =>
+                broker.GetCurrentUserAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedConsumerValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertConsumerAsync(It.IsAny<Consumer>()),
+                    Times.Never);
+
+            this.securityAuditBrokerMock.VerifyNoOtherCalls();
+            this.securityBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnAddIfCreateAndUpdateDatesIsNotSameAndLogItAsync()
+        {
+            // given
+            int randomNumber = GetRandomNumber();
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            string randomUserId = GetRandomString();
+            User randomUser = CreateRandomUser(userId: randomUserId);
+            Consumer randomConsumer = CreateRandomConsumer(randomDateTimeOffset, userId: randomUserId);
+            Consumer invalidConsumer = randomConsumer;
+
+            invalidConsumer.UpdatedDate =
+                invalidConsumer.CreatedDate.AddDays(randomNumber);
+
+            var invalidConsumerException =
+                new InvalidConsumerException(
+                    message: "Invalid consumer. Please correct the errors and try again.");
+
+            invalidConsumerException.AddData(
+                key: nameof(Consumer.UpdatedDate),
+                values: $"Date is not the same as {nameof(Consumer.CreatedDate)}");
+
+            var expectedConsumerValidationException =
+                new ConsumerValidationException(
+                    message: "Consumer validation errors occurred, please try again.",
+                    innerException: invalidConsumerException);
+
+            this.securityAuditBrokerMock.Setup(broker =>
+                broker.ApplyAddAuditValuesAsync(invalidConsumer))
+                    .ReturnsAsync(invalidConsumer);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTimeOffset);
+
+            this.securityBrokerMock.Setup(broker =>
+                broker.GetCurrentUserAsync())
+                    .ReturnsAsync(randomUser);
+
+            // when
+            ValueTask<Consumer> addConsumerTask =
+                this.consumerService.AddConsumerAsync(invalidConsumer);
+
+            ConsumerValidationException actualConsumerValidationException =
+                await Assert.ThrowsAsync<ConsumerValidationException>(() =>
+                    addConsumerTask.AsTask());
 
             // then
             actualConsumerValidationException.Should()
