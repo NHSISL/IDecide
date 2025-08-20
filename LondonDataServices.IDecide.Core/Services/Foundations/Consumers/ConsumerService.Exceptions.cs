@@ -5,6 +5,7 @@
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Models.Foundations.Consumers;
 using LondonDataServices.IDecide.Core.Models.Foundations.Consumers.Exceptions;
+using Microsoft.Data.SqlClient;
 using Xeptions;
 
 namespace LondonDataServices.IDecide.Core.Services.Foundations.Consumers
@@ -27,6 +28,15 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Consumers
             {
                 throw await CreateAndLogValidationException(invalidConsumerException);
             }
+            catch (SqlException sqlException)
+            {
+                var failedConsumerStorageException =
+                    new FailedConsumerStorageException(
+                        message: "Failed consumer storage error occurred, contact support.",
+                        innerException: sqlException);
+
+                throw await CreateAndLogCriticalDependencyException(failedConsumerStorageException);
+            }
         }
 
         private async ValueTask<ConsumerValidationException> CreateAndLogValidationException(Xeption exception)
@@ -39,6 +49,19 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Consumers
             await this.loggingBroker.LogErrorAsync(consumerValidationException);
 
             return consumerValidationException;
+        }
+
+        private async ValueTask<ConsumerDependencyException> CreateAndLogCriticalDependencyException(
+            Xeption exception)
+        {
+            var consumerDependencyException =
+                new ConsumerDependencyException(
+                    message: "Consumer dependency error occurred, contact support.",
+                    innerException: exception);
+
+            await this.loggingBroker.LogCriticalAsync(consumerDependencyException);
+
+            return consumerDependencyException;
         }
     }
 }
