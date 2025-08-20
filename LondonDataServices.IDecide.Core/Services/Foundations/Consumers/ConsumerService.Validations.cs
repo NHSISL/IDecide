@@ -15,11 +15,20 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Consumers
     {
         private async ValueTask ValidateConsumerOnAdd(Consumer consumer)
         {
+            ValidateConsumerIsNotNull(consumer);
             User currentUser = await this.securityBroker.GetCurrentUserAsync();
 
             Validate<InvalidConsumerException>(
                 message: "Invalid consumer. Please correct the errors and try again.",
                 (Rule: await IsNotRecentAsync(consumer.CreatedDate), Parameter: nameof(Consumer.CreatedDate)));
+        }
+
+        private static void ValidateConsumerIsNotNull(Consumer consumer)
+        {
+            if (consumer is null)
+            {
+                throw new NullConsumerException(message: "Consumer is null.");
+            }
         }
 
         private async ValueTask<dynamic> IsNotRecentAsync(DateTimeOffset date)
