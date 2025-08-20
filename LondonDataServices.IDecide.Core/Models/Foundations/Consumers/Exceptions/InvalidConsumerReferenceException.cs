@@ -2,14 +2,14 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using Xeptions;
 
 namespace LondonDataServices.IDecide.Core.Models.Foundations.Consumers.Exceptions
 {
-    public class ConsumerValidationException : Xeption
+    public class InvalidConsumerReferenceException : Xeption
     {
-        public ConsumerValidationException(string message, Xeption innerException)
-            : base(message, innerException)
-        { }
+        public InvalidConsumerReferenceException(string message, Exception innerException)
+            : base(message, innerException) { }
     }
 }
