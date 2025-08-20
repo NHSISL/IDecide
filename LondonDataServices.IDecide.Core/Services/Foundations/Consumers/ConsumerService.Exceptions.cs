@@ -47,6 +47,15 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Consumers
 
                 throw await CreateAndLogDependencyValidationException(alreadyExistsConsumerException);
             }
+            catch (ForeignKeyConstraintConflictException foreignKeyConstraintConflictException)
+            {
+                var invalidConsumerReferenceException =
+                    new InvalidConsumerReferenceException(
+                        message: "Invalid consumer reference error occurred.",
+                        innerException: foreignKeyConstraintConflictException);
+
+                throw await CreateAndLogDependencyValidationException(invalidConsumerReferenceException);
+            }
         }
 
         private async ValueTask<ConsumerValidationException> CreateAndLogValidationException(Xeption exception)
