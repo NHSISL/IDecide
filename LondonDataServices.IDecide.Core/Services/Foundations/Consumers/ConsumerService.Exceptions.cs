@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Consumers;
@@ -66,6 +67,15 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Consumers
 
                 throw await CreateAndLogDependencyException(failedConsumerStorageException);
             }
+            catch (Exception exception)
+            {
+                var failedConsumerServiceException =
+                    new FailedConsumerServiceException(
+                        message: "Failed consumer service occurred, please contact support",
+                        innerException: exception);
+
+                throw await CreateAndLogServiceException(failedConsumerServiceException);
+            }
         }
 
         private async ValueTask<ConsumerValidationException> CreateAndLogValidationException(Xeption exception)
@@ -117,6 +127,19 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Consumers
             await this.loggingBroker.LogErrorAsync(consumerDependencyException);
 
             return consumerDependencyException;
+        }
+
+        private async ValueTask<ConsumerServiceException> CreateAndLogServiceException(
+            Xeption exception)
+        {
+            var consumerServiceException =
+                new ConsumerServiceException(
+                    message: "Consumer service error occurred, contact support.",
+                    innerException: exception);
+
+            await this.loggingBroker.LogErrorAsync(consumerServiceException);
+
+            return consumerServiceException;
         }
     }
 }
