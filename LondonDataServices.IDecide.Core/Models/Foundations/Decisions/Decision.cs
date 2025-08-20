@@ -3,6 +3,8 @@
 // ---------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
+using LondonDataServices.IDecide.Core.Models.Foundations.Consumers;
 using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -29,5 +31,8 @@ namespace LondonDataServices.IDecide.Core.Models.Foundations.Decisions
 
         [BindNever]
         public Patient Patient { get; set; } = null!;
+
+        [BindNever]
+        public List<ConsumerStatus> ConsumerStatuses { get; set; } = new List<ConsumerStatus>();
     }
 }

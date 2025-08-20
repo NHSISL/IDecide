@@ -48,6 +48,7 @@ namespace LondonDataServices.IDecide.Core.Brokers.Storages.Sql
         {
             AddAuditConfigurations(modelBuilder.Entity<Audit>());
             AddConsumerConfigurations(modelBuilder.Entity<Consumer>());
+            AddConsumerStatusConfigurations(modelBuilder.Entity<ConsumerStatus>());
             AddDecisionTypeConfigurations(modelBuilder.Entity<DecisionType>());
             AddDecisionConfigurations(modelBuilder.Entity<Decision>());
             AddPatientConfigurations(modelBuilder.Entity<Patient>());
