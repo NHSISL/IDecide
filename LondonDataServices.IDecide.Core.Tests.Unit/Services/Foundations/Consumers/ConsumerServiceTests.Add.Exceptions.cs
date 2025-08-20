@@ -76,7 +76,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
         }
 
         [Fact]
-        public async Task ShouldThrowDependencyValidationExceptionOnAddIfConsumerAlreadyExsitsAndLogItAsync()
+        public async Task ShouldThrowDependencyValidationExceptionOnAddIfConsumerAlreadyExistsAndLogItAsync()
         {
             // given
             Consumer randomConsumer = CreateRandomConsumer();
