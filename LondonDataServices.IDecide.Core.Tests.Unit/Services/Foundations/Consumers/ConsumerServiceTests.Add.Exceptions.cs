@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using FluentAssertions;
@@ -247,6 +248,58 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
                     expectedConsumerDependencyException))),
+                        Times.Once);
+
+            this.securityAuditBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.securityBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnAddIfServiceErrorOccursAndLogItAsync()
+        {
+            // given
+            Consumer someConsumer = CreateRandomConsumer();
+            var serviceException = new Exception();
+
+            var failedConsumerServiceException =
+                new FailedConsumerServiceException(
+                    message: "Failed consumer service occurred, please contact support",
+                    innerException: serviceException);
+
+            var expectedConsumerServiceException =
+                new ConsumerServiceException(
+                    message: "Consumer service error occurred, contact support.",
+                    innerException: failedConsumerServiceException);
+
+            this.securityAuditBrokerMock.Setup(broker =>
+                broker.ApplyAddAuditValuesAsync(It.IsAny<Consumer>()))
+                    .ThrowsAsync(serviceException);
+
+            // when
+            ValueTask<Consumer> addConsumerTask = this.consumerService.AddConsumerAsync(someConsumer);
+
+            ConsumerServiceException actualConsumerServiceException =
+                await Assert.ThrowsAsync<ConsumerServiceException>(
+                    addConsumerTask.AsTask);
+
+            // then
+            actualConsumerServiceException.Should()
+                .BeEquivalentTo(expectedConsumerServiceException);
+
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.ApplyAddAuditValuesAsync(It.IsAny<Consumer>()),
+                    Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertConsumerAsync(It.IsAny<Consumer>()),
+                    Times.Never);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedConsumerServiceException))),
                         Times.Once);
 
             this.securityAuditBrokerMock.VerifyNoOtherCalls();
