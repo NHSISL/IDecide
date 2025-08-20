@@ -15,6 +15,9 @@ namespace LondonDataServices.IDecide.Core.Migrations
                 name: "Audit");
 
             migrationBuilder.EnsureSchema(
+                name: "Consumer");
+
+            migrationBuilder.EnsureSchema(
                 name: "Decision");
 
             migrationBuilder.CreateTable(
@@ -37,6 +40,23 @@ namespace LondonDataServices.IDecide.Core.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Audits", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Consumers",
+                schema: "Consumer",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    UpdatedBy = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Consumers", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -140,6 +160,13 @@ namespace LondonDataServices.IDecide.Core.Migrations
                 column: "LogLevel");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Consumers_Name",
+                schema: "Consumer",
+                table: "Consumers",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Decisions_DecisionTypeId",
                 schema: "Decision",
                 table: "Decisions",
@@ -158,6 +185,10 @@ namespace LondonDataServices.IDecide.Core.Migrations
             migrationBuilder.DropTable(
                 name: "Audits",
                 schema: "Audit");
+
+            migrationBuilder.DropTable(
+                name: "Consumers",
+                schema: "Consumer");
 
             migrationBuilder.DropTable(
                 name: "Decisions",

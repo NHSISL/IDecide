@@ -6,6 +6,10 @@ using System.IO;
 using System.Text.Json;
 using Attrify.Extensions;
 using Attrify.InvisibleApi.Models;
+using ISL.Providers.Captcha.Abstractions;
+using ISL.Providers.Captcha.FakeCaptcha.Providers.FakeCaptcha;
+using ISL.Providers.Captcha.GoogleReCaptcha.Models.Brokers.GoogleReCaptcha;
+using ISL.Providers.Captcha.GoogleReCaptcha.Providers;
 using ISL.Providers.Notifications.Abstractions;
 using ISL.Providers.Notifications.GovukNotify.Models;
 using ISL.Providers.Notifications.GovukNotify.Providers.Notifications;
@@ -153,9 +157,13 @@ namespace LondonDataServices.IDecide.Portal.Server
             services.AddTransient<IPdsAbstractionProvider, PdsAbstractionProvider>();
             services.AddTransient<INotificationAbstractionProvider, NotificationAbstractionProvider>();
             services.AddTransient<INotificationProvider, GovukNotifyProvider>();
+            services.AddTransient<ICaptchaAbstractionProvider, CaptchaAbstractionProvider>();
 
             bool fakeFHIRProviderMode = configuration
                 .GetSection("FakeFHIRProviderMode").Get<bool>();
+
+            bool fakeCaptchaProviderMode = configuration
+                .GetSection("FakeCaptchaProviderMode").Get<bool>();
 
             if (fakeFHIRProviderMode == true)
             {
@@ -174,6 +182,20 @@ namespace LondonDataServices.IDecide.Portal.Server
 
                 services.AddSingleton(pdsFhirConfigurations);
                 services.AddTransient<IPdsProvider, PdsFHIRProvider>();
+            }
+
+            if (fakeCaptchaProviderMode == true)
+            {
+                services.AddTransient<ICaptchaProvider, FakeCaptchaProvider>();
+            }
+            else
+            {
+                GoogleReCaptchaConfigurations reCaptchaConfigurations = configuration
+                .GetSection("googleReCaptchaConfigurations")
+                    .Get<GoogleReCaptchaConfigurations>();
+
+                services.AddSingleton(reCaptchaConfigurations);
+                services.AddTransient<ICaptchaProvider, GoogleReCaptchaProvider>();
             }
         }
 

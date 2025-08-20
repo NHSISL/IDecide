@@ -16,7 +16,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
     public partial class NotificationServiceTests
     {
         [Fact]
-        public async Task ShouldThrowValidationExceptionOnSendCodeNotificationWhenNotificationInfoIsNullAndLogItAsync()
+        public async Task
+            ShouldThrowValidationExceptionOnSendSubscriberUsageNotificationWhenNotificationInfoIsNullAndLogItAsync()
         {
             // given
             NotificationInfo nullNotificationInfo = null;
@@ -30,20 +31,20 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                     innerException: nullNotificationInfoException);
 
             // when
-            ValueTask sendCodeNotificationTask =
-                this.notificationService.SendCodeNotificationAsync(nullNotificationInfo);
+            ValueTask sendSubscriberUsageNotificationTask =
+                this.notificationService.SendSubscriberUsageNotificationAsync(nullNotificationInfo);
 
             NotificationValidationException actualNotificationValidationException =
                 await Assert.ThrowsAsync<NotificationValidationException>(
-                    () => sendCodeNotificationTask.AsTask());
+                    () => sendSubscriberUsageNotificationTask.AsTask());
 
             // then
             actualNotificationValidationException.Should().BeEquivalentTo(expectedNotificationValidationException);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogErrorAsync(It.Is(SameExceptionAs(
-                    expectedNotificationValidationException))),
-                        Times.Once);
+                    broker.LogErrorAsync(It.Is(SameExceptionAs(
+                        expectedNotificationValidationException))),
+                Times.Once);
 
             this.notificationBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
@@ -53,12 +54,13 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
         [InlineData(null)]
         [InlineData("")]
         [InlineData(" ")]
-        public async Task ShouldThrowValidationExceptionOnSendCodeNotificationIfNotificationInfoIsInvalidAndLogItAsync(
-            string invalidText)
+        public async Task
+            ShouldThrowValidationExceptionOnSendSubscriberUsageNotificationIfNotificationInfoIsInvalidAndLogItAsync(
+                string invalidText)
         {
             // given
             NotificationPreference invalidNotificationPreference = (NotificationPreference)999;
-            
+
             var invalidNotificationInfo = new NotificationInfo
             {
                 Patient = new Patient
@@ -158,12 +160,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                     innerException: invalidArgumentsNotificationException);
 
             // when
-            ValueTask sendCodeNotificationTask =
-                this.notificationService.SendCodeNotificationAsync(invalidNotificationInfo);
+            ValueTask sendSubscriberUsageNotificationTask =
+                this.notificationService.SendSubscriberUsageNotificationAsync(invalidNotificationInfo);
 
             NotificationValidationException actualNotificationValidationException =
                 await Assert.ThrowsAsync<NotificationValidationException>(
-                    () => sendCodeNotificationTask.AsTask());
+                    () => sendSubscriberUsageNotificationTask.AsTask());
 
             // then
             actualNotificationValidationException.Should().BeEquivalentTo(expectedNotificationValidationException);
@@ -181,21 +183,22 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
         [InlineData(null)]
         [InlineData("")]
         [InlineData(" ")]
-        public async Task ShouldThrowValidationExceptionOnSendCodeNotificationIfSendEmailInputIsInvalidAndLogItAsync(
-            string invalidText)
+        public async Task
+            ShouldThrowValidationExceptionOnSendSubscriberUsageNotificationIfSendEmailInputIsInvalidAndLogItAsync(
+                string invalidText)
         {
             // given
             NotificationInfo randomNotificationInfo = CreateRandomNotificationInfo();
             randomNotificationInfo.Patient.NotificationPreference = NotificationPreference.Email;
             NotificationInfo inputNotificationInfo = randomNotificationInfo;
-            this.notificationConfig.EmailCodeTemplateId = invalidText;
+            this.notificationConfig.EmailSubscriberUsageTemplateId = invalidText;
 
             var invalidArgumentsNotificationException =
                 new InvalidArgumentsNotificationException(
                     message: "Invalid notification arguments. Please correct the errors and try again.");
 
             invalidArgumentsNotificationException.AddData(
-                key: nameof(NotificationConfig.EmailCodeTemplateId),
+                key: nameof(NotificationConfig.EmailSubscriberUsageTemplateId),
                 values: "Text is required");
 
             var expectedNotificationValidationException =
@@ -204,12 +207,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                     innerException: invalidArgumentsNotificationException);
 
             // when
-            ValueTask sendCodeNotificationTask =
-                this.notificationService.SendCodeNotificationAsync(inputNotificationInfo);
+            ValueTask sendSubscriberUsageNotificationTask =
+                this.notificationService.SendSubscriberUsageNotificationAsync(inputNotificationInfo);
 
             NotificationValidationException actualNotificationValidationException =
                 await Assert.ThrowsAsync<NotificationValidationException>(
-                    () => sendCodeNotificationTask.AsTask());
+                    () => sendSubscriberUsageNotificationTask.AsTask());
 
             // then
             actualNotificationValidationException.Should().BeEquivalentTo(expectedNotificationValidationException);
@@ -227,21 +230,22 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
         [InlineData(null)]
         [InlineData("")]
         [InlineData(" ")]
-        public async Task ShouldThrowValidationExceptionOnSendCodeNotificationIfSendSmsInputIsInvalidAndLogItAsync(
-            string invalidText)
+        public async Task
+            ShouldThrowValidationExceptionOnSendSubscriberUsageNotificationIfSendSmsInputIsInvalidAndLogItAsync(
+                string invalidText)
         {
             // given
             NotificationInfo randomNotificationInfo = CreateRandomNotificationInfo();
             randomNotificationInfo.Patient.NotificationPreference = NotificationPreference.Sms;
             NotificationInfo inputNotificationInfo = randomNotificationInfo;
-            this.notificationConfig.SmsCodeTemplateId = invalidText;
+            this.notificationConfig.SmsSubscriberUsageTemplateId = invalidText;
 
             var invalidArgumentsNotificationException =
                 new InvalidArgumentsNotificationException(
                     message: "Invalid notification arguments. Please correct the errors and try again.");
 
             invalidArgumentsNotificationException.AddData(
-                key: nameof(NotificationConfig.SmsCodeTemplateId),
+                key: nameof(NotificationConfig.SmsSubscriberUsageTemplateId),
                 values: "Text is required");
 
             var expectedNotificationValidationException =
@@ -250,12 +254,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                     innerException: invalidArgumentsNotificationException);
 
             // when
-            ValueTask sendCodeNotificationTask =
-                this.notificationService.SendCodeNotificationAsync(inputNotificationInfo);
+            ValueTask sendSubscriberUsageNotificationTask =
+                this.notificationService.SendSubscriberUsageNotificationAsync(inputNotificationInfo);
 
             NotificationValidationException actualNotificationValidationException =
                 await Assert.ThrowsAsync<NotificationValidationException>(
-                    () => sendCodeNotificationTask.AsTask());
+                    () => sendSubscriberUsageNotificationTask.AsTask());
 
             // then
             actualNotificationValidationException.Should().BeEquivalentTo(expectedNotificationValidationException);
@@ -273,21 +277,22 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
         [InlineData(null)]
         [InlineData("")]
         [InlineData(" ")]
-        public async Task ShouldThrowValidationExceptionOnSendCodeNotificationIfSendLetterInputIsInvalidAndLogItAsync(
-            string invalidText)
+        public async Task
+            ShouldThrowValidationExceptionOnSendSubscriberUsageNotificationIfSendLetterInputIsInvalidAndLogItAsync(
+                string invalidText)
         {
             // given
             NotificationInfo randomNotificationInfo = CreateRandomNotificationInfo();
             randomNotificationInfo.Patient.NotificationPreference = NotificationPreference.Letter;
             NotificationInfo inputNotificationInfo = randomNotificationInfo;
-            this.notificationConfig.LetterCodeTemplateId = invalidText;
+            this.notificationConfig.LetterSubscriberUsageTemplateId = invalidText;
 
             var invalidArgumentsNotificationException =
                 new InvalidArgumentsNotificationException(
                     message: "Invalid notification arguments. Please correct the errors and try again.");
 
             invalidArgumentsNotificationException.AddData(
-                key: nameof(NotificationConfig.LetterCodeTemplateId),
+                key: nameof(NotificationConfig.LetterSubscriberUsageTemplateId),
                 values: "Text is required");
 
             var expectedNotificationValidationException =
@@ -296,12 +301,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                     innerException: invalidArgumentsNotificationException);
 
             // when
-            ValueTask sendCodeNotificationTask =
-                this.notificationService.SendCodeNotificationAsync(inputNotificationInfo);
+            ValueTask sendSubscriberUsageNotificationTask =
+                this.notificationService.SendSubscriberUsageNotificationAsync(inputNotificationInfo);
 
             NotificationValidationException actualNotificationValidationException =
                 await Assert.ThrowsAsync<NotificationValidationException>(
-                    () => sendCodeNotificationTask.AsTask());
+                    () => sendSubscriberUsageNotificationTask.AsTask());
 
             // then
             actualNotificationValidationException.Should().BeEquivalentTo(expectedNotificationValidationException);

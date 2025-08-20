@@ -17,7 +17,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
     public partial class NotificationServiceTests
     {
         [Fact]
-        public async Task ShouldThrowDependencyValidationExceptionOnSendCodeNotificationAndLogItAsync()
+        public async Task ShouldThrowDependencyValidationExceptionOnSendSubscriberUsageNotificationAndLogItAsync()
         {
             // given
             NotificationInfo randomNotificationInfo = CreateRandomNotificationInfo();
@@ -44,12 +44,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                 .ThrowsAsync(notificationProviderValidationException);
 
             // when
-            ValueTask sendCodeNotificationTask =
-                this.notificationService.SendCodeNotificationAsync(inputNotificationInfo);
+            ValueTask sendSubscriberUsageNotificationTask =
+                this.notificationService.SendSubscriberUsageNotificationAsync(inputNotificationInfo);
 
             NotificationDependencyValidationException actualException =
                 await Assert.ThrowsAsync<NotificationDependencyValidationException>(
-                    sendCodeNotificationTask.AsTask);
+                    sendSubscriberUsageNotificationTask.AsTask);
 
             // then
             actualException.Should().BeEquivalentTo(expectedNotificationDependencyValidationException);
@@ -72,7 +72,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
 
         [Theory]
         [MemberData(nameof(DependencyExceptions))]
-        public async Task ShouldThrowDependencyExceptionOnSendCodeNotificationAndLogItAsync(Xeption dependencyException)
+        public async Task ShouldThrowDependencyExceptionOnSendSubscriberUsageNotificationAndLogItAsync(
+            Xeption dependencyException)
         {
             // given
             NotificationInfo randomNotificationInfo = CreateRandomNotificationInfo();
@@ -96,12 +97,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                 .ThrowsAsync(dependencyException);
 
             // when
-            ValueTask sendCodeNotificationTask =
-                this.notificationService.SendCodeNotificationAsync(inputNotificationInfo);
+            ValueTask sendSubscriberUsageNotificationTask =
+                this.notificationService.SendSubscriberUsageNotificationAsync(inputNotificationInfo);
 
             NotificationDependencyException actualException =
                 await Assert.ThrowsAsync<NotificationDependencyException>(
-                    sendCodeNotificationTask.AsTask);
+                    sendSubscriberUsageNotificationTask.AsTask);
 
             // then
             actualException.Should().BeEquivalentTo(expectedNotificationDependencyException);
@@ -123,7 +124,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
         }
 
         [Fact]
-        public async Task ShouldThrowServiceExceptionOnSendCodeNotificationAndLogItAsync()
+        public async Task ShouldThrowServiceExceptionOnSendSubscriberUsageNotificationAndLogItAsync()
         {
             // given
             NotificationInfo randomNotificationInfo = CreateRandomNotificationInfo();
@@ -150,12 +151,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                 .ThrowsAsync(exception);
 
             // when
-            ValueTask sendCodeNotificationTask =
-                this.notificationService.SendCodeNotificationAsync(inputNotificationInfo);
+            ValueTask sendSubscriberUsageNotificationTask =
+                this.notificationService.SendSubscriberUsageNotificationAsync(inputNotificationInfo);
 
             NotificationServiceException actualException =
                 await Assert.ThrowsAsync<NotificationServiceException>(
-                    sendCodeNotificationTask.AsTask);
+                    sendSubscriberUsageNotificationTask.AsTask);
 
             // then
             actualException.Should().BeEquivalentTo(expectedNotificationServiceException);
