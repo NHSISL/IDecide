@@ -8,6 +8,7 @@ using FluentAssertions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Consumers;
 using LondonDataServices.IDecide.Core.Models.Foundations.Consumers.Exceptions;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consumers
@@ -197,6 +198,56 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertConsumerAsync(It.IsAny<Consumer>()),
                     Times.Never);
+
+            this.securityAuditBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.securityBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowDependencyExceptionOnAddIfDatabaseUpdateErrorOccursAndLogItAsync()
+        {
+            // given
+            Consumer someConsumer = CreateRandomConsumer();
+
+            var databaseUpdateException = new DbUpdateException();
+
+            var failedConsumerStorageException =
+                new FailedConsumerStorageException(
+                    message: "Failed consumer storage error occurred, contact support.",
+                    innerException: databaseUpdateException);
+
+            var expectedConsumerDependencyException =
+                new ConsumerDependencyException(
+                    message: "Consumer dependency error occurred, contact support.",
+                    innerException: failedConsumerStorageException);
+
+            this.securityAuditBrokerMock.Setup(broker =>
+                broker.ApplyAddAuditValuesAsync(It.IsAny<Consumer>()))
+                    .ThrowsAsync(databaseUpdateException);
+
+            // when
+            ValueTask<Consumer> addConsumerTask =
+                this.consumerService.AddConsumerAsync(someConsumer);
+
+            ConsumerDependencyException actualConsumerDependencyException =
+                await Assert.ThrowsAsync<ConsumerDependencyException>(
+                    addConsumerTask.AsTask);
+
+            // then
+            actualConsumerDependencyException.Should()
+                .BeEquivalentTo(expectedConsumerDependencyException);
+
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.ApplyAddAuditValuesAsync(It.IsAny<Consumer>()),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedConsumerDependencyException))),
+                        Times.Once);
 
             this.securityAuditBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
