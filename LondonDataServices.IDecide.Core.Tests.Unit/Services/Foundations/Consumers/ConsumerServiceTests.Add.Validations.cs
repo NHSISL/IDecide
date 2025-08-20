@@ -158,5 +158,76 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnAddIfConsumerHasInvalidLengthProperty()
+        {
+            // given
+            string randomUserId = GetRandomString();
+            User randomUser = CreateRandomUser(userId: randomUserId);
+
+            var invalidConsumer = CreateRandomConsumer(GetRandomDateTimeOffset(), userId: randomUserId);
+            invalidConsumer.Name = GetRandomStringWithLengthOf(256);
+
+            var invalidConsumerException =
+                new InvalidConsumerException(
+                    message: "Invalid consumer. Please correct the errors and try again.");
+
+            invalidConsumerException.AddData(
+                key: nameof(Consumer.Name),
+                values: $"Text exceed max length of {invalidConsumer.Name.Length - 1} characters");
+
+            var expectedConsumerValidationException =
+                new ConsumerValidationException(
+                    message: "Consumer validation errors occurred, please try again.",
+                    innerException: invalidConsumerException);
+
+            this.securityAuditBrokerMock.Setup(broker =>
+                broker.ApplyAddAuditValuesAsync(invalidConsumer))
+                    .ReturnsAsync(invalidConsumer);
+
+            this.securityBrokerMock.Setup(broker =>
+                broker.GetCurrentUserAsync())
+                    .ReturnsAsync(randomUser);
+
+            // when
+            ValueTask<Consumer> addConsumerTask =
+                this.consumerService.AddConsumerAsync(invalidConsumer);
+
+            ConsumerValidationException actualConsumerValidationException =
+                await Assert.ThrowsAsync<ConsumerValidationException>(
+                    addConsumerTask.AsTask);
+
+            // then
+            actualConsumerValidationException.Should()
+                .BeEquivalentTo(expectedConsumerValidationException);
+
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.ApplyAddAuditValuesAsync(invalidConsumer),
+                    Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once());
+
+            this.securityBrokerMock.Verify(broker =>
+                broker.GetCurrentUserAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedConsumerValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertConsumerAsync(It.IsAny<Consumer>()),
+                    Times.Never);
+
+            this.securityAuditBrokerMock.VerifyNoOtherCalls();
+            this.securityBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
