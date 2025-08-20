@@ -40,6 +40,7 @@ using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.OData;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -57,6 +58,13 @@ namespace LondonDataServices.IDecide.Manage.Server
             var invisibleApiKey = new InvisibleApiKey();
             ConfigureServices(builder, builder.Configuration, invisibleApiKey);
             var app = builder.Build();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var storageBroker = scope.ServiceProvider.GetRequiredService<StorageBroker>();
+                storageBroker.Database.Migrate();
+            }
+
             ConfigurePipeline(app, invisibleApiKey);
             app.Run();
         }
