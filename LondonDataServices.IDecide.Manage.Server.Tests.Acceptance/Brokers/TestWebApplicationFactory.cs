@@ -2,11 +2,10 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System.IO;
+using System;
 using System.Linq;
 using Attrify.InvisibleApi.Models;
-using ISL.Providers.PDS.Abstractions;
-using ISL.Providers.PDS.FakeFHIR.Models;
-using ISL.Providers.PDS.FakeFHIR.Providers.FakeFHIR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -21,19 +20,19 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Tests.Accept
         {
             builder.ConfigureAppConfiguration((context, config) =>
             {
+                var testProjectPath = Path.GetFullPath(
+                    Path.Combine(AppContext.BaseDirectory, "..", "..", ".."));
+
                 config
                     .AddJsonFile("appsettings.json", optional: true)
-                    .AddJsonFile("appsettings.Development.json", optional: true)
+                    .AddJsonFile(Path.Combine(testProjectPath, "appsettings.json"), optional: true)
+                    .AddJsonFile(Path.Combine(testProjectPath, "appsettings.Acceptance.json"), optional: true)
                     .AddEnvironmentVariables();
             });
 
             builder.ConfigureServices((context, services) =>
             {
                 OverrideSecurityForTesting(services);
-
-                OverrideFhirProviderForTesting(
-                    services,
-                    context.Configuration);
             });
         }
 
@@ -76,26 +75,6 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Tests.Accept
             {
                 options.AddPolicy("TestPolicy", policy => policy.RequireAssertion(_ => true));
             });
-        }
-
-        private static void OverrideFhirProviderForTesting(
-            IServiceCollection services,
-            IConfiguration configuration)
-        {
-            var fhirDescriptor = services
-                .FirstOrDefault(d => d.ServiceType == typeof(IPdsProvider));
-
-            if (fhirDescriptor != null)
-            {
-                services.Remove(fhirDescriptor);
-            }
-
-            FakeFHIRProviderConfigurations fakeFHIRProviderConfigurations = configuration
-                 .GetSection("FakeFHIRProviderConfigurations")
-                     .Get<FakeFHIRProviderConfigurations>();
-
-            services.AddSingleton(fakeFHIRProviderConfigurations);
-            services.AddTransient<IPdsProvider, FakeFHIRProvider>();
         }
     }
 }
