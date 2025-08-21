@@ -43,10 +43,8 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Consumers
                 return await this.storageBroker.InsertConsumerAsync(consumer);
             });
 
-        public async ValueTask<IQueryable<Consumer>> RetrieveAllConsumersAsync()
-        {
-            return await this.storageBroker.SelectAllConsumersAsync();
-        }
+        public ValueTask<IQueryable<Consumer>> RetrieveAllConsumersAsync() =>
+            TryCatch(async () => await this.storageBroker.SelectAllConsumersAsync());
 
         public ValueTask<Consumer> ModifyConsumerAsync(Consumer consumer) =>
             TryCatch(async () =>
