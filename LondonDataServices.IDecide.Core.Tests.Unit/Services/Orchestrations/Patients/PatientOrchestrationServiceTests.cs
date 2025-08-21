@@ -11,7 +11,9 @@ using LondonDataServices.IDecide.Core.Brokers.DateTimes;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
+using LondonDataServices.IDecide.Core.Models.Foundations.Notifications.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
+using LondonDataServices.IDecide.Core.Models.Foundations.Patients.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients;
@@ -194,6 +196,74 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
                 new PdsServiceException(
                     message: "PDS service error occurred, please contact support.",
+                    innerException),
+            };
+        }
+
+        public static TheoryData<Xeption> RecordPatientInformationDependencyValidationExceptions()
+        {
+            string randomMessage = GetRandomString();
+            string exceptionMessage = randomMessage;
+            var innerException = new Xeption(exceptionMessage);
+
+            return new TheoryData<Xeption>
+            {
+                new PdsValidationException(
+                    message: "PDS validation errors occured, please try again",
+                    innerException),
+
+                new PdsDependencyValidationException(
+                    message: "PDS dependency validation occurred, please try again.",
+                    innerException),
+
+                new PatientValidationException(
+                    message: "Patient validation errors occured, please try again",
+                    innerException),
+
+                new PatientDependencyValidationException(
+                    message: "Patient dependency validation occurred, please try again.",
+                    innerException),
+
+                new NotificationValidationException(
+                    message: "Notification validation errors occured, please try again",
+                    innerException),
+
+                new NotificationDependencyValidationException(
+                    message: "Notification dependency validation occurred, please try again.",
+                    innerException),
+            };
+        }
+
+        public static TheoryData<Xeption> RecordPatientInformationDependencyExceptions()
+        {
+            string randomMessage = GetRandomString();
+            string exceptionMessage = randomMessage;
+            var innerException = new Xeption(exceptionMessage);
+
+            return new TheoryData<Xeption>
+            {
+                new PdsDependencyException(
+                    message: "PDS dependency error occurred, please contact support.",
+                    innerException),
+
+                new PdsServiceException(
+                    message: "PDS service error occurred, please contact support.",
+                    innerException),
+
+                new PatientDependencyException(
+                    message: "Patient dependency error occurred, please contact support.",
+                    innerException),
+
+                new PatientServiceException(
+                    message: "Patient service error occurred, please contact support.",
+                    innerException),
+
+                new NotificationDependencyException(
+                    message: "Notification dependency error occurred, please contact support.",
+                    innerException),
+
+                new NotificationServiceException(
+                    message: "Notification service error occurred, please contact support.",
                     innerException),
             };
         }
