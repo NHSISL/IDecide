@@ -41,5 +41,10 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Consumers
 
                 return await this.storageBroker.InsertConsumerAsync(consumer);
             });
+
+        public ValueTask<Consumer> ModifyConsumerAsync(Consumer consumer)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }
