@@ -11,5 +11,11 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
     public interface IPatientOrchestrationService
     {
         ValueTask<Patient> PatientLookupAsync(PatientLookup patientLookup);
+
+        ValueTask RecordPatientInformation(
+            string nhsNumber,
+            string captcha,
+            string notificationPreference,
+            bool generateNewCode = false);
     }
 }

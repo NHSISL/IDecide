@@ -3,8 +3,12 @@
 // ---------------------------------------------------------
 
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
+using LondonDataServices.IDecide.Core.Brokers.DateTimes;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
+using LondonDataServices.IDecide.Core.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Extensions.Patients;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
@@ -17,17 +21,23 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
     public partial class PatientOrchestrationService : IPatientOrchestrationService
     {
         private readonly ILoggingBroker loggingBroker;
+        private readonly ISecurityBroker securityBroker;
+        private readonly IDateTimeBroker dateTimeBroker;
         private readonly IPdsService pdsService;
         private readonly IPatientService patientService;
         private readonly INotificationService notificationService;
 
         public PatientOrchestrationService(
             ILoggingBroker loggingBroker,
+            ISecurityBroker securityBroker,
+            IDateTimeBroker dateTimeBroker,
             IPdsService pdsService,
             IPatientService patientService,
             INotificationService notificationService)
         {
             this.loggingBroker = loggingBroker;
+            this.securityBroker = securityBroker;
+            this.dateTimeBroker = dateTimeBroker;
             this.pdsService = pdsService;
             this.patientService = patientService;
             this.notificationService = notificationService;
@@ -59,5 +69,35 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                     return redactedPatient;
                 }
             });
+
+        public ValueTask RecordPatientInformation(
+            string nhsNumber,
+            string captcha,
+            string notificationPreference,
+            bool generateNewCode = false)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        virtual internal string GenerateValidationCode()
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            StringBuilder result = new StringBuilder(5);
+
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                byte[] buffer = new byte[1];
+
+                for (int i = 0; i < 5; i++)
+                {
+                    int index;
+                    rng.GetBytes(buffer);
+                    index = buffer[0] % chars.Length;
+                    result.Append(chars[index]);
+                }
+            }
+
+            return result.ToString();
+        }
     }
 }

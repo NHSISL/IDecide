@@ -2,27 +2,31 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
 using System;
-using LondonDataServices.IDecide.Core.Services.Foundations.Pds;
-using Moq;
-using Tynamix.ObjectFiller;
-using LondonDataServices.IDecide.Core.Brokers.Loggings;
-using System.Linq.Expressions;
-using Xeptions;
-using LondonDataServices.IDecide.Core.Models.Foundations.Pds.Exceptions;
-using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using LondonDataServices.IDecide.Core.Brokers.DateTimes;
+using LondonDataServices.IDecide.Core.Brokers.Loggings;
+using LondonDataServices.IDecide.Core.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
-using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
+using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
+using LondonDataServices.IDecide.Core.Models.Foundations.Pds.Exceptions;
 using LondonDataServices.IDecide.Core.Services.Foundations.Notifications;
+using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
+using LondonDataServices.IDecide.Core.Services.Foundations.Pds;
+using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
+using Moq;
+using Tynamix.ObjectFiller;
+using Xeptions;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Patients
 {
     public partial class PatientOrchestrationServiceTests
     {
         private readonly Mock<ILoggingBroker> loggingBrokerMock = new Mock<ILoggingBroker>();
+        private readonly Mock<ISecurityBroker> securityBrokerMock = new Mock<ISecurityBroker>();
+        private readonly Mock<IDateTimeBroker> dateTimeBrokerMock = new Mock<IDateTimeBroker>();
         private readonly Mock<IPdsService> pdsServiceMock = new Mock<IPdsService>();
         private readonly Mock<IPatientService> patientServiceMock = new Mock<IPatientService>();
         private readonly Mock<INotificationService> notificationServiceMock = new Mock<INotificationService>();
@@ -31,12 +35,16 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         public PatientOrchestrationServiceTests()
         {
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
+            this.securityBrokerMock = new Mock<ISecurityBroker>();
+            this.dateTimeBrokerMock = new Mock<IDateTimeBroker>();
             this.pdsServiceMock = new Mock<IPdsService>();
             this.patientServiceMock = new Mock<IPatientService>();
             this.notificationServiceMock = new Mock<INotificationService>();
 
             this.patientOrchestrationService = new PatientOrchestrationService(
                 loggingBroker: this.loggingBrokerMock.Object,
+                securityBroker: this.securityBrokerMock.Object,
+                dateTimeBroker: this.dateTimeBrokerMock.Object,
                 pdsService: this.pdsServiceMock.Object,
                 patientService: this.patientServiceMock.Object,
                 notificationService: this.notificationServiceMock.Object);
@@ -46,8 +54,18 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         private static string GetRandomString() =>
             new MnemonicString().GetValue();
 
+        private static string GetRandomStringWithLengthOf(int length)
+        {
+            string result = new MnemonicString(wordCount: 1, wordMinLength: length, wordMaxLength: length).GetValue();
+
+            return result.Length > length ? result.Substring(0, length) : result;
+        }
+
         private static int GetRandomNumber() =>
            new IntRange(min: 2, max: 10).GetValue();
+
+        private static DateTimeOffset GetRandomDateTimeOffset() =>
+           new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
         private static string GenerateRandom10DigitNumber()
         {
