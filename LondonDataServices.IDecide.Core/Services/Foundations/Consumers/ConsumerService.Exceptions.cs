@@ -62,6 +62,15 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Consumers
 
                 throw await CreateAndLogDependencyValidationException(invalidConsumerReferenceException);
             }
+            catch (DbUpdateConcurrencyException dbUpdateConcurrencyException)
+            {
+                var lockedConsumerException =
+                    new LockedConsumerException(
+                        message: "Locked consumer record exception, please try again later",
+                        innerException: dbUpdateConcurrencyException);
+
+                throw await CreateAndLogDependencyValidationException(lockedConsumerException);
+            }
             catch (DbUpdateException databaseUpdateException)
             {
                 var failedConsumerStorageException =
