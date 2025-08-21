@@ -15,6 +15,7 @@ using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients;
+using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
 using LondonDataServices.IDecide.Core.Services.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Services.Foundations.Pds;
@@ -132,6 +133,11 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                     patientToRecord = maybeMatchingPatient;
 
                     await this.patientService.ModifyPatientAsync(patientToRecord);
+                }
+                else
+                {
+                    throw new ValidPatientCodeExistsException(
+                        message: "A valid code already exists for this patient, please go to the enter code screen.");
                 }
             }
 

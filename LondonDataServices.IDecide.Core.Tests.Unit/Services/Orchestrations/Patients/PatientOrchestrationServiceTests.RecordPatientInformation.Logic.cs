@@ -10,6 +10,7 @@ using Force.DeepCloner;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients;
+using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
 using Moq;
 
@@ -351,7 +352,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             NotificationPreference randomNotificationPreference = NotificationPreference.Email;
             NotificationPreference inputNotificationPreference = randomNotificationPreference.DeepClone();
             string notificationPreferenceString = inputNotificationPreference.ToString();
-            string outputValidationCode = GetRandomStringWithLengthOf(5);
             DateTimeOffset randomDateTimeOffest = GetRandomDateTimeOffset();
             DateTimeOffset outputDateTimeOffset = randomDateTimeOffest.DeepClone();
             Patient randomPatient = GetRandomPatientWithNhsNumber(inputNhsNumber);
@@ -403,7 +403,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogErrorAsync(It.IsAny<Exception>()),
+                broker.LogErrorAsync(It.IsAny<PatientOrchestrationValidationException>()),
                     Times.Once);
 
             this.pdsServiceMock.Verify(service =>
