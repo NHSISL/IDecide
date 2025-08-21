@@ -1,0 +1,103 @@
+﻿// ---------------------------------------------------------
+// Copyright (c) North East London ICB. All rights reserved.
+// ---------------------------------------------------------
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using LondonDataServices.IDecide.Core.Brokers.DateTimes;
+using LondonDataServices.IDecide.Core.Brokers.Loggings;
+using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
+using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
+using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions;
+using LondonDataServices.IDecide.Core.Services.Foundations.Decisions;
+using LondonDataServices.IDecide.Core.Services.Foundations.Notifications;
+using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
+using LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions;
+using Moq;
+using Tynamix.ObjectFiller;
+
+namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Decisions
+{
+    public partial class DecisionOrchestrationServiceTests
+    {
+        private readonly Mock<ILoggingBroker> loggingBrokerMock = new Mock<ILoggingBroker>();
+        private readonly Mock<IDateTimeBroker> dateTimeBrokerMock = new Mock<IDateTimeBroker>();
+        private readonly Mock<IPatientService> patientServiceMock = new Mock<IPatientService>();
+        private readonly Mock<INotificationService> notificationServiceMock = new Mock<INotificationService>();
+        private readonly Mock<IDecisionService> decisionServiceMock = new Mock<IDecisionService>();
+        private readonly DecisionOrchestrationConfigurations decisionOrchestrationConfigurations;
+        private static readonly int maxRetryCount = 3;
+        private readonly DecisionOrchestrationService decisionOrchestrationService;
+
+        public DecisionOrchestrationServiceTests()
+        {
+            this.loggingBrokerMock = new Mock<ILoggingBroker>();
+            this.dateTimeBrokerMock = new Mock<IDateTimeBroker>();
+            this.patientServiceMock = new Mock<IPatientService>();
+            this.notificationServiceMock = new Mock<INotificationService>();
+            this.decisionServiceMock = new Mock<IDecisionService>();
+
+            this.decisionOrchestrationConfigurations = new DecisionOrchestrationConfigurations
+            {
+                MaxRetryCount = maxRetryCount,
+            };
+
+            this.decisionOrchestrationService = new DecisionOrchestrationService(
+                loggingBroker: this.loggingBrokerMock.Object,
+                dateTimeBroker: this.dateTimeBrokerMock.Object,
+                patientService: this.patientServiceMock.Object,
+                notificationService: this.notificationServiceMock.Object,
+                decisionService: this.decisionServiceMock.Object,
+                decisionOrchestrationConfigurations: this.decisionOrchestrationConfigurations);
+        }
+
+        private static int GetRandomNumber() =>
+           new IntRange(min: 2, max: 10).GetValue();
+
+        private static DateTimeOffset GetRandomDateTimeOffset() =>
+           new DateTimeRange(earliestDate: new DateTime()).GetValue();
+
+        private static Patient GetRandomPatient(
+            DateTimeOffset validationCodeExpiresOn,
+            string inputNhsNumber = "1234567890",
+            string validationCode = "A1B2C") =>
+            CreatePatientFiller(validationCodeExpiresOn, inputNhsNumber, validationCode).Create();
+
+        private static List<Patient> GetRandomPatients(DateTimeOffset validationCodeExpiresOn) =>
+            CreatePatientFiller(validationCodeExpiresOn).Create(GetRandomNumber()).ToList();
+
+        private static Filler<Patient> CreatePatientFiller(
+            DateTimeOffset validationCodeExpiresOn,
+            string inputNhsNumber = "1234567890",
+            string validationCode = "A1B2C")
+        {
+            DateTimeOffset dateTimeOffset = DateTimeOffset.UtcNow;
+            var filler = new Filler<Patient>();
+
+            filler.Setup()
+                .OnType<DateTimeOffset>().Use(dateTimeOffset)
+                .OnType<DateTimeOffset?>().Use(dateTimeOffset)
+                .OnProperty(n => n.NhsNumber).Use(inputNhsNumber);
+
+            return filler;
+        }
+
+        private static Decision GetRandomDecision(Patient patient) =>
+            CreateDecisionFiller(patient).Create();
+
+        private static Filler<Decision> CreateDecisionFiller(Patient patient)
+        {
+            DateTimeOffset dateTimeOffset = DateTimeOffset.UtcNow;
+            var filler = new Filler<Decision>();
+
+            filler.Setup()
+                .OnType<DateTimeOffset>().Use(dateTimeOffset)
+                .OnType<DateTimeOffset?>().Use(dateTimeOffset)
+                .OnProperty(n => n.Patient).Use(patient)
+                .OnProperty(n => n.PatientNhsNumber).Use(patient.NhsNumber);
+
+            return filler;
+        }
+    }
+}
