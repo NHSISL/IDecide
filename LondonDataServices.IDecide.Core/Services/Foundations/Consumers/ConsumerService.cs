@@ -51,6 +51,8 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Consumers
                 Consumer maybeConsumer =
                     await this.storageBroker.SelectConsumerByIdAsync(consumer.Id);
 
+                ValidateStorageConsumer(maybeConsumer, consumer.Id);
+
                 consumer = await this.securityAuditBroker
                     .EnsureAddAuditValuesRemainsUnchangedOnModifyAsync(consumer, maybeConsumer);
 
