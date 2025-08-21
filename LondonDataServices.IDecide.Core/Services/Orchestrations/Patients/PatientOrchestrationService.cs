@@ -84,34 +84,63 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
         {
             IQueryable<Patient> patients = await this.patientService.RetrieveAllPatientsAsync();
             Patient maybeMatchingPatient = patients.FirstOrDefault(patient => patient.NhsNumber == nhsNumber);
-            Patient pdsPatient = null;
+            Patient patientToRecord = null;
+            DateTimeOffset now = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
+
+            Enum.TryParse(
+                notificationPreference, out NotificationPreference notificationPreferenceType);
 
             if (maybeMatchingPatient is null)
             {
-                pdsPatient = await this.pdsService.PatientLookupByNhsNumberAsync(nhsNumber);
+                Patient pdsPatient = await this.pdsService.PatientLookupByNhsNumberAsync(nhsNumber);
                 string validationCode = GenerateValidationCode();
-                DateTimeOffset now = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
 
                 DateTimeOffset expirationDate =
                     now.AddMinutes(patientOrchestrationConfigurations.ValidationCodeExpireAfterMinutes);
 
                 pdsPatient.ValidationCode = validationCode;
                 pdsPatient.ValidationCodeExpiresOn = expirationDate;
+                pdsPatient.NotificationPreference = notificationPreferenceType;
+                patientToRecord = pdsPatient;
 
-                await this.patientService.AddPatientAsync(pdsPatient);
+                await this.patientService.AddPatientAsync(patientToRecord);
+            }
+            else
+            {
+                if (maybeMatchingPatient.ValidationCodeExpiresOn <= now
+                    || (maybeMatchingPatient.ValidationCodeExpiresOn > now && generateNewCode == true))
+                {
+                    Patient pdsPatient = await this.pdsService.PatientLookupByNhsNumberAsync(nhsNumber);
+                    maybeMatchingPatient.Address = pdsPatient.Address;
+                    maybeMatchingPatient.DateOfBirth = pdsPatient.DateOfBirth;
+                    maybeMatchingPatient.Email = pdsPatient.Email;
+                    maybeMatchingPatient.Gender = pdsPatient.Gender;
+                    maybeMatchingPatient.GivenName = pdsPatient.GivenName;
+                    maybeMatchingPatient.NhsNumber = pdsPatient.NhsNumber;
+                    maybeMatchingPatient.Phone = pdsPatient.Phone;
+                    maybeMatchingPatient.PostCode = pdsPatient.PostCode;
+                    maybeMatchingPatient.Surname = pdsPatient.Surname;
+                    maybeMatchingPatient.Title = pdsPatient.Title;
+                    maybeMatchingPatient.NotificationPreference = notificationPreferenceType;
+                    string validationCode = GenerateValidationCode();
+
+                    DateTimeOffset expirationDate =
+                        now.AddMinutes(patientOrchestrationConfigurations.ValidationCodeExpireAfterMinutes);
+
+                    maybeMatchingPatient.ValidationCode = validationCode;
+                    maybeMatchingPatient.ValidationCodeExpiresOn = expirationDate;
+                    patientToRecord = maybeMatchingPatient;
+
+                    await this.patientService.ModifyPatientAsync(patientToRecord);
+                }
             }
 
             NotificationInfo notificationInfo = new NotificationInfo
             {
-                Patient = pdsPatient
+                Patient = patientToRecord
             };
 
-            switch (notificationPreference)
-            {
-                case "Email":
-                    await this.notificationService.SendCodeNotificationAsync(notificationInfo);
-                    break;
-            }
+            await this.notificationService.SendCodeNotificationAsync(notificationInfo);
         }
 
         virtual internal string GenerateValidationCode()
