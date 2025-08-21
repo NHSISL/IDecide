@@ -65,7 +65,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             this.patientServiceMock.Setup(service =>
                 service.RetrieveAllPatientsAsync())
-                    .ReturnsAsync(randomPatients.AsQueryable);
+                    .ReturnsAsync(outputPatients.AsQueryable);
 
             this.pdsServiceMock.Setup(service =>
                 service.PatientLookupByNhsNumberAsync(inputNhsNumber))
@@ -173,7 +173,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             this.patientServiceMock.Setup(service =>
                 service.RetrieveAllPatientsAsync())
-                    .ReturnsAsync(randomPatients.AsQueryable);
+                    .ReturnsAsync(outputPatients.AsQueryable);
 
             this.pdsServiceMock.Setup(service =>
                 service.PatientLookupByNhsNumberAsync(inputNhsNumber))
@@ -281,7 +281,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             this.patientServiceMock.Setup(service =>
                 service.RetrieveAllPatientsAsync())
-                    .ReturnsAsync(randomPatients.AsQueryable);
+                    .ReturnsAsync(outputPatients.AsQueryable);
 
             this.pdsServiceMock.Setup(service =>
                 service.PatientLookupByNhsNumberAsync(inputNhsNumber))
@@ -330,6 +330,97 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             this.notificationServiceMock.Verify(service =>
                 service.SendCodeNotificationAsync(It.Is(SameNotificationInfoAs(inputNotificationInfo))),
                         Times.Once);
+
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.securityBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.pdsServiceMock.VerifyNoOtherCalls();
+            this.patientServiceMock.VerifyNoOtherCalls();
+            this.notificationServiceMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldNotRecordPatientInformationAsyncWhenPatientFoundWithValidCodeAndGenerateNewCodeIsFalse()
+        {
+            // given
+            int expireAfterMinutes = this.patientOrchestrationConfigurations.ValidationCodeExpireAfterMinutes;
+            string randomNhsNumber = GenerateRandom10DigitNumber();
+            string inputNhsNumber = randomNhsNumber.DeepClone();
+            string randomCaptchaToken = GetRandomString();
+            string inputCaptchaToken = randomCaptchaToken.DeepClone();
+            NotificationPreference randomNotificationPreference = NotificationPreference.Email;
+            NotificationPreference inputNotificationPreference = randomNotificationPreference.DeepClone();
+            string notificationPreferenceString = inputNotificationPreference.ToString();
+            string outputValidationCode = GetRandomStringWithLengthOf(5);
+            DateTimeOffset randomDateTimeOffest = GetRandomDateTimeOffset();
+            DateTimeOffset outputDateTimeOffset = randomDateTimeOffest.DeepClone();
+            Patient randomPatient = GetRandomPatientWithNhsNumber(inputNhsNumber);
+            randomPatient.ValidationCodeExpiresOn = outputDateTimeOffset.AddMinutes(expireAfterMinutes);
+            randomPatient.NotificationPreference = inputNotificationPreference;
+            Patient outputPatient = randomPatient.DeepClone();
+            List<Patient> randomPatients = GetRandomPatients();
+            randomPatients.Add(outputPatient);
+            List<Patient> outputPatients = randomPatients.DeepClone();
+
+            PatientOrchestrationConfigurations patientOrchestrationConfigurations =
+                new PatientOrchestrationConfigurations
+                {
+                    ValidationCodeExpireAfterMinutes = 1440
+                };
+
+            var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
+                loggingBrokerMock.Object,
+                securityBrokerMock.Object,
+                dateTimeBrokerMock.Object,
+                pdsServiceMock.Object,
+                patientServiceMock.Object,
+                notificationServiceMock.Object,
+                patientOrchestrationConfigurations)
+            { CallBase = true };
+
+            this.patientServiceMock.Setup(service =>
+                service.RetrieveAllPatientsAsync())
+                    .ReturnsAsync(outputPatients.AsQueryable);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(outputDateTimeOffset);
+
+            // when
+            await patientOrchestrationServiceMock.Object.RecordPatientInformation(
+                inputNhsNumber,
+                inputCaptchaToken,
+                notificationPreferenceString,
+                false);
+
+            //then
+            this.patientServiceMock.Verify(service =>
+                service.RetrieveAllPatientsAsync(),
+                    Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.IsAny<Exception>()),
+                    Times.Once);
+
+            this.pdsServiceMock.Verify(service =>
+                service.PatientLookupByNhsNumberAsync(inputNhsNumber),
+                    Times.Never);
+
+            patientOrchestrationServiceMock.Verify(service =>
+                service.GenerateValidationCode(),
+                    Times.Never);
+
+            this.patientServiceMock.Verify(service =>
+                service.ModifyPatientAsync(It.IsAny<Patient>()),
+                    Times.Never);
+
+            this.notificationServiceMock.Verify(service =>
+                service.SendCodeNotificationAsync(It.IsAny<NotificationInfo>()),
+                        Times.Never);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.securityBrokerMock.VerifyNoOtherCalls();
