@@ -63,6 +63,9 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Consumers
                 (Rule: IsInvalid(consumer.CreatedBy), Parameter: nameof(Consumer.CreatedBy)),
                 (Rule: IsInvalid(consumer.UpdatedDate), Parameter: nameof(Consumer.UpdatedDate)),
                 (Rule: IsInvalid(consumer.UpdatedBy), Parameter: nameof(Consumer.UpdatedBy)),
+                (Rule: IsGreaterThan(consumer.Name, 255), Parameter: nameof(Consumer.Name)),
+                (Rule: IsGreaterThan(consumer.CreatedBy, 255), Parameter: nameof(Consumer.CreatedBy)),
+                (Rule: IsGreaterThan(consumer.UpdatedBy, 255), Parameter: nameof(Consumer.UpdatedBy)),
                 (Rule: await IsNotRecentAsync(consumer.UpdatedDate), Parameter: nameof(Consumer.UpdatedDate)));
         }
 
