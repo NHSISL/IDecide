@@ -109,6 +109,15 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Consumers
 
                 throw await CreateAndLogCriticalDependencyException(failedConsumerStorageException);
             }
+            catch (Exception exception)
+            {
+                var failedConsumerServiceException =
+                    new FailedConsumerServiceException(
+                        message: "Failed consumer service occurred, please contact support",
+                        innerException: exception);
+
+                throw await CreateAndLogServiceException(failedConsumerServiceException);
+            }
         }
 
 
