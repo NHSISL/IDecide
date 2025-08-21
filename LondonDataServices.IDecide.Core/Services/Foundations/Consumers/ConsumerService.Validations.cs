@@ -66,6 +66,18 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Consumers
                 (Rule: IsGreaterThan(consumer.Name, 255), Parameter: nameof(Consumer.Name)),
                 (Rule: IsGreaterThan(consumer.CreatedBy, 255), Parameter: nameof(Consumer.CreatedBy)),
                 (Rule: IsGreaterThan(consumer.UpdatedBy, 255), Parameter: nameof(Consumer.UpdatedBy)),
+
+                (Rule: IsNotSame(
+                    first: currentUser.UserId,
+                    second: consumer.UpdatedBy),
+                Parameter: nameof(Consumer.UpdatedBy)),
+
+                (Rule: IsSame(
+                    firstDate: consumer.UpdatedDate,
+                    secondDate: consumer.CreatedDate,
+                    secondDateName: nameof(Consumer.CreatedDate)),
+                Parameter: nameof(Consumer.UpdatedDate)),
+
                 (Rule: await IsNotRecentAsync(consumer.UpdatedDate), Parameter: nameof(Consumer.UpdatedDate)));
         }
 
@@ -104,13 +116,20 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Consumers
         private static bool IsExceedingLength(string text, int maxLength) =>
             (text ?? string.Empty).Length > maxLength;
 
-        private static dynamic IsNotSame(
-            string first,
-            string second) => new
+        private static dynamic IsSame(
+            DateTimeOffset firstDate,
+            DateTimeOffset secondDate,
+            string secondDateName) => new
             {
-                Condition = first != second,
-                Message = $"Expected value to be '{first}' but found '{second}'."
+                Condition = firstDate == secondDate,
+                Message = $"Date is the same as {secondDateName}"
             };
+
+        private static dynamic IsNotSame(string first, string second) => new
+        {
+            Condition = first != second,
+            Message = $"Expected value to be '{first}' but found '{second}'."
+        };
 
         private static dynamic IsNotSame(
             DateTimeOffset firstDate,
@@ -121,14 +140,11 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Consumers
                 Message = $"Date is not the same as {secondDateName}"
             };
 
-        private static dynamic IsNotSame(
-            string first,
-            string second,
-            string secondName) => new
-            {
-                Condition = first != second,
-                Message = $"Text is not the same as {secondName}"
-            };
+        private static dynamic IsNotSame(string first, string second, string secondName) => new
+        {
+            Condition = first != second,
+            Message = $"Text is not the same as {secondName}"
+        };
 
         private async ValueTask<dynamic> IsNotRecentAsync(DateTimeOffset date)
         {
