@@ -52,6 +52,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Consumers
 
         private async ValueTask ValidateConsumerOnModify(Consumer consumer)
         {
+            ValidateConsumerIsNotNull(consumer);
             User currentUser = await this.securityBroker.GetCurrentUserAsync();
 
             Validate<InvalidConsumerException>(

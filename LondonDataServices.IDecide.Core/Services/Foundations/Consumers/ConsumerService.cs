@@ -42,19 +42,19 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Consumers
                 return await this.storageBroker.InsertConsumerAsync(consumer);
             });
 
-        public async ValueTask<Consumer> ModifyConsumerAsync(Consumer consumer)
-        {
-            consumer = await this.securityAuditBroker.ApplyModifyAuditValuesAsync(consumer);
+        public ValueTask<Consumer> ModifyConsumerAsync(Consumer consumer) =>
+            TryCatch(async () =>
+            {
+                consumer = await this.securityAuditBroker.ApplyModifyAuditValuesAsync(consumer);
+                await ValidateConsumerOnModify(consumer);
 
-            await ValidateConsumerOnModify(consumer);
+                Consumer maybeConsumer =
+                    await this.storageBroker.SelectConsumerByIdAsync(consumer.Id);
 
-            Consumer maybeConsumer =
-                await this.storageBroker.SelectConsumerByIdAsync(consumer.Id);
+                consumer = await this.securityAuditBroker
+                    .EnsureAddAuditValuesRemainsUnchangedOnModifyAsync(consumer, maybeConsumer);
 
-            consumer = await this.securityAuditBroker
-                .EnsureAddAuditValuesRemainsUnchangedOnModifyAsync(consumer, maybeConsumer);
-
-            return await this.storageBroker.UpdateConsumerAsync(consumer);
-        }
+                return await this.storageBroker.UpdateConsumerAsync(consumer);
+            });
     }
 }
