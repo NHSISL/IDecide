@@ -83,6 +83,19 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             string notificationPreference,
             bool generateNewCode = false)
         {
+            ValidateRecordPatientInformationArguments(
+                nhsNumber: nhsNumber,
+                captchaToken: captcha,
+                notificationPreference: notificationPreference);
+
+            bool isCaptchaValid = await this.securityBroker.ValidateCaptchaAsync(captcha);
+
+            if (isCaptchaValid is false)
+            {
+                throw new InvalidCaptchaException(
+                    message: "The provided captcha token is invalid.");
+            }
+
             IQueryable<Patient> patients = await this.patientService.RetrieveAllPatientsAsync();
             Patient maybeMatchingPatient = patients.FirstOrDefault(patient => patient.NhsNumber == nhsNumber);
             Patient patientToRecord = null;

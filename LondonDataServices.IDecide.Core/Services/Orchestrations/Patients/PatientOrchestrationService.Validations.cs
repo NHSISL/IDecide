@@ -4,6 +4,7 @@
 
 using System;
 using System.Linq;
+using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
@@ -25,8 +26,8 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             if (patientLookup.Patients.Count != 1)
             {
                 throw new NoExactPatientFoundException(
-                    patientLookup.Patients.Count == 0 
-                        ? "No matching patient found." 
+                    patientLookup.Patients.Count == 0
+                        ? "No matching patient found."
                         : "Multiple matching patients found.");
             }
         }
@@ -38,6 +39,25 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                 Parameter: nameof(nhsNumber)));
         }
 
+        private static void ValidateRecordPatientInformationArguments(
+            string nhsNumber,
+            string captchaToken,
+            string notificationPreference)
+        {
+            Validate(
+                (Rule: IsInvalidIdentifier(nhsNumber),
+                Parameter: nameof(nhsNumber)),
+
+                (Rule: IsInvalid(captchaToken),
+                Parameter: nameof(captchaToken)),
+
+                (Rule: IsInvalid(notificationPreference),
+                Parameter: nameof(captchaToken)),
+
+                (Rule: IsInvalidNotificationPreference(notificationPreference),
+                Parameter: nameof(captchaToken)));
+        }
+
         private static void ValidatePatientIsNotNull(Patient patient)
         {
             if (patient is null)
@@ -45,6 +65,20 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                 throw new NullPatientException("Patient is null.");
             }
         }
+
+        private static dynamic IsInvalid(string value) => new
+        {
+            Condition = string.IsNullOrWhiteSpace(value),
+            Message = "Text is invalid"
+        };
+
+        private static dynamic IsInvalidNotificationPreference(string notificationPreference) => new
+        {
+            Condition = Enum.TryParse<NotificationPreference>(notificationPreference, out var preference)
+                && Enum.IsDefined(typeof(NotificationPreference), preference),
+
+            Message = "Text is not a valid notification preference"
+        };
 
         private static dynamic IsInvalidIdentifier(string name) => new
         {
