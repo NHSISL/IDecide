@@ -658,5 +658,92 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnModifyIfStorageUpdatedDateSameAsUpdatedDateAndLogItAsync()
+        {
+            // given
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            string randomUserId = GetRandomString();
+            User randomUser = CreateRandomUser(userId: randomUserId);
+
+            Consumer randomConsumer =
+                CreateRandomModifyConsumer(dateTimeOffset: randomDateTimeOffset, userId: randomUserId);
+
+            Consumer invalidConsumer = randomConsumer;
+            Consumer storageConsumer = randomConsumer.DeepClone();
+
+            var invalidConsumerException =
+                new InvalidConsumerException(
+                    message: "Invalid consumer. Please correct the errors and try again.");
+
+            invalidConsumerException.AddData(
+                key: nameof(Consumer.UpdatedDate),
+                values: $"Date is the same as {nameof(Consumer.UpdatedDate)}");
+
+            var expectedConsumerValidationException =
+                new ConsumerValidationException(
+                    message: "Consumer validation errors occurred, please try again.",
+                    innerException: invalidConsumerException);
+
+            this.securityAuditBrokerMock.Setup(broker =>
+                broker.ApplyModifyAuditValuesAsync(invalidConsumer))
+                    .ReturnsAsync(invalidConsumer);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectConsumerByIdAsync(invalidConsumer.Id))
+                    .ReturnsAsync(storageConsumer);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTimeOffset);
+
+            this.securityBrokerMock.Setup(broker =>
+                broker.GetCurrentUserAsync())
+                    .ReturnsAsync(randomUser);
+
+            this.securityAuditBrokerMock.Setup(broker =>
+                broker.EnsureAddAuditValuesRemainsUnchangedOnModifyAsync(invalidConsumer, storageConsumer))
+                    .ReturnsAsync(invalidConsumer);
+
+            // when
+            ValueTask<Consumer> modifyConsumerTask =
+                this.consumerService.ModifyConsumerAsync(invalidConsumer);
+
+            // then
+            await Assert.ThrowsAsync<ConsumerValidationException>(
+                modifyConsumerTask.AsTask);
+
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.ApplyModifyAuditValuesAsync(invalidConsumer),
+                    Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.securityBrokerMock.Verify(broker =>
+                broker.GetCurrentUserAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedConsumerValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectConsumerByIdAsync(invalidConsumer.Id),
+                    Times.Once);
+
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.EnsureAddAuditValuesRemainsUnchangedOnModifyAsync(invalidConsumer, storageConsumer),
+                    Times.Once);
+
+            this.securityAuditBrokerMock.VerifyNoOtherCalls();
+            this.securityBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
