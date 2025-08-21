@@ -132,62 +132,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         [InlineData(null)]
         [InlineData("")]
         [InlineData(" ")]
-        public async Task ShouldThrowValidationExceptionOnRecordPatientInformationAsyncWithInvalidNotificationPreference(
-            string invalidNotificationPreference)
-        {
-            // given
-            string randomCaptchaToken = GetRandomString();
-            string inputCaptchaToken = randomCaptchaToken.DeepClone();
-            string randomNhsNumber = GenerateRandom10DigitNumber();
-            string inputNhsNumber = randomNhsNumber.DeepClone();
-
-            var invalidPatientOrchestrationArgumentException =
-                new InvalidPatientOrchestrationArgumentException(
-                    "Invalid patient orchestration argument. Please correct the errors and try again.");
-
-            invalidPatientOrchestrationArgumentException.AddData(
-                key: "notificationPreference",
-                values: "Text is invalid");
-
-            var expectedPatientOrchestrationValidationException =
-                new PatientOrchestrationValidationException(
-                    message: "Patient orchestration validation error occurred, please fix the errors and try again.",
-                    innerException: invalidPatientOrchestrationArgumentException);
-
-            this.securityBrokerMock.Setup(broker =>
-                broker.ValidateCaptchaAsync(inputCaptchaToken, ""))
-                    .ThrowsAsync(invalidPatientOrchestrationArgumentException);
-
-            // when
-            ValueTask recordPatientInformationAction = patientOrchestrationService.RecordPatientInformation(
-                inputNhsNumber,
-                inputCaptchaToken,
-                invalidNotificationPreference,
-                false);
-
-            PatientOrchestrationValidationException actualException =
-                await Assert.ThrowsAsync<PatientOrchestrationValidationException>(
-                    recordPatientInformationAction.AsTask);
-
-            // then
-            actualException.Should().BeEquivalentTo(expectedPatientOrchestrationValidationException);
-
-            this.loggingBrokerMock.Verify(broker =>
-               broker.LogErrorAsync(It.Is(SameExceptionAs(
-                   expectedPatientOrchestrationValidationException))),
-                       Times.Once);
-
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.pdsServiceMock.VerifyNoOtherCalls();
-            this.patientServiceMock.VerifyNoOtherCalls();
-            this.notificationServiceMock.VerifyNoOtherCalls();
-        }
-
-        [Theory]
         [InlineData("test")]
-        public async Task ShouldThrowValidationExceptionOnRecordPatientInformationAsyncWithInvalidNotificationPreferenceValue(
+        public async Task ShouldThrowValidationExceptionOnRecordPatientInformationAsyncWithInvalidNotificationPreference(
             string invalidNotificationPreference)
         {
             // given
@@ -279,6 +225,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             // then
             actualException.Should().BeEquivalentTo(expectedPatientOrchestrationValidationException);
 
+            this.securityBrokerMock.Verify(broker =>
+                broker.ValidateCaptchaAsync(inputCaptchaToken, ""),
+                    Times.Once);
+
             this.loggingBrokerMock.Verify(broker =>
                broker.LogErrorAsync(It.Is(SameExceptionAs(
                    expectedPatientOrchestrationValidationException))),
@@ -330,6 +280,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             // then
             actualException.Should().BeEquivalentTo(expectedPatientOrchestrationValidationException);
+
+            this.securityBrokerMock.Verify(broker =>
+                broker.ValidateCaptchaAsync(inputCaptchaToken, ""),
+                    Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                broker.LogErrorAsync(It.Is(SameExceptionAs(

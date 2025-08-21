@@ -4,16 +4,20 @@
 
 using System;
 using System.Threading.Tasks;
+using LondonDataServices.IDecide.Core.Models.Foundations.Notifications.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
+using LondonDataServices.IDecide.Core.Models.Foundations.Patients.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
 using Xeptions;
+using NullPatientException = LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions.NullPatientException;
 
 namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
 {
     public partial class PatientOrchestrationService
     {
         private delegate ValueTask<Patient> ReturningPatientFunction();
+        private delegate ValueTask ReturningNothingFunction();
 
         private async ValueTask<Patient> TryCatch(
             ReturningPatientFunction returningPatientFunction)
@@ -58,6 +62,97 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             {
                 throw await CreateAndLogDependencyExceptionAsync(
                     pdsDependencyException);
+            }
+            catch (Exception exception)
+            {
+                var failedPatientOrchestrationServiceException =
+                    new FailedPatientOrchestrationServiceException(
+                        message: "Failed patient orchestration service error occurred, contact support.",
+                        innerException: exception);
+
+                throw await CreateAndLogServiceExceptionAsync(failedPatientOrchestrationServiceException);
+            }
+        }
+
+        private async ValueTask TryCatch(
+            ReturningNothingFunction returningNothingFunction)
+        {
+            try
+            {
+                await returningNothingFunction();
+            }
+            catch (InvalidCaptchaException invalidCaptchaException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(invalidCaptchaException);
+            }
+            catch (ValidPatientCodeExistsException validPatientCodeExistsException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(
+                    validPatientCodeExistsException);
+            }
+            catch (InvalidPatientOrchestrationArgumentException invalidPatientOrchestrationArgumentException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(invalidPatientOrchestrationArgumentException);
+            }
+            catch (PdsValidationException pdsValidationException)
+            {
+                throw await CreateAndLogDependencyValidationExceptionAsync(
+                    pdsValidationException);
+            }
+            catch (PdsDependencyValidationException pdsDependencyValidationException)
+            {
+                throw await CreateAndLogDependencyValidationExceptionAsync(
+                    pdsDependencyValidationException);
+            }
+            catch (PdsServiceException pdsServiceException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(
+                    pdsServiceException);
+            }
+            catch (PdsDependencyException pdsDependencyException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(
+                    pdsDependencyException);
+            }
+            catch (PatientValidationException patientValidationException)
+            {
+                throw await CreateAndLogDependencyValidationExceptionAsync(
+                    patientValidationException);
+            }
+            catch (PatientDependencyValidationException patientDependencyValidationException)
+            {
+                throw await CreateAndLogDependencyValidationExceptionAsync(
+                    patientDependencyValidationException);
+            }
+            catch (PatientServiceException patientServiceException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(
+                    patientServiceException);
+            }
+            catch (PatientDependencyException patientDependencyException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(
+                    patientDependencyException);
+            }
+            catch (NotificationValidationException notificationValidationException)
+            {
+                throw await CreateAndLogDependencyValidationExceptionAsync(
+                    notificationValidationException);
+            }
+            catch (NotificationDependencyValidationException notificationDependencyValidationException)
+            {
+                throw await CreateAndLogDependencyValidationExceptionAsync(
+                    notificationDependencyValidationException);
+            }
+            catch (NotificationServiceException notificationServiceException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(
+                    notificationServiceException);
+            }
+            catch (NotificationDependencyException notificationDependencyException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(
+                    notificationDependencyException);
             }
             catch (Exception exception)
             {

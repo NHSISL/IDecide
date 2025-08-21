@@ -77,90 +77,91 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                 }
             });
 
-        public async ValueTask RecordPatientInformation(
+        public ValueTask RecordPatientInformation(
             string nhsNumber,
             string captcha,
             string notificationPreference,
-            bool generateNewCode = false)
-        {
-            ValidateRecordPatientInformationArguments(
-                nhsNumber: nhsNumber,
-                captchaToken: captcha,
-                notificationPreference: notificationPreference);
-
-            bool isCaptchaValid = await this.securityBroker.ValidateCaptchaAsync(captcha);
-
-            if (isCaptchaValid is false)
+            bool generateNewCode = false) =>
+            TryCatch(async () =>
             {
-                throw new InvalidCaptchaException(
-                    message: "The provided captcha token is invalid.");
-            }
+                ValidateRecordPatientInformationArguments(
+                    nhsNumber: nhsNumber,
+                    captchaToken: captcha,
+                    notificationPreference: notificationPreference);
 
-            IQueryable<Patient> patients = await this.patientService.RetrieveAllPatientsAsync();
-            Patient maybeMatchingPatient = patients.FirstOrDefault(patient => patient.NhsNumber == nhsNumber);
-            Patient patientToRecord = null;
-            DateTimeOffset now = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
+                bool isCaptchaValid = await this.securityBroker.ValidateCaptchaAsync(captcha);
 
-            Enum.TryParse(
-                notificationPreference, out NotificationPreference notificationPreferenceType);
+                if (isCaptchaValid is false)
+                {
+                    throw new InvalidCaptchaException(
+                        message: "The provided captcha token is invalid.");
+                }
 
-            if (maybeMatchingPatient is null)
-            {
-                Patient pdsPatient = await this.pdsService.PatientLookupByNhsNumberAsync(nhsNumber);
-                string validationCode = GenerateValidationCode();
+                IQueryable<Patient> patients = await this.patientService.RetrieveAllPatientsAsync();
+                Patient maybeMatchingPatient = patients.FirstOrDefault(patient => patient.NhsNumber == nhsNumber);
+                Patient patientToRecord = null;
+                DateTimeOffset now = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
 
-                DateTimeOffset expirationDate =
-                    now.AddMinutes(patientOrchestrationConfigurations.ValidationCodeExpireAfterMinutes);
+                Enum.TryParse(
+                    notificationPreference, out NotificationPreference notificationPreferenceType);
 
-                pdsPatient.ValidationCode = validationCode;
-                pdsPatient.ValidationCodeExpiresOn = expirationDate;
-                pdsPatient.NotificationPreference = notificationPreferenceType;
-                patientToRecord = pdsPatient;
-
-                await this.patientService.AddPatientAsync(patientToRecord);
-            }
-            else
-            {
-                if (maybeMatchingPatient.ValidationCodeExpiresOn <= now
-                    || (maybeMatchingPatient.ValidationCodeExpiresOn > now && generateNewCode == true))
+                if (maybeMatchingPatient is null)
                 {
                     Patient pdsPatient = await this.pdsService.PatientLookupByNhsNumberAsync(nhsNumber);
-                    maybeMatchingPatient.Address = pdsPatient.Address;
-                    maybeMatchingPatient.DateOfBirth = pdsPatient.DateOfBirth;
-                    maybeMatchingPatient.Email = pdsPatient.Email;
-                    maybeMatchingPatient.Gender = pdsPatient.Gender;
-                    maybeMatchingPatient.GivenName = pdsPatient.GivenName;
-                    maybeMatchingPatient.NhsNumber = pdsPatient.NhsNumber;
-                    maybeMatchingPatient.Phone = pdsPatient.Phone;
-                    maybeMatchingPatient.PostCode = pdsPatient.PostCode;
-                    maybeMatchingPatient.Surname = pdsPatient.Surname;
-                    maybeMatchingPatient.Title = pdsPatient.Title;
-                    maybeMatchingPatient.NotificationPreference = notificationPreferenceType;
                     string validationCode = GenerateValidationCode();
 
                     DateTimeOffset expirationDate =
                         now.AddMinutes(patientOrchestrationConfigurations.ValidationCodeExpireAfterMinutes);
 
-                    maybeMatchingPatient.ValidationCode = validationCode;
-                    maybeMatchingPatient.ValidationCodeExpiresOn = expirationDate;
-                    patientToRecord = maybeMatchingPatient;
+                    pdsPatient.ValidationCode = validationCode;
+                    pdsPatient.ValidationCodeExpiresOn = expirationDate;
+                    pdsPatient.NotificationPreference = notificationPreferenceType;
+                    patientToRecord = pdsPatient;
 
-                    await this.patientService.ModifyPatientAsync(patientToRecord);
+                    await this.patientService.AddPatientAsync(patientToRecord);
                 }
                 else
                 {
-                    throw new ValidPatientCodeExistsException(
-                        message: "A valid code already exists for this patient, please go to the enter code screen.");
+                    if (maybeMatchingPatient.ValidationCodeExpiresOn <= now
+                        || (maybeMatchingPatient.ValidationCodeExpiresOn > now && generateNewCode == true))
+                    {
+                        Patient pdsPatient = await this.pdsService.PatientLookupByNhsNumberAsync(nhsNumber);
+                        maybeMatchingPatient.Address = pdsPatient.Address;
+                        maybeMatchingPatient.DateOfBirth = pdsPatient.DateOfBirth;
+                        maybeMatchingPatient.Email = pdsPatient.Email;
+                        maybeMatchingPatient.Gender = pdsPatient.Gender;
+                        maybeMatchingPatient.GivenName = pdsPatient.GivenName;
+                        maybeMatchingPatient.NhsNumber = pdsPatient.NhsNumber;
+                        maybeMatchingPatient.Phone = pdsPatient.Phone;
+                        maybeMatchingPatient.PostCode = pdsPatient.PostCode;
+                        maybeMatchingPatient.Surname = pdsPatient.Surname;
+                        maybeMatchingPatient.Title = pdsPatient.Title;
+                        maybeMatchingPatient.NotificationPreference = notificationPreferenceType;
+                        string validationCode = GenerateValidationCode();
+
+                        DateTimeOffset expirationDate =
+                            now.AddMinutes(patientOrchestrationConfigurations.ValidationCodeExpireAfterMinutes);
+
+                        maybeMatchingPatient.ValidationCode = validationCode;
+                        maybeMatchingPatient.ValidationCodeExpiresOn = expirationDate;
+                        patientToRecord = maybeMatchingPatient;
+
+                        await this.patientService.ModifyPatientAsync(patientToRecord);
+                    }
+                    else
+                    {
+                        throw new ValidPatientCodeExistsException(
+                            message: "A valid code already exists for this patient, please go to the enter code screen.");
+                    }
                 }
-            }
 
-            NotificationInfo notificationInfo = new NotificationInfo
-            {
-                Patient = patientToRecord
-            };
+                NotificationInfo notificationInfo = new NotificationInfo
+                {
+                    Patient = patientToRecord
+                };
 
-            await this.notificationService.SendCodeNotificationAsync(notificationInfo);
-        }
+                await this.notificationService.SendCodeNotificationAsync(notificationInfo);
+            });
 
         virtual internal string GenerateValidationCode()
         {

@@ -51,11 +51,8 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                 (Rule: IsInvalid(captchaToken),
                 Parameter: nameof(captchaToken)),
 
-                (Rule: IsInvalid(notificationPreference),
-                Parameter: nameof(captchaToken)),
-
                 (Rule: IsInvalidNotificationPreference(notificationPreference),
-                Parameter: nameof(captchaToken)));
+                Parameter: nameof(notificationPreference)));
         }
 
         private static void ValidatePatientIsNotNull(Patient patient)
@@ -72,13 +69,15 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             Message = "Text is invalid"
         };
 
-        private static dynamic IsInvalidNotificationPreference(string notificationPreference) => new
+        private static dynamic IsInvalidNotificationPreference(string notificationPreference)
         {
-            Condition = Enum.TryParse<NotificationPreference>(notificationPreference, out var preference)
-                && Enum.IsDefined(typeof(NotificationPreference), preference),
-
-            Message = "Text is not a valid notification preference"
-        };
+            return new
+            {
+                Condition = !(Enum.TryParse<NotificationPreference>(notificationPreference, true, out var preference)
+                    && Enum.IsDefined(typeof(NotificationPreference), preference)),
+                Message = "Text is not a valid notification preference"
+            };
+        }
 
         private static dynamic IsInvalidIdentifier(string name) => new
         {
