@@ -102,19 +102,11 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
 
             invalidConsumerException.AddData(
                 key: nameof(Consumer.UpdatedDate),
-                values:
-                [
-                    "Date is required",
-                    $"Date is the same as {nameof(Consumer.CreatedDate)}"
-                ]);
+                values: "Date is required");
 
             invalidConsumerException.AddData(
                 key: nameof(Consumer.UpdatedBy),
-                values:
-                [
-                    "Text is required",
-                    $"Expected value to be '{randomUserId}' but found '{invalidConsumer.UpdatedBy}'."
-                ]);
+                values: "Text is required");
 
             var expectedConsumerValidationException =
                 new ConsumerValidationException(

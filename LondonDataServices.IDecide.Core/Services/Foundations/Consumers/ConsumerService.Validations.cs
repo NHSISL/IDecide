@@ -57,6 +57,12 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Consumers
 
             Validate<InvalidConsumerException>(
                 message: "Invalid consumer. Please correct the errors and try again.",
+                (Rule: IsInvalid(consumer.Id), Parameter: nameof(Consumer.Id)),
+                (Rule: IsInvalid(consumer.Name), Parameter: nameof(Consumer.Name)),
+                (Rule: IsInvalid(consumer.CreatedDate), Parameter: nameof(Consumer.CreatedDate)),
+                (Rule: IsInvalid(consumer.CreatedBy), Parameter: nameof(Consumer.CreatedBy)),
+                (Rule: IsInvalid(consumer.UpdatedDate), Parameter: nameof(Consumer.UpdatedDate)),
+                (Rule: IsInvalid(consumer.UpdatedBy), Parameter: nameof(Consumer.UpdatedBy)),
                 (Rule: await IsNotRecentAsync(consumer.UpdatedDate), Parameter: nameof(Consumer.UpdatedDate)));
         }
 
