@@ -6,12 +6,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using KellermanSoftware.CompareNetObjects;
 using LondonDataServices.IDecide.Core.Brokers.DateTimes;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Brokers.Securities;
+using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds.Exceptions;
+using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients;
 using LondonDataServices.IDecide.Core.Services.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Services.Foundations.Pds;
@@ -30,7 +33,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         private readonly Mock<IPdsService> pdsServiceMock = new Mock<IPdsService>();
         private readonly Mock<IPatientService> patientServiceMock = new Mock<IPatientService>();
         private readonly Mock<INotificationService> notificationServiceMock = new Mock<INotificationService>();
+        private readonly PatientOrchestrationConfigurations patientOrchestrationConfigurations;
         private readonly PatientOrchestrationService patientOrchestrationService;
+        private static readonly int expireAfterMinutes = 1440;
+        private readonly ICompareLogic compareLogic;
 
         public PatientOrchestrationServiceTests()
         {
@@ -40,6 +46,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             this.pdsServiceMock = new Mock<IPdsService>();
             this.patientServiceMock = new Mock<IPatientService>();
             this.notificationServiceMock = new Mock<INotificationService>();
+            this.compareLogic = new CompareLogic();
+
+            this.patientOrchestrationConfigurations = new PatientOrchestrationConfigurations
+            {
+                ValidationCodeExpireAfterMinutes = expireAfterMinutes
+            };
 
             this.patientOrchestrationService = new PatientOrchestrationService(
                 loggingBroker: this.loggingBrokerMock.Object,
@@ -47,7 +59,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 dateTimeBroker: this.dateTimeBrokerMock.Object,
                 pdsService: this.pdsServiceMock.Object,
                 patientService: this.patientServiceMock.Object,
-                notificationService: this.notificationServiceMock.Object);
+                notificationService: this.notificationServiceMock.Object,
+                patientOrchestrationConfigurations: this.patientOrchestrationConfigurations);
 
         }
 
@@ -139,6 +152,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             return filler;
         }
+
+        private Expression<Func<Patient, bool>> SamePatientAs(Patient expectedPatient) =>
+            actualPatient => this.compareLogic.Compare(expectedPatient, actualPatient).AreEqual;
+
+        private Expression<Func<NotificationInfo, bool>> SameNotificationInfoAs(NotificationInfo expectedInfo) =>
+           actualInfo => this.compareLogic.Compare(expectedInfo, actualInfo).AreEqual;
 
         private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
             actualException => actualException.SameExceptionAs(expectedException);

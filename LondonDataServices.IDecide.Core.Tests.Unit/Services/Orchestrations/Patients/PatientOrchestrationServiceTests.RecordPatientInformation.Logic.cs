@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Force.DeepCloner;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
+using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
 using Moq;
 
@@ -20,6 +21,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         public async Task ShouldRecordPatientInformationAsyncWhenNoPatientFound()
         {
             // given
+            int expireAfterMinutes = this.patientOrchestrationConfigurations.ValidationCodeExpireAfterMinutes;
             string randomNhsNumber = GenerateRandom10DigitNumber();
             string inputNhsNumber = randomNhsNumber.DeepClone();
             string randomCaptchaToken = GetRandomString();
@@ -30,13 +32,14 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             string outputValidationCode = GetRandomStringWithLengthOf(5);
             DateTimeOffset randomDateTimeOffest = GetRandomDateTimeOffset();
             DateTimeOffset outputDateTimeOffset = randomDateTimeOffest.DeepClone();
-            Patient randomPatient = GetRandomPatient(inputNhsNumber);
+            Patient randomPatient = GetRandomPatientWithNhsNumber(inputNhsNumber);
+            randomPatient.NotificationPreference = inputNotificationPreference;
             Patient outputPatient = randomPatient.DeepClone();
             List<Patient> randomPatients = GetRandomPatients();
             List<Patient> outputPatients = randomPatients.DeepClone();
             Patient updatedPatient = outputPatient.DeepClone();
             updatedPatient.ValidationCode = outputValidationCode;
-            updatedPatient.ValidationCodeExpiresOn = outputDateTimeOffset.AddMinutes(10);
+            updatedPatient.ValidationCodeExpiresOn = outputDateTimeOffset.AddMinutes(expireAfterMinutes);
             updatedPatient.NotificationPreference = inputNotificationPreference;
 
             NotificationInfo inputNotificationInfo = new NotificationInfo
@@ -44,13 +47,20 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 Patient = updatedPatient
             };
 
+            PatientOrchestrationConfigurations patientOrchestrationConfigurations =
+                new PatientOrchestrationConfigurations
+                {
+                    ValidationCodeExpireAfterMinutes = 1440
+                };
+
             var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
                 loggingBrokerMock.Object,
                 securityBrokerMock.Object,
                 dateTimeBrokerMock.Object,
                 pdsServiceMock.Object,
                 patientServiceMock.Object,
-                notificationServiceMock.Object)
+                notificationServiceMock.Object,
+                patientOrchestrationConfigurations)
             { CallBase = true };
 
             this.patientServiceMock.Setup(service =>
@@ -70,7 +80,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     .ReturnsAsync(outputDateTimeOffset);
 
             this.patientServiceMock.Setup(service =>
-                service.AddPatientAsync(updatedPatient))
+                service.AddPatientAsync(It.Is(SamePatientAs(updatedPatient))))
                     .ReturnsAsync(updatedPatient);
 
             // when
@@ -98,11 +108,11 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     Times.Once);
 
             this.patientServiceMock.Verify(service =>
-                service.AddPatientAsync(updatedPatient),
+                service.AddPatientAsync(It.Is(SamePatientAs(updatedPatient))),
                     Times.Once);
 
             this.notificationServiceMock.Verify(service =>
-                service.SendCodeNotificationAsync(inputNotificationInfo),
+                service.SendCodeNotificationAsync(It.Is(SameNotificationInfoAs(inputNotificationInfo))),
                         Times.Once);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
