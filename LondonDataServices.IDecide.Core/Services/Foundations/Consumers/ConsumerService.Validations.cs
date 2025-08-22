@@ -81,6 +81,11 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Consumers
                 (Rule: await IsNotRecentAsync(consumer.UpdatedDate), Parameter: nameof(Consumer.UpdatedDate)));
         }
 
+        private static void ValidateConsumerId(Guid consumerId) =>
+            Validate<InvalidConsumerException>(
+                message: "Invalid consumer. Please correct the errors and try again.",
+                validations: (Rule: IsInvalid(consumerId), Parameter: nameof(Consumer.Id)));
+
         private static void ValidateStorageConsumer(Consumer maybeConsumer, Guid consumerId)
         {
             if (maybeConsumer is null)
