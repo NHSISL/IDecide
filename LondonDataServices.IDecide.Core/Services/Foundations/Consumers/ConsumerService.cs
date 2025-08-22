@@ -89,6 +89,8 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Consumers
                 Consumer maybeConsumer = await this.storageBroker
                     .SelectConsumerByIdAsync(consumerId);
 
+                ValidateStorageConsumer(maybeConsumer, consumerId);
+
                 return await this.storageBroker.DeleteConsumerAsync(maybeConsumer);
             });
     }
