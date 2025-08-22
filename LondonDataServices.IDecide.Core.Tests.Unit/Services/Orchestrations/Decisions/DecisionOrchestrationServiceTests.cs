@@ -10,8 +10,11 @@ using KellermanSoftware.CompareNetObjects;
 using LondonDataServices.IDecide.Core.Brokers.DateTimes;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
+using LondonDataServices.IDecide.Core.Models.Foundations.Decisions.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
+using LondonDataServices.IDecide.Core.Models.Foundations.Notifications.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
+using LondonDataServices.IDecide.Core.Models.Foundations.Patients.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions;
 using LondonDataServices.IDecide.Core.Services.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Services.Foundations.Notifications;
@@ -71,6 +74,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
 
             return randomNumber;
         }
+
+        private static string GetRandomString() =>
+            new MnemonicString().GetValue();
 
         private static string GetRandomStringWithLengthOf(int length)
         {
@@ -149,5 +155,73 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
 
         private Expression<Func<NotificationInfo, bool>> SameNotificationInfoAs(NotificationInfo expectedInfo) =>
            actualInfo => this.compareLogic.Compare(expectedInfo, actualInfo).AreEqual;
+
+        public static TheoryData<Xeption> DependencyValidationExceptions()
+        {
+            string randomMessage = GetRandomString();
+            string exceptionMessage = randomMessage;
+            var innerException = new Xeption(exceptionMessage);
+
+            return new TheoryData<Xeption>
+            {
+                new PatientValidationException(
+                    message: "Patient validation errors occured, please try again",
+                    innerException),
+
+                new PatientDependencyValidationException(
+                    message: "Patient dependency validation occurred, please try again.",
+                    innerException),
+
+                new DecisionValidationException(
+                    message: "Decision validation errors occured, please try again",
+                    innerException),
+
+                new DecisionDependencyValidationException(
+                    message: "Decision dependency validation occurred, please try again.",
+                    innerException),
+
+                new NotificationValidationException(
+                    message: "Notification validation errors occured, please try again",
+                    innerException),
+
+                new NotificationDependencyValidationException(
+                    message: "Notification dependency validation occurred, please try again.",
+                    innerException),
+            };
+        }
+
+        public static TheoryData<Xeption> DependencyExceptions()
+        {
+            string randomMessage = GetRandomString();
+            string exceptionMessage = randomMessage;
+            var innerException = new Xeption(exceptionMessage);
+
+            return new TheoryData<Xeption>
+            {
+                new PatientDependencyException(
+                    message: "Patient dependency error occurred, please contact support.",
+                    innerException),
+
+                new PatientServiceException(
+                    message: "Patient service error occurred, please contact support.",
+                    innerException),
+
+                new DecisionDependencyException(
+                    message: "Decision dependency error occurred, please contact support.",
+                    innerException),
+
+                new DecisionServiceException(
+                    message: "Decision service error occurred, please contact support.",
+                    innerException),
+
+                new NotificationDependencyException(
+                    message: "Notification dependency error occurred, please contact support.",
+                    innerException),
+
+                new NotificationServiceException(
+                    message: "Notification service error occurred, please contact support.",
+                    innerException),
+            };
+        }
     }
 }
