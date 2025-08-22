@@ -43,51 +43,51 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
             this.decisionOrchestrationConfiguration = decisionOrchestrationConfigurations;
         }
 
-        public async ValueTask VerifyAndRecordDecisionAsync(Decision decision)
-        {
-            ValidateDecisionIsNotNull(decision);
-            ValidateDecisionPatientIsNotNull(decision);
-            ValidateDecision(decision);
-            string maybeNhsNumber = decision.PatientNhsNumber;
-            IQueryable<Patient> patients = await this.patientService.RetrieveAllPatientsAsync();
-            Patient maybeMatchingPatient = patients.FirstOrDefault(patient => patient.NhsNumber == maybeNhsNumber);
-            ValidatePatientExists(maybeMatchingPatient);
-
-            if (maybeMatchingPatient.RetryCount > this.decisionOrchestrationConfiguration.MaxRetryCount)
+        public ValueTask VerifyAndRecordDecisionAsync(Decision decision) =>
+            TryCatch(async () =>
             {
-                throw new ExceededMaxRetryCountException(
-                    $"The maximum retry count of {this.decisionOrchestrationConfiguration.MaxRetryCount} exceeded.");
-            }
+                ValidateDecisionIsNotNull(decision);
+                ValidateDecision(decision);
+                string maybeNhsNumber = decision.PatientNhsNumber;
+                IQueryable<Patient> patients = await this.patientService.RetrieveAllPatientsAsync();
+                Patient maybeMatchingPatient = patients.FirstOrDefault(patient => patient.NhsNumber == maybeNhsNumber);
+                ValidatePatientExists(maybeMatchingPatient);
 
-            DateTimeOffset currentDateTime = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
+                if (maybeMatchingPatient.RetryCount > this.decisionOrchestrationConfiguration.MaxRetryCount)
+                {
+                    throw new ExceededMaxRetryCountException(
+                        $"The maximum retry count of {this.decisionOrchestrationConfiguration.MaxRetryCount} exceeded.");
+                }
 
-            if (maybeMatchingPatient.ValidationCodeExpiresOn < currentDateTime)
-            {
-                Patient patientToUpdate = maybeMatchingPatient;
-                patientToUpdate.RetryCount += 1;
-                await this.patientService.ModifyPatientAsync(patientToUpdate);
+                DateTimeOffset currentDateTime = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
 
-                throw new ExpiredValidationCodeException("The validation code has expired.");
-            }
+                if (maybeMatchingPatient.ValidationCodeExpiresOn < currentDateTime)
+                {
+                    Patient patientToUpdate = maybeMatchingPatient;
+                    patientToUpdate.RetryCount += 1;
+                    await this.patientService.ModifyPatientAsync(patientToUpdate);
 
-            if (maybeMatchingPatient.ValidationCode != decision.Patient.ValidationCode)
-            {
-                Patient patientToUpdate = maybeMatchingPatient;
-                patientToUpdate.RetryCount += 1;
-                await this.patientService.ModifyPatientAsync(patientToUpdate);
+                    throw new ExpiredValidationCodeException("The validation code has expired.");
+                }
 
-                throw new IncorrectValidationCodeException("The validation code provided is incorrect.");
-            }
+                if (maybeMatchingPatient.ValidationCode != decision.Patient.ValidationCode)
+                {
+                    Patient patientToUpdate = maybeMatchingPatient;
+                    patientToUpdate.RetryCount += 1;
+                    await this.patientService.ModifyPatientAsync(patientToUpdate);
 
-            Decision addedDecision = await this.decisionService.AddDecisionAsync(decision);
+                    throw new IncorrectValidationCodeException("The validation code provided is incorrect.");
+                }
 
-            NotificationInfo notificationInfo = new NotificationInfo
-            {
-                Patient = maybeMatchingPatient,
-                Decision = addedDecision
-            };
+                Decision addedDecision = await this.decisionService.AddDecisionAsync(decision);
 
-            await this.notificationService.SendSubmissionSuccessNotificationAsync(notificationInfo);
-        }
+                NotificationInfo notificationInfo = new NotificationInfo
+                {
+                    Patient = maybeMatchingPatient,
+                    Decision = addedDecision
+                };
+
+                await this.notificationService.SendSubmissionSuccessNotificationAsync(notificationInfo);
+            });
     }
 }

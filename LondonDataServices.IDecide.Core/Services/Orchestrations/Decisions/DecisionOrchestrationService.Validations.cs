@@ -20,24 +20,19 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
             }
         }
 
-        private static void ValidateDecisionPatientIsNotNull(Decision decision)
-        {
-            if (decision.Patient is null)
-            {
-                throw new NullDecisionPatientException("Decision patient is null.");
-            }
-        }
-
         private static void ValidateDecision(Decision decision)
         {
             Validate(
-                (Rule: IsInvalidIdentifier(decision.Patient.NhsNumber),
+                (Rule: IsPatientNull(decision.Patient),
+                Parameter: nameof(decision.Patient)),
+
+                (Rule: IsInvalidIdentifier(decision.Patient?.NhsNumber),
                 Parameter: nameof(decision.Patient.NhsNumber)),
 
                 (Rule: IsInvalidIdentifier(decision.PatientNhsNumber),
                 Parameter: nameof(decision.PatientNhsNumber)),
 
-                (Rule: IsInvalidValidationCode(decision.Patient.ValidationCode),
+                (Rule: IsInvalidValidationCode(decision.Patient?.ValidationCode),
                 Parameter: nameof(decision.Patient.ValidationCode)));
         }
 
@@ -48,6 +43,12 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
                 throw new NotFoundPatientException("Patient does not exist");
             }
         }
+
+        private static dynamic IsPatientNull(Patient patient) => new
+        {
+            Condition = patient is null,
+            Message = "Patient cannot be null."
+        };
 
         private static dynamic IsInvalidIdentifier(string identifier) => new
         {

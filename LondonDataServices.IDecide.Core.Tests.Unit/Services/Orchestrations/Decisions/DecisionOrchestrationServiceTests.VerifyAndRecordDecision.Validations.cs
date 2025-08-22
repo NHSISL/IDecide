@@ -61,16 +61,31 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
         {
             // given
             Decision randomDecision = GetRandomDecisionWithNullPatient();
-            var nullDecisionPatientException = new NullDecisionPatientException("Decision patient is null.");
+
+            var invalidDecisionOrchestrationArgumentException =
+                new InvalidDecisionOrchestrationArgumentException(
+                    "Invalid decision orchestration argument. Please correct the errors and try again.");
+
+            invalidDecisionOrchestrationArgumentException.AddData(
+                key: "Patient",
+                values: "Patient cannot be null.");
+
+            invalidDecisionOrchestrationArgumentException.AddData(
+                key: "NhsNumber",
+                values: "Text must be exactly 10 digits.");
+
+            invalidDecisionOrchestrationArgumentException.AddData(
+                key: "ValidationCode",
+                values: "Code must be 5 characters long.");
 
             var expectedDecisionOrchestrationValidationException =
                 new DecisionOrchestrationValidationException(
                     message: "Decision orchestration validation error occurred, please fix the errors and try again.",
-                    innerException: nullDecisionPatientException);
+                    innerException: invalidDecisionOrchestrationArgumentException);
 
             this.patientServiceMock.Setup(service =>
                 service.RetrieveAllPatientsAsync())
-                    .ThrowsAsync(nullDecisionPatientException);
+                    .ThrowsAsync(invalidDecisionOrchestrationArgumentException);
 
             // when
             ValueTask verifyAndRecordDecisionTask =
@@ -119,11 +134,11 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                     "Invalid decision orchestration argument. Please correct the errors and try again.");
 
             invalidDecisionOrchestrationArgumentException.AddData(
-                key: "nhsNumber",
+                key: "NhsNumber",
                 values: "Text must be exactly 10 digits.");
 
             invalidDecisionOrchestrationArgumentException.AddData(
-                key: "patientNhsNumber",
+                key: "PatientNhsNumber",
                 values: "Text must be exactly 10 digits.");
 
             var expectedDecisionOrchestrationValidationException =
@@ -181,7 +196,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                     "Invalid decision orchestration argument. Please correct the errors and try again.");
 
             invalidDecisionOrchestrationArgumentException.AddData(
-                key: "validationCode",
+                key: "ValidationCode",
                 values: "Code must be 5 characters long.");
 
             var expectedDecisionOrchestrationValidationException =
@@ -256,6 +271,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             actualPatientOrchestrationValidationException
                 .Should().BeEquivalentTo(expectedDecisionOrchestrationValidationException);
 
+            this.patientServiceMock.Verify(service =>
+                service.RetrieveAllPatientsAsync(),
+                    Times.Once);
+
             this.loggingBrokerMock.Verify(broker =>
                broker.LogErrorAsync(It.Is(SameExceptionAs(
                    expectedDecisionOrchestrationValidationException))),
@@ -301,6 +320,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             // then
             actualPatientOrchestrationValidationException
                 .Should().BeEquivalentTo(expectedDecisionOrchestrationValidationException);
+
+            this.patientServiceMock.Verify(service =>
+                service.RetrieveAllPatientsAsync(),
+                    Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                broker.LogErrorAsync(It.Is(SameExceptionAs(
@@ -349,6 +372,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             // then
             actualPatientOrchestrationValidationException
                 .Should().BeEquivalentTo(expectedDecisionOrchestrationValidationException);
+
+            this.patientServiceMock.Verify(service =>
+                service.RetrieveAllPatientsAsync(),
+                    Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                broker.LogErrorAsync(It.Is(SameExceptionAs(

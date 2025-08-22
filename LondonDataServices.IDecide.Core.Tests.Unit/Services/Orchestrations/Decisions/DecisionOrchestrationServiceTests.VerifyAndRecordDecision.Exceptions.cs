@@ -139,7 +139,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
 
             var expectedDecisionOrchestrationServiceException =
                 new DecisionOrchestrationServiceException(
-                    message: "Patient orchestration service error occurred, contact support.",
+                    message: "Decision orchestration service error occurred, contact support.",
                     innerException: failedServiceDecisionOrchestrationException);
 
             this.patientServiceMock.Setup(service =>
