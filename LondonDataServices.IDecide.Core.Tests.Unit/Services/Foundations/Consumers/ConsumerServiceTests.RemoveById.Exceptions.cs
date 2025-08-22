@@ -2,11 +2,13 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Consumers;
 using LondonDataServices.IDecide.Core.Models.Foundations.Consumers.Exceptions;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consumers
@@ -61,6 +63,61 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Never);
+
+            this.securityAuditBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.securityBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowDependencyValidationOnRemoveIfDatabaseUpdateConcurrencyErrorOccursAndLogItAsync()
+        {
+            // given
+            Guid someConsumerId = Guid.NewGuid();
+
+            var databaseUpdateConcurrencyException =
+                new DbUpdateConcurrencyException();
+
+            var lockedConsumerException =
+                new LockedConsumerException(
+                    message: "Locked consumer record exception, please try again later",
+                    innerException: databaseUpdateConcurrencyException);
+
+            var expectedConsumerDependencyValidationException =
+                new ConsumerDependencyValidationException(
+                    message: "Consumer dependency validation occurred, please try again.",
+                    innerException: lockedConsumerException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectConsumerByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(databaseUpdateConcurrencyException);
+
+            // when
+            ValueTask<Consumer> removeConsumerByIdTask =
+                this.consumerService.RemoveConsumerByIdAsync(someConsumerId);
+
+            ConsumerDependencyValidationException actualConsumerDependencyValidationException =
+                await Assert.ThrowsAsync<ConsumerDependencyValidationException>(
+                    removeConsumerByIdTask.AsTask);
+
+            // then
+            actualConsumerDependencyValidationException.Should()
+                .BeEquivalentTo(expectedConsumerDependencyValidationException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectConsumerByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedConsumerDependencyValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.DeleteConsumerAsync(It.IsAny<Consumer>()),
                     Times.Never);
 
             this.securityAuditBrokerMock.VerifyNoOtherCalls();
