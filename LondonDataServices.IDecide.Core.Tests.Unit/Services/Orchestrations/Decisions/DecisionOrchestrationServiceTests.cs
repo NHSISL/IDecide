@@ -19,6 +19,7 @@ using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions;
 using Moq;
 using Tynamix.ObjectFiller;
+using Xeptions;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Decisions
 {
@@ -71,11 +72,19 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             return randomNumber;
         }
 
+        private static string GetRandomStringWithLengthOf(int length)
+        {
+            string result = new MnemonicString(wordCount: 1, wordMinLength: length, wordMaxLength: length).GetValue();
+
+            return result.Length > length ? result.Substring(0, length) : result;
+        }
+
         private static Patient GetRandomPatient(
             DateTimeOffset validationCodeExpiresOn,
             string inputNhsNumber = "1234567890",
-            string validationCode = "A1B2C") =>
-            CreatePatientFiller(validationCodeExpiresOn, inputNhsNumber, validationCode).Create();
+            string validationCode = "A1B2C",
+            int retryCount = 0) =>
+            CreatePatientFiller(validationCodeExpiresOn, inputNhsNumber, validationCode, retryCount).Create();
 
         private static List<Patient> GetRandomPatients(DateTimeOffset validationCodeExpiresOn) =>
             CreatePatientFiller(validationCodeExpiresOn).Create(GetRandomNumber()).ToList();
@@ -83,7 +92,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
         private static Filler<Patient> CreatePatientFiller(
             DateTimeOffset validationCodeExpiresOn,
             string inputNhsNumber = "1234567890",
-            string validationCode = "A1B2C")
+            string validationCode = "A1B2C",
+            int retryCount = 0)
         {
             DateTimeOffset dateTimeOffset = DateTimeOffset.UtcNow;
             var filler = new Filler<Patient>();
@@ -91,7 +101,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
                 .OnType<DateTimeOffset?>().Use(dateTimeOffset)
-                .OnProperty(n => n.NhsNumber).Use(inputNhsNumber);
+                .OnProperty(n => n.ValidationCodeExpiresOn).Use(validationCodeExpiresOn)
+                .OnProperty(n => n.NhsNumber).Use(inputNhsNumber)
+                .OnProperty(n => n.ValidationCode).Use(validationCode)
+                .OnProperty(n => n.RetryCount).Use(retryCount);
 
             return filler;
         }
@@ -112,6 +125,24 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
 
             return filler;
         }
+
+        private static Decision GetRandomDecisionWithNullPatient() =>
+            CreateDecisionFillerWithNullPatient().Create();
+
+        private static Filler<Decision> CreateDecisionFillerWithNullPatient()
+        {
+            DateTimeOffset dateTimeOffset = DateTimeOffset.UtcNow;
+            var filler = new Filler<Decision>();
+
+            filler.Setup()
+                .OnType<DateTimeOffset>().Use(dateTimeOffset)
+                .OnType<DateTimeOffset?>().Use(dateTimeOffset);
+
+            return filler;
+        }
+
+        private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
+            actualException => actualException.SameExceptionAs(expectedException);
 
         private Expression<Func<Decision, bool>> SameDecisionAs(Decision expectedDecision) =>
             actualDecision => this.compareLogic.Compare(expectedDecision, actualDecision).AreEqual;

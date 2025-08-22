@@ -21,8 +21,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
         {
             // given
             string randomNhsNumber = GenerateRandom10DigitNumber();
+            string randomValidationCode = GetRandomStringWithLengthOf(5);
             DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
-            Patient randomPatient = GetRandomPatient(randomDateTime, randomNhsNumber);
+            Patient randomPatient = GetRandomPatient(randomDateTime, randomNhsNumber, randomValidationCode);
             List<Patient> randomPatients = GetRandomPatients(randomDateTime);
             randomPatients.Add(randomPatient);
             List<Patient> outputPatients = randomPatients.DeepClone();
@@ -40,6 +41,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 service.RetrieveAllPatientsAsync())
                     .ReturnsAsync(outputPatients.AsQueryable);
 
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTime);
+
             this.decisionServiceMock.Setup(service =>
                 service.AddDecisionAsync(It.Is(SameDecisionAs(inputDecision))))
                     .ReturnsAsync(outputDecision);
@@ -51,6 +56,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
 
             this.patientServiceMock.Verify(service =>
                 service.RetrieveAllPatientsAsync(),
+                    Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
 
             this.decisionServiceMock.Verify(service =>
