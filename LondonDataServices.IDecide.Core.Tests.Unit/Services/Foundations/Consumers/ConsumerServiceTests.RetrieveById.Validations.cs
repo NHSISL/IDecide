@@ -59,5 +59,51 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowNotFoundExceptionOnRetrieveByIdIfConsumerIsNotFoundAndLogItAsync()
+        {
+            //given
+            Guid someConsumerId = Guid.NewGuid();
+            Consumer noConsumer = null;
+
+            var notFoundConsumerException = new NotFoundConsumerException(
+                $"Couldn't find consumer with consumerId: {someConsumerId}.");
+
+            var expectedConsumerValidationException =
+                new ConsumerValidationException(
+                    message: "Consumer validation errors occurred, please try again.",
+                    innerException: notFoundConsumerException);
+
+            this.storageBrokerMock.Setup(broker =>
+                    broker.SelectConsumerByIdAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(noConsumer);
+
+            //when
+            ValueTask<Consumer> retrieveConsumerByIdTask =
+                this.consumerService.RetrieveConsumerByIdAsync(someConsumerId);
+
+            ConsumerValidationException actualConsumerValidationException =
+                await Assert.ThrowsAsync<ConsumerValidationException>(
+                    retrieveConsumerByIdTask.AsTask);
+
+            //then
+            actualConsumerValidationException.Should().BeEquivalentTo(expectedConsumerValidationException);
+
+            this.storageBrokerMock.Verify(broker =>
+                    broker.SelectConsumerByIdAsync(It.IsAny<Guid>()),
+                Times.Once());
+
+            this.loggingBrokerMock.Verify(broker =>
+                    broker.LogErrorAsync(It.Is(SameExceptionAs(
+                        expectedConsumerValidationException))),
+                Times.Once);
+
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.securityAuditBrokerMock.VerifyNoOtherCalls();
+            this.securityBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
