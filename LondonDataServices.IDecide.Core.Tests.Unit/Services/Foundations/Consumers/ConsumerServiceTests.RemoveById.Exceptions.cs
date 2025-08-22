@@ -126,5 +126,54 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.securityBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowDependencyExceptionOnRemoveWhenSqlExceptionOccursAndLogItAsync()
+        {
+            // given
+            Guid someConsumerId = Guid.NewGuid();
+            SqlException sqlException = GetSqlException();
+
+            var failedConsumerStorageException =
+                new FailedConsumerStorageException(
+                    message: "Failed consumer storage error occurred, contact support.",
+                    innerException: sqlException);
+
+            var expectedConsumerDependencyException =
+                new ConsumerDependencyException(
+                    message: "Consumer dependency error occurred, contact support.",
+                    innerException: failedConsumerStorageException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectConsumerByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(sqlException);
+
+            // when
+            ValueTask<Consumer> deleteConsumerTask =
+                this.consumerService.RemoveConsumerByIdAsync(someConsumerId);
+
+            ConsumerDependencyException actualConsumerDependencyException =
+                await Assert.ThrowsAsync<ConsumerDependencyException>(
+                    deleteConsumerTask.AsTask);
+
+            // then
+            actualConsumerDependencyException.Should()
+                .BeEquivalentTo(expectedConsumerDependencyException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectConsumerByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogCriticalAsync(It.Is(SameExceptionAs(
+                    expectedConsumerDependencyException))),
+                        Times.Once);
+
+            this.securityAuditBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.securityBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
