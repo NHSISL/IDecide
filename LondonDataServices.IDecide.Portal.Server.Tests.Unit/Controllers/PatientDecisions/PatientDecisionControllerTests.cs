@@ -5,14 +5,17 @@
 using System;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
+using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions.Exceptions;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions;
 using LondonDataServices.IDecide.Portal.Server.Controllers;
 using Moq;
+using RESTFulSense.Controllers;
 using Tynamix.ObjectFiller;
+using Xeptions;
 
 namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.PatientDecisions
 {
-    public partial class PatientDecisionControllerTests
+    public partial class PatientDecisionControllerTests : RESTFulController
     {
         private readonly Mock<IDecisionOrchestrationService> decisionOrchestrationServiceMock;
         private readonly PatientDecisionController patientDecisionController;
@@ -25,6 +28,9 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Patien
                 new PatientDecisionController(this.decisionOrchestrationServiceMock.Object);
         }
 
+        private static int GetRandomNumber() =>
+            new IntRange(max: 15, min: 2).GetValue();
+
         private static DateTimeOffset GetRandomDateTimeOffset() =>
            new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
@@ -35,6 +41,9 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Patien
 
             return randomNumber;
         }
+
+        private static string GetRandomString() =>
+            new MnemonicString(wordCount: GetRandomNumber()).GetValue();
 
         private static string GetRandomStringWithLengthOf(int length)
         {
@@ -85,6 +94,40 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Patien
                 .OnProperty(n => n.PatientNhsNumber).Use(patient.NhsNumber);
 
             return filler;
+        }
+
+        public static TheoryData<Xeption> ValidationExceptions()
+        {
+            var someInnerException = new Xeption();
+            string someMessage = GetRandomString();
+
+            return new TheoryData<Xeption>
+            {
+                new DecisionOrchestrationValidationException(
+                    message: someMessage,
+                    innerException: someInnerException),
+
+                new DecisionOrchestrationDependencyValidationException(
+                    message: someMessage,
+                    innerException: someInnerException)
+            };
+        }
+
+        public static TheoryData<Xeption> ServerExceptions()
+        {
+            var someInnerException = new Xeption();
+            string someMessage = GetRandomString();
+
+            return new TheoryData<Xeption>
+            {
+                new DecisionOrchestrationDependencyException(
+                    message: someMessage,
+                    innerException: someInnerException),
+
+                new DecisionOrchestrationServiceException(
+                    message: someMessage,
+                    innerException: someInnerException)
+            };
         }
     }
 }
