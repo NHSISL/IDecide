@@ -20,8 +20,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
         public async Task ShouldVerifyAndRecordDecisionAsync()
         {
             // given
+            string randomNhsNumber = GenerateRandom10DigitNumber();
             DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
-            Patient randomPatient = GetRandomPatient(randomDateTime);
+            Patient randomPatient = GetRandomPatient(randomDateTime, randomNhsNumber);
             List<Patient> randomPatients = GetRandomPatients(randomDateTime);
             randomPatients.Add(randomPatient);
             List<Patient> outputPatients = randomPatients.DeepClone();
@@ -40,7 +41,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                     .ReturnsAsync(outputPatients.AsQueryable);
 
             this.decisionServiceMock.Setup(service =>
-                service.AddDecisionAsync(inputDecision))
+                service.AddDecisionAsync(It.Is(SameDecisionAs(inputDecision))))
                     .ReturnsAsync(outputDecision);
 
             // when
@@ -53,11 +54,11 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                     Times.Once);
 
             this.decisionServiceMock.Verify(service =>
-                service.AddDecisionAsync(inputDecision),
+                service.AddDecisionAsync(It.Is(SameDecisionAs(inputDecision))),
                     Times.Once);
 
             this.notificationServiceMock.Verify(service =>
-                service.SendSubmissionSuccessNotificationAsync(inputNotificationInfo),
+                service.SendSubmissionSuccessNotificationAsync(It.Is(SameNotificationInfoAs(inputNotificationInfo))),
                     Times.Once);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();

@@ -5,9 +5,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using KellermanSoftware.CompareNetObjects;
 using LondonDataServices.IDecide.Core.Brokers.DateTimes;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
+using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions;
 using LondonDataServices.IDecide.Core.Services.Foundations.Decisions;
@@ -29,6 +32,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
         private readonly DecisionOrchestrationConfigurations decisionOrchestrationConfigurations;
         private static readonly int maxRetryCount = 3;
         private readonly DecisionOrchestrationService decisionOrchestrationService;
+        private readonly ICompareLogic compareLogic;
 
         public DecisionOrchestrationServiceTests()
         {
@@ -37,6 +41,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             this.patientServiceMock = new Mock<IPatientService>();
             this.notificationServiceMock = new Mock<INotificationService>();
             this.decisionServiceMock = new Mock<IDecisionService>();
+            this.compareLogic = new CompareLogic();
 
             this.decisionOrchestrationConfigurations = new DecisionOrchestrationConfigurations
             {
@@ -57,6 +62,14 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
 
         private static DateTimeOffset GetRandomDateTimeOffset() =>
            new DateTimeRange(earliestDate: new DateTime()).GetValue();
+
+        private static string GenerateRandom10DigitNumber()
+        {
+            Random random = new Random();
+            var randomNumber = random.Next(1000000000, 2000000000).ToString();
+
+            return randomNumber;
+        }
 
         private static Patient GetRandomPatient(
             DateTimeOffset validationCodeExpiresOn,
@@ -99,5 +112,11 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
 
             return filler;
         }
+
+        private Expression<Func<Decision, bool>> SameDecisionAs(Decision expectedDecision) =>
+            actualDecision => this.compareLogic.Compare(expectedDecision, actualDecision).AreEqual;
+
+        private Expression<Func<NotificationInfo, bool>> SameNotificationInfoAs(NotificationInfo expectedInfo) =>
+           actualInfo => this.compareLogic.Compare(expectedInfo, actualInfo).AreEqual;
     }
 }

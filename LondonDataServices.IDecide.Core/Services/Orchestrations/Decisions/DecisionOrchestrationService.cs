@@ -2,10 +2,13 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System.Linq;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Brokers.DateTimes;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
+using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
+using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions;
 using LondonDataServices.IDecide.Core.Services.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Services.Foundations.Notifications;
@@ -38,9 +41,20 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
             this.decisionOrchestrationConfiguration = decisionOrchestrationConfigurations;
         }
 
-        public ValueTask VerifyAndRecordDecisionAsync(Decision decision)
+        public async ValueTask VerifyAndRecordDecisionAsync(Decision decision)
         {
-            throw new System.NotImplementedException();
+            string maybeNhsNumber = decision.PatientNhsNumber;
+            IQueryable<Patient> patients = await this.patientService.RetrieveAllPatientsAsync();
+            Patient maybeMatchingPatient = patients.FirstOrDefault(patient => patient.NhsNumber == maybeNhsNumber);
+            Decision addedDecision = await this.decisionService.AddDecisionAsync(decision);
+
+            NotificationInfo notificationInfo = new NotificationInfo
+            {
+                Patient = maybeMatchingPatient,
+                Decision = addedDecision
+            };
+
+            await this.notificationService.SendSubmissionSuccessNotificationAsync(notificationInfo);
         }
     }
 }
