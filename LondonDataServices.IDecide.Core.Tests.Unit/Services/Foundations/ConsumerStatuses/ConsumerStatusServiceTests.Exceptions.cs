@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using FluentAssertions;
@@ -247,6 +248,58 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
                     expectedConsumerStatusDependencyException))),
+                        Times.Once);
+
+            this.securityAuditBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.securityBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnAddIfServiceErrorOccursAndLogItAsync()
+        {
+            // given
+            ConsumerStatus someConsumerStatus = CreateRandomConsumerStatus();
+            var serviceException = new Exception();
+
+            var failedConsumerStatusServiceException =
+                new FailedConsumerStatusServiceException(
+                    message: "Failed consumerStatus service occurred, please contact support",
+                    innerException: serviceException);
+
+            var expectedConsumerStatusServiceException =
+                new ConsumerStatusServiceException(
+                    message: "ConsumerStatus service error occurred, contact support.",
+                    innerException: failedConsumerStatusServiceException);
+
+            this.securityAuditBrokerMock.Setup(broker =>
+                broker.ApplyAddAuditValuesAsync(It.IsAny<ConsumerStatus>()))
+                    .ThrowsAsync(serviceException);
+
+            // when
+            ValueTask<ConsumerStatus> addConsumerStatusTask = this.consumerStatusService.AddConsumerStatusAsync(someConsumerStatus);
+
+            ConsumerStatusServiceException actualConsumerStatusServiceException =
+                await Assert.ThrowsAsync<ConsumerStatusServiceException>(
+                    addConsumerStatusTask.AsTask);
+
+            // then
+            actualConsumerStatusServiceException.Should()
+                .BeEquivalentTo(expectedConsumerStatusServiceException);
+
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.ApplyAddAuditValuesAsync(It.IsAny<ConsumerStatus>()),
+                    Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertConsumerStatusAsync(It.IsAny<ConsumerStatus>()),
+                    Times.Never);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedConsumerStatusServiceException))),
                         Times.Once);
 
             this.securityAuditBrokerMock.VerifyNoOtherCalls();
