@@ -33,12 +33,15 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
             this.loggingBroker = loggingBroker;
         }
 
-        public async ValueTask<ConsumerStatus> AddConsumerStatusAsync(ConsumerStatus consumerStatus)
-        {
-            consumerStatus = await this.securityAuditBroker.ApplyAddAuditValuesAsync(consumerStatus);
-            await ValidateConsumerStatusOnAdd(consumerStatus);
+        public ValueTask<ConsumerStatus> AddConsumerStatusAsync(ConsumerStatus consumerStatus) =>
+            TryCatch(async () =>
+            {
+                consumerStatus = await this.securityAuditBroker.ApplyAddAuditValuesAsync(consumerStatus);
+                await ValidateConsumerStatusOnAdd(consumerStatus);
 
-            return await this.storageBroker.InsertConsumerStatusAsync(consumerStatus);
-        }
+                return await this.storageBroker.InsertConsumerStatusAsync(consumerStatus);
+            });
+
+
     }
 }
