@@ -19,6 +19,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             //then
             actualValidationCode.Should().HaveLength(validationCodeLength);
+            actualValidationCode.Should().MatchRegex("^[A-Z0-9]+$");
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.securityBrokerMock.VerifyNoOtherCalls();
