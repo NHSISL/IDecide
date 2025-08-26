@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerStatuses;
@@ -66,6 +67,15 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
 
                 throw await CreateAndLogDependencyException(failedConsumerStatusStorageException);
             }
+            catch (Exception exception)
+            {
+                var failedConsumerStatusServiceException =
+                    new FailedConsumerStatusServiceException(
+                        message: "Failed consumerStatus service occurred, please contact support",
+                        innerException: exception);
+
+                throw await CreateAndLogServiceException(failedConsumerStatusServiceException);
+            }
         }
 
         private async ValueTask<ConsumerStatusValidationException> CreateAndLogValidationException(Xeption exception)
@@ -117,6 +127,18 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
             await this.loggingBroker.LogErrorAsync(consumerStatusDependencyException);
 
             return consumerStatusDependencyException;
+        }
+
+        private async ValueTask<ConsumerStatusServiceException> CreateAndLogServiceException(Xeption exception)
+        {
+            var consumerStatusServiceException =
+                new ConsumerStatusServiceException(
+                    message: "ConsumerStatus service error occurred, contact support.",
+                    innerException: exception);
+
+            await this.loggingBroker.LogErrorAsync(consumerStatusServiceException);
+
+            return consumerStatusServiceException;
         }
     }
 }
