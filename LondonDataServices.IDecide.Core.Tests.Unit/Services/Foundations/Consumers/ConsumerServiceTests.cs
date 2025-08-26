@@ -64,6 +64,15 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                 });
         }
 
+        private static Consumer CreateRandomModifyConsumer(DateTimeOffset dateTimeOffset, string userId = "")
+        {
+            int randomDaysInPast = GetRandomNegativeNumber();
+            Consumer randomConsumer = CreateRandomConsumer(dateTimeOffset, userId);
+            randomConsumer.CreatedDate = randomConsumer.CreatedDate.AddDays(randomDaysInPast);
+
+            return randomConsumer;
+        }
+
         private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
             actualException => actualException.SameExceptionAs(expectedException);
 
