@@ -73,7 +73,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
 
             var invalidConsumerStatusException =
                 new InvalidConsumerStatusException(
-                    message: "Invalid consumerStatus. Please correct the errors and try again.");
+                    message: "Invalid consumer status. Please correct the errors and try again.");
 
             invalidConsumerStatusException.AddData(
                 key: nameof(ConsumerStatus.Id),
