@@ -4,7 +4,7 @@
 
 using System;
 using System.Collections.Generic;
-using LondonDataServices.IDecide.Core.Models.Foundations.Consumers;
+using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerStatuses;
 using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using Microsoft.AspNetCore.Mvc.ModelBinding;

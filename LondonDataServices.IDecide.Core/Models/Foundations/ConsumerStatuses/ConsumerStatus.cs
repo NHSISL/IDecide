@@ -4,10 +4,11 @@
 
 using System;
 using LondonDataServices.IDecide.Core.Models.Bases;
+using LondonDataServices.IDecide.Core.Models.Foundations.Consumers;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace LondonDataServices.IDecide.Core.Models.Foundations.Consumers
+namespace LondonDataServices.IDecide.Core.Models.Foundations.ConsumerStatuses
 {
     public class ConsumerStatus : IKey, IAudit
     {
