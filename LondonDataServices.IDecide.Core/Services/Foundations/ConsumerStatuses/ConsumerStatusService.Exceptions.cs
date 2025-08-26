@@ -3,6 +3,7 @@
 // ---------------------------------------------------------
 
 using System.Threading.Tasks;
+using EFxceptions.Models.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerStatuses;
 using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerStatuses.Exceptions;
 using Microsoft.Data.SqlClient;
@@ -32,10 +33,19 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
             {
                 var failedConsumerStatusStorageException =
                     new FailedConsumerStatusStorageException(
-                        message: "Failed consumer status storage error occurred, contact support.",
+                        message: "Failed consumerStatus storage error occurred, contact support.",
                         innerException: sqlException);
 
                 throw await CreateAndLogCriticalDependencyException(failedConsumerStatusStorageException);
+            }
+            catch (DuplicateKeyException duplicateKeyException)
+            {
+                var alreadyExistsConsumerStatusException =
+                    new AlreadyExistsConsumerStatusException(
+                        message: "ConsumerStatus with the same Id already exists.",
+                        innerException: duplicateKeyException);
+
+                throw await CreateAndLogDependencyValidationException(alreadyExistsConsumerStatusException);
             }
         }
 
@@ -62,6 +72,19 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
             await this.loggingBroker.LogCriticalAsync(consumerStatusDependencyException);
 
             return consumerStatusDependencyException;
+        }
+
+        private async ValueTask<ConsumerStatusDependencyValidationException> CreateAndLogDependencyValidationException(
+            Xeption exception)
+        {
+            var consumerStatusDependencyValidationException =
+                new ConsumerStatusDependencyValidationException(
+                    message: "ConsumerStatus dependency validation occurred, please try again.",
+                    innerException: exception);
+
+            await this.loggingBroker.LogErrorAsync(consumerStatusDependencyValidationException);
+
+            return consumerStatusDependencyValidationException;
         }
     }
 }

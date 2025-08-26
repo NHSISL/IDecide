@@ -19,7 +19,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
             User currentUser = await this.securityBroker.GetCurrentUserAsync();
 
             Validate<InvalidConsumerStatusException>(
-                message: "Invalid consumer status. Please correct the errors and try again.",
+                message: "Invalid consumerStatus. Please correct the errors and try again.",
                 (Rule: IsInvalid(consumerStatus.Id), Parameter: nameof(ConsumerStatus.Id)),
                 (Rule: IsInvalid(consumerStatus.CreatedDate), Parameter: nameof(ConsumerStatus.CreatedDate)),
                 (Rule: IsInvalid(consumerStatus.CreatedBy), Parameter: nameof(ConsumerStatus.CreatedBy)),
