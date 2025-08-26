@@ -7,6 +7,7 @@ using EFxceptions.Models.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerStatuses;
 using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerStatuses.Exceptions;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Xeptions;
 
 namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
@@ -56,6 +57,15 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
 
                 throw await CreateAndLogDependencyValidationException(invalidConsumerStatusReferenceException);
             }
+            catch (DbUpdateException databaseUpdateException)
+            {
+                var failedConsumerStatusStorageException =
+                    new FailedConsumerStatusStorageException(
+                        message: "Failed consumerStatus storage error occurred, contact support.",
+                        innerException: databaseUpdateException);
+
+                throw await CreateAndLogDependencyException(failedConsumerStatusStorageException);
+            }
         }
 
         private async ValueTask<ConsumerStatusValidationException> CreateAndLogValidationException(Xeption exception)
@@ -94,6 +104,19 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
             await this.loggingBroker.LogErrorAsync(consumerStatusDependencyValidationException);
 
             return consumerStatusDependencyValidationException;
+        }
+
+        private async ValueTask<ConsumerStatusDependencyException> CreateAndLogDependencyException(
+            Xeption exception)
+        {
+            var consumerStatusDependencyException =
+                new ConsumerStatusDependencyException(
+                    message: "ConsumerStatus dependency error occurred, contact support.",
+                    innerException: exception);
+
+            await this.loggingBroker.LogErrorAsync(consumerStatusDependencyException);
+
+            return consumerStatusDependencyException;
         }
     }
 }
