@@ -23,6 +23,10 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
             {
                 throw await CreateAndLogValidationException(nullConsumerStatusException);
             }
+            catch (InvalidConsumerStatusException invalidConsumerStatusException)
+            {
+                throw await CreateAndLogValidationException(invalidConsumerStatusException);
+            }
         }
 
         private async ValueTask<ConsumerStatusValidationException> CreateAndLogValidationException(Xeption exception)
