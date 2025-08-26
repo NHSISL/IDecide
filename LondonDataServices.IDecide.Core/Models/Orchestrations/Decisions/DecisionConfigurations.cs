@@ -4,8 +4,9 @@
 
 namespace LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions
 {
-    public class DecisionOrchestrationConfigurations
+    public class DecisionConfigurations
     {
         public int MaxRetryCount { get; set; }
+        public int PatientValidationCodeExpireAfterMinutes { get; set; }
     }
 }

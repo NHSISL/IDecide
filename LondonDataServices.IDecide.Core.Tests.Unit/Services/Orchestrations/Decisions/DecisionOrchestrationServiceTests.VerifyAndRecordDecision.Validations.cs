@@ -246,7 +246,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
 
             var exceededMaxRetryCountException =
                 new ExceededMaxRetryCountException(
-                    $"The maximum retry count of {this.decisionOrchestrationConfigurations.MaxRetryCount} exceeded.");
+                    $"The maximum retry count of {this.decisionConfigurations.MaxRetryCount} exceeded.");
 
             var expectedDecisionOrchestrationValidationException =
                 new DecisionOrchestrationValidationException(

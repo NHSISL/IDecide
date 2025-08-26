@@ -33,8 +33,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
         private readonly Mock<IPatientService> patientServiceMock = new Mock<IPatientService>();
         private readonly Mock<INotificationService> notificationServiceMock = new Mock<INotificationService>();
         private readonly Mock<IDecisionService> decisionServiceMock = new Mock<IDecisionService>();
-        private readonly DecisionOrchestrationConfigurations decisionOrchestrationConfigurations;
+        private readonly DecisionConfigurations decisionConfigurations;
         private static readonly int maxRetryCount = 3;
+        private static readonly int patientValidationCodeExpireAfterMinutes = 1440;
         private readonly DecisionOrchestrationService decisionOrchestrationService;
         private readonly ICompareLogic compareLogic;
 
@@ -47,9 +48,11 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             this.decisionServiceMock = new Mock<IDecisionService>();
             this.compareLogic = new CompareLogic();
 
-            this.decisionOrchestrationConfigurations = new DecisionOrchestrationConfigurations
+            this.decisionConfigurations = new DecisionConfigurations
             {
                 MaxRetryCount = maxRetryCount,
+                PatientValidationCodeExpireAfterMinutes = patientValidationCodeExpireAfterMinutes
+
             };
 
             this.decisionOrchestrationService = new DecisionOrchestrationService(
@@ -58,7 +61,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 patientService: this.patientServiceMock.Object,
                 notificationService: this.notificationServiceMock.Object,
                 decisionService: this.decisionServiceMock.Object,
-                decisionOrchestrationConfigurations: this.decisionOrchestrationConfigurations);
+                decisionOrchestrationConfigurations: this.decisionConfigurations);
         }
 
         private static int GetRandomNumber() =>

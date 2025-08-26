@@ -25,7 +25,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
         private readonly IPatientService patientService;
         private readonly IDecisionService decisionService;
         private readonly INotificationService notificationService;
-        private readonly DecisionOrchestrationConfigurations decisionOrchestrationConfiguration;
+        private readonly DecisionConfigurations decisionConfiguration;
 
         public DecisionOrchestrationService(
             ILoggingBroker loggingBroker,
@@ -33,41 +33,29 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
             IPatientService patientService,
             IDecisionService decisionService,
             INotificationService notificationService,
-            DecisionOrchestrationConfigurations decisionOrchestrationConfigurations)
+            DecisionConfigurations decisionOrchestrationConfigurations)
         {
             this.loggingBroker = loggingBroker;
             this.dateTimeBroker = dateTimeBroker;
             this.patientService = patientService;
             this.decisionService = decisionService;
             this.notificationService = notificationService;
-            this.decisionOrchestrationConfiguration = decisionOrchestrationConfigurations;
+            this.decisionConfiguration = decisionOrchestrationConfigurations;
         }
 
         public ValueTask VerifyAndRecordDecisionAsync(Decision decision) =>
             TryCatch(async () =>
             {
-                ValidateDecisionIsNotNull(decision);
-                ValidateDecision(decision);
+                ValidateVerifyAndRecordDecisionArguments(decision);
                 string maybeNhsNumber = decision.PatientNhsNumber;
                 IQueryable<Patient> patients = await this.patientService.RetrieveAllPatientsAsync();
                 Patient maybeMatchingPatient = patients.FirstOrDefault(patient => patient.NhsNumber == maybeNhsNumber);
                 ValidatePatientExists(maybeMatchingPatient);
 
-                if (maybeMatchingPatient.RetryCount > this.decisionOrchestrationConfiguration.MaxRetryCount)
+                if (maybeMatchingPatient.RetryCount > this.decisionConfiguration.MaxRetryCount)
                 {
                     throw new ExceededMaxRetryCountException(
-                        $"The maximum retry count of {this.decisionOrchestrationConfiguration.MaxRetryCount} exceeded.");
-                }
-
-                DateTimeOffset currentDateTime = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
-
-                if (maybeMatchingPatient.ValidationCodeExpiresOn < currentDateTime)
-                {
-                    Patient patientToUpdate = maybeMatchingPatient;
-                    patientToUpdate.RetryCount += 1;
-                    await this.patientService.ModifyPatientAsync(patientToUpdate);
-
-                    throw new ExpiredValidationCodeException("The validation code has expired.");
+                        $"The maximum retry count of {this.decisionConfiguration.MaxRetryCount} exceeded.");
                 }
 
                 if (maybeMatchingPatient.ValidationCode != decision.Patient.ValidationCode)
@@ -77,6 +65,13 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
                     await this.patientService.ModifyPatientAsync(patientToUpdate);
 
                     throw new IncorrectValidationCodeException("The validation code provided is incorrect.");
+                }
+
+                DateTimeOffset currentDateTime = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
+
+                if (maybeMatchingPatient.ValidationCodeExpiresOn < currentDateTime)
+                {
+                    throw new ExpiredValidationCodeException("The validation code has expired.");
                 }
 
                 Decision addedDecision = await this.decisionService.AddDecisionAsync(decision);

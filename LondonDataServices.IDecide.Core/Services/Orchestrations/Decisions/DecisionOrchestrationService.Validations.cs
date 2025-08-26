@@ -12,6 +12,12 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
 {
     public partial class DecisionOrchestrationService
     {
+        private static void ValidateVerifyAndRecordDecisionArguments(Decision decision)
+        {
+            ValidateDecisionIsNotNull(decision);
+            ValidateDecisionProperties(decision);
+        }
+
         private static void ValidateDecisionIsNotNull(Decision decision)
         {
             if (decision is null)
@@ -20,7 +26,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
             }
         }
 
-        private static void ValidateDecision(Decision decision)
+        private static void ValidateDecisionProperties(Decision decision)
         {
             Validate(
                 (Rule: IsPatientNull(decision.Patient),
