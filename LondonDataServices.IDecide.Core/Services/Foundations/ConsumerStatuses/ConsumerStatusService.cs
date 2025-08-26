@@ -2,7 +2,6 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using System;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Brokers.DateTimes;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
@@ -34,9 +33,12 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
             this.loggingBroker = loggingBroker;
         }
 
-        public ValueTask<ConsumerStatus> AddConsumerStatusAsync(ConsumerStatus consumerStatus)
+        public async ValueTask<ConsumerStatus> AddConsumerStatusAsync(ConsumerStatus consumerStatus)
         {
-            throw new NotImplementedException();
+            consumerStatus = await this.securityAuditBroker.ApplyAddAuditValuesAsync(consumerStatus);
+            await ValidateConsumerStatusOnAdd(consumerStatus);
+
+            return await this.storageBroker.InsertConsumerStatusAsync(consumerStatus);
         }
     }
 }
