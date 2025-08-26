@@ -3,6 +3,7 @@
 // ---------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Consumers;
@@ -16,6 +17,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Consumers
     public partial class ConsumerService
     {
         private delegate ValueTask<Consumer> ReturningConsumerFunction();
+        private delegate ValueTask<IQueryable<Consumer>> ReturningConsumersFunction();
 
         private async ValueTask<Consumer> TryCatch(ReturningConsumerFunction returningConsumerFunction)
         {
@@ -90,6 +92,34 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Consumers
                 throw await CreateAndLogServiceException(failedConsumerServiceException);
             }
         }
+
+        private async ValueTask<IQueryable<Consumer>> TryCatch(
+            ReturningConsumersFunction returningConsumersFunction)
+        {
+            try
+            {
+                return await returningConsumersFunction();
+            }
+            catch (SqlException sqlException)
+            {
+                var failedConsumerStorageException =
+                    new FailedConsumerStorageException(
+                        message: "Failed consumer storage error occurred, contact support.",
+                        innerException: sqlException);
+
+                throw await CreateAndLogCriticalDependencyException(failedConsumerStorageException);
+            }
+            catch (Exception exception)
+            {
+                var failedConsumerServiceException =
+                    new FailedConsumerServiceException(
+                        message: "Failed consumer service occurred, please contact support",
+                        innerException: exception);
+
+                throw await CreateAndLogServiceException(failedConsumerServiceException);
+            }
+        }
+
 
         private async ValueTask<ConsumerValidationException> CreateAndLogValidationException(Xeption exception)
         {
