@@ -68,7 +68,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
         {
             int randomDaysInPast = GetRandomNegativeNumber();
             Consumer randomConsumer = CreateRandomConsumer(dateTimeOffset, userId);
-
             randomConsumer.CreatedDate = randomConsumer.CreatedDate.AddDays(randomDaysInPast);
 
             return randomConsumer;
