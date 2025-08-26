@@ -139,5 +139,70 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.securityBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnAddIfReferenceErrorOccursAndLogItAsync()
+        {
+            // given
+            ConsumerStatus someConsumerStatus = CreateRandomConsumerStatus();
+            string randomMessage = GetRandomString();
+            string exceptionMessage = randomMessage;
+
+            var foreignKeyConstraintConflictException =
+                new ForeignKeyConstraintConflictException(exceptionMessage);
+
+            var invalidConsumerStatusReferenceException =
+                new InvalidConsumerStatusReferenceException(
+                    message: "Invalid consumerStatus reference error occurred.",
+                    innerException: foreignKeyConstraintConflictException);
+
+            var expectedConsumerStatusValidationException =
+                new ConsumerStatusDependencyValidationException(
+                    message: "ConsumerStatus dependency validation occurred, please try again.",
+                    innerException: invalidConsumerStatusReferenceException);
+
+            this.securityAuditBrokerMock.Setup(broker =>
+                broker.ApplyAddAuditValuesAsync(It.IsAny<ConsumerStatus>()))
+                    .ThrowsAsync(foreignKeyConstraintConflictException);
+
+            // when
+            ValueTask<ConsumerStatus> addConsumerStatusTask =
+                this.consumerStatusService.AddConsumerStatusAsync(someConsumerStatus);
+
+            // then
+            ConsumerStatusDependencyValidationException actualConsumerStatusDependencyValidationException =
+                await Assert.ThrowsAsync<ConsumerStatusDependencyValidationException>(
+                    addConsumerStatusTask.AsTask);
+
+            actualConsumerStatusDependencyValidationException.Should()
+                .BeEquivalentTo(expectedConsumerStatusValidationException);
+
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.ApplyAddAuditValuesAsync(It.IsAny<ConsumerStatus>()),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedConsumerStatusValidationException))),
+                        Times.Once);
+
+            this.securityBrokerMock.Verify(broker =>
+                broker.GetCurrentUserAsync(),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Never());
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertConsumerStatusAsync(It.IsAny<ConsumerStatus>()),
+                    Times.Never);
+
+            this.securityAuditBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.securityBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
