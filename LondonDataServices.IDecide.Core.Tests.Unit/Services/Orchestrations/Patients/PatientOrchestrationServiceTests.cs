@@ -35,7 +35,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         private readonly Mock<IPdsService> pdsServiceMock = new Mock<IPdsService>();
         private readonly Mock<IPatientService> patientServiceMock = new Mock<IPatientService>();
         private readonly Mock<INotificationService> notificationServiceMock = new Mock<INotificationService>();
-        private readonly PatientOrchestrationConfigurations patientOrchestrationConfigurations;
+        private readonly PatientConfigurations patientConfigurations;
         private readonly PatientOrchestrationService patientOrchestrationService;
         private static readonly int expireAfterMinutes = 1440;
         private readonly ICompareLogic compareLogic;
@@ -50,7 +50,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             this.notificationServiceMock = new Mock<INotificationService>();
             this.compareLogic = new CompareLogic();
 
-            this.patientOrchestrationConfigurations = new PatientOrchestrationConfigurations
+            this.patientConfigurations = new PatientConfigurations
             {
                 ValidationCodeExpireAfterMinutes = expireAfterMinutes
             };
@@ -62,7 +62,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 pdsService: this.pdsServiceMock.Object,
                 patientService: this.patientServiceMock.Object,
                 notificationService: this.notificationServiceMock.Object,
-                patientOrchestrationConfigurations: this.patientOrchestrationConfigurations);
+                patientConfigurations: this.patientConfigurations);
 
         }
 

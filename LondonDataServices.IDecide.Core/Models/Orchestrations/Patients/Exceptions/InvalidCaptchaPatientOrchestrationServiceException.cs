@@ -6,9 +6,9 @@ using Xeptions;
 
 namespace LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions
 {
-    public class InvalidCaptchaException : Xeption
+    public class InvalidCaptchaPatientOrchestrationServiceException : Xeption
     {
-        public InvalidCaptchaException(string message)
+        public InvalidCaptchaPatientOrchestrationServiceException(string message)
             : base(message)
         { }
     }

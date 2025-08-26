@@ -4,7 +4,7 @@
 
 namespace LondonDataServices.IDecide.Core.Models.Orchestrations.Patients
 {
-    public class PatientOrchestrationConfigurations
+    public class PatientConfigurations
     {
         public int ValidationCodeExpireAfterMinutes { get; set; }
     }

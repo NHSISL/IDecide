@@ -198,18 +198,18 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             NotificationPreference inputNotificationPreference = randomNotificationPreference.DeepClone();
             string notificationPreferenceString = inputNotificationPreference.ToString();
 
-            var invalidCaptchaException =
-                new InvalidCaptchaException(
+            var invalidCaptchaPatientOrchestrationServiceException =
+                new InvalidCaptchaPatientOrchestrationServiceException(
                     "The provided captcha token is invalid.");
 
             var expectedPatientOrchestrationValidationException =
                 new PatientOrchestrationValidationException(
                     message: "Patient orchestration validation error occurred, please fix the errors and try again.",
-                    innerException: invalidCaptchaException);
+                    innerException: invalidCaptchaPatientOrchestrationServiceException);
 
             this.securityBrokerMock.Setup(broker =>
                 broker.ValidateCaptchaAsync(inputCaptchaToken, ""))
-                    .ThrowsAsync(invalidCaptchaException);
+                    .ThrowsAsync(invalidCaptchaPatientOrchestrationServiceException);
 
             // when
             ValueTask recordPatientInformationAction = patientOrchestrationService.RecordPatientInformation(

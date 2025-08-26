@@ -21,7 +21,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         public async Task ShouldRecordPatientInformationAsyncWhenNoPatientFound()
         {
             // given
-            int expireAfterMinutes = this.patientOrchestrationConfigurations.ValidationCodeExpireAfterMinutes;
+            int expireAfterMinutes = this.patientConfigurations.ValidationCodeExpireAfterMinutes;
             string randomNhsNumber = GenerateRandom10DigitNumber();
             string inputNhsNumber = randomNhsNumber.DeepClone();
             string randomCaptchaToken = GetRandomString();
@@ -47,8 +47,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 Patient = updatedPatient
             };
 
-            PatientOrchestrationConfigurations patientOrchestrationConfigurations =
-                new PatientOrchestrationConfigurations
+            PatientConfigurations patientConfigurations =
+                new PatientConfigurations
                 {
                     ValidationCodeExpireAfterMinutes = 1440
                 };
@@ -60,7 +60,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 pdsServiceMock.Object,
                 patientServiceMock.Object,
                 notificationServiceMock.Object,
-                patientOrchestrationConfigurations)
+                patientConfigurations)
             { CallBase = true };
 
             this.securityBrokerMock.Setup(broker =>
@@ -135,7 +135,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         public async Task ShouldRecordPatientInformationAsyncWhenPatientFoundWithExpiredCode()
         {
             // given
-            int expireAfterMinutes = this.patientOrchestrationConfigurations.ValidationCodeExpireAfterMinutes;
+            int expireAfterMinutes = this.patientConfigurations.ValidationCodeExpireAfterMinutes;
             string randomNhsNumber = GenerateRandom10DigitNumber();
             string inputNhsNumber = randomNhsNumber.DeepClone();
             string randomCaptchaToken = GetRandomString();
@@ -163,8 +163,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 Patient = updatedPatient
             };
 
-            PatientOrchestrationConfigurations patientOrchestrationConfigurations =
-                new PatientOrchestrationConfigurations
+            PatientConfigurations patientConfigurations =
+                new PatientConfigurations
                 {
                     ValidationCodeExpireAfterMinutes = 1440
                 };
@@ -176,7 +176,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 pdsServiceMock.Object,
                 patientServiceMock.Object,
                 notificationServiceMock.Object,
-                patientOrchestrationConfigurations)
+                patientConfigurations)
             { CallBase = true };
 
             this.securityBrokerMock.Setup(broker =>
@@ -251,7 +251,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         public async Task ShouldRecordPatientInformationAsyncWhenPatientFoundWithValidCodeAndGenerateNewCodeIsTrue()
         {
             // given
-            int expireAfterMinutes = this.patientOrchestrationConfigurations.ValidationCodeExpireAfterMinutes;
+            int expireAfterMinutes = this.patientConfigurations.ValidationCodeExpireAfterMinutes;
             string randomNhsNumber = GenerateRandom10DigitNumber();
             string inputNhsNumber = randomNhsNumber.DeepClone();
             string randomCaptchaToken = GetRandomString();
@@ -279,8 +279,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 Patient = updatedPatient
             };
 
-            PatientOrchestrationConfigurations patientOrchestrationConfigurations =
-                new PatientOrchestrationConfigurations
+            PatientConfigurations patientConfigurations =
+                new PatientConfigurations
                 {
                     ValidationCodeExpireAfterMinutes = 1440
                 };
@@ -292,7 +292,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 pdsServiceMock.Object,
                 patientServiceMock.Object,
                 notificationServiceMock.Object,
-                patientOrchestrationConfigurations)
+                patientConfigurations)
             { CallBase = true };
 
             this.securityBrokerMock.Setup(broker =>

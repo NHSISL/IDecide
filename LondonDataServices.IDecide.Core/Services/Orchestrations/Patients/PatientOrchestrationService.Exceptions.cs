@@ -32,8 +32,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             }
             catch (NoExactPatientFoundException noExactPatientFoundException)
             {
-                throw await CreateAndLogValidationExceptionAsync(
-                    noExactPatientFoundException);
+                throw await CreateAndLogValidationExceptionAsync(noExactPatientFoundException);
             }
             catch (InvalidPatientOrchestrationArgumentException invalidPatientOrchestrationArgumentException)
             {
@@ -45,23 +44,19 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             }
             catch (PdsValidationException pdsValidationException)
             {
-                throw await CreateAndLogDependencyValidationExceptionAsync(
-                    pdsValidationException);
+                throw await CreateAndLogDependencyValidationExceptionAsync(pdsValidationException);
             }
             catch (PdsDependencyValidationException pdsDependencyValidationException)
             {
-                throw await CreateAndLogDependencyValidationExceptionAsync(
-                    pdsDependencyValidationException);
+                throw await CreateAndLogDependencyValidationExceptionAsync(pdsDependencyValidationException);
             }
             catch (PdsServiceException pdsServiceException)
             {
-                throw await CreateAndLogDependencyExceptionAsync(
-                    pdsServiceException);
+                throw await CreateAndLogDependencyExceptionAsync(pdsServiceException);
             }
             catch (PdsDependencyException pdsDependencyException)
             {
-                throw await CreateAndLogDependencyExceptionAsync(
-                    pdsDependencyException);
+                throw await CreateAndLogDependencyExceptionAsync(pdsDependencyException);
             }
             catch (Exception exception)
             {
@@ -81,14 +76,13 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             {
                 await returningNothingFunction();
             }
-            catch (InvalidCaptchaException invalidCaptchaException)
+            catch (InvalidCaptchaPatientOrchestrationServiceException invalidCaptchaException)
             {
                 throw await CreateAndLogValidationExceptionAsync(invalidCaptchaException);
             }
             catch (ValidPatientCodeExistsException validPatientCodeExistsException)
             {
-                throw await CreateAndLogValidationExceptionAsync(
-                    validPatientCodeExistsException);
+                throw await CreateAndLogValidationExceptionAsync(validPatientCodeExistsException);
             }
             catch (InvalidPatientOrchestrationArgumentException invalidPatientOrchestrationArgumentException)
             {
@@ -96,63 +90,51 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             }
             catch (PdsValidationException pdsValidationException)
             {
-                throw await CreateAndLogDependencyValidationExceptionAsync(
-                    pdsValidationException);
+                throw await CreateAndLogDependencyValidationExceptionAsync(pdsValidationException);
             }
             catch (PdsDependencyValidationException pdsDependencyValidationException)
             {
-                throw await CreateAndLogDependencyValidationExceptionAsync(
-                    pdsDependencyValidationException);
+                throw await CreateAndLogDependencyValidationExceptionAsync(pdsDependencyValidationException);
             }
             catch (PdsServiceException pdsServiceException)
             {
-                throw await CreateAndLogDependencyExceptionAsync(
-                    pdsServiceException);
+                throw await CreateAndLogDependencyExceptionAsync(pdsServiceException);
             }
             catch (PdsDependencyException pdsDependencyException)
             {
-                throw await CreateAndLogDependencyExceptionAsync(
-                    pdsDependencyException);
+                throw await CreateAndLogDependencyExceptionAsync(pdsDependencyException);
             }
             catch (PatientValidationException patientValidationException)
             {
-                throw await CreateAndLogDependencyValidationExceptionAsync(
-                    patientValidationException);
+                throw await CreateAndLogDependencyValidationExceptionAsync(patientValidationException);
             }
             catch (PatientDependencyValidationException patientDependencyValidationException)
             {
-                throw await CreateAndLogDependencyValidationExceptionAsync(
-                    patientDependencyValidationException);
+                throw await CreateAndLogDependencyValidationExceptionAsync(patientDependencyValidationException);
             }
             catch (PatientServiceException patientServiceException)
             {
-                throw await CreateAndLogDependencyExceptionAsync(
-                    patientServiceException);
+                throw await CreateAndLogDependencyExceptionAsync(patientServiceException);
             }
             catch (PatientDependencyException patientDependencyException)
             {
-                throw await CreateAndLogDependencyExceptionAsync(
-                    patientDependencyException);
+                throw await CreateAndLogDependencyExceptionAsync(patientDependencyException);
             }
             catch (NotificationValidationException notificationValidationException)
             {
-                throw await CreateAndLogDependencyValidationExceptionAsync(
-                    notificationValidationException);
+                throw await CreateAndLogDependencyValidationExceptionAsync(notificationValidationException);
             }
             catch (NotificationDependencyValidationException notificationDependencyValidationException)
             {
-                throw await CreateAndLogDependencyValidationExceptionAsync(
-                    notificationDependencyValidationException);
+                throw await CreateAndLogDependencyValidationExceptionAsync(notificationDependencyValidationException);
             }
             catch (NotificationServiceException notificationServiceException)
             {
-                throw await CreateAndLogDependencyExceptionAsync(
-                    notificationServiceException);
+                throw await CreateAndLogDependencyExceptionAsync(notificationServiceException);
             }
             catch (NotificationDependencyException notificationDependencyException)
             {
-                throw await CreateAndLogDependencyExceptionAsync(
-                    notificationDependencyException);
+                throw await CreateAndLogDependencyExceptionAsync(notificationDependencyException);
             }
             catch (Exception exception)
             {

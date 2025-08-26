@@ -274,12 +274,12 @@ namespace LondonDataServices.IDecide.Manage.Server
 
         private static void AddOrchestrationServices(IServiceCollection services, IConfiguration configuration)
         {
-            PatientOrchestrationConfigurations patientOrchestrationConfigurations = configuration
-                .GetSection("PatientOrchestrationConfigurations")
-                    .Get<PatientOrchestrationConfigurations>() ??
-                        new PatientOrchestrationConfigurations();
+            PatientConfigurations patientConfigurations = configuration
+                .GetSection("PatientConfigurations")
+                    .Get<PatientConfigurations>() ??
+                        new PatientConfigurations();
 
-            services.AddSingleton(patientOrchestrationConfigurations);
+            services.AddSingleton(patientConfigurations);
             services.AddTransient<IPatientOrchestrationService, PatientOrchestrationService>();
         }
 

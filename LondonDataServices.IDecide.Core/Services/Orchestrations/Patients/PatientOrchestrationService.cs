@@ -30,7 +30,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
         private readonly IPdsService pdsService;
         private readonly IPatientService patientService;
         private readonly INotificationService notificationService;
-        private readonly PatientOrchestrationConfigurations patientOrchestrationConfigurations;
+        private readonly PatientConfigurations patientConfigurations;
 
         public PatientOrchestrationService(
             ILoggingBroker loggingBroker,
@@ -39,7 +39,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             IPdsService pdsService,
             IPatientService patientService,
             INotificationService notificationService,
-            PatientOrchestrationConfigurations patientOrchestrationConfigurations)
+            PatientConfigurations patientConfigurations)
         {
             this.loggingBroker = loggingBroker;
             this.securityBroker = securityBroker;
@@ -47,7 +47,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             this.pdsService = pdsService;
             this.patientService = patientService;
             this.notificationService = notificationService;
-            this.patientOrchestrationConfigurations = patientOrchestrationConfigurations;
+            this.patientConfigurations = patientConfigurations;
         }
 
         public ValueTask<Patient> PatientLookupAsync(PatientLookup patientLookup) =>
@@ -93,7 +93,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
 
                 if (isCaptchaValid is false)
                 {
-                    throw new InvalidCaptchaException(
+                    throw new InvalidCaptchaPatientOrchestrationServiceException(
                         message: "The provided captcha token is invalid.");
                 }
 
@@ -111,7 +111,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                     string validationCode = GenerateValidationCode();
 
                     DateTimeOffset expirationDate =
-                        now.AddMinutes(patientOrchestrationConfigurations.ValidationCodeExpireAfterMinutes);
+                        now.AddMinutes(patientConfigurations.ValidationCodeExpireAfterMinutes);
 
                     pdsPatient.ValidationCode = validationCode;
                     pdsPatient.ValidationCodeExpiresOn = expirationDate;
@@ -140,7 +140,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                         string validationCode = GenerateValidationCode();
 
                         DateTimeOffset expirationDate =
-                            now.AddMinutes(patientOrchestrationConfigurations.ValidationCodeExpireAfterMinutes);
+                            now.AddMinutes(patientConfigurations.ValidationCodeExpireAfterMinutes);
 
                         maybeMatchingPatient.ValidationCode = validationCode;
                         maybeMatchingPatient.ValidationCodeExpiresOn = expirationDate;
@@ -150,8 +150,8 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                     }
                     else
                     {
-                        throw new ValidPatientCodeExistsException(
-                            message: "A valid code already exists for this patient, please go to the enter code screen.");
+                        throw new ValidPatientCodeExistsException(message:
+                            "A valid code already exists for this patient, please go to the enter code screen.");
                     }
                 }
 
