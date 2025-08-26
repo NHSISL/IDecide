@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using LondonDataServices.IDecide.Core.Brokers.DateTimes;
@@ -62,6 +63,13 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                 {
                     new(type: GetRandomString(), value: GetRandomString())
                 });
+        }
+
+        private static IQueryable<Consumer> CreateRandomConsumers()
+        {
+            return CreateConsumerFiller(dateTimeOffset: GetRandomDateTimeOffset())
+                .Create(count: GetRandomNumber())
+                .AsQueryable();
         }
 
         private static Consumer CreateRandomModifyConsumer(DateTimeOffset dateTimeOffset, string userId = "")
