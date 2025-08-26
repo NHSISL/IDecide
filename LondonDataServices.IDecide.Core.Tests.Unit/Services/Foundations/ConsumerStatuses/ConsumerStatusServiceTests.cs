@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using LondonDataServices.IDecide.Core.Brokers.DateTimes;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Brokers.Securities;
@@ -13,6 +14,7 @@ using LondonDataServices.IDecide.Core.Models.Securities;
 using LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses;
 using Moq;
 using Tynamix.ObjectFiller;
+using Xeptions;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.ConsumerStatuses
 {
@@ -60,6 +62,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                     new(type: GetRandomString(), value: GetRandomString())
                 });
         }
+
+        private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
+            actualException => actualException.SameExceptionAs(expectedException);
 
         private static string GetRandomString() =>
             new MnemonicString(wordCount: GetRandomNumber()).GetValue();
