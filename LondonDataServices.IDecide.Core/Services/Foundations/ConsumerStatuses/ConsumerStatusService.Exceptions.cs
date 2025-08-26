@@ -5,6 +5,7 @@
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerStatuses;
 using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerStatuses.Exceptions;
+using Microsoft.Data.SqlClient;
 using Xeptions;
 
 namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
@@ -27,6 +28,15 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
             {
                 throw await CreateAndLogValidationException(invalidConsumerStatusException);
             }
+            catch (SqlException sqlException)
+            {
+                var failedConsumerStatusStorageException =
+                    new FailedConsumerStatusStorageException(
+                        message: "Failed consumer status storage error occurred, contact support.",
+                        innerException: sqlException);
+
+                throw await CreateAndLogCriticalDependencyException(failedConsumerStatusStorageException);
+            }
         }
 
         private async ValueTask<ConsumerStatusValidationException> CreateAndLogValidationException(Xeption exception)
@@ -39,6 +49,19 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
             await this.loggingBroker.LogErrorAsync(consumerStatusValidationException);
 
             return consumerStatusValidationException;
+        }
+
+        private async ValueTask<ConsumerStatusDependencyException> CreateAndLogCriticalDependencyException(
+            Xeption exception)
+        {
+            var consumerStatusDependencyException =
+                new ConsumerStatusDependencyException(
+                    message: "ConsumerStatus dependency error occurred, contact support.",
+                    innerException: exception);
+
+            await this.loggingBroker.LogCriticalAsync(consumerStatusDependencyException);
+
+            return consumerStatusDependencyException;
         }
     }
 }
