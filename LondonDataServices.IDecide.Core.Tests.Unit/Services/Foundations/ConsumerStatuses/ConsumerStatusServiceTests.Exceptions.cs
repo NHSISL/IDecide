@@ -23,7 +23,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
 
             var failedConsumerStatusStorageException =
                 new FailedConsumerStatusStorageException(
-                    message: "Failed consumer status storage error occurred, contact support.",
+                    message: "Failed consumerStatus storage error occurred, contact support.",
                     innerException: sqlException);
 
             var expectedConsumerStatusDependencyException =
@@ -88,7 +88,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
 
             var alreadyExistsConsumerStatusException =
                 new AlreadyExistsConsumerStatusException(
-                    message: "ConsumerSstatus with the same Id already exists.",
+                    message: "ConsumerStatus with the same Id already exists.",
                     innerException: duplicateKeyException);
 
             var expectedConsumerStatusDependencyValidationException =

@@ -75,7 +75,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
 
             var invalidConsumerStatusException =
                 new InvalidConsumerStatusException(
-                    message: "Invalid consumer status. Please correct the errors and try again.");
+                    message: "Invalid consumerStatus. Please correct the errors and try again.");
 
             invalidConsumerStatusException.AddData(
                 key: nameof(ConsumerStatus.Id),
@@ -170,7 +170,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
 
             var invalidConsumerStatusException =
                 new InvalidConsumerStatusException(
-                    message: "Invalid consumer status. Please correct the errors and try again.");
+                    message: "Invalid consumerStatus. Please correct the errors and try again.");
 
             invalidConsumerStatusException.AddData(
                 key: nameof(ConsumerStatus.UpdatedDate),
@@ -246,7 +246,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
 
             var invalidConsumerStatusException =
                 new InvalidConsumerStatusException(
-                    message: "Invalid consumer status. Please correct the errors and try again.");
+                    message: "Invalid consumerStatus. Please correct the errors and try again.");
 
             invalidConsumerStatusException.AddData(
                 key: nameof(ConsumerStatus.UpdatedBy),
@@ -330,7 +330,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
 
             var invalidConsumerStatusException =
                 new InvalidConsumerStatusException(
-                    message: "Invalid consumer status. Please correct the errors and try again.");
+                    message: "Invalid consumerStatus. Please correct the errors and try again.");
 
             invalidConsumerStatusException.AddData(
                 key: nameof(ConsumerStatus.CreatedDate),
