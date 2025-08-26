@@ -2,6 +2,8 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Brokers.DateTimes;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
@@ -40,6 +42,22 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Consumers
                 await ValidateConsumerOnAdd(consumer);
 
                 return await this.storageBroker.InsertConsumerAsync(consumer);
+            });
+
+        public ValueTask<IQueryable<Consumer>> RetrieveAllConsumersAsync() =>
+            TryCatch(async () => await this.storageBroker.SelectAllConsumersAsync());
+
+        public ValueTask<Consumer> RetrieveConsumerByIdAsync(Guid consumerId) =>
+            TryCatch(async () =>
+            {
+                ValidateConsumerId(consumerId);
+
+                Consumer maybeConsumer = await this.storageBroker
+                    .SelectConsumerByIdAsync(consumerId);
+
+                ValidateStorageConsumer(maybeConsumer, consumerId);
+
+                return maybeConsumer;
             });
 
         public ValueTask<Consumer> ModifyConsumerAsync(Consumer consumer) =>
