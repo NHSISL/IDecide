@@ -8,6 +8,7 @@ using FluentAssertions;
 using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerStatuses;
 using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerStatuses.Exceptions;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.ConsumerStatuses
@@ -197,6 +198,56 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertConsumerStatusAsync(It.IsAny<ConsumerStatus>()),
                     Times.Never);
+
+            this.securityAuditBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.securityBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowDependencyExceptionOnAddIfDatabaseUpdateErrorOccursAndLogItAsync()
+        {
+            // given
+            ConsumerStatus someConsumerStatus = CreateRandomConsumerStatus();
+
+            var databaseUpdateException = new DbUpdateException();
+
+            var failedConsumerStatusStorageException =
+                new FailedConsumerStatusStorageException(
+                    message: "Failed consumerStatus storage error occurred, contact support.",
+                    innerException: databaseUpdateException);
+
+            var expectedConsumerStatusDependencyException =
+                new ConsumerStatusDependencyException(
+                    message: "ConsumerStatus dependency error occurred, contact support.",
+                    innerException: failedConsumerStatusStorageException);
+
+            this.securityAuditBrokerMock.Setup(broker =>
+                broker.ApplyAddAuditValuesAsync(It.IsAny<ConsumerStatus>()))
+                    .ThrowsAsync(databaseUpdateException);
+
+            // when
+            ValueTask<ConsumerStatus> addConsumerStatusTask =
+                this.consumerStatusService.AddConsumerStatusAsync(someConsumerStatus);
+
+            ConsumerStatusDependencyException actualConsumerStatusDependencyException =
+                await Assert.ThrowsAsync<ConsumerStatusDependencyException>(
+                    addConsumerStatusTask.AsTask);
+
+            // then
+            actualConsumerStatusDependencyException.Should()
+                .BeEquivalentTo(expectedConsumerStatusDependencyException);
+
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.ApplyAddAuditValuesAsync(It.IsAny<ConsumerStatus>()),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedConsumerStatusDependencyException))),
+                        Times.Once);
 
             this.securityAuditBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
