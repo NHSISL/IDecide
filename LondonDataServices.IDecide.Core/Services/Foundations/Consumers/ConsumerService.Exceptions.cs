@@ -120,7 +120,6 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Consumers
             }
         }
 
-
         private async ValueTask<ConsumerValidationException> CreateAndLogValidationException(Xeption exception)
         {
             var consumerValidationException =

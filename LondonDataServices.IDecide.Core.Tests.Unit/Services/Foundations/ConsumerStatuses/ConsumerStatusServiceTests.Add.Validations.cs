@@ -162,7 +162,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
             DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
             string randomUserId = GetRandomString();
             User randomUser = CreateRandomUser(userId: randomUserId);
-            ConsumerStatus randomConsumerStatus = CreateRandomConsumerStatus(randomDateTimeOffset, userId: randomUserId);
+
+            ConsumerStatus randomConsumerStatus = CreateRandomConsumerStatus(
+                randomDateTimeOffset, userId: randomUserId);
+
             ConsumerStatus invalidConsumerStatus = randomConsumerStatus;
 
             invalidConsumerStatus.UpdatedDate =
@@ -240,7 +243,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
             DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
             string randomUserId = GetRandomString();
             User randomUser = CreateRandomUser(userId: randomUserId);
-            ConsumerStatus randomConsumerStatus = CreateRandomConsumerStatus(randomDateTimeOffset, userId: randomUserId);
+
+            ConsumerStatus randomConsumerStatus = CreateRandomConsumerStatus(
+                randomDateTimeOffset, userId: randomUserId);
+
             ConsumerStatus invalidConsumerStatus = randomConsumerStatus.DeepClone();
             invalidConsumerStatus.UpdatedBy = Guid.NewGuid().ToString();
 

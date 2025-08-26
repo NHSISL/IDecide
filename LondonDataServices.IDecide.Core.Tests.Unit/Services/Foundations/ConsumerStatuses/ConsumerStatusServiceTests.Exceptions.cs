@@ -279,7 +279,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                     .ThrowsAsync(serviceException);
 
             // when
-            ValueTask<ConsumerStatus> addConsumerStatusTask = this.consumerStatusService.AddConsumerStatusAsync(someConsumerStatus);
+            ValueTask<ConsumerStatus> addConsumerStatusTask =
+                this.consumerStatusService.AddConsumerStatusAsync(someConsumerStatus);
 
             ConsumerStatusServiceException actualConsumerStatusServiceException =
                 await Assert.ThrowsAsync<ConsumerStatusServiceException>(
