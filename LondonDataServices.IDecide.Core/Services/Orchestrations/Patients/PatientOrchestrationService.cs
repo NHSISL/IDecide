@@ -14,7 +14,7 @@ using LondonDataServices.IDecide.Core.Extensions.Patients;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
-using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients;
+using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
 using LondonDataServices.IDecide.Core.Services.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
@@ -30,7 +30,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
         private readonly IPdsService pdsService;
         private readonly IPatientService patientService;
         private readonly INotificationService notificationService;
-        private readonly PatientConfigurations patientConfigurations;
+        private readonly DecisionConfigurations decisionConfigurations;
 
         public PatientOrchestrationService(
             ILoggingBroker loggingBroker,
@@ -39,7 +39,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             IPdsService pdsService,
             IPatientService patientService,
             INotificationService notificationService,
-            PatientConfigurations patientConfigurations)
+            DecisionConfigurations decisionConfigurations)
         {
             this.loggingBroker = loggingBroker;
             this.securityBroker = securityBroker;
@@ -47,7 +47,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             this.pdsService = pdsService;
             this.patientService = patientService;
             this.notificationService = notificationService;
-            this.patientConfigurations = patientConfigurations;
+            this.decisionConfigurations = decisionConfigurations;
         }
 
         public ValueTask<Patient> PatientLookupAsync(PatientLookup patientLookup) =>
@@ -111,7 +111,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                     string validationCode = GenerateValidationCode();
 
                     DateTimeOffset expirationDate =
-                        now.AddMinutes(patientConfigurations.ValidationCodeExpireAfterMinutes);
+                        now.AddMinutes(decisionConfigurations.PatientValidationCodeExpireAfterMinutes);
 
                     pdsPatient.ValidationCode = validationCode;
                     pdsPatient.ValidationCodeExpiresOn = expirationDate;
@@ -140,7 +140,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                         string validationCode = GenerateValidationCode();
 
                         DateTimeOffset expirationDate =
-                            now.AddMinutes(patientConfigurations.ValidationCodeExpireAfterMinutes);
+                            now.AddMinutes(decisionConfigurations.PatientValidationCodeExpireAfterMinutes);
 
                         maybeMatchingPatient.ValidationCode = validationCode;
                         maybeMatchingPatient.ValidationCodeExpiresOn = expirationDate;

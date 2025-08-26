@@ -16,7 +16,7 @@ using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds.Exceptions;
-using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients;
+using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions;
 using LondonDataServices.IDecide.Core.Services.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Services.Foundations.Pds;
@@ -35,9 +35,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         private readonly Mock<IPdsService> pdsServiceMock = new Mock<IPdsService>();
         private readonly Mock<IPatientService> patientServiceMock = new Mock<IPatientService>();
         private readonly Mock<INotificationService> notificationServiceMock = new Mock<INotificationService>();
-        private readonly PatientConfigurations patientConfigurations;
+        private readonly DecisionConfigurations decisionConfigurations;
         private readonly PatientOrchestrationService patientOrchestrationService;
         private static readonly int expireAfterMinutes = 1440;
+        private static readonly int retryCount = 3;
         private readonly ICompareLogic compareLogic;
 
         public PatientOrchestrationServiceTests()
@@ -50,9 +51,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             this.notificationServiceMock = new Mock<INotificationService>();
             this.compareLogic = new CompareLogic();
 
-            this.patientConfigurations = new PatientConfigurations
+            this.decisionConfigurations = new DecisionConfigurations
             {
-                ValidationCodeExpireAfterMinutes = expireAfterMinutes
+                PatientValidationCodeExpireAfterMinutes = expireAfterMinutes,
+                MaxRetryCount = retryCount
             };
 
             this.patientOrchestrationService = new PatientOrchestrationService(
@@ -62,7 +64,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 pdsService: this.pdsServiceMock.Object,
                 patientService: this.patientServiceMock.Object,
                 notificationService: this.notificationServiceMock.Object,
-                patientConfigurations: this.patientConfigurations);
+                decisionConfigurations: this.decisionConfigurations);
 
         }
 

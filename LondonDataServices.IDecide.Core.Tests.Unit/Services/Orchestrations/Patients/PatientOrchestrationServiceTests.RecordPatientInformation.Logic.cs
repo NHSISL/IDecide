@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using Force.DeepCloner;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
-using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients;
+using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
 using Moq;
 
@@ -21,7 +21,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         public async Task ShouldRecordPatientInformationAsyncWhenNoPatientFound()
         {
             // given
-            int expireAfterMinutes = this.patientConfigurations.ValidationCodeExpireAfterMinutes;
+            int expireAfterMinutes = this.decisionConfigurations.PatientValidationCodeExpireAfterMinutes;
+            int maxRetryCount = this.decisionConfigurations.MaxRetryCount;
             string randomNhsNumber = GenerateRandom10DigitNumber();
             string inputNhsNumber = randomNhsNumber.DeepClone();
             string randomCaptchaToken = GetRandomString();
@@ -47,10 +48,11 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 Patient = updatedPatient
             };
 
-            PatientConfigurations patientConfigurations =
-                new PatientConfigurations
+            DecisionConfigurations decisionConfigurations =
+                new DecisionConfigurations
                 {
-                    ValidationCodeExpireAfterMinutes = 1440
+                    PatientValidationCodeExpireAfterMinutes = expireAfterMinutes,
+                    MaxRetryCount = maxRetryCount
                 };
 
             var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
@@ -60,7 +62,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 pdsServiceMock.Object,
                 patientServiceMock.Object,
                 notificationServiceMock.Object,
-                patientConfigurations)
+                decisionConfigurations)
             { CallBase = true };
 
             this.securityBrokerMock.Setup(broker =>
@@ -135,7 +137,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         public async Task ShouldRecordPatientInformationAsyncWhenPatientFoundWithExpiredCode()
         {
             // given
-            int expireAfterMinutes = this.patientConfigurations.ValidationCodeExpireAfterMinutes;
+            int expireAfterMinutes = this.decisionConfigurations.PatientValidationCodeExpireAfterMinutes;
+            int maxRetryCount = this.decisionConfigurations.MaxRetryCount;
             string randomNhsNumber = GenerateRandom10DigitNumber();
             string inputNhsNumber = randomNhsNumber.DeepClone();
             string randomCaptchaToken = GetRandomString();
@@ -163,10 +166,11 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 Patient = updatedPatient
             };
 
-            PatientConfigurations patientConfigurations =
-                new PatientConfigurations
+            DecisionConfigurations decisionConfigurations =
+                new DecisionConfigurations
                 {
-                    ValidationCodeExpireAfterMinutes = 1440
+                    PatientValidationCodeExpireAfterMinutes = expireAfterMinutes,
+                    MaxRetryCount = maxRetryCount
                 };
 
             var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
@@ -176,7 +180,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 pdsServiceMock.Object,
                 patientServiceMock.Object,
                 notificationServiceMock.Object,
-                patientConfigurations)
+                decisionConfigurations)
             { CallBase = true };
 
             this.securityBrokerMock.Setup(broker =>
@@ -251,7 +255,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         public async Task ShouldRecordPatientInformationAsyncWhenPatientFoundWithValidCodeAndGenerateNewCodeIsTrue()
         {
             // given
-            int expireAfterMinutes = this.patientConfigurations.ValidationCodeExpireAfterMinutes;
+            int expireAfterMinutes = this.decisionConfigurations.PatientValidationCodeExpireAfterMinutes;
+            int maxRetryCount = this.decisionConfigurations.MaxRetryCount;
             string randomNhsNumber = GenerateRandom10DigitNumber();
             string inputNhsNumber = randomNhsNumber.DeepClone();
             string randomCaptchaToken = GetRandomString();
@@ -279,10 +284,11 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 Patient = updatedPatient
             };
 
-            PatientConfigurations patientConfigurations =
-                new PatientConfigurations
+            DecisionConfigurations decisionConfigurations =
+                new DecisionConfigurations
                 {
-                    ValidationCodeExpireAfterMinutes = 1440
+                    PatientValidationCodeExpireAfterMinutes = expireAfterMinutes,
+                    MaxRetryCount = maxRetryCount
                 };
 
             var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
@@ -292,7 +298,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 pdsServiceMock.Object,
                 patientServiceMock.Object,
                 notificationServiceMock.Object,
-                patientConfigurations)
+                decisionConfigurations)
             { CallBase = true };
 
             this.securityBrokerMock.Setup(broker =>
