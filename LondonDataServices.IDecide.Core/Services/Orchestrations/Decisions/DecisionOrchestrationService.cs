@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Brokers.DateTimes;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
+using LondonDataServices.IDecide.Core.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
@@ -22,6 +23,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
     {
         private readonly ILoggingBroker loggingBroker;
         private readonly IDateTimeBroker dateTimeBroker;
+        private readonly ISecurityBroker securityBroker;
         private readonly IPatientService patientService;
         private readonly IDecisionService decisionService;
         private readonly INotificationService notificationService;
@@ -30,6 +32,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
         public DecisionOrchestrationService(
             ILoggingBroker loggingBroker,
             IDateTimeBroker dateTimeBroker,
+            ISecurityBroker securityBroker,
             IPatientService patientService,
             IDecisionService decisionService,
             INotificationService notificationService,
@@ -37,6 +40,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
         {
             this.loggingBroker = loggingBroker;
             this.dateTimeBroker = dateTimeBroker;
+            this.securityBroker = securityBroker;
             this.patientService = patientService;
             this.decisionService = decisionService;
             this.notificationService = notificationService;
@@ -52,26 +56,42 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
                 Patient maybeMatchingPatient = patients.FirstOrDefault(patient => patient.NhsNumber == maybeNhsNumber);
                 ValidatePatientExists(maybeMatchingPatient);
 
-                if (maybeMatchingPatient.RetryCount > this.decisionConfiguration.MaxRetryCount)
+                bool userIsAdmin = await this.securityBroker
+                    .IsInRoleAsync("Administrator");
+
+                bool userIsOperator = await this.securityBroker
+                    .IsInRoleAsync("Operator");
+
+                if (userIsAdmin || userIsOperator)
                 {
-                    throw new ExceededMaxRetryCountException(
-                        $"The maximum retry count of {this.decisionConfiguration.MaxRetryCount} exceeded.");
+                    if (maybeMatchingPatient.ValidationCode != decision.Patient.ValidationCode)
+                    {
+                        throw new IncorrectValidationCodeException("The validation code provided is incorrect.");
+                    }
                 }
-
-                if (maybeMatchingPatient.ValidationCode != decision.Patient.ValidationCode)
+                else
                 {
-                    Patient patientToUpdate = maybeMatchingPatient;
-                    patientToUpdate.RetryCount += 1;
-                    await this.patientService.ModifyPatientAsync(patientToUpdate);
+                    if (maybeMatchingPatient.RetryCount > this.decisionConfiguration.MaxRetryCount)
+                    {
+                        throw new ExceededMaxRetryCountException(
+                            $"The maximum retry count of {this.decisionConfiguration.MaxRetryCount} exceeded.");
+                    }
 
-                    throw new IncorrectValidationCodeException("The validation code provided is incorrect.");
-                }
+                    if (maybeMatchingPatient.ValidationCode != decision.Patient.ValidationCode)
+                    {
+                        Patient patientToUpdate = maybeMatchingPatient;
+                        patientToUpdate.RetryCount += 1;
+                        await this.patientService.ModifyPatientAsync(patientToUpdate);
 
-                DateTimeOffset currentDateTime = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
+                        throw new IncorrectValidationCodeException("The validation code provided is incorrect.");
+                    }
 
-                if (maybeMatchingPatient.ValidationCodeExpiresOn < currentDateTime)
-                {
-                    throw new ExpiredValidationCodeException("The validation code has expired.");
+                    DateTimeOffset currentDateTime = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
+
+                    if (maybeMatchingPatient.ValidationCodeExpiresOn < currentDateTime)
+                    {
+                        throw new ExpiredValidationCodeException("The validation code has expired.");
+                    }
                 }
 
                 Decision addedDecision = await this.decisionService.AddDecisionAsync(decision);

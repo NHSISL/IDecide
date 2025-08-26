@@ -9,6 +9,7 @@ using System.Linq.Expressions;
 using KellermanSoftware.CompareNetObjects;
 using LondonDataServices.IDecide.Core.Brokers.DateTimes;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
+using LondonDataServices.IDecide.Core.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
@@ -30,6 +31,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
     {
         private readonly Mock<ILoggingBroker> loggingBrokerMock = new Mock<ILoggingBroker>();
         private readonly Mock<IDateTimeBroker> dateTimeBrokerMock = new Mock<IDateTimeBroker>();
+        private readonly Mock<ISecurityBroker> securityBrokerMock = new Mock<ISecurityBroker>();
         private readonly Mock<IPatientService> patientServiceMock = new Mock<IPatientService>();
         private readonly Mock<INotificationService> notificationServiceMock = new Mock<INotificationService>();
         private readonly Mock<IDecisionService> decisionServiceMock = new Mock<IDecisionService>();
@@ -43,6 +45,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
         {
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
             this.dateTimeBrokerMock = new Mock<IDateTimeBroker>();
+            this.securityBrokerMock = new Mock<ISecurityBroker>();
             this.patientServiceMock = new Mock<IPatientService>();
             this.notificationServiceMock = new Mock<INotificationService>();
             this.decisionServiceMock = new Mock<IDecisionService>();
@@ -58,6 +61,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             this.decisionOrchestrationService = new DecisionOrchestrationService(
                 loggingBroker: this.loggingBrokerMock.Object,
                 dateTimeBroker: this.dateTimeBrokerMock.Object,
+                securityBroker: this.securityBrokerMock.Object,
                 patientService: this.patientServiceMock.Object,
                 notificationService: this.notificationServiceMock.Object,
                 decisionService: this.decisionServiceMock.Object,
@@ -160,6 +164,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
 
         private Expression<Func<NotificationInfo, bool>> SameNotificationInfoAs(NotificationInfo expectedInfo) =>
            actualInfo => this.compareLogic.Compare(expectedInfo, actualInfo).AreEqual;
+
+        private Expression<Func<Patient, bool>> SamePatientAs(Patient expectedPatient) =>
+            actualPatient => this.compareLogic.Compare(expectedPatient, actualPatient).AreEqual;
 
         public static TheoryData<Xeption> DependencyValidationExceptions()
         {
