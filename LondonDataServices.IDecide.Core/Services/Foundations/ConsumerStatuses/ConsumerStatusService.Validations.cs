@@ -15,6 +15,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
     {
         private async ValueTask ValidateConsumerStatusOnAdd(ConsumerStatus consumerStatus)
         {
+            ValidateConsumerStatusIsNotNull(consumerStatus);
             User currentUser = await this.securityBroker.GetCurrentUserAsync();
 
             Validate<InvalidConsumerStatusException>(
@@ -22,6 +23,14 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
 
                 (Rule: await IsNotRecentAsync(consumerStatus.CreatedDate),
                     Parameter: nameof(ConsumerStatus.CreatedDate)));
+        }
+
+        private static void ValidateConsumerStatusIsNotNull(ConsumerStatus consumerStatus)
+        {
+            if (consumerStatus is null)
+            {
+                throw new NullConsumerStatusException(message: "ConsumerStatus is null.");
+            }
         }
 
         private async ValueTask<dynamic> IsNotRecentAsync(DateTimeOffset date)
