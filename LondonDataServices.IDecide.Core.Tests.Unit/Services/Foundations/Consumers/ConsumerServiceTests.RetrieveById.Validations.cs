@@ -45,13 +45,13 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                 .BeEquivalentTo(expectedConsumerValidationException);
 
             this.loggingBrokerMock.Verify(broker =>
-                    broker.LogErrorAsync(It.Is(SameExceptionAs(
-                        expectedConsumerValidationException))),
-                Times.Once);
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedConsumerValidationException))),
+                        Times.Once());
 
             this.storageBrokerMock.Verify(broker =>
-                    broker.SelectConsumerByIdAsync(It.IsAny<Guid>()),
-                Times.Never);
+                broker.SelectConsumerByIdAsync(It.IsAny<Guid>()),
+                    Times.Never);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.securityAuditBrokerMock.VerifyNoOtherCalls();
@@ -91,13 +91,13 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
             actualConsumerValidationException.Should().BeEquivalentTo(expectedConsumerValidationException);
 
             this.storageBrokerMock.Verify(broker =>
-                    broker.SelectConsumerByIdAsync(It.IsAny<Guid>()),
-                Times.Once());
+                broker.SelectConsumerByIdAsync(It.IsAny<Guid>()),
+                    Times.Once());
 
             this.loggingBrokerMock.Verify(broker =>
-                    broker.LogErrorAsync(It.Is(SameExceptionAs(
-                        expectedConsumerValidationException))),
-                Times.Once);
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedConsumerValidationException))),
+                        Times.Once());
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.securityAuditBrokerMock.VerifyNoOtherCalls();

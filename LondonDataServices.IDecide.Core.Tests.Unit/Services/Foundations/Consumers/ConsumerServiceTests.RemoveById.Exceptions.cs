@@ -211,12 +211,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectConsumerByIdAsync(It.IsAny<Guid>()),
-                        Times.Once());
+                    Times.Once());
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
                     expectedConsumerServiceException))),
-                        Times.Once);
+                        Times.Once());
 
             this.securityAuditBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();

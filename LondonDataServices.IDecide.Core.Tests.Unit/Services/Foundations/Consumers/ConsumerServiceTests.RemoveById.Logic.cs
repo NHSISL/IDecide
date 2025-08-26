@@ -26,12 +26,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
             Consumer expectedConsumer = deletedConsumer.DeepClone();
 
             this.storageBrokerMock.Setup(broker =>
-                    broker.SelectConsumerByIdAsync(inputConsumerId))
-                .ReturnsAsync(storageConsumer);
+                broker.SelectConsumerByIdAsync(inputConsumerId))
+                    .ReturnsAsync(storageConsumer);
 
             this.storageBrokerMock.Setup(broker =>
-                    broker.DeleteConsumerAsync(expectedInputConsumer))
-                .ReturnsAsync(deletedConsumer);
+                broker.DeleteConsumerAsync(expectedInputConsumer))
+                    .ReturnsAsync(deletedConsumer);
 
             // when
             Consumer actualConsumer = await this.consumerService
@@ -41,12 +41,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
             actualConsumer.Should().BeEquivalentTo(expectedConsumer);
 
             this.storageBrokerMock.Verify(broker =>
-                    broker.SelectConsumerByIdAsync(inputConsumerId),
-                Times.Once);
+                broker.SelectConsumerByIdAsync(inputConsumerId),
+                    Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                    broker.DeleteConsumerAsync(expectedInputConsumer),
-                Times.Once);
+                broker.DeleteConsumerAsync(expectedInputConsumer),
+                    Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
