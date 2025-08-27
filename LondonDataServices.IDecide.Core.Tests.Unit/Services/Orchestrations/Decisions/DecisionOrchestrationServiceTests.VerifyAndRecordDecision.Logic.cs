@@ -401,7 +401,20 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             Decision inputDecision = randomDecision.DeepClone();
             Decision outputDecision = inputDecision.DeepClone();
             Patient patientToUpdate = randomPatient.DeepClone();
-            patientToUpdate.RetryCount += 1;
+            string randomNewValidationCode = GetRandomStringWithLengthOf(5);
+
+            DateTimeOffset newExpiryDateTimeOffset =
+                randomDateTime.AddMinutes(this.decisionConfigurations.PatientValidationCodeExpireAfterMinutes);
+
+            patientToUpdate.RetryCount = 0;
+            patientToUpdate.ValidationCode = randomNewValidationCode;
+            patientToUpdate.ValidationCodeExpiresOn = newExpiryDateTimeOffset;
+
+            NotificationInfo inputNotificationInfo = new NotificationInfo
+            {
+                Patient = patientToUpdate,
+                Decision = inputDecision
+            };
 
             this.patientServiceMock.Setup(service =>
                 service.RetrieveAllPatientsAsync())
@@ -418,12 +431,18 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 broker.GetCurrentDateTimeOffsetAsync())
                     .ReturnsAsync(randomDateTime);
 
-            var expiredValidationCodeException = new ExpiredValidationCodeException("The validation code has expired.");
+            this.patientServiceMock.Setup(service =>
+                service.GenerateValidationCodeAsync())
+                    .ReturnsAsync(randomNewValidationCode);
+
+            var renewedValidationCodeException =
+                new RenewedValidationCodeException("The validation code has expired, but we have issued a new code " +
+                $"that will be sent via {inputDecision.Patient.NotificationPreference.ToString()}");
 
             var expectedDecisionOrchestrationValidationException =
                 new DecisionOrchestrationValidationException(
                     message: "Decision orchestration validation error occurred, please fix the errors and try again.",
-                    innerException: expiredValidationCodeException);
+                    innerException: renewedValidationCodeException);
 
             ValueTask verifyAndRecordDecisionTask =
               this.decisionOrchestrationService
@@ -451,6 +470,18 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
 
             this.dateTimeBrokerMock.Verify(service =>
                 service.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.patientServiceMock.Verify(service =>
+                service.GenerateValidationCodeAsync(),
+                    Times.Once);
+
+            this.patientServiceMock.Verify(service =>
+                service.ModifyPatientAsync(It.Is(SamePatientAs(patientToUpdate))),
+                    Times.Once);
+
+            this.notificationServiceMock.Verify(service =>
+                service.SendCodeNotificationAsync(It.Is(SameNotificationInfoAs(inputNotificationInfo))),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>

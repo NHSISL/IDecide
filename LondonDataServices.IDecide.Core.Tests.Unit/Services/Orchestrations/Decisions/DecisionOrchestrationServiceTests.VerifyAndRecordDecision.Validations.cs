@@ -301,16 +301,19 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
             Patient randomPatient = GetRandomPatient(randomDateTime, randomNhsNumber, randomValidationCode);
             Decision randomDecision = GetRandomDecision(randomPatient);
-            var expiredValidationCodeException = new ExpiredValidationCodeException("The validation code has expired.");
+
+            var renewedValidationCodeException =
+                new RenewedValidationCodeException("The validation code has expired, but we have issued a new code " +
+                $"that will be sent via {randomDecision.Patient.NotificationPreference.ToString()}");
 
             var expectedDecisionOrchestrationValidationException =
                 new DecisionOrchestrationValidationException(
                     message: "Decision orchestration validation error occurred, please fix the errors and try again.",
-                    innerException: expiredValidationCodeException);
+                    innerException: renewedValidationCodeException);
 
             this.patientServiceMock.Setup(service =>
                 service.RetrieveAllPatientsAsync())
-                    .ThrowsAsync(expiredValidationCodeException);
+                    .ThrowsAsync(renewedValidationCodeException);
 
             // when
             ValueTask verifyAndRecordDecisionTask =

@@ -45,7 +45,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
             {
                 throw await CreateAndLogValidationExceptionAsync(exceededMaxRetryCountException);
             }
-            catch (ExpiredValidationCodeException expiredValidationCodeException)
+            catch (RenewedValidationCodeException expiredValidationCodeException)
             {
                 throw await CreateAndLogValidationExceptionAsync(expiredValidationCodeException);
             }

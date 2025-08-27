@@ -95,7 +95,28 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
 
                     if (maybeMatchingPatient.ValidationCodeExpiresOn < currentDateTime)
                     {
-                        throw new ExpiredValidationCodeException("The validation code has expired.");
+                        string newValidationCode = await this.patientService.GenerateValidationCodeAsync();
+                        Patient patientToUpdate = maybeMatchingPatient;
+                        patientToUpdate.ValidationCode = newValidationCode;
+                        patientToUpdate.RetryCount = 0;
+
+                        patientToUpdate.ValidationCodeExpiresOn =
+                            currentDateTime.AddMinutes(
+                                this.decisionConfiguration.PatientValidationCodeExpireAfterMinutes);
+
+                        await this.patientService.ModifyPatientAsync(patientToUpdate);
+
+                        NotificationInfo codeNotificationInfo = new NotificationInfo
+                        {
+                            Patient = patientToUpdate,
+                            Decision = decision
+                        };
+
+                        await this.notificationService.SendCodeNotificationAsync(codeNotificationInfo);
+
+                        throw new RenewedValidationCodeException(
+                            "The validation code has expired, but we have issued a new code that will be sent via " +
+                            $"{decision.Patient.NotificationPreference.ToString()}");
                     }
                 }
 

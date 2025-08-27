@@ -16,5 +16,6 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Patients
         ValueTask<Patient> RetrievePatientByIdAsync(Guid patientId);
         ValueTask<Patient> ModifyPatientAsync(Patient patient);
         ValueTask<Patient> RemovePatientByIdAsync(Guid patientId);
+        ValueTask<string> GenerateValidationCodeAsync();
     }
 }
