@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerStatuses;
@@ -154,6 +155,84 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
 
             this.storageBrokerMock.Verify(broker =>
                 broker.UpdateConsumerStatusAsync(It.IsAny<ConsumerStatus>()),
+                    Times.Never);
+
+            this.securityAuditBrokerMock.VerifyNoOtherCalls();
+            this.securityBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnModifyIfUpdatedDateIsSameAsCreatedDateAndLogItAsync()
+        {
+            // given
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            string randomUserId = GetRandomString();
+            User randomUser = CreateRandomUser(userId: randomUserId);
+
+            ConsumerStatus randomConsumerStatus =
+                CreateRandomConsumerStatus(dateTimeOffset: randomDateTimeOffset, userId: randomUserId);
+
+            ConsumerStatus invalidConsumerStatus = randomConsumerStatus;
+
+            var invalidConsumerStatusException =
+                new InvalidConsumerStatusException(
+                    message: "Invalid consumerStatus. Please correct the errors and try again.");
+
+            invalidConsumerStatusException.AddData(
+                key: nameof(ConsumerStatus.UpdatedDate),
+                values: $"Date is the same as {nameof(ConsumerStatus.CreatedDate)}");
+
+            var expectedConsumerStatusValidationException =
+                new ConsumerStatusValidationException(
+                    message: "ConsumerStatus validation errors occurred, please try again.",
+                    innerException: invalidConsumerStatusException);
+
+            this.securityAuditBrokerMock.Setup(broker =>
+                broker.ApplyModifyAuditValuesAsync(invalidConsumerStatus))
+                    .ReturnsAsync(invalidConsumerStatus);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTimeOffset);
+
+            this.securityBrokerMock.Setup(broker =>
+                broker.GetCurrentUserAsync())
+                    .ReturnsAsync(randomUser);
+
+            // when
+            ValueTask<ConsumerStatus> modifyConsumerStatusTask =
+                this.consumerStatusService.ModifyConsumerStatusAsync(invalidConsumerStatus);
+
+            ConsumerStatusValidationException actualConsumerStatusValidationException =
+                await Assert.ThrowsAsync<ConsumerStatusValidationException>(
+                    modifyConsumerStatusTask.AsTask);
+
+            // then
+            actualConsumerStatusValidationException.Should()
+                .BeEquivalentTo(expectedConsumerStatusValidationException);
+
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.ApplyModifyAuditValuesAsync(invalidConsumerStatus),
+                    Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.securityBrokerMock.Verify(broker =>
+                broker.GetCurrentUserAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedConsumerStatusValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectConsumerStatusByIdAsync(invalidConsumerStatus.Id),
                     Times.Never);
 
             this.securityAuditBrokerMock.VerifyNoOtherCalls();
