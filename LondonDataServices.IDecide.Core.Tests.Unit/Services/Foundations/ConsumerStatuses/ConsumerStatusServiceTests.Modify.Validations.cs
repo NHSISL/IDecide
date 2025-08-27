@@ -5,6 +5,7 @@
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Force.DeepCloner;
 using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerStatuses;
 using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerStatuses.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Securities;
@@ -395,6 +396,101 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
                     expectedConsumerStatusValidationException))),
                         Times.Once);
+
+            this.securityAuditBrokerMock.VerifyNoOtherCalls();
+            this.securityBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnModifyIfStorageCreatedDateNotSameAsCreatedDateAndLogItAsync()
+        {
+            // given
+            int randomNumber = GetRandomNegativeNumber();
+            int randomMinutes = randomNumber;
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            string randomUserId = GetRandomString();
+            User randomUser = CreateRandomUser(userId: randomUserId);
+
+            ConsumerStatus randomConsumerStatus = CreateRandomModifyConsumerStatus(
+                dateTimeOffset: randomDateTimeOffset, userId: randomUserId);
+
+            ConsumerStatus invalidConsumerStatus = randomConsumerStatus.DeepClone();
+            ConsumerStatus storageConsumerStatus = invalidConsumerStatus.DeepClone();
+            storageConsumerStatus.CreatedDate = storageConsumerStatus.CreatedDate.AddMinutes(randomMinutes);
+            storageConsumerStatus.UpdatedDate = storageConsumerStatus.UpdatedDate.AddMinutes(randomMinutes);
+
+            var invalidConsumerStatusException =
+                new InvalidConsumerStatusException(
+                    message: "Invalid consumerStatus. Please correct the errors and try again.");
+
+            invalidConsumerStatusException.AddData(
+                key: nameof(ConsumerStatus.CreatedDate),
+                values: $"Date is not the same as {nameof(ConsumerStatus.CreatedDate)}");
+
+            var expectedConsumerStatusValidationException =
+                new ConsumerStatusValidationException(
+                    message: "ConsumerStatus validation errors occurred, please try again.",
+                    innerException: invalidConsumerStatusException);
+
+            this.securityAuditBrokerMock.Setup(broker =>
+                broker.ApplyModifyAuditValuesAsync(invalidConsumerStatus))
+                    .ReturnsAsync(invalidConsumerStatus);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectConsumerStatusByIdAsync(invalidConsumerStatus.Id))
+                    .ReturnsAsync(storageConsumerStatus);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTimeOffset);
+
+            this.securityBrokerMock.Setup(broker =>
+                broker.GetCurrentUserAsync())
+                    .ReturnsAsync(randomUser);
+
+            this.securityAuditBrokerMock.Setup(broker =>
+                broker.EnsureAddAuditValuesRemainsUnchangedOnModifyAsync(invalidConsumerStatus, storageConsumerStatus))
+                    .ReturnsAsync(invalidConsumerStatus);
+
+            // when
+            ValueTask<ConsumerStatus> modifyConsumerStatusTask =
+                this.consumerStatusService.ModifyConsumerStatusAsync(invalidConsumerStatus);
+
+            ConsumerStatusValidationException actualConsumerStatusValidationException =
+                await Assert.ThrowsAsync<ConsumerStatusValidationException>(
+                    modifyConsumerStatusTask.AsTask);
+
+            // then
+            actualConsumerStatusValidationException.Should()
+                .BeEquivalentTo(expectedConsumerStatusValidationException);
+
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.ApplyModifyAuditValuesAsync(invalidConsumerStatus),
+                    Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectConsumerStatusByIdAsync(invalidConsumerStatus.Id),
+                    Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.securityBrokerMock.Verify(broker =>
+                broker.GetCurrentUserAsync(),
+                    Times.Once);
+
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.EnsureAddAuditValuesRemainsUnchangedOnModifyAsync(invalidConsumerStatus, storageConsumerStatus),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+               broker.LogErrorAsync(It.Is(SameExceptionAs(
+                   expectedConsumerStatusValidationException))),
+                       Times.Once);
 
             this.securityAuditBrokerMock.VerifyNoOtherCalls();
             this.securityBrokerMock.VerifyNoOtherCalls();
