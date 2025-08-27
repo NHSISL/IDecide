@@ -51,6 +51,8 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
                 ConsumerStatus maybeConsumerStatus =
                     await this.storageBroker.SelectConsumerStatusByIdAsync(consumerStatus.Id);
 
+                ValidateStorageConsumerStatus(maybeConsumerStatus, consumerStatus.Id);
+
                 consumerStatus = await this.securityAuditBroker
                     .EnsureAddAuditValuesRemainsUnchangedOnModifyAsync(consumerStatus, maybeConsumerStatus);
 

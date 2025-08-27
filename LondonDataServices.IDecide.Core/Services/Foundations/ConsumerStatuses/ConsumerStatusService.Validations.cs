@@ -78,6 +78,15 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
                 (Rule: await IsNotRecentAsync(consumerStatus.UpdatedDate), Parameter: nameof(ConsumerStatus.UpdatedDate)));
         }
 
+        private static void ValidateStorageConsumerStatus(ConsumerStatus maybeConsumerStatus, Guid consumerStatusId)
+        {
+            if (maybeConsumerStatus is null)
+            {
+                throw new NotFoundConsumerStatusException(
+                    message: $"Couldn't find consumerStatus with consumerStatusId: {consumerStatusId}.");
+            }
+        }
+
         private static void ValidateConsumerStatusIsNotNull(ConsumerStatus consumerStatus)
         {
             if (consumerStatus is null)

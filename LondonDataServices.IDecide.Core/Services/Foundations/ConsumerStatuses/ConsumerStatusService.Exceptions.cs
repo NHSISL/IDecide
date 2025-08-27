@@ -40,6 +40,10 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
 
                 throw await CreateAndLogCriticalDependencyException(failedConsumerStatusStorageException);
             }
+            catch (NotFoundConsumerStatusException notFoundConsumerStatusException)
+            {
+                throw await CreateAndLogValidationException(notFoundConsumerStatusException);
+            }
             catch (DuplicateKeyException duplicateKeyException)
             {
                 var alreadyExistsConsumerStatusException =
