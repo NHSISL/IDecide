@@ -42,9 +42,18 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
                 return await this.storageBroker.InsertConsumerStatusAsync(consumerStatus);
             });
 
-        public ValueTask<ConsumerStatus> ModifyConsumerStatusAsync(ConsumerStatus consumerStatus)
+        public async ValueTask<ConsumerStatus> ModifyConsumerStatusAsync(ConsumerStatus consumerStatus)
         {
-            throw new System.NotImplementedException();
+            consumerStatus = await this.securityAuditBroker.ApplyModifyAuditValuesAsync(consumerStatus);
+            await ValidateConsumerStatusOnModify(consumerStatus);
+
+            ConsumerStatus maybeConsumerStatus =
+                await this.storageBroker.SelectConsumerStatusByIdAsync(consumerStatus.Id);
+
+            consumerStatus = await this.securityAuditBroker
+                .EnsureAddAuditValuesRemainsUnchangedOnModifyAsync(consumerStatus, maybeConsumerStatus);
+
+            return await this.storageBroker.UpdateConsumerStatusAsync(consumerStatus);
         }
     }
 }
