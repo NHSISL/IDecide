@@ -19,7 +19,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
     public partial class DecisionOrchestrationServiceTests
     {
         [Fact]
-        public async Task ShouldVerifyAndRecordDecisionAsyncWithValidDecisionAndNonAdminUser()
+        public async Task ShouldVerifyAndRecordDecisionAsyncWithValidDecisionAndNonDecisionWorflowRoleUser()
         {
             // given
             string randomNhsNumber = GenerateRandom10DigitNumber();
@@ -43,13 +43,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 service.RetrieveAllPatientsAsync())
                     .ReturnsAsync(outputPatients.AsQueryable);
 
-            this.securityBrokerMock.Setup(broker =>
-                broker.IsInRoleAsync("Administrator"))
+            foreach (string role in this.decisionConfigurations.DecisionWorkflowRoles)
+            {
+                this.securityBrokerMock.Setup(broker =>
+                broker.IsInRoleAsync(role))
                     .ReturnsAsync(false);
-
-            this.securityBrokerMock.Setup(broker =>
-               broker.IsInRoleAsync("Operator"))
-                   .ReturnsAsync(false);
+            }
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
@@ -67,13 +66,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 service.RetrieveAllPatientsAsync(),
                     Times.Once);
 
-            this.securityBrokerMock.Verify(broker =>
-                broker.IsInRoleAsync("Administrator"),
+            foreach (string role in this.decisionConfigurations.DecisionWorkflowRoles)
+            {
+                this.securityBrokerMock.Verify(broker =>
+                broker.IsInRoleAsync(role),
                     Times.Once);
-
-            this.securityBrokerMock.Verify(broker =>
-                broker.IsInRoleAsync("Operator"),
-                    Times.Once);
+            }
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffsetAsync(),
@@ -96,7 +94,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
         }
 
         [Fact]
-        public async Task ShouldVerifyAndRecordDecisionAsyncWithValidDecisionAndAdminUser()
+        public async Task ShouldVerifyAndRecordDecisionAsyncWithValidDecisionAndDecisionWorflowRoleUser()
         {
             // given
             string randomNhsNumber = GenerateRandom10DigitNumber();
@@ -120,13 +118,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 service.RetrieveAllPatientsAsync())
                     .ReturnsAsync(outputPatients.AsQueryable);
 
-            this.securityBrokerMock.Setup(broker =>
-                broker.IsInRoleAsync("Administrator"))
+            foreach (string role in this.decisionConfigurations.DecisionWorkflowRoles)
+            {
+                this.securityBrokerMock.Setup(broker =>
+                broker.IsInRoleAsync(role))
                     .ReturnsAsync(true);
-
-            this.securityBrokerMock.Setup(broker =>
-               broker.IsInRoleAsync("Operator"))
-                   .ReturnsAsync(false);
+            }
 
             this.decisionServiceMock.Setup(service =>
                 service.AddDecisionAsync(It.Is(SameDecisionAs(inputDecision))))
@@ -141,11 +138,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                     Times.Once);
 
             this.securityBrokerMock.Verify(broker =>
-                broker.IsInRoleAsync("Administrator"),
-                    Times.Once);
-
-            this.securityBrokerMock.Verify(broker =>
-                broker.IsInRoleAsync("Operator"),
+                broker.IsInRoleAsync(this.decisionConfigurations.DecisionWorkflowRoles.First()),
                     Times.Once);
 
             this.decisionServiceMock.Verify(service =>
@@ -165,76 +158,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
         }
 
         [Fact]
-        public async Task ShouldVerifyAndRecordDecisionAsyncWithValidDecisionAndOperatorUser()
-        {
-            // given
-            string randomNhsNumber = GenerateRandom10DigitNumber();
-            string randomValidationCode = GetRandomStringWithLengthOf(5);
-            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
-            Patient randomPatient = GetRandomPatient(randomDateTime, randomNhsNumber, randomValidationCode);
-            List<Patient> randomPatients = GetRandomPatients(randomDateTime);
-            randomPatients.Add(randomPatient);
-            List<Patient> outputPatients = randomPatients.DeepClone();
-            Decision randomDecision = GetRandomDecision(randomPatient);
-            Decision inputDecision = randomDecision.DeepClone();
-            Decision outputDecision = inputDecision.DeepClone();
-
-            NotificationInfo inputNotificationInfo = new NotificationInfo
-            {
-                Patient = randomPatient,
-                Decision = outputDecision
-            };
-
-            this.patientServiceMock.Setup(service =>
-                service.RetrieveAllPatientsAsync())
-                    .ReturnsAsync(outputPatients.AsQueryable);
-
-            this.securityBrokerMock.Setup(broker =>
-                broker.IsInRoleAsync("Administrator"))
-                    .ReturnsAsync(false);
-
-            this.securityBrokerMock.Setup(broker =>
-               broker.IsInRoleAsync("Operator"))
-                   .ReturnsAsync(true);
-
-            this.decisionServiceMock.Setup(service =>
-                service.AddDecisionAsync(It.Is(SameDecisionAs(inputDecision))))
-                    .ReturnsAsync(outputDecision);
-
-            // when
-            await this.decisionOrchestrationService.VerifyAndRecordDecisionAsync(inputDecision);
-
-            //then
-            this.patientServiceMock.Verify(service =>
-                service.RetrieveAllPatientsAsync(),
-                    Times.Once);
-
-            this.securityBrokerMock.Verify(broker =>
-                broker.IsInRoleAsync("Administrator"),
-                    Times.Once);
-
-            this.securityBrokerMock.Verify(broker =>
-                broker.IsInRoleAsync("Operator"),
-                    Times.Once);
-
-            this.decisionServiceMock.Verify(service =>
-                service.AddDecisionAsync(It.Is(SameDecisionAs(inputDecision))),
-                    Times.Once);
-
-            this.notificationServiceMock.Verify(service =>
-                service.SendSubmissionSuccessNotificationAsync(It.Is(SameNotificationInfoAs(inputNotificationInfo))),
-                    Times.Once);
-
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
-            this.patientServiceMock.VerifyNoOtherCalls();
-            this.notificationServiceMock.VerifyNoOtherCalls();
-            this.decisionServiceMock.VerifyNoOtherCalls();
-        }
-
-        [Fact]
-        public async Task ShouldErrorOnVerifyAndRecordDecisionAsyncWithInvalidValidationCodeAndAdminUser()
+        public async Task ShouldErrorOnVerifyAndRecordDecisionAsyncWithInvalidValidationCodeAndDecisionWorflowRoleUser()
         {
             // given
             string randomNhsNumber = GenerateRandom10DigitNumber();
@@ -263,13 +187,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 service.RetrieveAllPatientsAsync())
                     .ReturnsAsync(outputPatients.AsQueryable);
 
-            this.securityBrokerMock.Setup(broker =>
-                broker.IsInRoleAsync("Administrator"))
+            foreach (string role in this.decisionConfigurations.DecisionWorkflowRoles)
+            {
+                this.securityBrokerMock.Setup(broker =>
+                broker.IsInRoleAsync(role))
                     .ReturnsAsync(true);
-
-            this.securityBrokerMock.Setup(broker =>
-               broker.IsInRoleAsync("Operator"))
-                   .ReturnsAsync(false);
+            }
 
             // when
             ValueTask verifyAndRecordDecisionTask =
@@ -290,11 +213,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                     Times.Once);
 
             this.securityBrokerMock.Verify(broker =>
-                broker.IsInRoleAsync("Administrator"),
-                    Times.Once);
-
-            this.securityBrokerMock.Verify(broker =>
-                broker.IsInRoleAsync("Operator"),
+                broker.IsInRoleAsync(this.decisionConfigurations.DecisionWorkflowRoles.First()),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
@@ -311,84 +230,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
         }
 
         [Fact]
-        public async Task ShouldErrorOnVerifyAndRecordDecisionAsyncWithInvalidValidationCodeAndOperatorUser()
-        {
-            // given
-            string randomNhsNumber = GenerateRandom10DigitNumber();
-            string randomValidationCode = GetRandomStringWithLengthOf(5);
-            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
-            Patient randomPatient = GetRandomPatient(randomDateTime, randomNhsNumber, randomValidationCode);
-            Patient invalidCodePatient = randomPatient.DeepClone();
-            string invalidValidationCode = GetRandomStringWithLengthOf(5);
-            invalidCodePatient.ValidationCode = invalidValidationCode;
-            List<Patient> randomPatients = GetRandomPatients(randomDateTime);
-            randomPatients.Add(randomPatient);
-            List<Patient> outputPatients = randomPatients.DeepClone();
-            Decision randomDecision = GetRandomDecision(invalidCodePatient);
-            Decision inputDecision = randomDecision.DeepClone();
-            Decision outputDecision = inputDecision.DeepClone();
-
-            var incorrectValidationCodeException =
-                new IncorrectValidationCodeException("The validation code provided is incorrect.");
-
-            var expectedDecisionOrchestrationValidationException =
-                new DecisionOrchestrationValidationException(
-                    message: "Decision orchestration validation error occurred, please fix the errors and try again.",
-                    innerException: incorrectValidationCodeException);
-
-            this.patientServiceMock.Setup(service =>
-                service.RetrieveAllPatientsAsync())
-                    .ReturnsAsync(outputPatients.AsQueryable);
-
-            this.securityBrokerMock.Setup(broker =>
-                broker.IsInRoleAsync("Administrator"))
-                    .ReturnsAsync(false);
-
-            this.securityBrokerMock.Setup(broker =>
-               broker.IsInRoleAsync("Operator"))
-                   .ReturnsAsync(true);
-
-            // when
-            ValueTask verifyAndRecordDecisionTask =
-               this.decisionOrchestrationService
-                   .VerifyAndRecordDecisionAsync(inputDecision);
-
-            DecisionOrchestrationValidationException
-                actualDecisionOrchestrationValidationException =
-                    await Assert.ThrowsAsync<DecisionOrchestrationValidationException>(
-                        testCode: verifyAndRecordDecisionTask.AsTask);
-
-            //then
-            actualDecisionOrchestrationValidationException
-                .Should().BeEquivalentTo(expectedDecisionOrchestrationValidationException);
-
-            this.patientServiceMock.Verify(service =>
-                service.RetrieveAllPatientsAsync(),
-                    Times.Once);
-
-            this.securityBrokerMock.Verify(broker =>
-                broker.IsInRoleAsync("Administrator"),
-                    Times.Once);
-
-            this.securityBrokerMock.Verify(broker =>
-                broker.IsInRoleAsync("Operator"),
-                    Times.Once);
-
-            this.loggingBrokerMock.Verify(broker =>
-               broker.LogErrorAsync(It.Is(SameExceptionAs(
-                   expectedDecisionOrchestrationValidationException))),
-                       Times.Once);
-
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
-            this.patientServiceMock.VerifyNoOtherCalls();
-            this.notificationServiceMock.VerifyNoOtherCalls();
-            this.decisionServiceMock.VerifyNoOtherCalls();
-        }
-
-        [Fact]
-        public async Task ShouldErrorOnVerifyAndRecordDecisionAsyncWithExceededRetryAndNonOperatorUser()
+        public async Task ShouldErrorOnVerifyAndRecordDecisionAsyncWithExceededRetryAndNonDecisionWorflowRoleUser()
         {
             // given
             string randomNhsNumber = GenerateRandom10DigitNumber();
@@ -408,13 +250,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 service.RetrieveAllPatientsAsync())
                     .ReturnsAsync(outputPatients.AsQueryable);
 
-            this.securityBrokerMock.Setup(broker =>
-                broker.IsInRoleAsync("Administrator"))
+            foreach (string role in this.decisionConfigurations.DecisionWorkflowRoles)
+            {
+                this.securityBrokerMock.Setup(broker =>
+                broker.IsInRoleAsync(role))
                     .ReturnsAsync(false);
-
-            this.securityBrokerMock.Setup(broker =>
-               broker.IsInRoleAsync("Operator"))
-                   .ReturnsAsync(false);
+            }
 
             var exceededMaxRetryCountException =
                 new ExceededMaxRetryCountException(
@@ -442,13 +283,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 service.RetrieveAllPatientsAsync(),
                     Times.Once);
 
-            this.securityBrokerMock.Verify(broker =>
-                broker.IsInRoleAsync("Administrator"),
+            foreach (string role in this.decisionConfigurations.DecisionWorkflowRoles)
+            {
+                this.securityBrokerMock.Verify(broker =>
+                broker.IsInRoleAsync(role),
                     Times.Once);
-
-            this.securityBrokerMock.Verify(broker =>
-                broker.IsInRoleAsync("Operator"),
-                    Times.Once);
+            }
 
             this.loggingBrokerMock.Verify(broker =>
                broker.LogErrorAsync(It.Is(SameExceptionAs(
@@ -464,7 +304,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
         }
 
         [Fact]
-        public async Task ShouldErrorOnVerifyAndRecordDecisionAsyncWithIncorrectValidationCodeAndNonOperatorUser()
+        public async Task
+            ShouldErrorOnVerifyAndRecordDecisionAsyncWithIncorrectValidationCodeAndNonDecisionWorflowRoleUser()
         {
             // given
             string randomNhsNumber = GenerateRandom10DigitNumber();
@@ -487,13 +328,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 service.RetrieveAllPatientsAsync())
                     .ReturnsAsync(outputPatients.AsQueryable);
 
-            this.securityBrokerMock.Setup(broker =>
-                broker.IsInRoleAsync("Administrator"))
+            foreach (string role in this.decisionConfigurations.DecisionWorkflowRoles)
+            {
+                this.securityBrokerMock.Setup(broker =>
+                broker.IsInRoleAsync(role))
                     .ReturnsAsync(false);
-
-            this.securityBrokerMock.Setup(broker =>
-               broker.IsInRoleAsync("Operator"))
-                   .ReturnsAsync(false);
+            }
 
             var incorrectValidationCodeException =
                 new IncorrectValidationCodeException("The validation code provided is incorrect.");
@@ -520,13 +360,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 service.RetrieveAllPatientsAsync(),
                     Times.Once);
 
-            this.securityBrokerMock.Verify(broker =>
-                broker.IsInRoleAsync("Administrator"),
+            foreach (string role in this.decisionConfigurations.DecisionWorkflowRoles)
+            {
+                this.securityBrokerMock.Verify(broker =>
+                broker.IsInRoleAsync(role),
                     Times.Once);
-
-            this.securityBrokerMock.Verify(broker =>
-                broker.IsInRoleAsync("Operator"),
-                    Times.Once);
+            }
 
             this.patientServiceMock.Verify(service =>
                 service.ModifyPatientAsync(It.Is(SamePatientAs(patientToUpdate))),
@@ -546,7 +385,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
         }
 
         [Fact]
-        public async Task ShouldErrorOnVerifyAndRecordDecisionAsyncWithExpiredValidationCodeAndNonOperatorUser()
+        public async Task
+            ShouldErrorOnVerifyAndRecordDecisionAsyncWithExpiredValidationCodeAndNonDecisionWorflowRoleUser()
         {
             // given
             string randomNhsNumber = GenerateRandom10DigitNumber();
@@ -567,13 +407,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 service.RetrieveAllPatientsAsync())
                     .ReturnsAsync(outputPatients.AsQueryable);
 
-            this.securityBrokerMock.Setup(broker =>
-                broker.IsInRoleAsync("Administrator"))
+            foreach (string role in this.decisionConfigurations.DecisionWorkflowRoles)
+            {
+                this.securityBrokerMock.Setup(broker =>
+                broker.IsInRoleAsync(role))
                     .ReturnsAsync(false);
-
-            this.securityBrokerMock.Setup(broker =>
-               broker.IsInRoleAsync("Operator"))
-                   .ReturnsAsync(false);
+            }
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
@@ -603,13 +442,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 service.RetrieveAllPatientsAsync(),
                     Times.Once);
 
-            this.securityBrokerMock.Verify(broker =>
-                broker.IsInRoleAsync("Administrator"),
+            foreach (string role in this.decisionConfigurations.DecisionWorkflowRoles)
+            {
+                this.securityBrokerMock.Verify(broker =>
+                broker.IsInRoleAsync(role),
                     Times.Once);
-
-            this.securityBrokerMock.Verify(broker =>
-                broker.IsInRoleAsync("Operator"),
-                    Times.Once);
+            }
 
             this.dateTimeBrokerMock.Verify(service =>
                 service.GetCurrentDateTimeOffsetAsync(),

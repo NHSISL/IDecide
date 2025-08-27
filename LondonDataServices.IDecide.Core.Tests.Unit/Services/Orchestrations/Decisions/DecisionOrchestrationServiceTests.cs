@@ -38,6 +38,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
         private readonly DecisionConfigurations decisionConfigurations;
         private static readonly int maxRetryCount = 3;
         private static readonly int patientValidationCodeExpireAfterMinutes = 1440;
+        private static readonly List<string> decisionWorkflowRoles = new List<string> { "Administrator" };
         private readonly DecisionOrchestrationService decisionOrchestrationService;
         private readonly ICompareLogic compareLogic;
 
@@ -54,7 +55,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             this.decisionConfigurations = new DecisionConfigurations
             {
                 MaxRetryCount = maxRetryCount,
-                PatientValidationCodeExpireAfterMinutes = patientValidationCodeExpireAfterMinutes
+                PatientValidationCodeExpireAfterMinutes = patientValidationCodeExpireAfterMinutes,
+                DecisionWorkflowRoles = decisionWorkflowRoles
 
             };
 
@@ -65,7 +67,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 patientService: this.patientServiceMock.Object,
                 notificationService: this.notificationServiceMock.Object,
                 decisionService: this.decisionServiceMock.Object,
-                decisionOrchestrationConfigurations: this.decisionConfigurations);
+                decisionConfigurations: this.decisionConfigurations);
         }
 
         private static int GetRandomNumber() =>

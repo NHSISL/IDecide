@@ -36,7 +36,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
             IPatientService patientService,
             IDecisionService decisionService,
             INotificationService notificationService,
-            DecisionConfigurations decisionOrchestrationConfigurations)
+            DecisionConfigurations decisionConfigurations)
         {
             this.loggingBroker = loggingBroker;
             this.dateTimeBroker = dateTimeBroker;
@@ -44,7 +44,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
             this.patientService = patientService;
             this.decisionService = decisionService;
             this.notificationService = notificationService;
-            this.decisionConfiguration = decisionOrchestrationConfigurations;
+            this.decisionConfiguration = decisionConfigurations;
         }
 
         public ValueTask VerifyAndRecordDecisionAsync(Decision decision) =>
@@ -56,13 +56,18 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
                 Patient maybeMatchingPatient = patients.FirstOrDefault(patient => patient.NhsNumber == maybeNhsNumber);
                 ValidatePatientExists(maybeMatchingPatient);
 
-                bool userIsAdmin = await this.securityBroker
-                    .IsInRoleAsync("Administrator");
+                bool userIsInWorkflowRole = false;
 
-                bool userIsOperator = await this.securityBroker
-                    .IsInRoleAsync("Operator");
+                foreach (string role in this.decisionConfiguration.DecisionWorkflowRoles)
+                {
+                    if (await this.securityBroker.IsInRoleAsync(role))
+                    {
+                        userIsInWorkflowRole = true;
+                        break;
+                    }
+                }
 
-                if (userIsAdmin || userIsOperator)
+                if (userIsInWorkflowRole)
                 {
                     if (maybeMatchingPatient.ValidationCode != decision.Patient.ValidationCode)
                     {
