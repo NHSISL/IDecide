@@ -5,11 +5,11 @@
 using System;
 using Xeptions;
 
-namespace LondonDataServices.IDecide.Core.Models.Foundations.Consumers.Exceptions
+namespace LondonDataServices.IDecide.Core.Models.Foundations.ConsumerStatuses.Exceptions
 {
-    public class LockedConsumerException : Xeption
+    public class LockedConsumerStatusException : Xeption
     {
-        public LockedConsumerException(string message, Exception innerException)
+        public LockedConsumerStatusException(string message, Exception innerException)
             : base(message, innerException)
         { }
     }

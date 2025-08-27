@@ -7,7 +7,7 @@ using Xeptions;
 
 namespace LondonDataServices.IDecide.Core.Models.Foundations.ConsumerStatuses.Exceptions
 {
-    internal class ConsumerStatusServiceException : Xeption
+    public class ConsumerStatusServiceException : Xeption
     {
         public ConsumerStatusServiceException(string message, Exception innerException)
             : base(message, innerException)
