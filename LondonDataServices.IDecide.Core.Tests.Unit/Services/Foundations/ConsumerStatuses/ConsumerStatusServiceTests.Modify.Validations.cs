@@ -241,5 +241,88 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Theory]
+        [MemberData(nameof(MinutesBeforeOrAfter))]
+        public async Task ShouldThrowValidationExceptionOnModifyIfUpdatedDateIsNotRecentAndLogItAsync(int minutes)
+        {
+            // given
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            DateTimeOffset invalidDate = randomDateTimeOffset.AddMinutes(minutes);
+            DateTimeOffset startDate = randomDateTimeOffset.AddSeconds(-90);
+            DateTimeOffset endDate = randomDateTimeOffset.AddSeconds(0);
+            string randomUserId = GetRandomString();
+            User randomUser = CreateRandomUser(userId: randomUserId);
+
+            ConsumerStatus randomConsumerStatus =
+                CreateRandomConsumerStatus(dateTimeOffset: randomDateTimeOffset, userId: randomUserId);
+
+            randomConsumerStatus.UpdatedDate = randomDateTimeOffset.AddMinutes(minutes);
+
+            var invalidConsumerStatusException =
+                new InvalidConsumerStatusException(
+                    message: "Invalid consumerStatus. Please correct the errors and try again.");
+
+            invalidConsumerStatusException.AddData(
+                key: nameof(ConsumerStatus.UpdatedDate),
+                values:
+                    $"Date is not recent. Expected a value between {startDate} and {endDate} but found {invalidDate}");
+
+            var expectedConsumerStatusValidatonException =
+                new ConsumerStatusValidationException(
+                    message: "ConsumerStatus validation errors occurred, please try again.",
+                    innerException: invalidConsumerStatusException);
+
+            this.securityAuditBrokerMock.Setup(broker =>
+                broker.ApplyModifyAuditValuesAsync(randomConsumerStatus))
+                    .ReturnsAsync(randomConsumerStatus);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                .ReturnsAsync(randomDateTimeOffset);
+
+            this.securityBrokerMock.Setup(broker =>
+                broker.GetCurrentUserAsync())
+                    .ReturnsAsync(randomUser);
+
+            // when
+            ValueTask<ConsumerStatus> modifyConsumerStatusTask =
+                this.consumerStatusService.ModifyConsumerStatusAsync(randomConsumerStatus);
+
+            ConsumerStatusValidationException actualConsumerStatusValidationException =
+                await Assert.ThrowsAsync<ConsumerStatusValidationException>(
+                    modifyConsumerStatusTask.AsTask);
+
+            // then
+            actualConsumerStatusValidationException.Should()
+                .BeEquivalentTo(expectedConsumerStatusValidatonException);
+
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.ApplyModifyAuditValuesAsync(randomConsumerStatus),
+                    Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedConsumerStatusValidatonException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectConsumerStatusByIdAsync(It.IsAny<Guid>()),
+                    Times.Never);
+
+            this.securityBrokerMock.Verify(broker =>
+                broker.GetCurrentUserAsync(),
+                    Times.Once);
+
+            this.securityAuditBrokerMock.VerifyNoOtherCalls();
+            this.securityBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
