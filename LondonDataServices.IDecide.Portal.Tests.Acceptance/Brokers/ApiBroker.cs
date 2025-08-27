@@ -6,6 +6,7 @@ using System.Net.Http;
 using Attrify.InvisibleApi.Models;
 using LondonDataServices.IDecide.Portal.Server;
 using LondonDataServices.IDecide.Portal.Tests.Acceptance.Brokers;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RESTFulSense.Clients;
 
@@ -16,6 +17,7 @@ namespace LondonDataServices.IDecide.Portals.Server.Tests.Acceptance.Brokers
         private readonly TestWebApplicationFactory<Program> webApplicationFactory;
         private readonly HttpClient httpClient;
         private readonly IRESTFulApiFactoryClient apiFactoryClient;
+        internal IConfiguration configuration;
         internal readonly InvisibleApiKey invisibleApiKey;
 
         public ApiBroker()
@@ -25,6 +27,7 @@ namespace LondonDataServices.IDecide.Portals.Server.Tests.Acceptance.Brokers
             this.httpClient = this.webApplicationFactory.CreateClient();
             this.httpClient.DefaultRequestHeaders.Add(this.invisibleApiKey.Key, this.invisibleApiKey.Value);
             this.apiFactoryClient = new RESTFulApiFactoryClient(this.httpClient);
+            this.configuration = this.webApplicationFactory.Services.GetService<IConfiguration>();
         }
     }
 }
