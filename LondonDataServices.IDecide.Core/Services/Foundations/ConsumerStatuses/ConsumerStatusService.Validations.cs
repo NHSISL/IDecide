@@ -95,6 +95,31 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
             }
         }
 
+        private static void ValidateAgainstStorageConsumerStatusOnModify(
+            ConsumerStatus inputConsumerStatus,
+            ConsumerStatus storageConsumerStatus)
+        {
+            Validate<InvalidConsumerStatusException>(
+                message: "Invalid consumerStatus. Please correct the errors and try again.",
+                (Rule: IsNotSame(
+                        firstDate: inputConsumerStatus.CreatedDate,
+                        secondDate: storageConsumerStatus.CreatedDate,
+                        secondDateName: nameof(ConsumerStatus.CreatedDate)),
+                    Parameter: nameof(ConsumerStatus.CreatedDate)),
+
+                (Rule: IsNotSame(
+                        first: inputConsumerStatus.CreatedBy,
+                        second: storageConsumerStatus.CreatedBy,
+                        secondName: nameof(ConsumerStatus.CreatedBy)),
+                    Parameter: nameof(ConsumerStatus.CreatedBy)),
+
+                (Rule: IsSame(
+                        firstDate: inputConsumerStatus.UpdatedDate,
+                        secondDate: storageConsumerStatus.UpdatedDate,
+                        secondDateName: nameof(ConsumerStatus.UpdatedDate)),
+                    Parameter: nameof(ConsumerStatus.UpdatedDate)));
+        }
+
         private static dynamic IsInvalid(Guid id) => new
         {
             Condition = id == Guid.Empty,
