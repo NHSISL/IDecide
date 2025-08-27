@@ -56,6 +56,25 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
 
             Validate<InvalidConsumerStatusException>(
                 message: "Invalid consumerStatus. Please correct the errors and try again.",
+                (Rule: IsInvalid(consumerStatus.Id), Parameter: nameof(ConsumerStatus.Id)),
+                (Rule: IsInvalid(consumerStatus.CreatedDate), Parameter: nameof(ConsumerStatus.CreatedDate)),
+                (Rule: IsInvalid(consumerStatus.CreatedBy), Parameter: nameof(ConsumerStatus.CreatedBy)),
+                (Rule: IsInvalid(consumerStatus.UpdatedDate), Parameter: nameof(ConsumerStatus.UpdatedDate)),
+                (Rule: IsInvalid(consumerStatus.UpdatedBy), Parameter: nameof(ConsumerStatus.UpdatedBy)),
+                (Rule: IsGreaterThan(consumerStatus.CreatedBy, 255), Parameter: nameof(ConsumerStatus.CreatedBy)),
+                (Rule: IsGreaterThan(consumerStatus.UpdatedBy, 255), Parameter: nameof(ConsumerStatus.UpdatedBy)),
+
+                (Rule: IsNotSame(
+                        first: currentUser.UserId,
+                        second: consumerStatus.UpdatedBy),
+                    Parameter: nameof(ConsumerStatus.UpdatedBy)),
+
+                (Rule: IsSame(
+                        firstDate: consumerStatus.UpdatedDate,
+                        secondDate: consumerStatus.CreatedDate,
+                        secondDateName: nameof(ConsumerStatus.CreatedDate)),
+                    Parameter: nameof(ConsumerStatus.UpdatedDate)),
+
                 (Rule: await IsNotRecentAsync(consumerStatus.UpdatedDate), Parameter: nameof(ConsumerStatus.UpdatedDate)));
         }
 
