@@ -49,6 +49,16 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
                     Parameter: nameof(ConsumerStatus.CreatedDate)));
         }
 
+        private async ValueTask ValidateConsumerStatusOnModify(ConsumerStatus consumerStatus)
+        {
+            ValidateConsumerStatusIsNotNull(consumerStatus);
+            User currentUser = await this.securityBroker.GetCurrentUserAsync();
+
+            Validate<InvalidConsumerStatusException>(
+                message: "Invalid consumerStatus. Please correct the errors and try again.",
+                (Rule: await IsNotRecentAsync(consumerStatus.UpdatedDate), Parameter: nameof(ConsumerStatus.UpdatedDate)));
+        }
+
         private static void ValidateConsumerStatusIsNotNull(ConsumerStatus consumerStatus)
         {
             if (consumerStatus is null)
