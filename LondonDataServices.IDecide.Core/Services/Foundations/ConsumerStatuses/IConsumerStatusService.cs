@@ -10,5 +10,6 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
     public interface IConsumerStatusService
     {
         ValueTask<ConsumerStatus> AddConsumerStatusAsync(ConsumerStatus consumerStatus);
+        ValueTask<ConsumerStatus> ModifyConsumerStatusAsync(ConsumerStatus consumerStatus);
     }
 }
