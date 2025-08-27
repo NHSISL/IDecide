@@ -4,6 +4,8 @@
 
 using System;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Brokers.DateTimes;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
@@ -94,5 +96,26 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Patients
 
                 return await this.storageBroker.DeletePatientAsync(maybePatient);
             });
+
+        public async ValueTask<string> GenerateValidationCodeAsync()
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            StringBuilder result = new StringBuilder(5);
+
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                byte[] buffer = new byte[1];
+
+                for (int i = 0; i < 5; i++)
+                {
+                    int index;
+                    rng.GetBytes(buffer);
+                    index = buffer[0] % chars.Length;
+                    result.Append(chars[index]);
+                }
+            }
+
+            return result.ToString();
+        }
     }
 }

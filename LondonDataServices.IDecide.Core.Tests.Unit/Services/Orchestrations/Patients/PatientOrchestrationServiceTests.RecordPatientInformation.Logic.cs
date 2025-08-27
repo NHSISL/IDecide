@@ -10,7 +10,6 @@ using Force.DeepCloner;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions;
-using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
 using Moq;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Patients
@@ -55,16 +54,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     MaxRetryCount = maxRetryCount
                 };
 
-            var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
-                loggingBrokerMock.Object,
-                securityBrokerMock.Object,
-                dateTimeBrokerMock.Object,
-                pdsServiceMock.Object,
-                patientServiceMock.Object,
-                notificationServiceMock.Object,
-                decisionConfigurations)
-            { CallBase = true };
-
             this.securityBrokerMock.Setup(broker =>
                 broker.ValidateCaptchaAsync(inputCaptchaToken, ""))
                     .ReturnsAsync(true);
@@ -77,9 +66,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 service.PatientLookupByNhsNumberAsync(inputNhsNumber))
                     .ReturnsAsync(outputPatient);
 
-            patientOrchestrationServiceMock.Setup(service =>
-                service.GenerateValidationCode())
-                    .Returns(outputValidationCode);
+            this.patientServiceMock.Setup(service =>
+                service.GenerateValidationCodeAsync())
+                    .ReturnsAsync(outputValidationCode);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
@@ -90,7 +79,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     .ReturnsAsync(updatedPatient);
 
             // when
-            await patientOrchestrationServiceMock.Object.RecordPatientInformation(
+            await patientOrchestrationService.RecordPatientInformation(
                 inputNhsNumber,
                 inputCaptchaToken,
                 notificationPreferenceString,
@@ -109,8 +98,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 service.PatientLookupByNhsNumberAsync(inputNhsNumber),
                     Times.Once);
 
-            patientOrchestrationServiceMock.Verify(service =>
-                service.GenerateValidationCode(),
+            this.patientServiceMock.Verify(service =>
+                service.GenerateValidationCodeAsync(),
                     Times.Once);
 
             this.dateTimeBrokerMock.Verify(broker =>
@@ -173,16 +162,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     MaxRetryCount = maxRetryCount
                 };
 
-            var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
-                loggingBrokerMock.Object,
-                securityBrokerMock.Object,
-                dateTimeBrokerMock.Object,
-                pdsServiceMock.Object,
-                patientServiceMock.Object,
-                notificationServiceMock.Object,
-                decisionConfigurations)
-            { CallBase = true };
-
             this.securityBrokerMock.Setup(broker =>
                 broker.ValidateCaptchaAsync(inputCaptchaToken, ""))
                     .ReturnsAsync(true);
@@ -195,9 +174,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 service.PatientLookupByNhsNumberAsync(inputNhsNumber))
                     .ReturnsAsync(outputPatient);
 
-            patientOrchestrationServiceMock.Setup(service =>
-                service.GenerateValidationCode())
-                    .Returns(outputValidationCode);
+            this.patientServiceMock.Setup(service =>
+                service.GenerateValidationCodeAsync())
+                    .ReturnsAsync(outputValidationCode);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
@@ -208,7 +187,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     .ReturnsAsync(updatedPatient);
 
             // when
-            await patientOrchestrationServiceMock.Object.RecordPatientInformation(
+            await patientOrchestrationService.RecordPatientInformation(
                 inputNhsNumber,
                 inputCaptchaToken,
                 notificationPreferenceString,
@@ -227,8 +206,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 service.PatientLookupByNhsNumberAsync(inputNhsNumber),
                     Times.Once);
 
-            patientOrchestrationServiceMock.Verify(service =>
-                service.GenerateValidationCode(),
+            this.patientServiceMock.Verify(service =>
+                service.GenerateValidationCodeAsync(),
                     Times.Once);
 
             this.dateTimeBrokerMock.Verify(broker =>
@@ -291,16 +270,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     MaxRetryCount = maxRetryCount
                 };
 
-            var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
-                loggingBrokerMock.Object,
-                securityBrokerMock.Object,
-                dateTimeBrokerMock.Object,
-                pdsServiceMock.Object,
-                patientServiceMock.Object,
-                notificationServiceMock.Object,
-                decisionConfigurations)
-            { CallBase = true };
-
             this.securityBrokerMock.Setup(broker =>
                 broker.ValidateCaptchaAsync(inputCaptchaToken, ""))
                     .ReturnsAsync(true);
@@ -313,9 +282,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 service.PatientLookupByNhsNumberAsync(inputNhsNumber))
                     .ReturnsAsync(outputPatient);
 
-            patientOrchestrationServiceMock.Setup(service =>
-                service.GenerateValidationCode())
-                    .Returns(outputValidationCode);
+            this.patientServiceMock.Setup(service =>
+                service.GenerateValidationCodeAsync())
+                    .ReturnsAsync(outputValidationCode);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
@@ -326,7 +295,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     .ReturnsAsync(updatedPatient);
 
             // when
-            await patientOrchestrationServiceMock.Object.RecordPatientInformation(
+            await patientOrchestrationService.RecordPatientInformation(
                 inputNhsNumber,
                 inputCaptchaToken,
                 notificationPreferenceString,
@@ -345,8 +314,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 service.PatientLookupByNhsNumberAsync(inputNhsNumber),
                     Times.Once);
 
-            patientOrchestrationServiceMock.Verify(service =>
-                service.GenerateValidationCode(),
+            this.patientServiceMock.Verify(service =>
+                service.GenerateValidationCodeAsync(),
                     Times.Once);
 
             this.dateTimeBrokerMock.Verify(broker =>

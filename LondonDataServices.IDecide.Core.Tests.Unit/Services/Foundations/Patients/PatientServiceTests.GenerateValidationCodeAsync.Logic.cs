@@ -2,31 +2,31 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System.Threading.Tasks;
 using FluentAssertions;
 
-namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Patients
+namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patients
 {
-    public partial class PatientOrchestrationServiceTests
+    public partial class PatientServiceTests
     {
         [Fact]
-        public void ShouldGenerateValidationCode()
+        public async Task ShouldGenerateValidationCodeAsync()
         {
             //given
             int validationCodeLength = 5;
 
             // when
-            string actualValidationCode = this.patientOrchestrationService.GenerateValidationCode();
+            string actualValidationCode = await this.patientService.GenerateValidationCodeAsync();
 
-            //then
+            // then
             actualValidationCode.Should().HaveLength(validationCodeLength);
             actualValidationCode.Should().MatchRegex("^[A-Z0-9]+$");
 
-            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.securityAuditBrokerMock.VerifyNoOtherCalls();
             this.securityBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.pdsServiceMock.VerifyNoOtherCalls();
-            this.patientServiceMock.VerifyNoOtherCalls();
-            this.notificationServiceMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }
 }

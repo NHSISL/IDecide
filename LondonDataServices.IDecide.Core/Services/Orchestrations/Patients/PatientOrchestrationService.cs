@@ -4,8 +4,6 @@
 
 using System;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Brokers.DateTimes;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
@@ -108,7 +106,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                 if (maybeMatchingPatient is null)
                 {
                     Patient pdsPatient = await this.pdsService.PatientLookupByNhsNumberAsync(nhsNumber);
-                    string validationCode = GenerateValidationCode();
+                    string validationCode = await this.patientService.GenerateValidationCodeAsync();
 
                     DateTimeOffset expirationDate =
                         now.AddMinutes(decisionConfigurations.PatientValidationCodeExpireAfterMinutes);
@@ -137,7 +135,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                         maybeMatchingPatient.Surname = pdsPatient.Surname;
                         maybeMatchingPatient.Title = pdsPatient.Title;
                         maybeMatchingPatient.NotificationPreference = notificationPreferenceType;
-                        string validationCode = GenerateValidationCode();
+                        string validationCode = await this.patientService.GenerateValidationCodeAsync();
 
                         DateTimeOffset expirationDate =
                             now.AddMinutes(decisionConfigurations.PatientValidationCodeExpireAfterMinutes);
@@ -162,26 +160,5 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
 
                 await this.notificationService.SendCodeNotificationAsync(notificationInfo);
             });
-
-        virtual internal string GenerateValidationCode()
-        {
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            StringBuilder result = new StringBuilder(5);
-
-            using (var rng = RandomNumberGenerator.Create())
-            {
-                byte[] buffer = new byte[1];
-
-                for (int i = 0; i < 5; i++)
-                {
-                    int index;
-                    rng.GetBytes(buffer);
-                    index = buffer[0] % chars.Length;
-                    result.Append(chars[index]);
-                }
-            }
-
-            return result.ToString();
-        }
     }
 }
