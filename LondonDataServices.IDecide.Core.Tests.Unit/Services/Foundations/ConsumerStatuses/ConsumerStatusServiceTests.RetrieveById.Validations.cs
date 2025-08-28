@@ -45,13 +45,13 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                 .BeEquivalentTo(expectedConsumerStatusValidationException);
 
             this.loggingBrokerMock.Verify(broker =>
-                    broker.LogErrorAsync(It.Is(SameExceptionAs(
-                        expectedConsumerStatusValidationException))),
-                Times.Once);
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedConsumerStatusValidationException))),
+                        Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                    broker.SelectConsumerStatusByIdAsync(It.IsAny<Guid>()),
-                Times.Never);
+                broker.SelectConsumerStatusByIdAsync(It.IsAny<Guid>()),
+                    Times.Never);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.securityAuditBrokerMock.VerifyNoOtherCalls();
@@ -76,8 +76,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                     innerException: notFoundConsumerStatusException);
 
             this.storageBrokerMock.Setup(broker =>
-                    broker.SelectConsumerStatusByIdAsync(It.IsAny<Guid>()))
-                .ReturnsAsync(noConsumerStatus);
+                broker.SelectConsumerStatusByIdAsync(It.IsAny<Guid>()))
+                    .ReturnsAsync(noConsumerStatus);
 
             //when
             ValueTask<ConsumerStatus> retrieveConsumerStatusByIdTask =
@@ -91,13 +91,13 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
             actualConsumerStatusValidationException.Should().BeEquivalentTo(expectedConsumerStatusValidationException);
 
             this.storageBrokerMock.Verify(broker =>
-                    broker.SelectConsumerStatusByIdAsync(It.IsAny<Guid>()),
-                Times.Once());
+                broker.SelectConsumerStatusByIdAsync(It.IsAny<Guid>()),
+                    Times.Once());
 
             this.loggingBrokerMock.Verify(broker =>
-                    broker.LogErrorAsync(It.Is(SameExceptionAs(
-                        expectedConsumerStatusValidationException))),
-                Times.Once);
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedConsumerStatusValidationException))),
+                        Times.Once);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.securityAuditBrokerMock.VerifyNoOtherCalls();

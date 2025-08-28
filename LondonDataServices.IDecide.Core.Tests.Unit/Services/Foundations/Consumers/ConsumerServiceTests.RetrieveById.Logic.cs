@@ -22,8 +22,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
             Consumer expectedConsumer = storageConsumer.DeepClone();
 
             this.storageBrokerMock.Setup(broker =>
-                    broker.SelectConsumerByIdAsync(inputConsumer.Id))
-                .ReturnsAsync(storageConsumer);
+                broker.SelectConsumerByIdAsync(inputConsumer.Id))
+                    .ReturnsAsync(storageConsumer);
 
             // when
             Consumer actualConsumer =
