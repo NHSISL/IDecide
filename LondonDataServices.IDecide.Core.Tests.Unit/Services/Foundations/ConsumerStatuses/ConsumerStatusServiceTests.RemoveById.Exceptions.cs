@@ -126,5 +126,54 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.securityBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowDependencyExceptionOnRemoveWhenSqlExceptionOccursAndLogItAsync()
+        {
+            // given
+            Guid someConsumerStatusId = Guid.NewGuid();
+            SqlException sqlException = GetSqlException();
+
+            var failedConsumerStatusStorageException =
+                new FailedConsumerStatusStorageException(
+                    message: "Failed consumerStatus storage error occurred, contact support.",
+                    innerException: sqlException);
+
+            var expectedConsumerStatusDependencyException =
+                new ConsumerStatusDependencyException(
+                    message: "ConsumerStatus dependency error occurred, contact support.",
+                    innerException: failedConsumerStatusStorageException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectConsumerStatusByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(sqlException);
+
+            // when
+            ValueTask<ConsumerStatus> deleteConsumerStatusTask =
+                this.consumerStatusService.RemoveConsumerStatusByIdAsync(someConsumerStatusId);
+
+            ConsumerStatusDependencyException actualConsumerStatusDependencyException =
+                await Assert.ThrowsAsync<ConsumerStatusDependencyException>(
+                    deleteConsumerStatusTask.AsTask);
+
+            // then
+            actualConsumerStatusDependencyException.Should()
+                .BeEquivalentTo(expectedConsumerStatusDependencyException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectConsumerStatusByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogCriticalAsync(It.Is(SameExceptionAs(
+                    expectedConsumerStatusDependencyException))),
+                        Times.Once);
+
+            this.securityAuditBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.securityBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
