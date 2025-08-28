@@ -70,10 +70,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
         }
 
         private static int GetRandomNumber() =>
-           new IntRange(min: 2, max: 10).GetValue();
+            new IntRange(min: 2, max: 10).GetValue();
 
         private static DateTimeOffset GetRandomDateTimeOffset() =>
-           new DateTimeRange(earliestDate: new DateTime()).GetValue();
+            new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
         private static string GenerateRandom10DigitNumber()
         {
