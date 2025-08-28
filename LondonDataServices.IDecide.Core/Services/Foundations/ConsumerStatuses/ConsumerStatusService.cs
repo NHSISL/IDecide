@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Brokers.DateTimes;
@@ -45,6 +46,11 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
 
         public ValueTask<IQueryable<ConsumerStatus>> RetrieveAllConsumerStatusesAsync() =>
             TryCatch(async () => await this.storageBroker.SelectAllConsumerStatusesAsync());
+
+        public ValueTask<ConsumerStatus> RetrieveConsumerStatusByIdAsync(Guid consumerStatusId)
+        {
+            throw new NotImplementedException();
+        }
 
         public ValueTask<ConsumerStatus> ModifyConsumerStatusAsync(ConsumerStatus consumerStatus) =>
             TryCatch(async () =>
