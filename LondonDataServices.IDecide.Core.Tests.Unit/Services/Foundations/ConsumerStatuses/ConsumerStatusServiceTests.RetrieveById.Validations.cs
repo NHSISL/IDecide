@@ -59,5 +59,51 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowNotFoundExceptionOnRetrieveByIdIfConsumerStatusIsNotFoundAndLogItAsync()
+        {
+            //given
+            Guid someConsumerStatusId = Guid.NewGuid();
+            ConsumerStatus noConsumerStatus = null;
+
+            var notFoundConsumerStatusException = new NotFoundConsumerStatusException(
+                $"Couldn't find consumerStatus with consumerStatusId: {someConsumerStatusId}.");
+
+            var expectedConsumerStatusValidationException =
+                new ConsumerStatusValidationException(
+                    message: "ConsumerStatus validation errors occurred, please try again.",
+                    innerException: notFoundConsumerStatusException);
+
+            this.storageBrokerMock.Setup(broker =>
+                    broker.SelectConsumerStatusByIdAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(noConsumerStatus);
+
+            //when
+            ValueTask<ConsumerStatus> retrieveConsumerStatusByIdTask =
+                this.consumerStatusService.RetrieveConsumerStatusByIdAsync(someConsumerStatusId);
+
+            ConsumerStatusValidationException actualConsumerStatusValidationException =
+                await Assert.ThrowsAsync<ConsumerStatusValidationException>(
+                    retrieveConsumerStatusByIdTask.AsTask);
+
+            //then
+            actualConsumerStatusValidationException.Should().BeEquivalentTo(expectedConsumerStatusValidationException);
+
+            this.storageBrokerMock.Verify(broker =>
+                    broker.SelectConsumerStatusByIdAsync(It.IsAny<Guid>()),
+                Times.Once());
+
+            this.loggingBrokerMock.Verify(broker =>
+                    broker.LogErrorAsync(It.Is(SameExceptionAs(
+                        expectedConsumerStatusValidationException))),
+                Times.Once);
+
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.securityAuditBrokerMock.VerifyNoOtherCalls();
+            this.securityBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
