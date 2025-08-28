@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using LondonDataServices.IDecide.Core.Models.Bases;
+using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerStatuses;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace LondonDataServices.IDecide.Core.Models.Foundations.Consumers
