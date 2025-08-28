@@ -55,6 +55,8 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
                 ConsumerStatus maybeConsumerStatus = await this.storageBroker
                     .SelectConsumerStatusByIdAsync(consumerStatusId);
 
+                ValidateStorageConsumerStatus(maybeConsumerStatus, consumerStatusId);
+
                 return maybeConsumerStatus;
             });
 
