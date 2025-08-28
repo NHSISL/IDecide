@@ -14,10 +14,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
     public partial class ConsumerServiceTests
     {
         [Fact]
-        public async Task ShouldThrowValidationExceptionOnRetrieveByIdIfIdIsInvalidAndLogItAsync()
+        public async Task ShouldThrowValidationExceptionOnRemoveIfIdIsInvalidAndLogItAsync()
         {
             // given
-            var invalidConsumerId = Guid.Empty;
+            Guid invalidConsumerId = Guid.Empty;
 
             var invalidConsumerException =
                 new InvalidConsumerException(
@@ -33,23 +33,24 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                     innerException: invalidConsumerException);
 
             // when
-            ValueTask<Consumer> retrieveConsumerByIdTask =
-                this.consumerService.RetrieveConsumerByIdAsync(invalidConsumerId);
+            ValueTask<Consumer> removeConsumerByIdTask =
+                this.consumerService.RemoveConsumerByIdAsync(invalidConsumerId);
 
             ConsumerValidationException actualConsumerValidationException =
                 await Assert.ThrowsAsync<ConsumerValidationException>(
-                    retrieveConsumerByIdTask.AsTask);
+                    removeConsumerByIdTask.AsTask);
 
             // then
             actualConsumerValidationException.Should()
                 .BeEquivalentTo(expectedConsumerValidationException);
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogErrorAsync(It.Is(SameExceptionAs(expectedConsumerValidationException))),
-                    Times.Once());
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedConsumerValidationException))),
+                        Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectConsumerByIdAsync(It.IsAny<Guid>()),
+                broker.DeleteConsumerAsync(It.IsAny<Consumer>()),
                     Times.Never);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
@@ -60,7 +61,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
         }
 
         [Fact]
-        public async Task ShouldThrowNotFoundExceptionOnRetrieveByIdIfConsumerIsNotFoundAndLogItAsync()
+        public async Task ShouldThrowNotFoundExceptionOnRemoveByIdIfConsumerIsNotFoundAndLogItAsync()
         {
             //given
             Guid someConsumerId = Guid.NewGuid();
@@ -75,12 +76,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                     innerException: notFoundConsumerException);
 
             this.storageBrokerMock.Setup(broker =>
-                    broker.SelectConsumerByIdAsync(It.IsAny<Guid>()))
-                .ReturnsAsync(noConsumer);
+                broker.SelectConsumerByIdAsync(It.IsAny<Guid>()))
+                    .ReturnsAsync(noConsumer);
 
             //when
             ValueTask<Consumer> retrieveConsumerByIdTask =
-                this.consumerService.RetrieveConsumerByIdAsync(someConsumerId);
+                this.consumerService.RemoveConsumerByIdAsync(someConsumerId);
 
             ConsumerValidationException actualConsumerValidationException =
                 await Assert.ThrowsAsync<ConsumerValidationException>(
@@ -94,8 +95,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                     Times.Once());
 
             this.loggingBrokerMock.Verify(broker =>
-                broker.LogErrorAsync(It.Is(SameExceptionAs(expectedConsumerValidationException))),
-                    Times.Once());
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedConsumerValidationException))),
+                        Times.Once());
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.securityAuditBrokerMock.VerifyNoOtherCalls();
