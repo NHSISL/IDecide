@@ -47,9 +47,12 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
         public ValueTask<IQueryable<ConsumerStatus>> RetrieveAllConsumerStatusesAsync() =>
             TryCatch(async () => await this.storageBroker.SelectAllConsumerStatusesAsync());
 
-        public ValueTask<ConsumerStatus> RetrieveConsumerStatusByIdAsync(Guid consumerStatusId)
+        public async ValueTask<ConsumerStatus> RetrieveConsumerStatusByIdAsync(Guid consumerStatusId)
         {
-            throw new NotImplementedException();
+            ConsumerStatus maybeConsumerStatus = await this.storageBroker
+                .SelectConsumerStatusByIdAsync(consumerStatusId);
+
+            return maybeConsumerStatus;
         }
 
         public ValueTask<ConsumerStatus> ModifyConsumerStatusAsync(ConsumerStatus consumerStatus) =>
