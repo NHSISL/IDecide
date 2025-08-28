@@ -67,12 +67,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
 
-        [Theory]
-        [InlineData(null)]
-        [InlineData("")]
-        [InlineData(" ")]
-        public async Task ShouldThrowValidationExceptionOnModifyIfConsumerStatusIsInvalidAndLogItAsync(
-            string invalidText)
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnModifyIfConsumerStatusIsInvalidAndLogItAsync()
         {
             // given 
             string randomUserId = GetRandomString();
