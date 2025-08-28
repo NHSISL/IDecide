@@ -32,8 +32,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
             actualConsumerStatuses.Should().BeEquivalentTo(expectedConsumerStatuses);
 
             this.storageBrokerMock.Verify(broker =>
-                    broker.SelectAllConsumerStatusesAsync(),
-                Times.Once);
+                broker.SelectAllConsumerStatusesAsync(),
+                    Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.securityAuditBrokerMock.VerifyNoOtherCalls();
