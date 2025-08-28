@@ -22,8 +22,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
             Consumer expectedConsumer = storageConsumer.DeepClone();
 
             this.storageBrokerMock.Setup(broker =>
-                    broker.SelectConsumerByIdAsync(inputConsumer.Id))
-                .ReturnsAsync(storageConsumer);
+                broker.SelectConsumerByIdAsync(inputConsumer.Id))
+                    .ReturnsAsync(storageConsumer);
 
             // when
             Consumer actualConsumer =
@@ -33,8 +33,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
             actualConsumer.Should().BeEquivalentTo(expectedConsumer);
 
             this.storageBrokerMock.Verify(broker =>
-                    broker.SelectConsumerByIdAsync(inputConsumer.Id),
-                Times.Once);
+                broker.SelectConsumerByIdAsync(inputConsumer.Id),
+                    Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.securityAuditBrokerMock.VerifyNoOtherCalls();
