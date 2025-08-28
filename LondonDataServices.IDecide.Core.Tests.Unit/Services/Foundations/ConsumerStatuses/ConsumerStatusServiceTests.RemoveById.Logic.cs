@@ -41,12 +41,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
             actualConsumerStatus.Should().BeEquivalentTo(expectedConsumerStatus);
 
             this.storageBrokerMock.Verify(broker =>
-                    broker.SelectConsumerStatusByIdAsync(inputConsumerStatusId),
-                Times.Once);
+                broker.SelectConsumerStatusByIdAsync(inputConsumerStatusId),
+                    Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                    broker.DeleteConsumerStatusAsync(expectedInputConsumerStatus),
-                Times.Once);
+                broker.DeleteConsumerStatusAsync(expectedInputConsumerStatus),
+                    Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
