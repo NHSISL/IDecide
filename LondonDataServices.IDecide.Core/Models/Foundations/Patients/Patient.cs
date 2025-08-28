@@ -25,6 +25,7 @@ namespace LondonDataServices.IDecide.Core.Models.Foundations.Patients
         public string PostCode { get; set; }
         public string ValidationCode { get; set; }
         public DateTimeOffset ValidationCodeExpiresOn { get; set; }
+        public DateTimeOffset ValidationCodeMatchedOn { get; set; }
         public int RetryCount { get; set; }
         public NotificationPreference NotificationPreference { get; set; }
         public string CreatedBy { get; set; }
