@@ -175,5 +175,54 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.securityBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnRemoveIfServiceErrorOccursAndLogItAsync()
+        {
+            // given
+            Guid someConsumerStatusId = Guid.NewGuid();
+            var serviceException = new Exception();
+
+            var failedConsumerStatusServiceException =
+                new FailedConsumerStatusServiceException(
+                    message: "Failed consumerStatus service occurred, please contact support",
+                    innerException: serviceException);
+
+            var expectedConsumerStatusServiceException =
+                new ConsumerStatusServiceException(
+                    message: "ConsumerStatus service error occurred, contact support.",
+                    innerException: failedConsumerStatusServiceException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectConsumerStatusByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(serviceException);
+
+            // when
+            ValueTask<ConsumerStatus> removeConsumerStatusByIdTask =
+                this.consumerStatusService.RemoveConsumerStatusByIdAsync(someConsumerStatusId);
+
+            ConsumerStatusServiceException actualConsumerStatusServiceException =
+                await Assert.ThrowsAsync<ConsumerStatusServiceException>(
+                    removeConsumerStatusByIdTask.AsTask);
+
+            // then
+            actualConsumerStatusServiceException.Should()
+                .BeEquivalentTo(expectedConsumerStatusServiceException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectConsumerStatusByIdAsync(It.IsAny<Guid>()),
+                    Times.Once());
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedConsumerStatusServiceException))),
+                        Times.Once());
+
+            this.securityAuditBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.securityBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
