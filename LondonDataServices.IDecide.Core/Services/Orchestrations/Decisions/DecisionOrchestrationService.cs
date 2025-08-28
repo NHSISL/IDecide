@@ -98,6 +98,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
                         string newValidationCode = await this.patientService.GenerateValidationCodeAsync();
                         Patient patientToUpdate = maybeMatchingPatient;
                         patientToUpdate.ValidationCode = newValidationCode;
+                        patientToUpdate.ValidationCodeMatchedOn = null;
                         patientToUpdate.RetryCount = 0;
 
                         patientToUpdate.ValidationCodeExpiresOn =
@@ -119,6 +120,9 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
                             $"{decision.Patient.NotificationPreference.ToString()}");
                     }
                 }
+
+                maybeMatchingPatient.ValidationCodeMatchedOn =
+                    await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
 
                 Decision addedDecision = await this.decisionService.AddDecisionAsync(decision);
 

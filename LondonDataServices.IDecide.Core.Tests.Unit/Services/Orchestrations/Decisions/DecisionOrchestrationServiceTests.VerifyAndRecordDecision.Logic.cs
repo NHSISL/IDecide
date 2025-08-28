@@ -32,10 +32,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             Decision randomDecision = GetRandomDecision(randomPatient);
             Decision inputDecision = randomDecision.DeepClone();
             Decision outputDecision = inputDecision.DeepClone();
+            Patient patientToUpdate = randomPatient.DeepClone();
+            patientToUpdate.ValidationCodeMatchedOn = randomDateTime;
 
             NotificationInfo inputNotificationInfo = new NotificationInfo
             {
-                Patient = randomPatient,
+                Patient = patientToUpdate,
                 Decision = outputDecision
             };
 
@@ -75,7 +77,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffsetAsync(),
-                    Times.Once);
+                    Times.Exactly(2));
 
             this.decisionServiceMock.Verify(service =>
                 service.AddDecisionAsync(It.Is(SameDecisionAs(inputDecision))),
@@ -107,10 +109,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             Decision randomDecision = GetRandomDecision(randomPatient);
             Decision inputDecision = randomDecision.DeepClone();
             Decision outputDecision = inputDecision.DeepClone();
+            Patient patientToUpdate = randomPatient.DeepClone();
+            patientToUpdate.ValidationCodeMatchedOn = randomDateTime;
 
             NotificationInfo inputNotificationInfo = new NotificationInfo
             {
-                Patient = randomPatient,
+                Patient = patientToUpdate,
                 Decision = outputDecision
             };
 
@@ -128,6 +132,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             this.decisionServiceMock.Setup(service =>
                 service.AddDecisionAsync(It.Is(SameDecisionAs(inputDecision))))
                     .ReturnsAsync(outputDecision);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTime);
 
             // when
             await this.decisionOrchestrationService.VerifyAndRecordDecisionAsync(inputDecision);
@@ -147,6 +155,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
 
             this.notificationServiceMock.Verify(service =>
                 service.SendSubmissionSuccessNotificationAsync(It.Is(SameNotificationInfoAs(inputNotificationInfo))),
+                    Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
@@ -409,6 +421,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             patientToUpdate.RetryCount = 0;
             patientToUpdate.ValidationCode = randomNewValidationCode;
             patientToUpdate.ValidationCodeExpiresOn = newExpiryDateTimeOffset;
+            patientToUpdate.ValidationCodeMatchedOn = null;
 
             NotificationInfo inputNotificationInfo = new NotificationInfo
             {

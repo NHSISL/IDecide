@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LondonDataServices.IDecide.Core.Migrations
 {
     [DbContext(typeof(StorageBroker))]
-    [Migration("20250828135312_UpdatePatientToHaveValidationCodeMatchedOn")]
+    [Migration("20250828140142_UpdatePatientToHaveValidationCodeMatchedOn")]
     partial class UpdatePatientToHaveValidationCodeMatchedOn
     {
         /// <inheritdoc />
@@ -326,7 +326,7 @@ namespace LondonDataServices.IDecide.Core.Migrations
                     b.Property<DateTimeOffset>("ValidationCodeExpiresOn")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<DateTimeOffset>("ValidationCodeMatchedOn")
+                    b.Property<DateTimeOffset?>("ValidationCodeMatchedOn")
                         .HasColumnType("datetimeoffset");
 
                     b.HasKey("Id");

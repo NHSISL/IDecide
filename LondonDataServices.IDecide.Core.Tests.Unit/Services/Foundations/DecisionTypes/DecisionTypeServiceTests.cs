@@ -133,6 +133,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
 
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
+                .OnType<DateTimeOffset?>().Use(dateTimeOffset)
                 .OnProperty(decisionType => decisionType.CreatedBy).Use(userId)
                 .OnProperty(decisionType => decisionType.UpdatedBy).Use(userId)
                 .OnProperty(decisionType => decisionType.Decisions).IgnoreIt();

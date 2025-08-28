@@ -133,6 +133,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
 
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
+                .OnType<DateTimeOffset?>().Use(dateTimeOffset)
                 .OnProperty(patient => patient.NhsNumber).Use(GetRandomStringWithLengthOf(10))
                 .OnProperty(patient => patient.Title).Use(GetRandomStringWithLengthOf(35))
                 .OnProperty(patient => patient.GivenName).Use(GetRandomStringWithLengthOf(255))

@@ -323,7 +323,7 @@ namespace LondonDataServices.IDecide.Core.Migrations
                     b.Property<DateTimeOffset>("ValidationCodeExpiresOn")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<DateTimeOffset>("ValidationCodeMatchedOn")
+                    b.Property<DateTimeOffset?>("ValidationCodeMatchedOn")
                         .HasColumnType("datetimeoffset");
 
                     b.HasKey("Id");
