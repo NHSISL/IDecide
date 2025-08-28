@@ -45,7 +45,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                 loggingBroker: this.loggingBrokerMock.Object);
         }
 
-
         private User CreateRandomUser(string userId = "")
         {
             userId = string.IsNullOrWhiteSpace(userId) ? GetRandomStringWithLengthOf(255) : userId;
@@ -124,6 +123,5 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
 
             return filler;
         }
-
     }
 }
