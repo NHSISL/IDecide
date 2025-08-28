@@ -110,6 +110,15 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
 
                 throw await CreateAndLogCriticalDependencyException(failedConsumerStatusStorageException);
             }
+            catch (Exception exception)
+            {
+                var failedConsumerStatusServiceException =
+                    new FailedConsumerStatusServiceException(
+                        message: "Failed consumerStatus service occurred, please contact support",
+                        innerException: exception);
+
+                throw await CreateAndLogServiceException(failedConsumerStatusServiceException);
+            }
         }
 
         private async ValueTask<ConsumerStatusValidationException> CreateAndLogValidationException(Xeption exception)
