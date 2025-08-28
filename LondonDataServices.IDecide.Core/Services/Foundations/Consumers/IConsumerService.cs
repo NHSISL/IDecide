@@ -15,5 +15,6 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Consumers
         ValueTask<IQueryable<Consumer>> RetrieveAllConsumersAsync();
         ValueTask<Consumer> RetrieveConsumerByIdAsync(Guid consumerId);
         ValueTask<Consumer> ModifyConsumerAsync(Consumer consumer);
+        ValueTask<Consumer> RemoveConsumerByIdAsync(Guid consumerId);
     }
 }
