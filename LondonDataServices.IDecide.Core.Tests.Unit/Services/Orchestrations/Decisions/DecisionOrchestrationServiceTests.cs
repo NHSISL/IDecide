@@ -57,7 +57,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 MaxRetryCount = maxRetryCount,
                 PatientValidationCodeExpireAfterMinutes = patientValidationCodeExpireAfterMinutes,
                 DecisionWorkflowRoles = decisionWorkflowRoles
-
             };
 
             this.decisionOrchestrationService = new DecisionOrchestrationService(
