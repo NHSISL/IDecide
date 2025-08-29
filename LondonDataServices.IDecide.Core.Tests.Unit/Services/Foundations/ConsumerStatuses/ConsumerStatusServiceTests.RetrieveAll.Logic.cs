@@ -21,8 +21,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
             IQueryable<ConsumerStatus> expectedConsumerStatuses = storageConsumerStatuses;
 
             this.storageBrokerMock.Setup(broker =>
-                    broker.SelectAllConsumerStatusesAsync())
-                .ReturnsAsync(storageConsumerStatuses);
+                broker.SelectAllConsumerStatusesAsync())
+                    .ReturnsAsync(storageConsumerStatuses);
 
             // when
             IQueryable<ConsumerStatus> actualConsumerStatuses =
