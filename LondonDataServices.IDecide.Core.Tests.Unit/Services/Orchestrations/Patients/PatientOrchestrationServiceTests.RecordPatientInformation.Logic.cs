@@ -79,7 +79,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                         .ReturnsAsync(updatedPatient);
 
             // when
-            await patientOrchestrationServiceMock.Object.RecordPatientInformation(
+            await patientOrchestrationServiceMock.Object.RecordPatientInformationAsync(
                 inputNhsNumber,
                 inputCaptchaToken,
                 notificationPreferenceString,
@@ -182,7 +182,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     .ReturnsAsync(updatedPatient);
 
             // when
-            await patientOrchestrationServiceMock.Object.RecordPatientInformation(
+            await patientOrchestrationServiceMock.Object.RecordPatientInformationAsync(
                 inputNhsNumber,
                 inputCaptchaToken,
                 notificationPreferenceString,
@@ -277,7 +277,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     .ReturnsAsync(outputDateTimeOffset);
 
             // when
-            ValueTask recordPatientInformationTask = patientOrchestrationServiceMock.Object.RecordPatientInformation(
+            ValueTask recordPatientInformationTask = patientOrchestrationServiceMock.Object.RecordPatientInformationAsync(
                 inputNhsNumber,
                 inputCaptchaToken,
                 notificationPreferenceString,
@@ -374,7 +374,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     .ReturnsAsync(outputDateTimeOffset);
 
             // when
-            ValueTask recordPatientInformationTask = patientOrchestrationServiceMock.Object.RecordPatientInformation(
+            ValueTask recordPatientInformationTask = patientOrchestrationServiceMock.Object.RecordPatientInformationAsync(
                 inputNhsNumber,
                 inputCaptchaToken,
                 notificationPreferenceString,
@@ -479,7 +479,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                         .ReturnsAsync(updatedPatient);
 
             // when
-            await patientOrchestrationServiceMock.Object.RecordPatientInformation(
+            await patientOrchestrationServiceMock.Object.RecordPatientInformationAsync(
                 inputNhsNumber,
                 inputCaptchaToken,
                 notificationPreferenceString,
@@ -583,7 +583,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                         .ReturnsAsync(updatedPatient);
 
             // when
-            await patientOrchestrationServiceMock.Object.RecordPatientInformation(
+            await patientOrchestrationServiceMock.Object.RecordPatientInformationAsync(
                 inputNhsNumber,
                 inputCaptchaToken,
                 notificationPreferenceString,
@@ -679,7 +679,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     .ReturnsAsync(outputDateTimeOffset);
 
             // when
-            ValueTask recordPatientInformationTask = patientOrchestrationServiceMock.Object.RecordPatientInformation(
+            ValueTask recordPatientInformationTask = patientOrchestrationServiceMock.Object.RecordPatientInformationAsync(
                 inputNhsNumber,
                 inputCaptchaToken,
                 notificationPreferenceString,
@@ -784,7 +784,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                         .ReturnsAsync(updatedPatient);
 
             // when
-            await patientOrchestrationServiceMock.Object.RecordPatientInformation(
+            await patientOrchestrationServiceMock.Object.RecordPatientInformationAsync(
                 inputNhsNumber,
                 inputCaptchaToken,
                 notificationPreferenceString,

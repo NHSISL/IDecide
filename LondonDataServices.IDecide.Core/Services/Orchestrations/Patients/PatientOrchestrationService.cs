@@ -75,7 +75,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                 }
             });
 
-        public ValueTask RecordPatientInformation(
+        public ValueTask RecordPatientInformationAsync(
             string nhsNumber,
             string captcha,
             string notificationPreference,

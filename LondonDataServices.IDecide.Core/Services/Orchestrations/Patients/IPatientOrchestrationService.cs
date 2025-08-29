@@ -12,7 +12,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
     {
         ValueTask<Patient> PatientLookupAsync(PatientLookup patientLookup);
 
-        ValueTask RecordPatientInformation(
+        ValueTask RecordPatientInformationAsync(
             string nhsNumber,
             string captcha,
             string notificationPreference,

@@ -52,7 +52,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             // when
             ValueTask recordPatientInformationTask =
-                 patientOrchestrationServiceMock.Object.RecordPatientInformation(
+                 patientOrchestrationServiceMock.Object.RecordPatientInformationAsync(
                     inputNhsNumber,
                     inputCaptchaToken,
                     notificationPreferenceString,
@@ -120,7 +120,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             // when
             ValueTask recordPatientInformationTask =
-                 patientOrchestrationServiceMock.Object.RecordPatientInformation(
+                 patientOrchestrationServiceMock.Object.RecordPatientInformationAsync(
                     inputNhsNumber,
                     inputCaptchaToken,
                     notificationPreferenceString,
@@ -191,7 +191,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             // when
             ValueTask recordPatientInformationTask =
-                 patientOrchestrationServiceMock.Object.RecordPatientInformation(
+                 patientOrchestrationServiceMock.Object.RecordPatientInformationAsync(
                     inputNhsNumber,
                     inputCaptchaToken,
                     notificationPreferenceString,

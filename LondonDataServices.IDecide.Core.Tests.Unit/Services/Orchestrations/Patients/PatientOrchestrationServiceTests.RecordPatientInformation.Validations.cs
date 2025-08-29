@@ -55,11 +55,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     .ThrowsAsync(invalidPatientOrchestrationArgumentException);
 
             // when
-            ValueTask recordPatientInformationTask = patientOrchestrationServiceMock.Object.RecordPatientInformation(
-                invalidNhsNumber,
-                inputCaptchaToken,
-                notificationPreferenceString,
-                false);
+            ValueTask recordPatientInformationTask =
+                patientOrchestrationServiceMock.Object.RecordPatientInformationAsync(
+                    invalidNhsNumber,
+                    inputCaptchaToken,
+                    notificationPreferenceString,
+                    false);
 
             PatientOrchestrationValidationException actualException =
                 await Assert.ThrowsAsync<PatientOrchestrationValidationException>(
@@ -123,11 +124,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     .ThrowsAsync(invalidPatientOrchestrationArgumentException);
 
             // when
-            ValueTask recordPatientInformationTask = patientOrchestrationServiceMock.Object.RecordPatientInformation(
-                inputNhsNumber,
-                invalidCaptchaToken,
-                notificationPreferenceString,
-                false);
+            ValueTask recordPatientInformationTask =
+                patientOrchestrationServiceMock.Object.RecordPatientInformationAsync(
+                    inputNhsNumber,
+                    invalidCaptchaToken,
+                    notificationPreferenceString,
+                    false);
 
             PatientOrchestrationValidationException actualException =
                 await Assert.ThrowsAsync<PatientOrchestrationValidationException>(
@@ -191,11 +193,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     .ThrowsAsync(invalidPatientOrchestrationArgumentException);
 
             // when
-            ValueTask recordPatientInformationTask = patientOrchestrationServiceMock.Object.RecordPatientInformation(
-                inputNhsNumber,
-                inputCaptchaToken,
-                invalidNotificationPreference,
-                false);
+            ValueTask recordPatientInformationTask =
+                patientOrchestrationServiceMock.Object.RecordPatientInformationAsync(
+                    inputNhsNumber,
+                    inputCaptchaToken,
+                    invalidNotificationPreference,
+                    false);
 
             PatientOrchestrationValidationException actualException =
                 await Assert.ThrowsAsync<PatientOrchestrationValidationException>(
@@ -253,11 +256,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     .ThrowsAsync(invalidCaptchaPatientOrchestrationServiceException);
 
             // when
-            ValueTask recordPatientInformationTask = patientOrchestrationServiceMock.Object.RecordPatientInformation(
-                inputNhsNumber,
-                inputCaptchaToken,
-                notificationPreferenceString,
-                false);
+            ValueTask recordPatientInformationTask =
+                patientOrchestrationServiceMock.Object.RecordPatientInformationAsync(
+                    inputNhsNumber,
+                    inputCaptchaToken,
+                    notificationPreferenceString,
+                    false);
 
             PatientOrchestrationValidationException actualException =
                 await Assert.ThrowsAsync<PatientOrchestrationValidationException>(
@@ -319,11 +323,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     .ThrowsAsync(validPatientCodeExistsException);
 
             // when
-            ValueTask recordPatientInformationTask = patientOrchestrationServiceMock.Object.RecordPatientInformation(
-                 inputNhsNumber,
-                 inputCaptchaToken,
-                 notificationPreferenceString,
-                 false);
+            ValueTask recordPatientInformationTask =
+                patientOrchestrationServiceMock.Object.RecordPatientInformationAsync(
+                     inputNhsNumber,
+                     inputCaptchaToken,
+                     notificationPreferenceString,
+                     false);
 
             PatientOrchestrationValidationException actualException =
                 await Assert.ThrowsAsync<PatientOrchestrationValidationException>(
