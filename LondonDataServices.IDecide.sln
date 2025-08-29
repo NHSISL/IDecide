@@ -38,9 +38,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LondonDataServices.IDecide.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LondonDataServices.IDecide.Portal.Server.Tests.Unit", "LondonDataServices.IDecide.Portal.Server.Tests.Unit\LondonDataServices.IDecide.Portal.Server.Tests.Unit.csproj", "{57197625-13AF-6149-2A5F-EB43C3921612}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LondonDataServices.IDecide.Portal.Server.Tests.Acceptance", "LondonDataServices.IDecide.Portal.Tests.Acceptance\LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.csproj", "{500E2DBA-A365-CEE1-07E5-6653468A64EA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LondonDataServices.IDecide.Portal.Server.Tests.Acceptance", "LondonDataServices.IDecide.Portal.Server.Tests.Acceptance\LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.csproj", "{500E2DBA-A365-CEE1-07E5-6653468A64EA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LondonDataServices.IDecide.Portal.Server.Tests.Integration", "LondonDataServices.IDecide.Portal.Tests.Integration\LondonDataServices.IDecide.Portal.Server.Tests.Integration.csproj", "{3996C9DD-C4A9-88EE-0AF2-D79DFBC620A9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LondonDataServices.IDecide.Portal.Server.Tests.Integration", "LondonDataServices.IDecide.Portal.Server.Tests.Integration\LondonDataServices.IDecide.Portal.Server.Tests.Integration.csproj", "{3996C9DD-C4A9-88EE-0AF2-D79DFBC620A9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LondonDataServices.IDecide.Infrastructure", "LondonDataServices.IDecide.Infrastructure\LondonDataServices.IDecide.Infrastructure.csproj", "{A15527F8-B2EA-C22C-1C5F-79608B83BB66}"
 EndProject
