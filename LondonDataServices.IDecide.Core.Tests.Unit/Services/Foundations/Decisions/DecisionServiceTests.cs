@@ -134,6 +134,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
                 .OnType<DateTimeOffset?>().Use(dateTimeOffset)
+
+                .OnProperty(decision => decision.PatientNhsNumber).Use(GetRandomStringWithLengthOf(10))
+                .OnProperty(decision => decision.DecisionChoice).Use(GetRandomStringWithLengthOf(255))
                 .OnProperty(decision => decision.CreatedBy).Use(userId)
                 .OnProperty(decision => decision.UpdatedBy).Use(userId)
                 .OnProperty(decision => decision.DecisionType).IgnoreIt()

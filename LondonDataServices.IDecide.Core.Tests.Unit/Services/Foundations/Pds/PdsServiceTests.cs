@@ -233,6 +233,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
                 .OnProperty(n => n.Id).IgnoreIt()
                 .OnProperty(n => n.ValidationCode).IgnoreIt()
                 .OnProperty(n => n.ValidationCodeExpiresOn).IgnoreIt()
+                .OnProperty(n => n.ValidationCodeMatchedOn).IgnoreIt()
                 .OnProperty(n => n.RetryCount).IgnoreIt()
                 .OnProperty(n => n.CreatedBy).IgnoreIt()
                 .OnProperty(n => n.CreatedDate).IgnoreIt()
