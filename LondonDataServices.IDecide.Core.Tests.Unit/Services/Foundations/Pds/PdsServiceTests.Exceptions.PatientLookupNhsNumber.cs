@@ -2,12 +2,12 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using System.Threading.Tasks;
 using System;
-using Moq;
+using System.Threading.Tasks;
 using FluentAssertions;
-using LondonDataServices.IDecide.Core.Models.Foundations.Pds.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
+using LondonDataServices.IDecide.Core.Models.Foundations.Pds.Exceptions;
+using Moq;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
 {
@@ -40,9 +40,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
             ValueTask<Patient> patientLookupByNhsNumberTask =
                 pdsService.PatientLookupByNhsNumberAsync(inputNhsNumber);
 
-           PdsServiceException actualPdsServiceException =
-                await Assert.ThrowsAsync<PdsServiceException>(
-                    testCode: patientLookupByNhsNumberTask.AsTask);
+            PdsServiceException actualPdsServiceException =
+                 await Assert.ThrowsAsync<PdsServiceException>(
+                     testCode: patientLookupByNhsNumberTask.AsTask);
 
             // then
             actualPdsServiceException.Should().BeEquivalentTo(

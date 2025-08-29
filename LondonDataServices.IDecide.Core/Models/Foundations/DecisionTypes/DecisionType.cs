@@ -3,9 +3,9 @@
 // ---------------------------------------------------------
 
 using System;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Collections.Generic;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes
 {

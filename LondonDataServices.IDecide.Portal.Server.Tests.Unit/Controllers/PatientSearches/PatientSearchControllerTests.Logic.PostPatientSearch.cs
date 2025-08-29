@@ -2,13 +2,13 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System.Threading.Tasks;
 using Force.DeepCloner;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using RESTFulSense.Clients.Extensions;
-using System.Threading.Tasks;
 
 namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.PatientSearches
 {
@@ -31,7 +31,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Patien
             var expectedActionResult =
                 new ActionResult<Patient>(expectedObjectResult);
 
-            this.patientOrchestrationServiceMock.Setup(service => 
+            this.patientOrchestrationServiceMock.Setup(service =>
                 service.PatientLookupAsync(inputPatientLookup))
                     .ReturnsAsync(outputPatient);
 
@@ -42,7 +42,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Patien
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
 
-            this.patientOrchestrationServiceMock.Verify(service => 
+            this.patientOrchestrationServiceMock.Verify(service =>
                 service.PatientLookupAsync(inputPatientLookup),
                    Times.Once);
 

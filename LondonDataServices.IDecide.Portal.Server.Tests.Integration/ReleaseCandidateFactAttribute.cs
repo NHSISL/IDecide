@@ -2,9 +2,10 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using Xunit.Sdk;
 
-namespace LondonDataServices.IDecide.Manage.Server.Tests.Integration
+namespace LondonDataServices.IDecide.Portal.Server.Tests.Integration
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
     [XunitTestCaseDiscoverer(

@@ -10,6 +10,6 @@ namespace LondonDataServices.IDecide.Core.Models.Foundations.Pds
     public class PatientLookup
     {
         public SearchCriteria SearchCriteria { get; set; }
-        public List<Patient> Patients {  get; set; }
+        public List<Patient> Patients { get; set; }
     }
 }

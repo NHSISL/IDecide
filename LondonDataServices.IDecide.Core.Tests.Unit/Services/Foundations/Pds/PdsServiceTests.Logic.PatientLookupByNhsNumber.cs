@@ -38,7 +38,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
             PdsService pdsService = pdsServiceMock.Object;
 
             // when
-            Patient actualPatient = 
+            Patient actualPatient =
                 await pdsService.PatientLookupByNhsNumberAsync(inputNhsNumber);
 
             //then

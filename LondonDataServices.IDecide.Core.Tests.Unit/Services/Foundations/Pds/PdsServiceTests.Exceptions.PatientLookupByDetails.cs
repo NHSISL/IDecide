@@ -2,13 +2,13 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using System.Threading.Tasks;
 using System;
+using System.Threading.Tasks;
+using FluentAssertions;
+using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
+using LondonDataServices.IDecide.Core.Models.Foundations.Pds.Exceptions;
 using Moq;
 using Task = System.Threading.Tasks.Task;
-using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
-using FluentAssertions;
-using LondonDataServices.IDecide.Core.Models.Foundations.Pds.Exceptions;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
 {

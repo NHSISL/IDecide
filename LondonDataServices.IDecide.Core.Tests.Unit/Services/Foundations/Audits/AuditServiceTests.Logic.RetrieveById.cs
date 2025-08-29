@@ -7,7 +7,6 @@ using FluentAssertions;
 using Force.DeepCloner;
 using LondonDataServices.IDecide.Core.Models.Foundations.Audits;
 using Moq;
-using Xunit;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
 {

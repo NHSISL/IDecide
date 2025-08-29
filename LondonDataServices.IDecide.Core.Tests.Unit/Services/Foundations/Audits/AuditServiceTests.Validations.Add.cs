@@ -5,12 +5,11 @@
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
-using LondonDataServices.IDecide.Core.Services.Foundations.Audits;
 using LondonDataServices.IDecide.Core.Models.Foundations.Audits;
 using LondonDataServices.IDecide.Core.Models.Foundations.Audits.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Securities;
+using LondonDataServices.IDecide.Core.Services.Foundations.Audits;
 using Moq;
-using Xunit;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
 {

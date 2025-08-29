@@ -20,7 +20,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
 
             // when
             NullFhirPatientException actualNullFhirPatientException =
-                 Assert.Throws<NullFhirPatientException>(() => 
+                 Assert.Throws<NullFhirPatientException>(() =>
                     pdsService.MapToPatientFromFhirPatient(nullFhirPatient));
 
             // then

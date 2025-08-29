@@ -2,15 +2,15 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Hl7.Fhir.Model;
 using ISL.Providers.PDS.Abstractions.Models;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Brokers.Pds;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Patient = LondonDataServices.IDecide.Core.Models.Foundations.Patients.Patient;
 
 namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
@@ -64,8 +64,8 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
                 return patient;
             });
 
-        virtual internal List<Patient> MapToPatientsFromPatientBundle(PatientBundle patientBundle) 
-        { 
+        virtual internal List<Patient> MapToPatientsFromPatientBundle(PatientBundle patientBundle)
+        {
             ValidatePatientBundleIsNotNull(patientBundle);
             List<Patient> patients = new List<Patient>();
 

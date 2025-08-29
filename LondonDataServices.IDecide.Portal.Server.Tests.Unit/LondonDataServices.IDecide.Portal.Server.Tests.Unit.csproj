@@ -8,6 +8,15 @@
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Controllers\Features\**" />
+    <Compile Remove="Controllers\FrontendConfigurations\**" />
+    <EmbeddedResource Remove="Controllers\Features\**" />
+    <EmbeddedResource Remove="Controllers\FrontendConfigurations\**" />
+    <None Remove="Controllers\Features\**" />
+    <None Remove="Controllers\FrontendConfigurations\**" />
+  </ItemGroup>
+
 	<ItemGroup>
 		<PackageReference Include="coverlet.collector" Version="6.0.4">
 			<PrivateAssets>all</PrivateAssets>
@@ -30,11 +39,6 @@
 
   <ItemGroup>
     <Using Include="Xunit" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Controllers\Features\" />
-    <Folder Include="Controllers\FrontendConfigurations\" />
   </ItemGroup>
 
   <ItemGroup>

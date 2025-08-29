@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
 
-namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis
+namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Apis
 {
     public partial class FeaturesApiTests
     {
@@ -15,10 +15,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis
         {
             // Given
             List<string> expectedResult = new List<string>
-            {
-                "Configuration",
-                "UserAccess"
-            };
+            { };
 
             // When
             string[] actualResult = await this.apiBroker.GetFeaturesAsync();

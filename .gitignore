@@ -420,4 +420,4 @@ FodyWeavers.xsd
 /Documentation/*.bkp
 /Documentation/*.dtmp
 /LondonDataServices.IDecide.Manage.Server.Tests.Acceptance/appsettings.Acceptance.json
-/LondonDataServices.IDecide.Portal.Tests.Acceptance/appsettings.Acceptance.json
+/LondonDataServices.IDecide.Portal.Server.Tests.Acceptance/appsettings.Acceptance.json

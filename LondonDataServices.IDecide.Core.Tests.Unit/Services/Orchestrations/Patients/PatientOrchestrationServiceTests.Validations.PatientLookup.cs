@@ -2,14 +2,14 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
-using Moq;
-using FluentAssertions;
-using System.Threading.Tasks;
-using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
-using Force.DeepCloner;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using FluentAssertions;
+using Force.DeepCloner;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
+using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
+using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
+using Moq;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Patients
 {

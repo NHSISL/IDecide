@@ -4,10 +4,9 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using LondonDataServices.IDecide.Core.Services.Foundations.Audits;
 using LondonDataServices.IDecide.Core.Models.Foundations.Audits;
+using LondonDataServices.IDecide.Core.Services.Foundations.Audits;
 using Moq;
-using Xunit;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
 {
