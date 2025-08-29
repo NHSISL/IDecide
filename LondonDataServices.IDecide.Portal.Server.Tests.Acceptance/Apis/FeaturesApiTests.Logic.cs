@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
 
-namespace LondonDataServices.IDecide.Portals.Server.Tests.Acceptance.Apis
+namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Apis
 {
     public partial class FeaturesApiTests
     {

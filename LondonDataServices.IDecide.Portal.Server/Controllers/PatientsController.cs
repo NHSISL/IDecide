@@ -1,10 +1,10 @@
-﻿using System;
+﻿// ---------------------------------------------------------
+// Copyright (c) North East London ICB. All rights reserved.
+// ---------------------------------------------------------
+
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
-using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
-using LondonDataServices.IDecide.Portal.Server.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 
@@ -143,7 +143,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
                 return BadRequest("NhsNumber and NotificationPreference are required.");
             }
 
-            return NoContent(); 
+            return NoContent();
         }
 
         //recapture

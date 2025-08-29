@@ -3,20 +3,20 @@
 // ---------------------------------------------------------
 
 using System;
-using LondonDataServices.IDecide.Core.Brokers.Loggings;
-using LondonDataServices.IDecide.Core.Brokers.Pds;
-using LondonDataServices.IDecide.Core.Services.Foundations.Pds;
-using Moq;
-using Tynamix.ObjectFiller;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
-using Xeptions;
-using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
 using Hl7.Fhir.Model;
 using ISL.Providers.PDS.Abstractions.Models;
 using ISL.Providers.PDS.FakeFHIR.Mappers;
-using System.Collections.Generic;
+using LondonDataServices.IDecide.Core.Brokers.Loggings;
+using LondonDataServices.IDecide.Core.Brokers.Pds;
+using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
+using LondonDataServices.IDecide.Core.Services.Foundations.Pds;
+using Moq;
+using Tynamix.ObjectFiller;
+using Xeptions;
 using Patient = LondonDataServices.IDecide.Core.Models.Foundations.Patients.Patient;
-using System.Linq;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
 {
@@ -58,8 +58,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
             patient.BirthDate = GetRandomDateTimeOffset().ToString("yyyy-MM-dd");
             patient.Address = new List<Address> { CreateAddressFiller(withWhiteSpace).Create() };
 
-            patient.Telecom = new List<ContactPoint> { 
-                CreateContactPointFiller(ContactPoint.ContactPointSystem.Phone, withWhiteSpace).Create(), 
+            patient.Telecom = new List<ContactPoint> {
+                CreateContactPointFiller(ContactPoint.ContactPointSystem.Phone, withWhiteSpace).Create(),
                 CreateContactPointFiller(ContactPoint.ContactPointSystem.Email, withWhiteSpace).Create()
             };
 

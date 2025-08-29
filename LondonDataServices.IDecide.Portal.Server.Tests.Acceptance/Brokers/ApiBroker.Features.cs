@@ -4,7 +4,7 @@
 
 using System.Threading.Tasks;
 
-namespace LondonDataServices.IDecide.Portals.Server.Tests.Acceptance.Brokers
+namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Brokers
 {
     public partial class ApiBroker
     {

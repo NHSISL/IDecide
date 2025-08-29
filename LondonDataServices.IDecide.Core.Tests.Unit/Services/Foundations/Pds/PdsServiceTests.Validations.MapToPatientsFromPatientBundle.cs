@@ -21,7 +21,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
 
             // when
             NullPatientBundleException actualNullPatientBundleException =
-                 Assert.Throws<NullPatientBundleException>(() => 
+                 Assert.Throws<NullPatientBundleException>(() =>
                     pdsService.MapToPatientsFromPatientBundle(nullPatientBundle));
 
             // then

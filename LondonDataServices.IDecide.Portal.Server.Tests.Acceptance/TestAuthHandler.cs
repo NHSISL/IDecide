@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace LondonDataServices.IDecide.Portal.Tests.Acceptance
+namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance
 {
     public class TestAuthHandler : AuthenticationHandler<CustomAuthenticationSchemeOptions>
     {

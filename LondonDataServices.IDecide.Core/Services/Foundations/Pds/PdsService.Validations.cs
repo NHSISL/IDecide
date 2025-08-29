@@ -2,13 +2,13 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
-using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
 using System;
 using System.Linq;
-using LondonDataServices.IDecide.Core.Models.Foundations.Pds.Exceptions;
 using Hl7.Fhir.Model;
 using ISL.Providers.PDS.Abstractions.Models;
+using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
+using LondonDataServices.IDecide.Core.Models.Foundations.Pds.Exceptions;
+using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
 
 namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
 {
@@ -68,9 +68,9 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
             {
                 if (rule.Condition)
                 {
-                        invalidPdsException.UpsertDataList(
-                            key: parameter,
-                            value: rule.Message);
+                    invalidPdsException.UpsertDataList(
+                        key: parameter,
+                        value: rule.Message);
                 }
             }
 

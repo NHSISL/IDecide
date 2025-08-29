@@ -10,7 +10,6 @@ using LondonDataServices.IDecide.Core.Models.Foundations.Audits;
 using LondonDataServices.IDecide.Core.Models.Foundations.Audits.Exceptions;
 using Microsoft.Data.SqlClient;
 using Moq;
-using Xunit;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
 {

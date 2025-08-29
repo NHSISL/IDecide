@@ -3,14 +3,13 @@
 // ---------------------------------------------------------
 
 using System.Linq;
-using LondonDataServices.IDecide.Portal.Tests.Integration;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace LondonDataServices.IDecide.Portal.Tests.Integration.Brokers
+namespace LondonDataServices.IDecide.Portal.Server.Tests.Integration.Brokers
 {
     public class TestWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup> where TStartup : class
     {

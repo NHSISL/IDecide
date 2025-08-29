@@ -4,10 +4,10 @@
 
 using System.Net.Http;
 using LondonDataServices.IDecide.Portal.Server;
-using LondonDataServices.IDecide.Portal.Tests.Integration.Brokers;
+using LondonDataServices.IDecide.Portal.Server.Tests.Integration.Brokers;
 using RESTFulSense.Clients;
 
-namespace LondonDataServices.IDecide.Portals.Server.Tests.Integration.ReIdentification.Brokers
+namespace LondonDataServices.IDecide.Portal.Server.Tests.Integration.ReIdentification.Brokers
 {
     public partial class ApiBroker
     {

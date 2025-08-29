@@ -5,10 +5,10 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using LondonDataServices.IDecide.Core.Models.Securities;
-using ISL.Security.Client.Clients;
-using Microsoft.AspNetCore.Http;
 using ISL.Providers.Captcha.Abstractions;
+using ISL.Security.Client.Clients;
+using LondonDataServices.IDecide.Core.Models.Securities;
+using Microsoft.AspNetCore.Http;
 
 namespace LondonDataServices.IDecide.Core.Brokers.Securities
 {

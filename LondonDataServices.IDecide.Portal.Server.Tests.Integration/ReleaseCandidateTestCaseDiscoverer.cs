@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
-namespace LondonDataServices.IDecide.Portal.Tests.Integration
+namespace LondonDataServices.IDecide.Portal.Server.Tests.Integration
 {
     public class ReleaseCandidateTestCaseDiscoverer : IXunitTestCaseDiscoverer
     {

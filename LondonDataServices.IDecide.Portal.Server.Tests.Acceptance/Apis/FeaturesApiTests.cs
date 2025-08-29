@@ -2,10 +2,10 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using LondonDataServices.IDecide.Portals.Server.Tests.Acceptance.Brokers;
-using LondonDataServices.IDecide.Portal.Tests.Acceptance.Brokers;
+using LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Brokers;
+using LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Brokers;
 
-namespace LondonDataServices.IDecide.Portals.Server.Tests.Acceptance.Apis
+namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Apis
 {
     [Collection(nameof(ApiTestCollection))]
     public partial class FeaturesApiTests
