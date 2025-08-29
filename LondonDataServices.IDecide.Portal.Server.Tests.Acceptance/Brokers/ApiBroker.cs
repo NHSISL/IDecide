@@ -5,11 +5,11 @@
 using System.Net.Http;
 using Attrify.InvisibleApi.Models;
 using LondonDataServices.IDecide.Portal.Server;
-using LondonDataServices.IDecide.Portal.Tests.Acceptance.Brokers;
+using LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Brokers;
 using Microsoft.Extensions.DependencyInjection;
 using RESTFulSense.Clients;
 
-namespace LondonDataServices.IDecide.Portals.Server.Tests.Acceptance.Brokers
+namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Brokers
 {
     public partial class ApiBroker
     {

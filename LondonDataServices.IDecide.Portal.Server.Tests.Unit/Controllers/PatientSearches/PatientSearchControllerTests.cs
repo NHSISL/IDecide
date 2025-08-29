@@ -3,15 +3,15 @@
 // ---------------------------------------------------------
 
 using System;
+using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
+using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
 using LondonDataServices.IDecide.Portal.Server.Controllers;
 using Moq;
-using Tynamix.ObjectFiller;
-using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
-using Xeptions;
-using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
 using RESTFulSense.Controllers;
+using Tynamix.ObjectFiller;
+using Xeptions;
 
 namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.PatientSearches
 {
@@ -24,7 +24,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Patien
         {
             this.patientOrchestrationServiceMock = new Mock<IPatientOrchestrationService>();
 
-            this.patientSearchController = 
+            this.patientSearchController =
                 new PatientSearchController(this.patientOrchestrationServiceMock.Object);
         }
 

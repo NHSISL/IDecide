@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace LondonDataServices.IDecide.Portal.Tests.Acceptance.Brokers
+namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Brokers
 {
     public class TestWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup> where TStartup : class
     {

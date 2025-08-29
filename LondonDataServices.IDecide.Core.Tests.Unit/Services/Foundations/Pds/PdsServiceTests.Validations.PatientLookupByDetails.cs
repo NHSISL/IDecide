@@ -3,12 +3,12 @@
 // ---------------------------------------------------------
 
 using System.Threading.Tasks;
-using Moq;
-using Task = System.Threading.Tasks.Task;
-using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
 using FluentAssertions;
+using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
+using Moq;
+using Task = System.Threading.Tasks.Task;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
 {

@@ -3,7 +3,6 @@
 // ---------------------------------------------------------
 
 using System.Collections.Generic;
-using System.Linq;
 using FluentAssertions;
 using Force.DeepCloner;
 using Hl7.Fhir.Model;
@@ -39,7 +38,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
                 this.loggingBrokerMock.Object)
             { CallBase = true };
 
-            pdsServiceMock.Setup(service => 
+            pdsServiceMock.Setup(service =>
                 service.MapToPatientsFromPatientBundle(outputPatientBundle))
                     .Returns(mappedPatients);
 

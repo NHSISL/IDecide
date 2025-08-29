@@ -37,7 +37,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Decisions
 
                 (Rule: IsGreaterThan(decision.ResponsiblePersonSurname, 255),
                     Parameter: nameof(Decision.ResponsiblePersonSurname)),
-                
+
                 (Rule: IsGreaterThan(decision.ResponsiblePersonRelationship, 255),
                     Parameter: nameof(Decision.ResponsiblePersonRelationship)),
 

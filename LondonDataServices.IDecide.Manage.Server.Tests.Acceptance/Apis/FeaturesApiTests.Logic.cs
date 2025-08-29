@@ -17,7 +17,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis
             List<string> expectedResult = new List<string>
             {
                 "Configuration",
-                "UserAccess" 
+                "UserAccess"
             };
 
             // When

@@ -5,7 +5,7 @@
 using Attrify.InvisibleApi.Models;
 using Microsoft.AspNetCore.Authentication;
 
-namespace LondonDataServices.IDecide.Portal.Tests.Acceptance
+namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance
 {
     public class CustomAuthenticationSchemeOptions : AuthenticationSchemeOptions
     {

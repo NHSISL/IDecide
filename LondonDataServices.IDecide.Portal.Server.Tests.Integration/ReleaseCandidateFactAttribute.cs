@@ -5,11 +5,11 @@
 using System;
 using Xunit.Sdk;
 
-namespace LondonDataServices.IDecide.Portal.Tests.Integration
+namespace LondonDataServices.IDecide.Portal.Server.Tests.Integration
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
     [XunitTestCaseDiscoverer(
-        typeName: "LondonDataServices.IDecide.Portals.Server.Tests.Integration.ReIdentification.ReleaseCandidateTestCaseDiscoverer",
-        assemblyName: "LondonDataServices.IDecide.Portals.Server.Tests.Integration.ReIdentification")]
+        typeName: "LondonDataServices.IDecide.Portal.Server.Tests.Integration.ReIdentification.ReleaseCandidateTestCaseDiscoverer",
+        assemblyName: "LondonDataServices.IDecide.Portal.Server.Tests.Integration.ReIdentification")]
     public class ReleaseCandidateFactAttribute : FactAttribute { }
 }
