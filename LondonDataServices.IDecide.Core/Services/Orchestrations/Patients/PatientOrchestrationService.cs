@@ -87,69 +87,50 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                     captchaToken: captcha,
                     notificationPreference: notificationPreference);
 
-                bool isCaptchaValid = await this.securityBroker.ValidateCaptchaAsync(captcha);
-
-                if (isCaptchaValid is false)
-                {
-                    throw new InvalidCaptchaPatientOrchestrationServiceException(
-                        message: "The provided captcha token is invalid.");
-                }
-
+                bool isAuthenticatedUserWithRole = await CheckIfIsAuthenticatedUserWithRequiredRoleAsync(captcha);
                 IQueryable<Patient> patients = await this.patientService.RetrieveAllPatientsAsync();
                 Patient maybeMatchingPatient = patients.FirstOrDefault(patient => patient.NhsNumber == nhsNumber);
                 Patient patientToRecord = null;
                 DateTimeOffset now = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
+                bool codeIsExpired = maybeMatchingPatient.ValidationCodeExpiresOn <= now;
 
                 Enum.TryParse(
                     notificationPreference, out NotificationPreference notificationPreferenceType);
 
                 if (maybeMatchingPatient is null)
                 {
-                    Patient pdsPatient = await this.pdsService.PatientLookupByNhsNumberAsync(nhsNumber);
-                    string validationCode = await this.patientService.GenerateValidationCodeAsync();
-
-                    DateTimeOffset expirationDate =
-                        now.AddMinutes(decisionConfigurations.PatientValidationCodeExpireAfterMinutes);
-
-                    pdsPatient.ValidationCode = validationCode;
-                    pdsPatient.ValidationCodeExpiresOn = expirationDate;
-                    pdsPatient.NotificationPreference = notificationPreferenceType;
-                    patientToRecord = pdsPatient;
-
-                    await this.patientService.AddPatientAsync(patientToRecord);
+                    patientToRecord = await GenerateNewPatientWithCodeAsync(
+                        nhsNumber, notificationPreferenceType, now);
+                }
+                else if (codeIsExpired is false && generateNewCode is false)
+                {
+                    throw new ValidPatientCodeExistsException(message:
+                                "A valid code already exists for this patient, please go to the enter code screen.");
                 }
                 else
                 {
-                    if (maybeMatchingPatient.ValidationCodeExpiresOn <= now
-                        || (maybeMatchingPatient.ValidationCodeExpiresOn > now && generateNewCode == true))
+                    if (isAuthenticatedUserWithRole)
                     {
-                        Patient pdsPatient = await this.pdsService.PatientLookupByNhsNumberAsync(nhsNumber);
-                        maybeMatchingPatient.Address = pdsPatient.Address;
-                        maybeMatchingPatient.DateOfBirth = pdsPatient.DateOfBirth;
-                        maybeMatchingPatient.Email = pdsPatient.Email;
-                        maybeMatchingPatient.Gender = pdsPatient.Gender;
-                        maybeMatchingPatient.GivenName = pdsPatient.GivenName;
-                        maybeMatchingPatient.NhsNumber = pdsPatient.NhsNumber;
-                        maybeMatchingPatient.Phone = pdsPatient.Phone;
-                        maybeMatchingPatient.PostCode = pdsPatient.PostCode;
-                        maybeMatchingPatient.Surname = pdsPatient.Surname;
-                        maybeMatchingPatient.Title = pdsPatient.Title;
-                        maybeMatchingPatient.NotificationPreference = notificationPreferenceType;
-                        string validationCode = await this.patientService.GenerateValidationCodeAsync();
-
-                        DateTimeOffset expirationDate =
-                            now.AddMinutes(decisionConfigurations.PatientValidationCodeExpireAfterMinutes);
-
-                        maybeMatchingPatient.ValidationCode = validationCode;
-                        maybeMatchingPatient.ValidationCodeExpiresOn = expirationDate;
-                        patientToRecord = maybeMatchingPatient;
-
-                        await this.patientService.ModifyPatientAsync(patientToRecord);
+                        patientToRecord = await UpdatePatientWithNewCodeAsync(
+                            maybeMatchingPatient, notificationPreferenceType, now, true);
                     }
                     else
                     {
-                        throw new ValidPatientCodeExistsException(message:
-                            "A valid code already exists for this patient, please go to the enter code screen.");
+                        if (codeIsExpired)
+                        {
+                            patientToRecord = await UpdatePatientWithNewCodeAsync(
+                                maybeMatchingPatient, notificationPreferenceType, now, true);
+                        }
+                        else if (maybeMatchingPatient.RetryCount >= this.decisionConfigurations.MaxRetryCount)
+                        {
+                            throw new MaxRetryAttemptsExceededException(message:
+                                "The maximum number of validation attempts has been exceeded, please contact support.");
+                        }
+                        else
+                        {
+                            patientToRecord = await UpdatePatientWithNewCodeAsync(
+                                maybeMatchingPatient, notificationPreferenceType, now);
+                        }
                     }
                 }
 
@@ -160,5 +141,108 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
 
                 await this.notificationService.SendCodeNotificationAsync(notificationInfo);
             });
+
+        virtual internal async ValueTask<Patient> GenerateNewPatientWithCodeAsync(
+            string nhsNumber,
+            NotificationPreference notificationPreference,
+            DateTimeOffset now)
+        {
+            Patient pdsPatient = await this.pdsService.PatientLookupByNhsNumberAsync(nhsNumber);
+            string validationCode = await this.patientService.GenerateValidationCodeAsync();
+
+            DateTimeOffset expirationDate =
+                now.AddMinutes(decisionConfigurations.PatientValidationCodeExpireAfterMinutes);
+
+            pdsPatient.ValidationCode = validationCode;
+            pdsPatient.ValidationCodeExpiresOn = expirationDate;
+            pdsPatient.ValidationCodeMatchedOn = null;
+            pdsPatient.NotificationPreference = notificationPreference;
+            Patient patientToRecord = pdsPatient;
+
+            Patient recordedPatient = await this.patientService.AddPatientAsync(patientToRecord);
+
+            return recordedPatient;
+        }
+
+        virtual internal async ValueTask<Patient> UpdatePatientWithNewCodeAsync(
+            Patient currentPatient,
+            NotificationPreference notificationPreference,
+            DateTimeOffset now,
+            bool resetRetryCount = false)
+        {
+            Patient patientToUpdate = currentPatient;
+            Patient pdsPatient = await this.pdsService.PatientLookupByNhsNumberAsync(patientToUpdate.NhsNumber);
+            patientToUpdate.Address = pdsPatient.Address;
+            patientToUpdate.DateOfBirth = pdsPatient.DateOfBirth;
+            patientToUpdate.Email = pdsPatient.Email;
+            patientToUpdate.Gender = pdsPatient.Gender;
+            patientToUpdate.GivenName = pdsPatient.GivenName;
+            patientToUpdate.NhsNumber = pdsPatient.NhsNumber;
+            patientToUpdate.Phone = pdsPatient.Phone;
+            patientToUpdate.PostCode = pdsPatient.PostCode;
+            patientToUpdate.Surname = pdsPatient.Surname;
+            patientToUpdate.Title = pdsPatient.Title;
+            patientToUpdate.NotificationPreference = notificationPreference;
+            string validationCode = await this.patientService.GenerateValidationCodeAsync();
+
+            DateTimeOffset expirationDate =
+                now.AddMinutes(decisionConfigurations.PatientValidationCodeExpireAfterMinutes);
+
+            patientToUpdate.ValidationCode = validationCode;
+            patientToUpdate.ValidationCodeMatchedOn = null;
+            patientToUpdate.ValidationCodeExpiresOn = expirationDate;
+
+            if (resetRetryCount)
+            {
+                patientToUpdate.RetryCount = 0;
+            }
+
+            Patient modifiedPatient = await this.patientService.ModifyPatientAsync(patientToUpdate);
+
+            return modifiedPatient;
+        }
+
+        virtual internal async ValueTask<bool> CheckIfIsAuthenticatedUserWithRequiredRoleAsync(string captcha)
+        {
+            var currentUserIsAuthenticated = await this.securityBroker.IsCurrentUserAuthenticatedAsync();
+
+            if (currentUserIsAuthenticated)
+            {
+                bool userIsInWorkflowRole = false;
+
+                foreach (string role in this.decisionConfigurations.DecisionWorkflowRoles)
+                {
+                    if (await this.securityBroker.IsInRoleAsync(role))
+                    {
+                        userIsInWorkflowRole = true;
+                        break;
+                    }
+                }
+
+                if (userIsInWorkflowRole is false)
+                {
+                    throw new UnauthorizedPatientOrchestrationServiceException(
+                        message: "The current user is not authorized to perform this operation.");
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                bool isCaptchaValid = await this.securityBroker.ValidateCaptchaAsync(captcha);
+
+                if (isCaptchaValid is false)
+                {
+                    throw new InvalidCaptchaPatientOrchestrationServiceException(
+                        message: "The provided captcha token is invalid.");
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
     }
 }

@@ -21,7 +21,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         {
             // given
             int expireAfterMinutes = this.decisionConfigurations.PatientValidationCodeExpireAfterMinutes;
-            int maxRetryCount = this.decisionConfigurations.MaxRetryCount;
             string randomNhsNumber = GenerateRandom10DigitNumber();
             string inputNhsNumber = randomNhsNumber.DeepClone();
             string randomCaptchaToken = GetRandomString();
@@ -46,13 +45,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             {
                 Patient = updatedPatient
             };
-
-            DecisionConfigurations decisionConfigurations =
-                new DecisionConfigurations
-                {
-                    PatientValidationCodeExpireAfterMinutes = expireAfterMinutes,
-                    MaxRetryCount = maxRetryCount
-                };
 
             this.securityBrokerMock.Setup(broker =>
                 broker.ValidateCaptchaAsync(inputCaptchaToken, ""))
@@ -123,7 +115,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         }
 
         [Fact]
-        public async Task ShouldRecordPatientInformationAsyncWhenPatientFoundWithExpiredCode()
+        public async Task ShouldThrowErrorRecordPatientInformationAsyncWhenPatientFoundWithExpiredCodeAndNoRetriesLeft()
         {
             // given
             int expireAfterMinutes = this.decisionConfigurations.PatientValidationCodeExpireAfterMinutes;
@@ -142,6 +134,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             randomPatient.ValidationCodeExpiresOn = outputDateTimeOffset.AddMinutes(-1 * expireAfterMinutes);
             randomPatient.NotificationPreference = inputNotificationPreference;
             Patient outputPatient = randomPatient.DeepClone();
+            outputPatient.RetryCount = maxRetryCount + 1;
             List<Patient> randomPatients = GetRandomPatients();
             randomPatients.Add(outputPatient);
             List<Patient> outputPatients = randomPatients.DeepClone();
@@ -155,13 +148,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 Patient = updatedPatient
             };
 
-            DecisionConfigurations decisionConfigurations =
-                new DecisionConfigurations
-                {
-                    PatientValidationCodeExpireAfterMinutes = expireAfterMinutes,
-                    MaxRetryCount = maxRetryCount
-                };
-
             this.securityBrokerMock.Setup(broker =>
                 broker.ValidateCaptchaAsync(inputCaptchaToken, ""))
                     .ReturnsAsync(true);
@@ -170,21 +156,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 service.RetrieveAllPatientsAsync())
                     .ReturnsAsync(outputPatients.AsQueryable);
 
-            this.pdsServiceMock.Setup(service =>
-                service.PatientLookupByNhsNumberAsync(inputNhsNumber))
-                    .ReturnsAsync(outputPatient);
-
-            this.patientServiceMock.Setup(service =>
-                service.GenerateValidationCodeAsync())
-                    .ReturnsAsync(outputValidationCode);
-
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
                     .ReturnsAsync(outputDateTimeOffset);
-
-            this.patientServiceMock.Setup(service =>
-                service.ModifyPatientAsync(It.Is(SamePatientAs(updatedPatient))))
-                    .ReturnsAsync(updatedPatient);
 
             // when
             await patientOrchestrationService.RecordPatientInformation(
@@ -202,25 +176,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 service.RetrieveAllPatientsAsync(),
                     Times.Once);
 
-            this.pdsServiceMock.Verify(service =>
-                service.PatientLookupByNhsNumberAsync(inputNhsNumber),
-                    Times.Once);
-
-            this.patientServiceMock.Verify(service =>
-                service.GenerateValidationCodeAsync(),
-                    Times.Once);
-
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
-
-            this.patientServiceMock.Verify(service =>
-                service.ModifyPatientAsync(It.Is(SamePatientAs(updatedPatient))),
-                    Times.Once);
-
-            this.notificationServiceMock.Verify(service =>
-                service.SendCodeNotificationAsync(It.Is(SameNotificationInfoAs(inputNotificationInfo))),
-                        Times.Once);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.securityBrokerMock.VerifyNoOtherCalls();

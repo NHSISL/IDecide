@@ -80,6 +80,10 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             {
                 throw await CreateAndLogValidationExceptionAsync(invalidCaptchaException);
             }
+            catch (UnauthorizedPatientOrchestrationServiceException unauthorizedPatientOrchestrationServiceException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(unauthorizedPatientOrchestrationServiceException);
+            }
             catch (ValidPatientCodeExistsException validPatientCodeExistsException)
             {
                 throw await CreateAndLogValidationExceptionAsync(validPatientCodeExistsException);
