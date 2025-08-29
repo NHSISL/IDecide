@@ -41,7 +41,5 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
 
                 return await this.storageBroker.InsertConsumerStatusAsync(consumerStatus);
             });
-
-
     }
 }
