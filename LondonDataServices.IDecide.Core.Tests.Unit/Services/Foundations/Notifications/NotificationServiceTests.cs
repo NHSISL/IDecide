@@ -112,6 +112,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
 
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
+                .OnType<DateTimeOffset?>().Use(dateTimeOffset)
                 .OnProperty(decision => decision.CreatedBy).Use(userId)
                 .OnProperty(decision => decision.UpdatedBy).Use(userId)
                 .OnProperty(decision => decision.DecisionType).Use(new DecisionType
@@ -129,6 +130,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
 
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
+                .OnType<DateTimeOffset?>().Use(dateTimeOffset)
                 .OnProperty(patient => patient.NhsNumber).Use(GetRandomStringWithLengthOf(10))
                 .OnProperty(patient => patient.Title).Use(GetRandomStringWithLengthOf(35))
                 .OnProperty(patient => patient.GivenName).Use(GetRandomStringWithLengthOf(255))

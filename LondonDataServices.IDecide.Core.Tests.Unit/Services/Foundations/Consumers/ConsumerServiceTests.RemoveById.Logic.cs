@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Force.DeepCloner;
@@ -13,33 +14,44 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
     public partial class ConsumerServiceTests
     {
         [Fact]
-        public async Task ShouldRetrieveConsumerByIdAsync()
+        public async Task ShouldRemoveConsumerByIdAsync()
         {
             // given
+            Guid randomId = Guid.NewGuid();
+            Guid inputConsumerId = randomId;
             Consumer randomConsumer = CreateRandomConsumer();
-            Consumer inputConsumer = randomConsumer;
             Consumer storageConsumer = randomConsumer;
-            Consumer expectedConsumer = storageConsumer.DeepClone();
+            Consumer expectedInputConsumer = storageConsumer;
+            Consumer deletedConsumer = expectedInputConsumer;
+            Consumer expectedConsumer = deletedConsumer.DeepClone();
 
             this.storageBrokerMock.Setup(broker =>
-                    broker.SelectConsumerByIdAsync(inputConsumer.Id))
-                .ReturnsAsync(storageConsumer);
+                broker.SelectConsumerByIdAsync(inputConsumerId))
+                    .ReturnsAsync(storageConsumer);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.DeleteConsumerAsync(expectedInputConsumer))
+                    .ReturnsAsync(deletedConsumer);
 
             // when
-            Consumer actualConsumer =
-                await this.consumerService.RetrieveConsumerByIdAsync(inputConsumer.Id);
+            Consumer actualConsumer = await this.consumerService
+                .RemoveConsumerByIdAsync(inputConsumerId);
 
             // then
             actualConsumer.Should().BeEquivalentTo(expectedConsumer);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectConsumerByIdAsync(inputConsumer.Id),
-                    Times.Once());
+                broker.SelectConsumerByIdAsync(inputConsumerId),
+                    Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.DeleteConsumerAsync(expectedInputConsumer),
+                    Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.securityAuditBrokerMock.VerifyNoOtherCalls();
             this.securityBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }

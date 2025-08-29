@@ -80,5 +80,18 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Consumers
 
                 return await this.storageBroker.UpdateConsumerAsync(consumer);
             });
+
+        public ValueTask<Consumer> RemoveConsumerByIdAsync(Guid consumerId) =>
+            TryCatch(async () =>
+            {
+                ValidateConsumerId(consumerId);
+
+                Consumer maybeConsumer = await this.storageBroker
+                    .SelectConsumerByIdAsync(consumerId);
+
+                ValidateStorageConsumer(maybeConsumer, consumerId);
+
+                return await this.storageBroker.DeleteConsumerAsync(maybeConsumer);
+            });
     }
 }
