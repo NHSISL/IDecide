@@ -239,7 +239,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
                 .OnProperty(n => n.CreatedDate).IgnoreIt()
                 .OnProperty(n => n.UpdatedBy).IgnoreIt()
                 .OnProperty(n => n.UpdatedDate).IgnoreIt()
-                .OnProperty(n => n.Decisions).IgnoreIt();
+                .OnProperty(n => n.Decisions).IgnoreIt()
+                .OnProperty(n => n.NotificationPreference).IgnoreIt();
 
             return filler;
         }
