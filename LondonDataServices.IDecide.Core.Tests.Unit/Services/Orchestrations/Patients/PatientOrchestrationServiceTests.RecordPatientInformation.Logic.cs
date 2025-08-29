@@ -431,6 +431,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             DateTimeOffset outputDateTimeOffset = randomDateTimeOffest.DeepClone();
             Patient randomPatient = GetRandomPatientWithNhsNumber(inputNhsNumber);
             randomPatient.NotificationPreference = inputNotificationPreference;
+            randomPatient.RetryCount = 0;
             Patient outputPatient = randomPatient.DeepClone();
             List<Patient> randomPatients = GetRandomPatients();
             randomPatients.Add(outputPatient);

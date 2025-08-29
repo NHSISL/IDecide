@@ -154,7 +154,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
                 .OnType<DateTimeOffset?>().Use(dateTimeOffset)
-                .OnProperty(n => n.NhsNumber).Use(nhsNumber);
+                .OnProperty(n => n.NhsNumber).Use(nhsNumber)
+                .OnProperty(n => n.RetryCount).Use(0);
 
             return filler;
         }

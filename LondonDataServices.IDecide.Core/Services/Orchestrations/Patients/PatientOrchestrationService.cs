@@ -103,47 +103,46 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                 {
                     patientToRecord = await GenerateNewPatientWithCodeAsync(
                         nhsNumber, notificationPreferenceType, now);
+
+                    await SendValidationCodeNotificationAsync(patientToRecord);
+
+                    return;
                 }
-                else if (codeIsExpired is false
+                if (codeIsExpired is false
                     && maybeMatchingPatient.ValidationCodeMatchedOn is null
                     && generateNewCode is false)
                 {
                     throw new ValidPatientCodeExistsException(message:
-                                "A valid code already exists for this patient, please go to the enter code screen.");
+                        "A valid code already exists for this patient, please go to the enter code screen.");
                 }
-                else
+                if (isAuthenticatedUserWithRole)
                 {
-                    if (isAuthenticatedUserWithRole)
-                    {
-                        patientToRecord = await UpdatePatientWithNewCodeAsync(
-                            maybeMatchingPatient, notificationPreferenceType, now, true);
-                    }
-                    else
-                    {
-                        if (codeIsExpired)
-                        {
-                            patientToRecord = await UpdatePatientWithNewCodeAsync(
-                                maybeMatchingPatient, notificationPreferenceType, now, true);
-                        }
-                        else if (maybeMatchingPatient.RetryCount >= this.decisionConfigurations.MaxRetryCount)
-                        {
-                            throw new MaxRetryAttemptsExceededException(message:
-                                "The maximum number of validation attempts has been exceeded, please contact support.");
-                        }
-                        else
-                        {
-                            patientToRecord = await UpdatePatientWithNewCodeAsync(
-                                maybeMatchingPatient, notificationPreferenceType, now);
-                        }
-                    }
+                    patientToRecord = await UpdatePatientWithNewCodeAsync(
+                        maybeMatchingPatient, notificationPreferenceType, now, true);
+
+                    await SendValidationCodeNotificationAsync(patientToRecord);
+
+                    return;
+                }
+                if (codeIsExpired)
+                {
+                    patientToRecord = await UpdatePatientWithNewCodeAsync(
+                        maybeMatchingPatient, notificationPreferenceType, now, true);
+
+                    await SendValidationCodeNotificationAsync(patientToRecord);
+
+                    return;
+                }
+                if (maybeMatchingPatient.RetryCount >= this.decisionConfigurations.MaxRetryCount)
+                {
+                    throw new MaxRetryAttemptsExceededException(message:
+                        "The maximum number of validation attempts has been exceeded, please contact support.");
                 }
 
-                NotificationInfo notificationInfo = new NotificationInfo
-                {
-                    Patient = patientToRecord
-                };
+                patientToRecord = await UpdatePatientWithNewCodeAsync(
+                    maybeMatchingPatient, notificationPreferenceType, now);
 
-                await this.notificationService.SendCodeNotificationAsync(notificationInfo);
+                await SendValidationCodeNotificationAsync(patientToRecord);
             });
 
         virtual internal async ValueTask<Patient> GenerateNewPatientWithCodeAsync(
@@ -247,6 +246,16 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                     return false;
                 }
             }
+        }
+
+        virtual internal async ValueTask SendValidationCodeNotificationAsync(Patient patientToSend)
+        {
+            NotificationInfo notificationInfo = new NotificationInfo
+            {
+                Patient = patientToSend
+            };
+
+            await this.notificationService.SendCodeNotificationAsync(notificationInfo);
         }
     }
 }
