@@ -39,6 +39,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         private readonly PatientOrchestrationService patientOrchestrationService;
         private static readonly int expireAfterMinutes = 1440;
         private static readonly int retryCount = 3;
+        private static readonly List<string> decisionWorkflowRoles = new List<string> { "Administrator" };
         private readonly ICompareLogic compareLogic;
 
         public PatientOrchestrationServiceTests()
@@ -54,7 +55,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             this.decisionConfigurations = new DecisionConfigurations
             {
                 PatientValidationCodeExpireAfterMinutes = expireAfterMinutes,
-                MaxRetryCount = retryCount
+                MaxRetryCount = retryCount,
+                DecisionWorkflowRoles = decisionWorkflowRoles
             };
 
             this.patientOrchestrationService = new PatientOrchestrationService(
