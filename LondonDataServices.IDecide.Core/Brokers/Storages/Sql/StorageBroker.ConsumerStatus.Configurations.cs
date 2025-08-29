@@ -2,7 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using LondonDataServices.IDecide.Core.Models.Foundations.Consumers;
+using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerStatuses;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

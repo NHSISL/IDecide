@@ -2,14 +2,13 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using System;
 using Xeptions;
 
-namespace LondonDataServices.IDecide.Core.Models.Foundations.Consumers.Exceptions
+namespace LondonDataServices.IDecide.Core.Models.Foundations.ConsumerStatuses.Exceptions
 {
-    public class LockedConsumerException : Xeption
+    public class ConsumerStatusValidationException : Xeption
     {
-        public LockedConsumerException(string message, Exception innerException)
+        public ConsumerStatusValidationException(string message, Xeption innerException)
             : base(message, innerException)
         { }
     }
