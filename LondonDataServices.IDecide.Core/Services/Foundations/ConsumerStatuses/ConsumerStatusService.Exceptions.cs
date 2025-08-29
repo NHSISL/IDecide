@@ -3,6 +3,7 @@
 // ---------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerStatuses;
@@ -16,8 +17,10 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
     public partial class ConsumerStatusService
     {
         private delegate ValueTask<ConsumerStatus> ReturningConsumerStatusFunction();
+        private delegate ValueTask<IQueryable<ConsumerStatus>> ReturningConsumerStatusesFunction();
 
-        private async ValueTask<ConsumerStatus> TryCatch(ReturningConsumerStatusFunction returningConsumerStatusFunction)
+        private async ValueTask<ConsumerStatus> TryCatch(
+            ReturningConsumerStatusFunction returningConsumerStatusFunction)
         {
             try
             {
@@ -79,6 +82,33 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
                         innerException: databaseUpdateException);
 
                 throw await CreateAndLogDependencyException(failedConsumerStatusStorageException);
+            }
+            catch (Exception exception)
+            {
+                var failedConsumerStatusServiceException =
+                    new FailedConsumerStatusServiceException(
+                        message: "Failed consumerStatus service occurred, please contact support",
+                        innerException: exception);
+
+                throw await CreateAndLogServiceException(failedConsumerStatusServiceException);
+            }
+        }
+
+        private async ValueTask<IQueryable<ConsumerStatus>> TryCatch(
+            ReturningConsumerStatusesFunction returningConsumerStatusesFunction)
+        {
+            try
+            {
+                return await returningConsumerStatusesFunction();
+            }
+            catch (SqlException sqlException)
+            {
+                var failedConsumerStatusStorageException =
+                    new FailedConsumerStatusStorageException(
+                        message: "Failed consumerStatus storage error occurred, contact support.",
+                        innerException: sqlException);
+
+                throw await CreateAndLogCriticalDependencyException(failedConsumerStatusStorageException);
             }
             catch (Exception exception)
             {
