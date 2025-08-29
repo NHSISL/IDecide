@@ -33,6 +33,7 @@ using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions;
 using LondonDataServices.IDecide.Core.Services.Foundations.Audits;
 using LondonDataServices.IDecide.Core.Services.Foundations.Consumers;
+using LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses;
 using LondonDataServices.IDecide.Core.Services.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes;
 using LondonDataServices.IDecide.Core.Services.Foundations.Notifications;
@@ -267,6 +268,7 @@ namespace LondonDataServices.IDecide.Manage.Server
             services.AddTransient<IPatientService, PatientService>();
             services.AddTransient<INotificationService, NotificationService>();
             services.AddTransient<IConsumerService, ConsumerService>();
+            services.AddTransient<IConsumerStatusService, ConsumerStatusService>();
         }
 
         private static void AddProcessingServices(IServiceCollection services)

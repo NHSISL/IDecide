@@ -5,7 +5,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using LondonDataServices.IDecide.Core.Models.Foundations.Consumers;
+using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerStatuses;
 using Microsoft.EntityFrameworkCore;
 
 namespace LondonDataServices.IDecide.Core.Brokers.Storages.Sql
