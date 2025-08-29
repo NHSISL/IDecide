@@ -8,6 +8,7 @@ using FluentAssertions;
 using Force.DeepCloner;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
+using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
 using Moq;
 using Xeptions;
 
@@ -35,13 +36,23 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                         "please fix the errors and try again.",
                     innerException: dependencyValidationException.InnerException as Xeption);
 
-            this.securityBrokerMock.Setup(broker =>
-                broker.ValidateCaptchaAsync(inputCaptchaToken, ""))
+            var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
+                this.loggingBrokerMock.Object,
+                this.securityBrokerMock.Object,
+                this.dateTimeBrokerMock.Object,
+                this.pdsServiceMock.Object,
+                this.patientServiceMock.Object,
+                this.notificationServiceMock.Object,
+                this.decisionConfigurations)
+            { CallBase = true };
+
+            patientOrchestrationServiceMock.Setup(broker =>
+                broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(inputCaptchaToken))
                     .ThrowsAsync(dependencyValidationException);
 
             // when
             ValueTask recordPatientInformationTask =
-                 this.patientOrchestrationService.RecordPatientInformation(
+                 patientOrchestrationServiceMock.Object.RecordPatientInformation(
                     inputNhsNumber,
                     inputCaptchaToken,
                     notificationPreferenceString,
@@ -56,8 +67,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             actualPatientOrchestrationDependencyValidationException
                 .Should().BeEquivalentTo(expectedPatientOrchestrationDependencyValidationException);
 
-            this.securityBrokerMock.Verify(broker =>
-                broker.ValidateCaptchaAsync(inputCaptchaToken, ""),
+            patientOrchestrationServiceMock.Verify(broker =>
+                broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(inputCaptchaToken),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
@@ -93,13 +104,23 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                         "please fix the errors and try again.",
                     innerException: dependencyException.InnerException as Xeption);
 
-            this.securityBrokerMock.Setup(broker =>
-                broker.ValidateCaptchaAsync(inputCaptchaToken, ""))
+            var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
+                this.loggingBrokerMock.Object,
+                this.securityBrokerMock.Object,
+                this.dateTimeBrokerMock.Object,
+                this.pdsServiceMock.Object,
+                this.patientServiceMock.Object,
+                this.notificationServiceMock.Object,
+                this.decisionConfigurations)
+            { CallBase = true };
+
+            patientOrchestrationServiceMock.Setup(broker =>
+                broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(inputCaptchaToken))
                     .ThrowsAsync(dependencyException);
 
             // when
             ValueTask recordPatientInformationTask =
-                 this.patientOrchestrationService.RecordPatientInformation(
+                 patientOrchestrationServiceMock.Object.RecordPatientInformation(
                     inputNhsNumber,
                     inputCaptchaToken,
                     notificationPreferenceString,
@@ -114,8 +135,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             actualPatientOrchestrationDependencyException
                 .Should().BeEquivalentTo(expectedPatientOrchestrationDependencyException);
 
-            this.securityBrokerMock.Verify(broker =>
-                broker.ValidateCaptchaAsync(inputCaptchaToken, ""),
+            patientOrchestrationServiceMock.Verify(broker =>
+                broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(inputCaptchaToken),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
@@ -154,13 +175,23 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     message: "Patient orchestration service error occurred, contact support.",
                     innerException: failedServicePatientOrchestrationException);
 
-            this.securityBrokerMock.Setup(broker =>
-                broker.ValidateCaptchaAsync(inputCaptchaToken, ""))
+            var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
+                this.loggingBrokerMock.Object,
+                this.securityBrokerMock.Object,
+                this.dateTimeBrokerMock.Object,
+                this.pdsServiceMock.Object,
+                this.patientServiceMock.Object,
+                this.notificationServiceMock.Object,
+                this.decisionConfigurations)
+            { CallBase = true };
+
+            patientOrchestrationServiceMock.Setup(broker =>
+                broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(inputCaptchaToken))
                     .ThrowsAsync(serviceException);
 
             // when
             ValueTask recordPatientInformationTask =
-                 this.patientOrchestrationService.RecordPatientInformation(
+                 patientOrchestrationServiceMock.Object.RecordPatientInformation(
                     inputNhsNumber,
                     inputCaptchaToken,
                     notificationPreferenceString,
@@ -175,9 +206,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             actualPatientOrchestrationValidationException.Should().BeEquivalentTo(
                 expectedPatientOrchestrationServiceException);
 
-            this.securityBrokerMock.Verify(broker =>
-                broker.ValidateCaptchaAsync(inputCaptchaToken, ""),
-                    Times.Once);
+            patientOrchestrationServiceMock.Verify(broker =>
+                 broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(inputCaptchaToken),
+                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                broker.LogErrorAsync(It.Is(SameExceptionAs(

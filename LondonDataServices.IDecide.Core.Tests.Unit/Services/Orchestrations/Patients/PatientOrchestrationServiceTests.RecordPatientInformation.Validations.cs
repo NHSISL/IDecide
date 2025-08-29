@@ -7,6 +7,7 @@ using FluentAssertions;
 using Force.DeepCloner;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
+using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
 using Moq;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Patients
@@ -39,12 +40,22 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     message: "Patient orchestration validation error occurred, please fix the errors and try again.",
                     innerException: invalidPatientOrchestrationArgumentException);
 
-            this.securityBrokerMock.Setup(broker =>
-                broker.ValidateCaptchaAsync(inputCaptchaToken, ""))
+            var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
+               this.loggingBrokerMock.Object,
+               this.securityBrokerMock.Object,
+               this.dateTimeBrokerMock.Object,
+               this.pdsServiceMock.Object,
+               this.patientServiceMock.Object,
+               this.notificationServiceMock.Object,
+               this.decisionConfigurations)
+            { CallBase = true };
+
+            patientOrchestrationServiceMock.Setup(broker =>
+                broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(inputCaptchaToken))
                     .ThrowsAsync(invalidPatientOrchestrationArgumentException);
 
             // when
-            ValueTask recordPatientInformationAction = patientOrchestrationService.RecordPatientInformation(
+            ValueTask recordPatientInformationTask = patientOrchestrationServiceMock.Object.RecordPatientInformation(
                 invalidNhsNumber,
                 inputCaptchaToken,
                 notificationPreferenceString,
@@ -52,7 +63,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             PatientOrchestrationValidationException actualException =
                 await Assert.ThrowsAsync<PatientOrchestrationValidationException>(
-                    recordPatientInformationAction.AsTask);
+                    recordPatientInformationTask.AsTask);
 
             // then
             actualException.Should().BeEquivalentTo(expectedPatientOrchestrationValidationException);
@@ -97,12 +108,22 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     message: "Patient orchestration validation error occurred, please fix the errors and try again.",
                     innerException: invalidPatientOrchestrationArgumentException);
 
-            this.securityBrokerMock.Setup(broker =>
-                broker.ValidateCaptchaAsync(invalidCaptchaToken, ""))
+            var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
+               this.loggingBrokerMock.Object,
+               this.securityBrokerMock.Object,
+               this.dateTimeBrokerMock.Object,
+               this.pdsServiceMock.Object,
+               this.patientServiceMock.Object,
+               this.notificationServiceMock.Object,
+               this.decisionConfigurations)
+            { CallBase = true };
+
+            patientOrchestrationServiceMock.Setup(broker =>
+                broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(invalidCaptchaToken))
                     .ThrowsAsync(invalidPatientOrchestrationArgumentException);
 
             // when
-            ValueTask recordPatientInformationAction = patientOrchestrationService.RecordPatientInformation(
+            ValueTask recordPatientInformationTask = patientOrchestrationServiceMock.Object.RecordPatientInformation(
                 inputNhsNumber,
                 invalidCaptchaToken,
                 notificationPreferenceString,
@@ -110,7 +131,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             PatientOrchestrationValidationException actualException =
                 await Assert.ThrowsAsync<PatientOrchestrationValidationException>(
-                    recordPatientInformationAction.AsTask);
+                    recordPatientInformationTask.AsTask);
 
             // then
             actualException.Should().BeEquivalentTo(expectedPatientOrchestrationValidationException);
@@ -155,12 +176,22 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     message: "Patient orchestration validation error occurred, please fix the errors and try again.",
                     innerException: invalidPatientOrchestrationArgumentException);
 
-            this.securityBrokerMock.Setup(broker =>
-                broker.ValidateCaptchaAsync(inputCaptchaToken, ""))
+            var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
+               this.loggingBrokerMock.Object,
+               this.securityBrokerMock.Object,
+               this.dateTimeBrokerMock.Object,
+               this.pdsServiceMock.Object,
+               this.patientServiceMock.Object,
+               this.notificationServiceMock.Object,
+               this.decisionConfigurations)
+            { CallBase = true };
+
+            patientOrchestrationServiceMock.Setup(broker =>
+                broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(inputCaptchaToken))
                     .ThrowsAsync(invalidPatientOrchestrationArgumentException);
 
             // when
-            ValueTask recordPatientInformationAction = patientOrchestrationService.RecordPatientInformation(
+            ValueTask recordPatientInformationTask = patientOrchestrationServiceMock.Object.RecordPatientInformation(
                 inputNhsNumber,
                 inputCaptchaToken,
                 invalidNotificationPreference,
@@ -168,7 +199,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             PatientOrchestrationValidationException actualException =
                 await Assert.ThrowsAsync<PatientOrchestrationValidationException>(
-                    recordPatientInformationAction.AsTask);
+                    recordPatientInformationTask.AsTask);
 
             // then
             actualException.Should().BeEquivalentTo(expectedPatientOrchestrationValidationException);
@@ -207,12 +238,22 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     message: "Patient orchestration validation error occurred, please fix the errors and try again.",
                     innerException: invalidCaptchaPatientOrchestrationServiceException);
 
-            this.securityBrokerMock.Setup(broker =>
-                broker.ValidateCaptchaAsync(inputCaptchaToken, ""))
+            var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
+                 this.loggingBrokerMock.Object,
+                 this.securityBrokerMock.Object,
+                 this.dateTimeBrokerMock.Object,
+                 this.pdsServiceMock.Object,
+                 this.patientServiceMock.Object,
+                 this.notificationServiceMock.Object,
+                 this.decisionConfigurations)
+            { CallBase = true };
+
+            patientOrchestrationServiceMock.Setup(broker =>
+                broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(inputCaptchaToken))
                     .ThrowsAsync(invalidCaptchaPatientOrchestrationServiceException);
 
             // when
-            ValueTask recordPatientInformationAction = patientOrchestrationService.RecordPatientInformation(
+            ValueTask recordPatientInformationTask = patientOrchestrationServiceMock.Object.RecordPatientInformation(
                 inputNhsNumber,
                 inputCaptchaToken,
                 notificationPreferenceString,
@@ -220,14 +261,14 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             PatientOrchestrationValidationException actualException =
                 await Assert.ThrowsAsync<PatientOrchestrationValidationException>(
-                    recordPatientInformationAction.AsTask);
+                    recordPatientInformationTask.AsTask);
 
             // then
             actualException.Should().BeEquivalentTo(expectedPatientOrchestrationValidationException);
 
-            this.securityBrokerMock.Verify(broker =>
-                broker.ValidateCaptchaAsync(inputCaptchaToken, ""),
-                    Times.Once);
+            patientOrchestrationServiceMock.Verify(broker =>
+                 broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(inputCaptchaToken),
+                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                broker.LogErrorAsync(It.Is(SameExceptionAs(
@@ -263,27 +304,37 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     message: "Patient orchestration validation error occurred, please fix the errors and try again.",
                     innerException: validPatientCodeExistsException);
 
-            this.securityBrokerMock.Setup(broker =>
-                broker.ValidateCaptchaAsync(inputCaptchaToken, ""))
+            var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
+                this.loggingBrokerMock.Object,
+                this.securityBrokerMock.Object,
+                this.dateTimeBrokerMock.Object,
+                this.pdsServiceMock.Object,
+                this.patientServiceMock.Object,
+                this.notificationServiceMock.Object,
+                this.decisionConfigurations)
+            { CallBase = true };
+
+            patientOrchestrationServiceMock.Setup(broker =>
+                broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(inputCaptchaToken))
                     .ThrowsAsync(validPatientCodeExistsException);
 
             // when
-            ValueTask recordPatientInformationAction = patientOrchestrationService.RecordPatientInformation(
-                inputNhsNumber,
-                inputCaptchaToken,
-                notificationPreferenceString,
-                false);
+            ValueTask recordPatientInformationTask = patientOrchestrationServiceMock.Object.RecordPatientInformation(
+                 inputNhsNumber,
+                 inputCaptchaToken,
+                 notificationPreferenceString,
+                 false);
 
             PatientOrchestrationValidationException actualException =
                 await Assert.ThrowsAsync<PatientOrchestrationValidationException>(
-                    recordPatientInformationAction.AsTask);
+                    recordPatientInformationTask.AsTask);
 
             // then
             actualException.Should().BeEquivalentTo(expectedPatientOrchestrationValidationException);
 
-            this.securityBrokerMock.Verify(broker =>
-                broker.ValidateCaptchaAsync(inputCaptchaToken, ""),
-                    Times.Once);
+            patientOrchestrationServiceMock.Verify(broker =>
+                 broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(inputCaptchaToken),
+                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                broker.LogErrorAsync(It.Is(SameExceptionAs(

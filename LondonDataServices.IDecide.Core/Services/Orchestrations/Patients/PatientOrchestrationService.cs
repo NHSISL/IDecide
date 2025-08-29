@@ -92,7 +92,9 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                 Patient maybeMatchingPatient = patients.FirstOrDefault(patient => patient.NhsNumber == nhsNumber);
                 Patient patientToRecord = null;
                 DateTimeOffset now = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
-                bool codeIsExpired = maybeMatchingPatient.ValidationCodeExpiresOn <= now;
+
+                bool codeIsExpired =
+                    maybeMatchingPatient is null ? true : maybeMatchingPatient.ValidationCodeExpiresOn <= now;
 
                 Enum.TryParse(
                     notificationPreference, out NotificationPreference notificationPreferenceType);
@@ -102,7 +104,9 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                     patientToRecord = await GenerateNewPatientWithCodeAsync(
                         nhsNumber, notificationPreferenceType, now);
                 }
-                else if (codeIsExpired is false && generateNewCode is false)
+                else if (codeIsExpired is false
+                    && maybeMatchingPatient.ValidationCodeMatchedOn is null
+                    && generateNewCode is false)
                 {
                     throw new ValidPatientCodeExistsException(message:
                                 "A valid code already exists for this patient, please go to the enter code screen.");
