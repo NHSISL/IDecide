@@ -6,10 +6,10 @@ using Xeptions;
 
 namespace LondonDataServices.IDecide.Core.Models.Foundations.ConsumerStatuses.Exceptions
 {
-    public class ConsumerStatusDependencyValidationException : Xeption
+    public class NotFoundConsumerStatusException : Xeption
     {
-        public ConsumerStatusDependencyValidationException(string message, Xeption innerException)
-            : base(message, innerException)
+        public NotFoundConsumerStatusException(string message)
+            : base(message)
         { }
     }
 }

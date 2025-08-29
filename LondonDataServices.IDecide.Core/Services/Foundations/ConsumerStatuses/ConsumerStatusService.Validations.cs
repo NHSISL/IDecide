@@ -49,12 +49,75 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
                     Parameter: nameof(ConsumerStatus.CreatedDate)));
         }
 
+        private async ValueTask ValidateConsumerStatusOnModify(ConsumerStatus consumerStatus)
+        {
+            ValidateConsumerStatusIsNotNull(consumerStatus);
+            User currentUser = await this.securityBroker.GetCurrentUserAsync();
+
+            Validate<InvalidConsumerStatusException>(
+                message: "Invalid consumerStatus. Please correct the errors and try again.",
+                (Rule: IsInvalid(consumerStatus.Id), Parameter: nameof(ConsumerStatus.Id)),
+                (Rule: IsInvalid(consumerStatus.CreatedDate), Parameter: nameof(ConsumerStatus.CreatedDate)),
+                (Rule: IsInvalid(consumerStatus.CreatedBy), Parameter: nameof(ConsumerStatus.CreatedBy)),
+                (Rule: IsInvalid(consumerStatus.UpdatedDate), Parameter: nameof(ConsumerStatus.UpdatedDate)),
+                (Rule: IsInvalid(consumerStatus.UpdatedBy), Parameter: nameof(ConsumerStatus.UpdatedBy)),
+                (Rule: IsGreaterThan(consumerStatus.CreatedBy, 255), Parameter: nameof(ConsumerStatus.CreatedBy)),
+                (Rule: IsGreaterThan(consumerStatus.UpdatedBy, 255), Parameter: nameof(ConsumerStatus.UpdatedBy)),
+
+                (Rule: IsNotSame(
+                        first: currentUser.UserId,
+                        second: consumerStatus.UpdatedBy),
+                    Parameter: nameof(ConsumerStatus.UpdatedBy)),
+
+                (Rule: IsSame(
+                        firstDate: consumerStatus.UpdatedDate,
+                        secondDate: consumerStatus.CreatedDate,
+                        secondDateName: nameof(ConsumerStatus.CreatedDate)),
+                    Parameter: nameof(ConsumerStatus.UpdatedDate)),
+
+                (Rule: await IsNotRecentAsync(consumerStatus.UpdatedDate), Parameter: nameof(ConsumerStatus.UpdatedDate)));
+        }
+
+        private static void ValidateStorageConsumerStatus(ConsumerStatus maybeConsumerStatus, Guid consumerStatusId)
+        {
+            if (maybeConsumerStatus is null)
+            {
+                throw new NotFoundConsumerStatusException(
+                    message: $"Couldn't find consumerStatus with consumerStatusId: {consumerStatusId}.");
+            }
+        }
+
         private static void ValidateConsumerStatusIsNotNull(ConsumerStatus consumerStatus)
         {
             if (consumerStatus is null)
             {
                 throw new NullConsumerStatusException(message: "ConsumerStatus is null.");
             }
+        }
+
+        private static void ValidateAgainstStorageConsumerStatusOnModify(
+            ConsumerStatus inputConsumerStatus,
+            ConsumerStatus storageConsumerStatus)
+        {
+            Validate<InvalidConsumerStatusException>(
+                message: "Invalid consumerStatus. Please correct the errors and try again.",
+                (Rule: IsNotSame(
+                        firstDate: inputConsumerStatus.CreatedDate,
+                        secondDate: storageConsumerStatus.CreatedDate,
+                        secondDateName: nameof(ConsumerStatus.CreatedDate)),
+                    Parameter: nameof(ConsumerStatus.CreatedDate)),
+
+                (Rule: IsNotSame(
+                        first: inputConsumerStatus.CreatedBy,
+                        second: storageConsumerStatus.CreatedBy,
+                        secondName: nameof(ConsumerStatus.CreatedBy)),
+                    Parameter: nameof(ConsumerStatus.CreatedBy)),
+
+                (Rule: IsSame(
+                        firstDate: inputConsumerStatus.UpdatedDate,
+                        secondDate: storageConsumerStatus.UpdatedDate,
+                        secondDateName: nameof(ConsumerStatus.UpdatedDate)),
+                    Parameter: nameof(ConsumerStatus.UpdatedDate)));
         }
 
         private static dynamic IsInvalid(Guid id) => new

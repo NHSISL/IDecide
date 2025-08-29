@@ -40,6 +40,10 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
 
                 throw await CreateAndLogCriticalDependencyException(failedConsumerStatusStorageException);
             }
+            catch (NotFoundConsumerStatusException notFoundConsumerStatusException)
+            {
+                throw await CreateAndLogValidationException(notFoundConsumerStatusException);
+            }
             catch (DuplicateKeyException duplicateKeyException)
             {
                 var alreadyExistsConsumerStatusException =
@@ -57,6 +61,15 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
                         innerException: foreignKeyConstraintConflictException);
 
                 throw await CreateAndLogDependencyValidationException(invalidConsumerStatusReferenceException);
+            }
+            catch (DbUpdateConcurrencyException dbUpdateConcurrencyException)
+            {
+                var lockedConsumerStatusException =
+                    new LockedConsumerStatusException(
+                        message: "Locked consumerStatus record exception, please try again later",
+                        innerException: dbUpdateConcurrencyException);
+
+                throw await CreateAndLogDependencyValidationException(lockedConsumerStatusException);
             }
             catch (DbUpdateException databaseUpdateException)
             {
