@@ -3,8 +3,8 @@
 // ---------------------------------------------------------
 
 using System.Linq;
-using Hl7.FhirPath.Sprache;
 using System.Text.RegularExpressions;
+using Hl7.FhirPath.Sprache;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 
 namespace LondonDataServices.IDecide.Core.Extensions.Patients

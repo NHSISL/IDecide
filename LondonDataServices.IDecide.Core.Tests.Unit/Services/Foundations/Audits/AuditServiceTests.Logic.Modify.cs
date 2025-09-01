@@ -9,7 +9,6 @@ using Force.DeepCloner;
 using LondonDataServices.IDecide.Core.Models.Foundations.Audits;
 using LondonDataServices.IDecide.Core.Models.Securities;
 using Moq;
-using Xunit;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
 {

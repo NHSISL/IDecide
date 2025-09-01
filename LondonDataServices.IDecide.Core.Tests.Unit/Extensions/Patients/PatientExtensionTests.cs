@@ -72,7 +72,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Extensions.Patients
                 RetryCount = patient.RetryCount,
                 Title = patient.Title,
                 UpdatedBy = patient.UpdatedBy,
-                UpdatedDate= patient.UpdatedDate,
+                UpdatedDate = patient.UpdatedDate,
                 ValidationCode = patient.ValidationCode,
                 ValidationCodeExpiresOn = patient.ValidationCodeExpiresOn
             };

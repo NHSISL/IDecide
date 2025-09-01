@@ -1,8 +1,10 @@
-﻿using LondonDataServices.IDecide.Portal.Server.Models;
-using Microsoft.AspNetCore.Authorization;
+﻿// ---------------------------------------------------------
+// Copyright (c) North East London ICB. All rights reserved.
+// ---------------------------------------------------------
+
+using System;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using System;
 
 namespace LondonDataServices.IDecide.Portal.Server.Controllers
 {

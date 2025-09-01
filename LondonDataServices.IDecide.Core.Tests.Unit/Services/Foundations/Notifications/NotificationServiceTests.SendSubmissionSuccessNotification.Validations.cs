@@ -60,7 +60,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
         {
             // given
             NotificationPreference invalidNotificationPreference = (NotificationPreference)999;
-            
+
             var invalidNotificationInfo = new NotificationInfo
             {
                 Patient = new Patient

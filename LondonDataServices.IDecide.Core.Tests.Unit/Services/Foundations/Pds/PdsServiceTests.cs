@@ -3,20 +3,20 @@
 // ---------------------------------------------------------
 
 using System;
-using LondonDataServices.IDecide.Core.Brokers.Loggings;
-using LondonDataServices.IDecide.Core.Brokers.Pds;
-using LondonDataServices.IDecide.Core.Services.Foundations.Pds;
-using Moq;
-using Tynamix.ObjectFiller;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
-using Xeptions;
-using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
 using Hl7.Fhir.Model;
 using ISL.Providers.PDS.Abstractions.Models;
 using ISL.Providers.PDS.FakeFHIR.Mappers;
-using System.Collections.Generic;
+using LondonDataServices.IDecide.Core.Brokers.Loggings;
+using LondonDataServices.IDecide.Core.Brokers.Pds;
+using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
+using LondonDataServices.IDecide.Core.Services.Foundations.Pds;
+using Moq;
+using Tynamix.ObjectFiller;
+using Xeptions;
 using Patient = LondonDataServices.IDecide.Core.Models.Foundations.Patients.Patient;
-using System.Linq;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
 {
@@ -58,8 +58,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
             patient.BirthDate = GetRandomDateTimeOffset().ToString("yyyy-MM-dd");
             patient.Address = new List<Address> { CreateAddressFiller(withWhiteSpace).Create() };
 
-            patient.Telecom = new List<ContactPoint> { 
-                CreateContactPointFiller(ContactPoint.ContactPointSystem.Phone, withWhiteSpace).Create(), 
+            patient.Telecom = new List<ContactPoint> {
+                CreateContactPointFiller(ContactPoint.ContactPointSystem.Phone, withWhiteSpace).Create(),
                 CreateContactPointFiller(ContactPoint.ContactPointSystem.Email, withWhiteSpace).Create()
             };
 
@@ -233,12 +233,14 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
                 .OnProperty(n => n.Id).IgnoreIt()
                 .OnProperty(n => n.ValidationCode).IgnoreIt()
                 .OnProperty(n => n.ValidationCodeExpiresOn).IgnoreIt()
+                .OnProperty(n => n.ValidationCodeMatchedOn).IgnoreIt()
                 .OnProperty(n => n.RetryCount).IgnoreIt()
                 .OnProperty(n => n.CreatedBy).IgnoreIt()
                 .OnProperty(n => n.CreatedDate).IgnoreIt()
                 .OnProperty(n => n.UpdatedBy).IgnoreIt()
                 .OnProperty(n => n.UpdatedDate).IgnoreIt()
-                .OnProperty(n => n.Decisions).IgnoreIt();
+                .OnProperty(n => n.Decisions).IgnoreIt()
+                .OnProperty(n => n.NotificationPreference).IgnoreIt();
 
             return filler;
         }
