@@ -34,6 +34,7 @@ using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerStatuses;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
+using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Services.Foundations.Audits;
 using LondonDataServices.IDecide.Core.Services.Foundations.Consumers;
@@ -291,6 +292,12 @@ namespace LondonDataServices.IDecide.Portal.Server
 
         private static void AddOrchestrationServices(IServiceCollection services, IConfiguration configuration)
         {
+            DecisionConfigurations decisionConfigurations = configuration
+                .GetSection("DecisionConfigurations")
+                    .Get<DecisionConfigurations>() ??
+                        new DecisionConfigurations();
+
+            services.AddSingleton(decisionConfigurations);
             services.AddTransient<IPatientOrchestrationService, PatientOrchestrationService>();
         }
 

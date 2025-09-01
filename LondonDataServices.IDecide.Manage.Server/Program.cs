@@ -30,6 +30,7 @@ using LondonDataServices.IDecide.Core.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Brokers.Storages.Sql;
 using LondonDataServices.IDecide.Core.Models.Foundations.Audits;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
+using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions;
 using LondonDataServices.IDecide.Core.Services.Foundations.Audits;
 using LondonDataServices.IDecide.Core.Services.Foundations.Consumers;
 using LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses;
@@ -275,6 +276,12 @@ namespace LondonDataServices.IDecide.Manage.Server
 
         private static void AddOrchestrationServices(IServiceCollection services, IConfiguration configuration)
         {
+            DecisionConfigurations decisionConfigurations = configuration
+                .GetSection("DecisionConfigurations")
+                    .Get<DecisionConfigurations>() ??
+                        new DecisionConfigurations();
+
+            services.AddSingleton(decisionConfigurations);
             services.AddTransient<IPatientOrchestrationService, PatientOrchestrationService>();
         }
 
