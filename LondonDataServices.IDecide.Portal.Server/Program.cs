@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using System.IO;
 using System.Text.Json;
 using Attrify.Extensions;
@@ -27,7 +28,13 @@ using LondonDataServices.IDecide.Core.Brokers.Pds;
 using LondonDataServices.IDecide.Core.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Brokers.Storages.Sql;
 using LondonDataServices.IDecide.Core.Models.Brokers.Notifications;
+using LondonDataServices.IDecide.Core.Models.Foundations.Audits;
+using LondonDataServices.IDecide.Core.Models.Foundations.Consumers;
+using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerStatuses;
+using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
+using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
+using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions;
 using LondonDataServices.IDecide.Core.Services.Foundations.Audits;
 using LondonDataServices.IDecide.Core.Services.Foundations.Consumers;
@@ -38,10 +45,15 @@ using LondonDataServices.IDecide.Core.Services.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Services.Foundations.Pds;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.OData;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Identity.Web;
+using Microsoft.OData.Edm;
+using Microsoft.OData.ModelBuilder;
 
 namespace LondonDataServices.IDecide.Portal.Server
 {
@@ -76,6 +88,26 @@ namespace LondonDataServices.IDecide.Portal.Server
                 .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
 
+            // Add services to the container.
+            var azureAdOptions = builder.Configuration.GetSection("AzureAd");
+
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddMicrosoftIdentityWebApi(azureAdOptions);
+
+            var instance = builder.Configuration["AzureAd:Instance"];
+            var tenantId = builder.Configuration["AzureAd:TenantId"];
+            var scopes = builder.Configuration["AzureAd:Scopes"];
+            var missingKeys = new System.Collections.Generic.List<string>();
+            if (string.IsNullOrEmpty(instance)) missingKeys.Add("Instance");
+            if (string.IsNullOrEmpty(tenantId)) missingKeys.Add("TenantId");
+            if (string.IsNullOrEmpty(scopes)) missingKeys.Add("Scopes");
+
+            if (missingKeys.Count > 0)
+            {
+                throw new InvalidOperationException(
+                    $"AzureAd configuration is incomplete. Missing keys: {string.Join(", ", missingKeys)}. " +
+                    $"Please check appsettings.json.");
+            }
 
             builder.Services.AddSwaggerGen(configuration =>
             {
@@ -103,13 +135,18 @@ namespace LondonDataServices.IDecide.Portal.Server
             JsonNamingPolicy jsonNamingPolicy = JsonNamingPolicy.CamelCase;
 
             builder.Services.AddControllers()
-               .AddJsonOptions(options =>
-               {
-                   options.JsonSerializerOptions.PropertyNamingPolicy = jsonNamingPolicy;
-                   options.JsonSerializerOptions.DictionaryKeyPolicy = jsonNamingPolicy;
-                   options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
-                   options.JsonSerializerOptions.WriteIndented = true;
-               });
+                .AddOData(options =>
+                {
+                    options.AddRouteComponents("odata", GetEdmModel());
+                    options.Select().Filter().Expand().OrderBy().Count().SetMaxTop(100);
+                })
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.PropertyNamingPolicy = jsonNamingPolicy;
+                    options.JsonSerializerOptions.DictionaryKeyPolicy = jsonNamingPolicy;
+                    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+                    options.JsonSerializerOptions.WriteIndented = true;
+                });
         }
 
         public static void ConfigurePipeline(WebApplication app, InvisibleApiKey invisibleApiKey)
@@ -139,6 +176,22 @@ namespace LondonDataServices.IDecide.Portal.Server
             app.UseInvisibleApiMiddleware(invisibleApiKey);
             app.MapControllers().WithOpenApi();
             app.MapFallbackToFile("/index.html");
+        }
+
+        private static IEdmModel GetEdmModel()
+        {
+            ODataConventionModelBuilder builder =
+               new ODataConventionModelBuilder();
+
+            builder.EntitySet<Consumer>("Consumers");
+            builder.EntitySet<ConsumerStatus>("ConsumerStatuses");
+            builder.EntitySet<DecisionType>("DecisionTypes");
+            builder.EntitySet<Decision>("Decisions");
+            builder.EntitySet<Patient>("Patients");
+            builder.EntitySet<Audit>("Audits");
+            builder.EnableLowerCamelCase();
+
+            return builder.GetEdmModel();
         }
 
         private static void AddProviders(IServiceCollection services, IConfiguration configuration)
