@@ -108,6 +108,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
 
                     return;
                 }
+
                 if (codeIsExpired is false
                     && maybeMatchingPatient.ValidationCodeMatchedOn is null
                     && generateNewCode is false)
@@ -115,6 +116,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                     throw new ValidPatientCodeExistsException(message:
                         "A valid code already exists for this patient, please go to the enter code screen.");
                 }
+
                 if (isAuthenticatedUserWithRole)
                 {
                     patientToRecord = await UpdatePatientWithNewCodeAsync(
@@ -124,6 +126,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
 
                     return;
                 }
+
                 if (codeIsExpired)
                 {
                     patientToRecord = await UpdatePatientWithNewCodeAsync(
@@ -133,6 +136,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
 
                     return;
                 }
+
                 if (maybeMatchingPatient.RetryCount >= this.decisionConfigurations.MaxRetryCount)
                 {
                     throw new MaxRetryAttemptsExceededException(message:
@@ -161,7 +165,6 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             pdsPatient.ValidationCodeMatchedOn = null;
             pdsPatient.NotificationPreference = notificationPreference;
             Patient patientToRecord = pdsPatient;
-
             Patient recordedPatient = await this.patientService.AddPatientAsync(patientToRecord);
 
             return recordedPatient;
