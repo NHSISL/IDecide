@@ -101,6 +101,11 @@ namespace LondonDataServices.IDecide.Portal.Server
             if (string.IsNullOrEmpty(tenantId)) missingKeys.Add("TenantId");
             if (string.IsNullOrEmpty(scopes)) missingKeys.Add("Scopes");
 
+            var missingKeys = new System.Collections.Generic.List<string>();
+            if (string.IsNullOrEmpty(instance)) missingKeys.Add("Instance");
+            if (string.IsNullOrEmpty(tenantId)) missingKeys.Add("TenantId");
+            if (string.IsNullOrEmpty(scopes)) missingKeys.Add("Scopes");
+
             if (missingKeys.Count > 0)
             {
                 throw new InvalidOperationException(
