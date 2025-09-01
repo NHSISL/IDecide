@@ -4,6 +4,7 @@
 
 using System;
 using System.Linq;
+using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
@@ -38,12 +39,44 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                 Parameter: nameof(nhsNumber)));
         }
 
+        private static void ValidateRecordPatientInformationArguments(
+            string nhsNumber,
+            string captchaToken,
+            string notificationPreference)
+        {
+            Validate(
+                (Rule: IsInvalidIdentifier(nhsNumber),
+                Parameter: nameof(nhsNumber)),
+
+                (Rule: IsInvalid(captchaToken),
+                Parameter: nameof(captchaToken)),
+
+                (Rule: IsInvalidNotificationPreference(notificationPreference),
+                Parameter: nameof(notificationPreference)));
+        }
+
         private static void ValidatePatientIsNotNull(Patient patient)
         {
             if (patient is null)
             {
                 throw new NullPatientException("Patient is null.");
             }
+        }
+
+        private static dynamic IsInvalid(string value) => new
+        {
+            Condition = string.IsNullOrWhiteSpace(value),
+            Message = "Text is invalid"
+        };
+
+        private static dynamic IsInvalidNotificationPreference(string notificationPreference)
+        {
+            return new
+            {
+                Condition = !(Enum.TryParse<NotificationPreference>(notificationPreference, true, out var preference)
+                    && Enum.IsDefined(typeof(NotificationPreference), preference)),
+                Message = "Text is not a valid notification preference"
+            };
         }
 
         private static dynamic IsInvalidIdentifier(string name) => new
