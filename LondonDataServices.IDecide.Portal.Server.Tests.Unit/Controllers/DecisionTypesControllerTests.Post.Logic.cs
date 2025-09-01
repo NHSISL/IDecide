@@ -34,7 +34,8 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Decisi
                     .ReturnsAsync(addedDecisionType);
 
             // when
-            ActionResult<DecisionType> actualActionResult = await decisionTypesController.PostDecisionTypeAsync(randomDecisionType);
+            ActionResult<DecisionType> actualActionResult = 
+                await decisionTypesController.PostDecisionTypeAsync(randomDecisionType);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);

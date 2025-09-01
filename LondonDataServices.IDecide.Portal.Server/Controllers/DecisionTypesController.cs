@@ -25,7 +25,6 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
             this.decisionTypeService = decisionTypeService;
 
         [HttpPost]
-        //[InvisibleApi]
         [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators,DecisionTypes.Create")]
         public async ValueTask<ActionResult<DecisionType>> PostDecisionTypeAsync([FromBody] DecisionType decisionType)
         {
@@ -66,7 +65,6 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
 #if DEBUG
         [EnableQuery(PageSize = 5000)]
 #endif
-        //[InvisibleApi]
         [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators,DecisionTypes.Read")]
         public async ValueTask<ActionResult<IQueryable<DecisionType>>> Get()
         {
@@ -88,7 +86,6 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
         }
 
         [HttpGet("{decisionTypeId}")]
-        //[InvisibleApi]
         [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators,DecisionTypes.Read")]
         public async ValueTask<ActionResult<DecisionType>> GetDecisionTypeByIdAsync(Guid decisionTypeId)
         {
@@ -122,7 +119,6 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
         }
 
         [HttpPut]
-        //[InvisibleApi]
         [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators,DecisionTypes.Update")]
         public async ValueTask<ActionResult<DecisionType>> PutDecisionTypeAsync([FromBody] DecisionType decisionType)
         {
@@ -162,7 +158,6 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
         }
 
         [HttpDelete("{decisionTypeId}")]
-        //[InvisibleApi]
         [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators,DecisionTypes.Delete")]
         public async ValueTask<ActionResult<DecisionType>> DeleteDecisionTypeByIdAsync(Guid decisionTypeId)
         {

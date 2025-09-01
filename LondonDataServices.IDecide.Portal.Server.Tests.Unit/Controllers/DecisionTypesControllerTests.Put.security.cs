@@ -78,28 +78,5 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Decisi
             // Then
             attribute.Should().BeNull();
         }
-
-        //[Fact]
-        //public void PutShouldHaveInvisibleApiAttribute()
-        //{
-        //    // Given
-        //    var controllerType = typeof(DecisionTypesController);
-        //    var methodInfo = controllerType.GetMethod("PutDecisionTypeAsync");
-        //    Type attributeType = typeof(InvisibleApiAttribute);
-        //
-        //    // When
-        //    var methodAttribute = methodInfo?
-        //        .GetCustomAttributes(attributeType, inherit: true)
-        //        .FirstOrDefault();
-        //
-        //    var controllerAttribute = controllerType
-        //        .GetCustomAttributes(attributeType, inherit: true)
-        //        .FirstOrDefault();
-        //
-        //    var attribute = methodAttribute ?? controllerAttribute;
-        //
-        //    // Then
-        //    attribute.Should().NotBeNull();
-        //}
     }
 }

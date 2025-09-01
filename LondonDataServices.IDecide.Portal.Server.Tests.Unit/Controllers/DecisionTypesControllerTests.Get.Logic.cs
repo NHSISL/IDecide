@@ -34,7 +34,8 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Decisi
                     .ReturnsAsync(storageDecisionType);
 
             // when
-            ActionResult<DecisionType> actualActionResult = await decisionTypesController.GetDecisionTypeByIdAsync(inputId);
+            ActionResult<DecisionType> actualActionResult = 
+                await decisionTypesController.GetDecisionTypeByIdAsync(inputId);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);

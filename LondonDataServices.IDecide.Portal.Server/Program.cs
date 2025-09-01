@@ -96,11 +96,16 @@ namespace LondonDataServices.IDecide.Portal.Server
             var instance = builder.Configuration["AzureAd:Instance"];
             var tenantId = builder.Configuration["AzureAd:TenantId"];
             var scopes = builder.Configuration["AzureAd:Scopes"];
+            var missingKeys = new System.Collections.Generic.List<string>();
+            if (string.IsNullOrEmpty(instance)) missingKeys.Add("Instance");
+            if (string.IsNullOrEmpty(tenantId)) missingKeys.Add("TenantId");
+            if (string.IsNullOrEmpty(scopes)) missingKeys.Add("Scopes");
 
-            if (string.IsNullOrEmpty(instance) || string.IsNullOrEmpty(tenantId) || string.IsNullOrEmpty(scopes))
+            if (missingKeys.Count > 0)
             {
                 throw new InvalidOperationException(
-                    "AzureAd configuration is incomplete. Please check appsettings.json.");
+                    $"AzureAd configuration is incomplete. Missing keys: {string.Join(", ", missingKeys)}. " +
+                    $"Please check appsettings.json.");
             }
 
             builder.Services.AddSwaggerGen(configuration =>

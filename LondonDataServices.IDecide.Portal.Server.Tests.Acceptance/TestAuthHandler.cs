@@ -44,6 +44,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
             var invisibleApiKey = Options.InvisibleApiKey;
+            
             if (invisibleApiKey != null && !string.IsNullOrWhiteSpace(invisibleApiKey.Key))
             {
                 claims.Add(new Claim(ClaimTypes.Role, invisibleApiKey.Key));
