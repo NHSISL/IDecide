@@ -34,8 +34,8 @@ using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerStatuses;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
-using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
+using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions;
 using LondonDataServices.IDecide.Core.Services.Foundations.Audits;
 using LondonDataServices.IDecide.Core.Services.Foundations.Consumers;
 using LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses;
@@ -97,11 +97,6 @@ namespace LondonDataServices.IDecide.Portal.Server
             var instance = builder.Configuration["AzureAd:Instance"];
             var tenantId = builder.Configuration["AzureAd:TenantId"];
             var scopes = builder.Configuration["AzureAd:Scopes"];
-            var missingKeys = new System.Collections.Generic.List<string>();
-            if (string.IsNullOrEmpty(instance)) missingKeys.Add("Instance");
-            if (string.IsNullOrEmpty(tenantId)) missingKeys.Add("TenantId");
-            if (string.IsNullOrEmpty(scopes)) missingKeys.Add("Scopes");
-
             var missingKeys = new System.Collections.Generic.List<string>();
             if (string.IsNullOrEmpty(instance)) missingKeys.Add("Instance");
             if (string.IsNullOrEmpty(tenantId)) missingKeys.Add("TenantId");
