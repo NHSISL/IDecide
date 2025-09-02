@@ -37,6 +37,10 @@ namespace LondonDataServices.IDecide.Core.Brokers.Storages.Sql
                 .IsRequired();
 
             model
+                .Property(status => status.AdoptionDate)
+                .IsRequired();
+
+            model
                 .Property(status => status.CreatedDate)
                 .IsRequired();
 

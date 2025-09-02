@@ -21,6 +21,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
             Validate<InvalidConsumerStatusException>(
                 message: "Invalid consumerStatus. Please correct the errors and try again.",
                 (Rule: IsInvalid(consumerStatus.Id), Parameter: nameof(ConsumerStatus.Id)),
+                (Rule: IsInvalid(consumerStatus.AdoptionDate), Parameter: nameof(ConsumerStatus.AdoptionDate)),
                 (Rule: IsInvalid(consumerStatus.CreatedDate), Parameter: nameof(ConsumerStatus.CreatedDate)),
                 (Rule: IsInvalid(consumerStatus.CreatedBy), Parameter: nameof(ConsumerStatus.CreatedBy)),
                 (Rule: IsInvalid(consumerStatus.UpdatedDate), Parameter: nameof(ConsumerStatus.UpdatedDate)),
@@ -57,6 +58,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
             Validate<InvalidConsumerStatusException>(
                 message: "Invalid consumerStatus. Please correct the errors and try again.",
                 (Rule: IsInvalid(consumerStatus.Id), Parameter: nameof(ConsumerStatus.Id)),
+                (Rule: IsInvalid(consumerStatus.AdoptionDate), Parameter: nameof(ConsumerStatus.AdoptionDate)),
                 (Rule: IsInvalid(consumerStatus.CreatedDate), Parameter: nameof(ConsumerStatus.CreatedDate)),
                 (Rule: IsInvalid(consumerStatus.CreatedBy), Parameter: nameof(ConsumerStatus.CreatedBy)),
                 (Rule: IsInvalid(consumerStatus.UpdatedDate), Parameter: nameof(ConsumerStatus.UpdatedDate)),

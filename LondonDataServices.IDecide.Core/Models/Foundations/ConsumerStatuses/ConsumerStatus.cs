@@ -16,6 +16,7 @@ namespace LondonDataServices.IDecide.Core.Models.Foundations.ConsumerStatuses
         public Guid ConsumerId { get; set; }
         public Guid DecisionId { get; set; }
         public string CreatedBy { get; set; }
+        public DateTimeOffset AdoptionDate { get; set; }
         public DateTimeOffset CreatedDate { get; set; }
         public string UpdatedBy { get; set; }
         public DateTimeOffset UpdatedDate { get; set; }
