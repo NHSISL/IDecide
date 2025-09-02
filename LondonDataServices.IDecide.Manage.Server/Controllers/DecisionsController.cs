@@ -5,7 +5,6 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Attrify.Attributes;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions.Exceptions;
 using LondonDataServices.IDecide.Core.Services.Foundations.Decisions;
@@ -14,7 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using RESTFulSense.Controllers;
 
-namespace LondonDataServices.IDecide.Portal.Server.Controllers
+namespace LondonDataServices.IDecide.Manage.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -26,8 +25,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
             this.decisionService = decisionService;
 
         [HttpPost]
-        [InvisibleApi]
-        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators,Decisions.Create")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,Decisions.Create")]
         public async ValueTask<ActionResult<Decision>> PostDecisionAsync([FromBody] Decision decision)
         {
             try
@@ -67,8 +65,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
 #if DEBUG
         [EnableQuery(PageSize = 5000)]
 #endif
-        [InvisibleApi]
-        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators,Decisions.Read")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,Decisions.Read")]
         public async ValueTask<ActionResult<IQueryable<Decision>>> Get()
         {
             try
@@ -89,8 +86,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
         }
 
         [HttpGet("{decisionId}")]
-        [InvisibleApi]
-        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators,Decisions.Read")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,Decisions.Read")]
         public async ValueTask<ActionResult<Decision>> GetDecisionByIdAsync(Guid decisionId)
         {
             try
@@ -123,8 +119,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
         }
 
         [HttpPut]
-        [InvisibleApi]
-        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators,Decisions.Update")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,Decisions.Update")]
         public async ValueTask<ActionResult<Decision>> PutDecisionAsync([FromBody] Decision decision)
         {
             try
@@ -163,8 +158,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
         }
 
         [HttpDelete("{decisionId}")]
-        [InvisibleApi]
-        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators,Decisions.Delete")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,Decisions.Delete")]
         public async ValueTask<ActionResult<Decision>> DeleteDecisionByIdAsync(Guid decisionId)
         {
             try

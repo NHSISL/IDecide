@@ -5,6 +5,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Attrify.Attributes;
 using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
 using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes.Exceptions;
 using LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes;
@@ -25,6 +26,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
             this.decisionTypeService = decisionTypeService;
 
         [HttpPost]
+        [InvisibleApi]
         [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators,DecisionTypes.Create")]
         public async ValueTask<ActionResult<DecisionType>> PostDecisionTypeAsync([FromBody] DecisionType decisionType)
         {
@@ -119,6 +121,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
         }
 
         [HttpPut]
+        [InvisibleApi]
         [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators,DecisionTypes.Update")]
         public async ValueTask<ActionResult<DecisionType>> PutDecisionTypeAsync([FromBody] DecisionType decisionType)
         {
@@ -158,6 +161,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
         }
 
         [HttpDelete("{decisionTypeId}")]
+        [InvisibleApi]
         [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators,DecisionTypes.Delete")]
         public async ValueTask<ActionResult<DecisionType>> DeleteDecisionTypeByIdAsync(Guid decisionTypeId)
         {
