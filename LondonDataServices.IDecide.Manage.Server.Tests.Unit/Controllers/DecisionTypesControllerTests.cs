@@ -17,7 +17,6 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Decisi
 {
     public partial class DecisionTypesControllerTests : RESTFulController
     {
-
         private readonly Mock<IDecisionTypeService> decisionTypeServiceMock;
         private readonly DecisionTypesController decisionTypesController;
 
