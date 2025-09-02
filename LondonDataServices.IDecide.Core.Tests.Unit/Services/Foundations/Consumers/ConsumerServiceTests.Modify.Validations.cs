@@ -79,7 +79,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
 
             var invalidConsumer = new Consumer
             {
-                Name = invalidText
+                Name = invalidText,
+                AccessToken = invalidText,
             };
 
             var invalidConsumerException =
@@ -92,6 +93,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
 
             invalidConsumerException.AddData(
                 key: nameof(Consumer.Name),
+                values: "Text is required");
+
+            invalidConsumerException.AddData(
+                key: nameof(Consumer.AccessToken),
                 values: "Text is required");
 
             invalidConsumerException.AddData(
@@ -180,6 +185,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
 
             var invalidConsumer = CreateRandomModifyConsumer(GetRandomDateTimeOffset(), userId: randomUserId);
             invalidConsumer.Name = GetRandomStringWithLengthOf(256);
+            invalidConsumer.AccessToken = GetRandomStringWithLengthOf(37);
 
             var invalidConsumerException =
                 new InvalidConsumerException(
@@ -188,6 +194,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
             invalidConsumerException.AddData(
                 key: nameof(Consumer.Name),
                 values: $"Text exceed max length of {invalidConsumer.Name.Length - 1} characters");
+
+            invalidConsumerException.AddData(
+                key: nameof(Consumer.AccessToken),
+                values: $"Text exceed max length of {invalidConsumer.AccessToken.Length - 1} characters");
 
             var expectedConsumerValidationException =
                 new ConsumerValidationException(
