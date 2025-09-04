@@ -5,7 +5,6 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Attrify.Attributes;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients.Exceptions;
 using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
@@ -14,7 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using RESTFulSense.Controllers;
 
-namespace LondonDataServices.IDecide.Portal.Server.Controllers
+namespace LondonDataServices.IDecide.Manage.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -26,8 +25,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
             this.patientService = patientService;
 
         [HttpPost]
-        [InvisibleApi]
-        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators,Patients.Create")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,Patients.Create")]
         public async ValueTask<ActionResult<Patient>> PostPatientAsync([FromBody] Patient patient)
         {
             try
@@ -67,8 +65,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
 #if DEBUG
         [EnableQuery(PageSize = 5000)]
 #endif
-        [InvisibleApi]
-        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators,Patients.Read")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,Patients.Read")]
         public async ValueTask<ActionResult<IQueryable<Patient>>> Get()
         {
             try
@@ -89,8 +86,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
         }
 
         [HttpGet("{patientId}")]
-        [InvisibleApi]
-        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators,Patients.Read")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,Patients.Read")]
         public async ValueTask<ActionResult<Patient>> GetPatientByIdAsync(Guid patientId)
         {
             try
@@ -123,8 +119,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
         }
 
         [HttpPut]
-        [InvisibleApi]
-        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators,Patients.Update")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,Patients.Update")]
         public async ValueTask<ActionResult<Patient>> PutPatientAsync([FromBody] Patient patient)
         {
             try
@@ -163,8 +158,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
         }
 
         [HttpDelete("{patientId}")]
-        [InvisibleApi]
-        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators,Patients.Delete")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,Patients.Delete")]
         public async ValueTask<ActionResult<Patient>> DeletePatientByIdAsync(Guid patientId)
         {
             try
