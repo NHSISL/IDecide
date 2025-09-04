@@ -8,6 +8,7 @@ using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
 using LondonDataServices.IDecide.Portal.Server.Controllers;
+using LondonDataServices.IDecide.Portal.Server.Models;
 using Moq;
 using RESTFulSense.Controllers;
 using Tynamix.ObjectFiller;
@@ -65,14 +66,6 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Patien
         private static int GetRandomNumber() =>
             new IntRange(max: 15, min: 2).GetValue();
 
-        private static string GenerateRandom10DigitNumber()
-        {
-            Random random = new Random();
-            var randomNumber = random.Next(1000000000, 2000000000).ToString();
-
-            return randomNumber;
-        }
-
         private static string GetRandomString() =>
             new MnemonicString(wordCount: GetRandomNumber()).GetValue();
 
@@ -107,18 +100,14 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Patien
             return filler;
         }
 
-        private static Patient GetRandomPatientWithNhsNumber(string nhsNumber) =>
-            CreatePatientFillerWithNhsNumber(nhsNumber).Create();
+        private static GenerateCodeRequest GetRandomGenerateCodeRequest() =>
+           CreateGenerateCodeRequestFiller().Create();
 
-        private static Filler<Patient> CreatePatientFillerWithNhsNumber(string nhsNumber = "1234567890")
+        private static Filler<GenerateCodeRequest> CreateGenerateCodeRequestFiller()
         {
-            DateTimeOffset dateTimeOffset = DateTimeOffset.UtcNow;
-            var filler = new Filler<Patient>();
+            var filler = new Filler<GenerateCodeRequest>();
 
-            filler.Setup()
-                .OnType<DateTimeOffset>().Use(dateTimeOffset)
-                .OnType<DateTimeOffset?>().Use(dateTimeOffset)
-                .OnProperty(n => n.NhsNumber).Use(nhsNumber);
+            filler.Setup();
 
             return filler;
         }
