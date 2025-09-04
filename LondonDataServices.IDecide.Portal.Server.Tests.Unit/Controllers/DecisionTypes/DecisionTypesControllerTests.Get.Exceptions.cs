@@ -55,11 +55,11 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Decisi
             // given
             Guid someId = Guid.NewGuid();
 
-            InternalServerErrorObjectResult expectedBadRequestObjectResult =
+            InternalServerErrorObjectResult expectedInternalServerErrorObjectResult =
                 InternalServerError(validationException);
 
             var expectedActionResult =
-                new ActionResult<DecisionType>(expectedBadRequestObjectResult);
+                new ActionResult<DecisionType>(expectedInternalServerErrorObjectResult);
 
             this.decisionTypeServiceMock.Setup(service =>
                 service.RetrieveDecisionTypeByIdAsync(It.IsAny<Guid>()))

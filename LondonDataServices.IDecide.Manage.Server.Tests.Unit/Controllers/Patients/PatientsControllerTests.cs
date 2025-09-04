@@ -96,10 +96,18 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Patien
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
                 .OnType<DateTimeOffset?>().Use(dateTimeOffset)
-
-                // TODO:  Add your property configurations here
-
+                .OnProperty(patient => patient.NhsNumber).Use(GetRandomStringWithLengthOf(10))
+                .OnProperty(patient => patient.Title).Use(GetRandomStringWithLengthOf(35))
+                .OnProperty(patient => patient.GivenName).Use(GetRandomStringWithLengthOf(255))
+                .OnProperty(patient => patient.Surname).Use(GetRandomStringWithLengthOf(255))
+                .OnProperty(patient => patient.Gender).Use(GetRandomStringWithLengthOf(50))
+                .OnProperty(patient => patient.Email).Use(GetRandomStringWithLengthOf(255))
+                .OnProperty(patient => patient.Phone).Use(GetRandomStringWithLengthOf(15))
+                .OnProperty(patient => patient.PostCode).Use(GetRandomStringWithLengthOf(8))
+                .OnProperty(patient => patient.ValidationCode).Use(GetRandomStringWithLengthOf(5))
+                .OnProperty(patient => patient.CreatedDate).Use(dateTimeOffset)
                 .OnProperty(patient => patient.CreatedBy).Use(user)
+                .OnProperty(patient => patient.UpdatedDate).Use(dateTimeOffset)
                 .OnProperty(patient => patient.UpdatedBy).Use(user);
 
             return filler;

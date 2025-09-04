@@ -55,11 +55,11 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Patien
             // given
             Patient somePatient = CreateRandomPatient();
 
-            InternalServerErrorObjectResult expectedBadRequestObjectResult =
+            InternalServerErrorObjectResult expectedInternalServerErrorObjectResult =
                 InternalServerError(validationException);
 
             var expectedActionResult =
-                new ActionResult<Patient>(expectedBadRequestObjectResult);
+                new ActionResult<Patient>(expectedInternalServerErrorObjectResult);
 
             this.patientServiceMock.Setup(service =>
                 service.ModifyPatientAsync(It.IsAny<Patient>()))
