@@ -2,14 +2,11 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using LondonDataServices.IDecide.Portal.Server.Tests.Integration.Brokers;
-using LondonDataServices.IDecide.Portal.Server.Tests.Integration.Models.DecisionTypes;
+using LondonDataServices.IDecide.Manage.Server.Tests.Integration.Brokers;
+using LondonDataServices.IDecide.Manage.Server.Tests.Integration.Models.DecisionTypes;
 using Tynamix.ObjectFiller;
 
-namespace LondonDataServices.IDecide.Portal.Server.Tests.Integration.Apis
+namespace LondonDataServices.IDecide.Manage.Server.Tests.Integration.Apis
 {
     [Collection(nameof(ApiTestCollection))]
     public partial class DecisionTypeApiTests
@@ -63,6 +60,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Integration.Apis
 
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(now)
+                .OnProperty(decisionType => decisionType.Name).Use(GetRandomStringWithLengthOf(255))
                 .OnProperty(decisionType => decisionType.CreatedDate).Use(now)
                 .OnProperty(decisionType => decisionType.CreatedBy).Use(user)
                 .OnProperty(decisionType => decisionType.UpdatedDate).Use(now)
