@@ -60,6 +60,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Integration.Apis
 
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(now)
+                .OnType<DateTimeOffset?>().Use(now)
                 .OnProperty(patient => patient.NhsNumber).Use(GetRandomStringWithLengthOf(10))
                 .OnProperty(patient => patient.Title).Use(GetRandomStringWithLengthOf(35))
                 .OnProperty(patient => patient.GivenName).Use(GetRandomStringWithLengthOf(255))
