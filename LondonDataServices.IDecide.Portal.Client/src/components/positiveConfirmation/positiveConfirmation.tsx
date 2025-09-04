@@ -4,15 +4,19 @@ import { patientViewService } from "../../services/views/patientViewService";
 import { GenerateCodeRequest } from "../../models/patients/generateCodeRequest";
 import { Row, Col, Alert } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
-
+import { loadRecaptchaScript } from "../../helpers/recaptureLoad";
+import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
 interface PositiveConfirmationProps {
     goToConfirmCode: (createdPatient: GenerateCodeRequest) => void;
 }
 
 const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirmCode }) => {
     const { t: translate } = useTranslation();
+    const { configuration } = useFrontendConfiguration();
     const { createdPatient, powerOfAttourney } = useStep();
-    const updatePatient = patientViewService.useUpdatePatient();
+    const updatePatient = patientViewService.useAddPatient();
+
+    const RECAPTCHA_SITE_KEY = configuration.recaptchaSiteKey;
 
     if (!createdPatient) {
         return <div>{translate("PositiveConfirmation.noPatientDetails")}</div>;
@@ -20,7 +24,7 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
 
     const patientToUpdate = new GenerateCodeRequest(createdPatient);
 
-    const handleSubmit = (method: "Email" | "SMS" | "Letter") => {
+    const handleSubmit = async (method: "Email" | "SMS" | "Letter") => {
         patientToUpdate.notificationPreference = method;
 
         if (powerOfAttourney) {
@@ -29,18 +33,35 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
             patientToUpdate.poaRelationship = powerOfAttourney.relationship;
         }
 
-        updatePatient.mutate(patientToUpdate, {
-            onSuccess: () => {
-                goToConfirmCode(patientToUpdate);
-            },
-            onError: (error: unknown) => {
-                if (error instanceof Error) {
-                    console.error("Error updating patient:", error.message);
-                } else {
-                    console.error("Error updating patient:", error);
+        await loadRecaptchaScript(RECAPTCHA_SITE_KEY);
+
+        if (typeof grecaptcha === "undefined") {
+            console.error("reCAPTCHA not loaded");
+            return;
+        }
+
+        try {
+            const token = await grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: "submit" });
+
+            updatePatient.mutate(
+                patientToUpdate,
+                {
+                    headers: { "X-Recaptcha-Token": token },
+                    onSuccess: () => {
+                        goToConfirmCode(patientToUpdate);
+                    },
+                    onError: (error: unknown) => {
+                        if (error instanceof Error) {
+                            console.error("Error updating patient:", error.message);
+                        } else {
+                            console.error("Error updating patient:", error);
+                        }
+                    }
                 }
-            }
-        });
+            );
+        } catch (err) {
+            console.error("Error executing reCAPTCHA:", err);
+        }
     };
 
     return (

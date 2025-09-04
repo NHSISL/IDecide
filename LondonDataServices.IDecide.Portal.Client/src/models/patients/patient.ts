@@ -2,7 +2,7 @@ export class Patient {
     public id: string = "";
     public nhsNumber: string = "";
     public title: string = "";
-    public givenName: string = "";
+    public givenName: string[] = []; // Changed from string to string[]
     public surname: string = "";
     public dateOfBirth?: Date;
     public gender: string = "";
@@ -23,7 +23,14 @@ export class Patient {
             this.id = patient.id ?? "";
             this.nhsNumber = patient.nhsNumber ?? "";
             this.title = patient.title ?? "";
-            this.givenName = patient.givenName ?? "";
+            // Accepts string or string[] for compatibility
+            if (Array.isArray(patient.givenName)) {
+                this.givenName = patient.givenName;
+            } else if (typeof patient.givenName === "string") {
+                this.givenName = patient.givenName ? [patient.givenName] : [];
+            } else {
+                this.givenName = [];
+            }
             this.surname = patient.surname ?? "";
             this.dateOfBirth = patient.dateOfBirth ? new Date(patient.dateOfBirth) : undefined;
             this.gender = patient.gender ?? "";

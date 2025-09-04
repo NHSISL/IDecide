@@ -1,5 +1,5 @@
 import PatientBroker from "../../brokers/apiBroker.patients";
-import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Patient } from "../../models/patients/patient";
 import { GenerateCodeRequest } from "../../models/patients/generateCodeRequest";
 import { ConfirmCodeRequest } from "../../models/patients/confirmCodeRequest";
@@ -37,19 +37,38 @@ export const patientService = {
         });
     },
 
-    useGenerateCodeRequest: () => {
+    usePatientSearchByNhsNumber: () => {
         const broker = new PatientBroker();
-        const queryClient = useQueryClient();
 
         return useMutation({
-            mutationFn: (request: GenerateCodeRequest) => {
-                return broker.PutGenerateCodeRequestAsync(request);
+            mutationFn: (patientLookup: PatientLookup) => {
+                return broker.PostPatientSearchByNhsNumberAsync(patientLookup);
             },
-            onSuccess: () => {
-                queryClient.invalidateQueries({ queryKey: ["PatientGetAll"] });
-            }
         });
     },
+
+    //useGenerateCodeRequest: () => {
+    //    const broker = new PatientBroker();
+    //    const queryClient = useQueryClient();
+
+    //    return useMutation({
+    //        mutationFn: (request: GenerateCodeRequest) => {
+    //            return broker.PostPatientWithNotificationPreference(request);
+    //        },
+    //        onSuccess: () => {
+    //            queryClient.invalidateQueries({ queryKey: ["PatientGetAll"] });
+    //        }
+    //    });
+    //},
+
+    usePostPatientWithNotificationPreference: async (
+        patient: GenerateCodeRequest,
+        headers?: Record<string, string>
+    ) => {
+        const broker = new PatientBroker();
+        return await broker.PostPatientWithNotificationPreference(patient, headers);
+    },
+
 
     useRetrievePatientById: (nhsNumber: string) => {
         const broker = new PatientBroker();

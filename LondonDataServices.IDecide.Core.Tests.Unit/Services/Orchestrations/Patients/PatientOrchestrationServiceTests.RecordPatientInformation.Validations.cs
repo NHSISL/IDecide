@@ -51,83 +51,13 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             { CallBase = true };
 
             patientOrchestrationServiceMock.Setup(broker =>
-                broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(inputCaptchaToken))
+                broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
                     .ThrowsAsync(invalidPatientOrchestrationArgumentException);
 
             // when
             ValueTask recordPatientInformationTask =
                 patientOrchestrationServiceMock.Object.RecordPatientInformationAsync(
                     invalidNhsNumber,
-                    inputCaptchaToken,
-                    notificationPreferenceString,
-                    false);
-
-            PatientOrchestrationValidationException actualException =
-                await Assert.ThrowsAsync<PatientOrchestrationValidationException>(
-                    recordPatientInformationTask.AsTask);
-
-            // then
-            actualException.Should().BeEquivalentTo(expectedPatientOrchestrationValidationException);
-
-            this.loggingBrokerMock.Verify(broker =>
-               broker.LogErrorAsync(It.Is(SameExceptionAs(
-                   expectedPatientOrchestrationValidationException))),
-                       Times.Once);
-
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.pdsServiceMock.VerifyNoOtherCalls();
-            this.patientServiceMock.VerifyNoOtherCalls();
-            this.notificationServiceMock.VerifyNoOtherCalls();
-        }
-
-        [Theory]
-        [InlineData(null)]
-        [InlineData("")]
-        [InlineData(" ")]
-        public async Task ShouldThrowValidationExceptionOnRecordPatientInformationAsyncWithInvalidCaptchaToken(
-            string invalidCaptchaToken)
-        {
-            // given
-            string randomNhsNumber = GenerateRandom10DigitNumber();
-            string inputNhsNumber = randomNhsNumber.DeepClone();
-            NotificationPreference randomNotificationPreference = NotificationPreference.Email;
-            NotificationPreference inputNotificationPreference = randomNotificationPreference.DeepClone();
-            string notificationPreferenceString = inputNotificationPreference.ToString();
-
-            var invalidPatientOrchestrationArgumentException =
-                new InvalidPatientOrchestrationArgumentException(
-                    "Invalid patient orchestration argument. Please correct the errors and try again.");
-
-            invalidPatientOrchestrationArgumentException.AddData(
-                key: "captchaToken",
-                values: "Text is invalid");
-
-            var expectedPatientOrchestrationValidationException =
-                new PatientOrchestrationValidationException(
-                    message: "Patient orchestration validation error occurred, please fix the errors and try again.",
-                    innerException: invalidPatientOrchestrationArgumentException);
-
-            var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
-               this.loggingBrokerMock.Object,
-               this.securityBrokerMock.Object,
-               this.dateTimeBrokerMock.Object,
-               this.pdsServiceMock.Object,
-               this.patientServiceMock.Object,
-               this.notificationServiceMock.Object,
-               this.decisionConfigurations)
-            { CallBase = true };
-
-            patientOrchestrationServiceMock.Setup(broker =>
-                broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(invalidCaptchaToken))
-                    .ThrowsAsync(invalidPatientOrchestrationArgumentException);
-
-            // when
-            ValueTask recordPatientInformationTask =
-                patientOrchestrationServiceMock.Object.RecordPatientInformationAsync(
-                    inputNhsNumber,
-                    invalidCaptchaToken,
                     notificationPreferenceString,
                     false);
 
@@ -189,14 +119,13 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             { CallBase = true };
 
             patientOrchestrationServiceMock.Setup(broker =>
-                broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(inputCaptchaToken))
+                broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
                     .ThrowsAsync(invalidPatientOrchestrationArgumentException);
 
             // when
             ValueTask recordPatientInformationTask =
                 patientOrchestrationServiceMock.Object.RecordPatientInformationAsync(
                     inputNhsNumber,
-                    inputCaptchaToken,
                     invalidNotificationPreference,
                     false);
 
@@ -252,14 +181,13 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             { CallBase = true };
 
             patientOrchestrationServiceMock.Setup(broker =>
-                broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(inputCaptchaToken))
+                broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
                     .ThrowsAsync(invalidCaptchaPatientOrchestrationServiceException);
 
             // when
             ValueTask recordPatientInformationTask =
                 patientOrchestrationServiceMock.Object.RecordPatientInformationAsync(
                     inputNhsNumber,
-                    inputCaptchaToken,
                     notificationPreferenceString,
                     false);
 
@@ -271,7 +199,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             actualException.Should().BeEquivalentTo(expectedPatientOrchestrationValidationException);
 
             patientOrchestrationServiceMock.Verify(broker =>
-                 broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(inputCaptchaToken),
+                 broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
                      Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
@@ -319,14 +247,13 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             { CallBase = true };
 
             patientOrchestrationServiceMock.Setup(broker =>
-                broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(inputCaptchaToken))
+                broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
                     .ThrowsAsync(validPatientCodeExistsException);
 
             // when
             ValueTask recordPatientInformationTask =
                 patientOrchestrationServiceMock.Object.RecordPatientInformationAsync(
                      inputNhsNumber,
-                     inputCaptchaToken,
                      notificationPreferenceString,
                      false);
 
@@ -338,7 +265,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             actualException.Should().BeEquivalentTo(expectedPatientOrchestrationValidationException);
 
             patientOrchestrationServiceMock.Verify(broker =>
-                 broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(inputCaptchaToken),
+                 broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
                      Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>

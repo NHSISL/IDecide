@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ using ISL.Providers.Captcha.Abstractions;
 using ISL.Security.Client.Clients;
 using LondonDataServices.IDecide.Core.Models.Securities;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
 
 namespace LondonDataServices.IDecide.Core.Brokers.Securities
 {
@@ -19,6 +21,8 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
     public class SecurityBroker : ISecurityBroker
     {
         private readonly ClaimsPrincipal claimsPrincipal;
+        private string remoteIpAddress;
+        private StringValues captchaToken;
         private readonly ISecurityClient securityClient;
         private readonly ICaptchaAbstractionProvider captchaAbstractionProvider;
 
@@ -31,6 +35,11 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
         public SecurityBroker(IHttpContextAccessor httpContextAccessor)
         {
             claimsPrincipal = httpContextAccessor.HttpContext?.User ?? new ClaimsPrincipal();
+            remoteIpAddress = httpContextAccessor.HttpContext.Connection.RemoteIpAddress?.ToString();
+
+            // TODO:  Change "X-Recaptcha-Token" to configuration setting if needed
+            httpContextAccessor.HttpContext.Request.Headers.TryGetValue("X-Recaptcha-Token", out captchaToken);
+
             this.securityClient = new SecurityClient();
         }
 
@@ -135,10 +144,9 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
         /// <summary>
         /// Validates the Captcha request
         /// </summary>
-        /// <param name="captchaToken">The captcha token to check.</param>
-        /// <param name="userIp">An optional ip address for the requesting user.</param>
         /// <returns>True if the user request is successfully validated; otherwise, false.</returns>
-        public async ValueTask<bool> ValidateCaptchaAsync(string captchaToken, string userIp = "") =>
-            await this.captchaAbstractionProvider.ValidateCaptchaAsync(captchaToken, userIp);
+        //public async ValueTask<bool> ValidateCaptchaAsync() =>
+        //    await this.captchaAbstractionProvider.ValidateCaptchaAsync(this.captchaToken, this.remoteIpAddress);
+        public async ValueTask<bool> ValidateCaptchaAsync() => true;
     }
 }

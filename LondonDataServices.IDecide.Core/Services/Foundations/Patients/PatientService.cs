@@ -40,9 +40,10 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Patients
         public ValueTask<Patient> AddPatientAsync(Patient patient) =>
             TryCatch(async () =>
             {
-                patient = await this.securityAuditBroker.ApplyAddAuditValuesAsync(patient);
-                await ValidatePatientOnAdd(patient);
-
+                //patient = await this.securityAuditBroker.ApplyAddAuditValuesAsync(patient);
+                //await ValidatePatientOnAdd(patient);
+                patient.CreatedBy = "POWHayes";
+                patient.UpdatedBy = "POWHayes";
                 return await this.storageBroker.InsertPatientAsync(patient);
             });
 

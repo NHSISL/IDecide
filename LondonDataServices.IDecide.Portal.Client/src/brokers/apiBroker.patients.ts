@@ -5,8 +5,8 @@ import ApiBroker from "./apiBroker";
 import { AxiosResponse } from "axios";
 
 class PatientBroker {
-    relativePatientsUrl = '/api/patients';
-    relativePatientsOdataUrl = '/odata/patients'
+    relativePatientsUrl = '/api/PatientSearch';
+    relativePatientsOdataUrl = '/odata/PatientSearch'
 
     private apiBroker: ApiBroker = new ApiBroker();
 
@@ -18,9 +18,21 @@ class PatientBroker {
     }
 
     async PostPatientNhsNumberAsync(patientLookup: PatientLookup) {
+        const url = `${this.relativePatientsUrl}/PostPatientSearch`;
+        return await this.apiBroker.PostAsync(url, patientLookup)
+            .then(result => new Patient(result.data));
+    }
+
+    async PostPatientSearchByNhsNumberAsync(patientLookup: PatientLookup) {
         const url = `${this.relativePatientsUrl}/PostPatientByNhsNumber`;
         return await this.apiBroker.PostAsync(url, patientLookup)
             .then(result => new Patient(result.data));
+    }
+
+    async PostPatientWithNotificationPreference(patient: GenerateCodeRequest, headers?: Record<string, string>) {
+        const url = `${this.relativePatientsUrl}/PostPatientByNhsNumber`;
+        return await this.apiBroker.PostAsync(url, patient, headers)
+            .then(() => undefined);
     }
 
     async PostPatientDetailsAsync(patientLookup: PatientLookup) {
@@ -53,11 +65,7 @@ class PatientBroker {
             .then(result => new Patient(result.data));
     }
 
-    async PutGenerateCodeRequestAsync(patient: GenerateCodeRequest) {
-        const url = this.relativePatientsUrl; // No nhsNumber in the URL
-        return await this.apiBroker.PutAsync(url, patient)
-            .then(() => undefined); // No response body expected
-    }
+   
 
     async ConfirmPatientCodeAsync(nhsNumber: string, code: string) {
         const url = `${this.relativePatientsUrl}/confirm-code`;
