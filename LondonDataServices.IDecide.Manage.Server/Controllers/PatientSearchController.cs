@@ -25,7 +25,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
             this.patientOrchestrationService = patientOrchestrationService;
         }
 
-        [HttpPost("PostPatientSearch")]
+        [HttpPost("PatientSearch")]
         public async ValueTask<ActionResult<Patient>> PostPatientSearchAsync([FromBody] PatientLookup patientLookup)
         {
             try
