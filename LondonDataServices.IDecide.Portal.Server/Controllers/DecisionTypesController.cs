@@ -1,0 +1,199 @@
+// ---------------------------------------------------------
+// Copyright (c) North East London ICB. All rights reserved.
+// ---------------------------------------------------------
+
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
+using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes.Exceptions;
+using LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
+using RESTFulSense.Controllers;
+
+namespace LondonDataServices.IDecide.Portal.Server.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class DecisionTypesController : RESTFulController
+    {
+        private readonly IDecisionTypeService decisionTypeService;
+
+        public DecisionTypesController(IDecisionTypeService decisionTypeService) =>
+            this.decisionTypeService = decisionTypeService;
+
+        [HttpPost]
+        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators,DecisionTypes.Create")]
+        public async ValueTask<ActionResult<DecisionType>> PostDecisionTypeAsync([FromBody] DecisionType decisionType)
+        {
+            try
+            {
+                DecisionType addedDecisionType =
+                    await this.decisionTypeService.AddDecisionTypeAsync(decisionType);
+
+                return Created(addedDecisionType);
+            }
+            catch (DecisionTypeValidationException decisionTypeValidationException)
+            {
+                return BadRequest(decisionTypeValidationException.InnerException);
+            }
+            catch (DecisionTypeDependencyValidationException decisionTypeDependencyValidationException)
+               when (decisionTypeDependencyValidationException.InnerException is AlreadyExistsDecisionTypeException)
+            {
+                return Conflict(decisionTypeDependencyValidationException.InnerException);
+            }
+            catch (DecisionTypeDependencyValidationException decisionTypeDependencyValidationException)
+            {
+                return BadRequest(decisionTypeDependencyValidationException.InnerException);
+            }
+            catch (DecisionTypeDependencyException decisionTypeDependencyException)
+            {
+                return InternalServerError(decisionTypeDependencyException);
+            }
+            catch (DecisionTypeServiceException decisionTypeServiceException)
+            {
+                return InternalServerError(decisionTypeServiceException);
+            }
+        }
+
+        [HttpGet]
+#if !DEBUG
+        [EnableQuery(PageSize = 50)]
+#endif
+#if DEBUG
+        [EnableQuery(PageSize = 5000)]
+#endif
+        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators,DecisionTypes.Read")]
+        public async ValueTask<ActionResult<IQueryable<DecisionType>>> Get()
+        {
+            try
+            {
+                IQueryable<DecisionType> retrievedDecisionTypes =
+                    await this.decisionTypeService.RetrieveAllDecisionTypesAsync();
+
+                return Ok(retrievedDecisionTypes);
+            }
+            catch (DecisionTypeDependencyException decisionTypeDependencyException)
+            {
+                return InternalServerError(decisionTypeDependencyException);
+            }
+            catch (DecisionTypeServiceException decisionTypeServiceException)
+            {
+                return InternalServerError(decisionTypeServiceException);
+            }
+        }
+
+        [HttpGet("{decisionTypeId}")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators,DecisionTypes.Read")]
+        public async ValueTask<ActionResult<DecisionType>> GetDecisionTypeByIdAsync(Guid decisionTypeId)
+        {
+            try
+            {
+                DecisionType decisionType = await this.decisionTypeService.RetrieveDecisionTypeByIdAsync(decisionTypeId);
+
+                return Ok(decisionType);
+            }
+            catch (DecisionTypeValidationException decisionTypeValidationException)
+                when (decisionTypeValidationException.InnerException is NotFoundDecisionTypeException)
+            {
+                return NotFound(decisionTypeValidationException.InnerException);
+            }
+            catch (DecisionTypeValidationException decisionTypeValidationException)
+            {
+                return BadRequest(decisionTypeValidationException.InnerException);
+            }
+            catch (DecisionTypeDependencyValidationException decisionTypeDependencyValidationException)
+            {
+                return BadRequest(decisionTypeDependencyValidationException.InnerException);
+            }
+            catch (DecisionTypeDependencyException decisionTypeDependencyException)
+            {
+                return InternalServerError(decisionTypeDependencyException);
+            }
+            catch (DecisionTypeServiceException decisionTypeServiceException)
+            {
+                return InternalServerError(decisionTypeServiceException);
+            }
+        }
+
+        [HttpPut]
+        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators,DecisionTypes.Update")]
+        public async ValueTask<ActionResult<DecisionType>> PutDecisionTypeAsync([FromBody] DecisionType decisionType)
+        {
+            try
+            {
+                DecisionType modifiedDecisionType =
+                    await this.decisionTypeService.ModifyDecisionTypeAsync(decisionType);
+
+                return Ok(modifiedDecisionType);
+            }
+            catch (DecisionTypeValidationException decisionTypeValidationException)
+                when (decisionTypeValidationException.InnerException is NotFoundDecisionTypeException)
+            {
+                return NotFound(decisionTypeValidationException.InnerException);
+            }
+            catch (DecisionTypeValidationException decisionTypeValidationException)
+            {
+                return BadRequest(decisionTypeValidationException.InnerException);
+            }
+            catch (DecisionTypeDependencyValidationException decisionTypeDependencyValidationException)
+               when (decisionTypeDependencyValidationException.InnerException is AlreadyExistsDecisionTypeException)
+            {
+                return Conflict(decisionTypeDependencyValidationException.InnerException);
+            }
+            catch (DecisionTypeDependencyValidationException decisionTypeDependencyValidationException)
+            {
+                return BadRequest(decisionTypeDependencyValidationException.InnerException);
+            }
+            catch (DecisionTypeDependencyException decisionTypeDependencyException)
+            {
+                return InternalServerError(decisionTypeDependencyException);
+            }
+            catch (DecisionTypeServiceException decisionTypeServiceException)
+            {
+                return InternalServerError(decisionTypeServiceException);
+            }
+        }
+
+        [HttpDelete("{decisionTypeId}")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators,DecisionTypes.Delete")]
+        public async ValueTask<ActionResult<DecisionType>> DeleteDecisionTypeByIdAsync(Guid decisionTypeId)
+        {
+            try
+            {
+                DecisionType deletedDecisionType =
+                    await this.decisionTypeService.RemoveDecisionTypeByIdAsync(decisionTypeId);
+
+                return Ok(deletedDecisionType);
+            }
+            catch (DecisionTypeValidationException decisionTypeValidationException)
+                when (decisionTypeValidationException.InnerException is NotFoundDecisionTypeException)
+            {
+                return NotFound(decisionTypeValidationException.InnerException);
+            }
+            catch (DecisionTypeValidationException decisionTypeValidationException)
+            {
+                return BadRequest(decisionTypeValidationException.InnerException);
+            }
+            catch (DecisionTypeDependencyValidationException decisionTypeDependencyValidationException)
+                when (decisionTypeDependencyValidationException.InnerException is LockedDecisionTypeException)
+            {
+                return Locked(decisionTypeDependencyValidationException.InnerException);
+            }
+            catch (DecisionTypeDependencyValidationException decisionTypeDependencyValidationException)
+            {
+                return BadRequest(decisionTypeDependencyValidationException.InnerException);
+            }
+            catch (DecisionTypeDependencyException decisionTypeDependencyException)
+            {
+                return InternalServerError(decisionTypeDependencyException);
+            }
+            catch (DecisionTypeServiceException decisionTypeServiceException)
+            {
+                return InternalServerError(decisionTypeServiceException);
+            }
+        }
+    }
+}

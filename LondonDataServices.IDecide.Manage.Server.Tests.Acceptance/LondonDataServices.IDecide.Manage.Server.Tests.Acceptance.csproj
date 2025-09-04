@@ -1,18 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <ImplicitUsings>disable</ImplicitUsings>
-    <Nullable>disable</Nullable>
-    <IsPackable>false</IsPackable>
-    <IsTestProject>true</IsTestProject>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="Models\**" />
-    <EmbeddedResource Remove="Models\**" />
-    <None Remove="Models\**" />
-  </ItemGroup>
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<ImplicitUsings>disable</ImplicitUsings>
+		<Nullable>disable</Nullable>
+		<IsPackable>false</IsPackable>
+		<IsTestProject>true</IsTestProject>
+	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="coverlet.collector" Version="6.0.4">
@@ -36,13 +30,13 @@
 		</PackageReference>
 	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\LondonDataServices.IDecide.Manage.Client\LondonDataServices.IDecide.Manage.Client.esproj" />
-    <ProjectReference Include="..\LondonDataServices.IDecide.Manage.Server\LondonDataServices.IDecide.Manage.Server.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\LondonDataServices.IDecide.Manage.Client\LondonDataServices.IDecide.Manage.Client.esproj" />
+		<ProjectReference Include="..\LondonDataServices.IDecide.Manage.Server\LondonDataServices.IDecide.Manage.Server.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Using Include="Xunit" />
-  </ItemGroup>
+	<ItemGroup>
+		<Using Include="Xunit" />
+	</ItemGroup>
 
 </Project>
