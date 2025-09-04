@@ -55,11 +55,11 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Decisi
             // given
             Decision someDecision = CreateRandomDecision();
 
-            InternalServerErrorObjectResult expectedBadRequestObjectResult =
+            InternalServerErrorObjectResult expectedInternalServerErrorObjectResult =
                 InternalServerError(validationException);
 
             var expectedActionResult =
-                new ActionResult<Decision>(expectedBadRequestObjectResult);
+                new ActionResult<Decision>(expectedInternalServerErrorObjectResult);
 
             this.decisionServiceMock.Setup(service =>
                 service.AddDecisionAsync(It.IsAny<Decision>()))

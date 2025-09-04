@@ -58,11 +58,11 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Patien
             PatientLookup randomPatientLookup = GetRandomSearchPatientLookup(randomString);
             PatientLookup inputPatientLookup = randomPatientLookup;
 
-            InternalServerErrorObjectResult expectedBadRequestObjectResult =
+            InternalServerErrorObjectResult expectedInternalServerErrorObjectResult =
                 InternalServerError(validationException);
 
             var expectedActionResult =
-                new ActionResult<Patient>(expectedBadRequestObjectResult);
+                new ActionResult<Patient>(expectedInternalServerErrorObjectResult);
 
             this.patientOrchestrationServiceMock.Setup(service =>
                 service.PatientLookupAsync(inputPatientLookup))
