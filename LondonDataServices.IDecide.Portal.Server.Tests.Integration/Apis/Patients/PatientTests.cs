@@ -9,7 +9,7 @@ using LondonDataServices.IDecide.Portal.Server.Tests.Integration.Brokers;
 using LondonDataServices.IDecide.Portal.Server.Tests.Integration.Models.Patients;
 using Tynamix.ObjectFiller;
 
-namespace LondonDataServices.IDecide.Portal.Server.Tests.Integration.Apis
+namespace LondonDataServices.IDecide.Portal.Server.Tests.Integration.Apis.Patients
 {
     [Collection(nameof(ApiTestCollection))]
     public partial class PatientApiTests

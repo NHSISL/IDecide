@@ -9,7 +9,7 @@ using LondonDataServices.IDecide.Manage.Server.Tests.Integration.Brokers;
 using LondonDataServices.IDecide.Manage.Server.Tests.Integration.Models.DecisionTypes;
 using Tynamix.ObjectFiller;
 
-namespace LondonDataServices.IDecide.Manage.Server.Tests.Integration.Apis
+namespace LondonDataServices.IDecide.Manage.Server.Tests.Integration.Apis.DecisionTypes
 {
     [Collection(nameof(ApiTestCollection))]
     public partial class DecisionTypeApiTests

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using LondonDataServices.IDecide.Portal.Server.Tests.Integration.Models.DecisionTypes;
 using RESTFulSense.Exceptions;
 
-namespace LondonDataServices.IDecide.Portal.Server.Tests.Integration.Apis
+namespace LondonDataServices.IDecide.Portal.Server.Tests.Integration.Apis.DecisionTypes
 {
     public partial class DecisionTypeApiTests
     {
@@ -20,7 +20,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Integration.Apis
             await this.apiBroker.DeleteDecisionTypeByIdAsync(randomDecisionType.Id);
 
             // then
-            ValueTask<DecisionType> getDecisionTypeByIdTask = 
+            ValueTask<DecisionType> getDecisionTypeByIdTask =
                 this.apiBroker.GetDecisionTypeByIdAsync(randomDecisionType.Id);
 
             await Assert.ThrowsAsync<HttpResponseNotFoundException>(getDecisionTypeByIdTask.AsTask);

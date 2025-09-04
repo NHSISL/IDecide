@@ -2,13 +2,11 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.DecisionTypes;
 
-namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis
+namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.DecisionTypes
 {
     public partial class DecisionTypeApiTests
     {
@@ -16,15 +14,15 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis
         public async Task ShouldPutDecisionTypeAsync()
         {
             // given
-            DecisionType randomDecisionType = 
+            DecisionType randomDecisionType =
                 await PostRandomDecisionTypeAsync();
 
-            DecisionType modifiedDecisionType = 
+            DecisionType modifiedDecisionType =
                 UpdateDecisionTypeWithRandomValues(randomDecisionType);
 
             // when
             await this.apiBroker.PutDecisionTypeAsync(modifiedDecisionType);
-            
+
             DecisionType actualDecisionType = await this.apiBroker
                 .GetDecisionTypeByIdAsync(randomDecisionType.Id);
 

@@ -2,13 +2,11 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Models.Patients;
 
-namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Apis
+namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Apis.Patients
 {
     public partial class PatientApiTests
     {
@@ -20,7 +18,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Apis
             Patient expectedPatient = randomPatient;
 
             // when
-            Patient actualPatient = 
+            Patient actualPatient =
                 await this.apiBroker.GetPatientByIdAsync(randomPatient.Id);
 
             // then
