@@ -5,7 +5,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Force.DeepCloner;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
 using Moq;
 
@@ -17,8 +16,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         public async Task ShouldCheckIfIsAuthenticatedUserWithRequiredRoleAsyncWithAuthenticatedUserInRole()
         {
             // given
-            string randomCaptchaToken = GetRandomString();
-            string inputCaptchaToken = randomCaptchaToken.DeepClone();
             bool expectedResult = true;
 
             this.securityBrokerMock.Setup(broker =>
@@ -31,7 +28,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             // when
             bool actualResult =
-                await patientOrchestrationService.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(inputCaptchaToken);
+                await patientOrchestrationService.CheckIfIsAuthenticatedUserWithRequiredRoleAsync();
 
             //then
             actualResult.Should().Be(expectedResult);
@@ -56,9 +53,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         public async Task ShouldErrorOnCheckIfIsAuthenticatedUserWithRequiredRoleAsyncWithAuthenticatedUserNotInRole()
         {
             // given
-            string randomCaptchaToken = GetRandomString();
-            string inputCaptchaToken = randomCaptchaToken.DeepClone();
-
             this.securityBrokerMock.Setup(broker =>
                 broker.IsCurrentUserAuthenticatedAsync())
                     .ReturnsAsync(true);
@@ -76,7 +70,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             // when
             ValueTask<bool> checkUserAction =
-                patientOrchestrationService.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(inputCaptchaToken);
+                patientOrchestrationService.CheckIfIsAuthenticatedUserWithRequiredRoleAsync();
 
             UnauthorizedPatientOrchestrationServiceException
                 actualUnauthorizedPatientOrchestrationServiceException =
@@ -111,15 +105,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             ShouldErrorOnCheckIfIsAuthenticatedUserWithRequiredRoleAsyncWithNonAuthenticatedUserInvalidCaptcha()
         {
             // given
-            string randomCaptchaToken = GetRandomString();
-            string inputCaptchaToken = randomCaptchaToken.DeepClone();
-
             this.securityBrokerMock.Setup(broker =>
                 broker.IsCurrentUserAuthenticatedAsync())
                     .ReturnsAsync(false);
 
             this.securityBrokerMock.Setup(broker =>
-                 broker.ValidateCaptchaAsync(inputCaptchaToken, ""))
+                 broker.ValidateCaptchaAsync())
                      .ReturnsAsync(false);
 
             var invalidCaptchaPatientOrchestrationServiceException =
@@ -128,7 +119,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             // when
             ValueTask<bool> checkUserAction =
-                patientOrchestrationService.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(inputCaptchaToken);
+                patientOrchestrationService.CheckIfIsAuthenticatedUserWithRequiredRoleAsync();
 
             InvalidCaptchaPatientOrchestrationServiceException
                 actualInvalidCaptchaPatientOrchestrationServiceException =
@@ -144,7 +135,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     Times.Once);
 
             this.securityBrokerMock.Verify(broker =>
-                broker.ValidateCaptchaAsync(inputCaptchaToken, ""),
+                broker.ValidateCaptchaAsync(),
                     Times.Once);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
@@ -159,8 +150,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         public async Task ShouldCheckIfIsAuthenticatedUserWithRequiredRoleAsyncWithNonAuthenticatedUserValidCaptcha()
         {
             // given
-            string randomCaptchaToken = GetRandomString();
-            string inputCaptchaToken = randomCaptchaToken.DeepClone();
             bool expectedResult = false;
 
             this.securityBrokerMock.Setup(broker =>
@@ -168,12 +157,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     .ReturnsAsync(false);
 
             this.securityBrokerMock.Setup(broker =>
-                 broker.ValidateCaptchaAsync(inputCaptchaToken, ""))
+                 broker.ValidateCaptchaAsync())
                      .ReturnsAsync(true);
 
             // when
             bool actualResult =
-                await patientOrchestrationService.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(inputCaptchaToken);
+                await patientOrchestrationService.CheckIfIsAuthenticatedUserWithRequiredRoleAsync();
 
             //then
             actualResult.Should().Be(expectedResult);
@@ -183,7 +172,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     Times.Once);
 
             this.securityBrokerMock.Verify(broker =>
-                broker.ValidateCaptchaAsync(inputCaptchaToken, ""),
+                broker.ValidateCaptchaAsync(),
                     Times.Once);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();

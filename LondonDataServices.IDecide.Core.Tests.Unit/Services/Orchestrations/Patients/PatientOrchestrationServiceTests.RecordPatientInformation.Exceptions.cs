@@ -24,8 +24,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             // given
             string randomNhsNumber = GenerateRandom10DigitNumber();
             string inputNhsNumber = randomNhsNumber.DeepClone();
-            string randomCaptchaToken = GetRandomString();
-            string inputCaptchaToken = randomCaptchaToken.DeepClone();
             NotificationPreference randomNotificationPreference = NotificationPreference.Email;
             NotificationPreference inputNotificationPreference = randomNotificationPreference.DeepClone();
             string notificationPreferenceString = inputNotificationPreference.ToString();
@@ -47,14 +45,13 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             { CallBase = true };
 
             patientOrchestrationServiceMock.Setup(broker =>
-                broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(inputCaptchaToken))
+                broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
                     .ThrowsAsync(dependencyValidationException);
 
             // when
             ValueTask recordPatientInformationTask =
                  patientOrchestrationServiceMock.Object.RecordPatientInformationAsync(
                     inputNhsNumber,
-                    inputCaptchaToken,
                     notificationPreferenceString,
                     false);
 
@@ -68,7 +65,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 .Should().BeEquivalentTo(expectedPatientOrchestrationDependencyValidationException);
 
             patientOrchestrationServiceMock.Verify(broker =>
-                broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(inputCaptchaToken),
+                broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
@@ -92,8 +89,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             // given
             string randomNhsNumber = GenerateRandom10DigitNumber();
             string inputNhsNumber = randomNhsNumber.DeepClone();
-            string randomCaptchaToken = GetRandomString();
-            string inputCaptchaToken = randomCaptchaToken.DeepClone();
             NotificationPreference randomNotificationPreference = NotificationPreference.Email;
             NotificationPreference inputNotificationPreference = randomNotificationPreference.DeepClone();
             string notificationPreferenceString = inputNotificationPreference.ToString();
@@ -115,14 +110,13 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             { CallBase = true };
 
             patientOrchestrationServiceMock.Setup(broker =>
-                broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(inputCaptchaToken))
+                broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
                     .ThrowsAsync(dependencyException);
 
             // when
             ValueTask recordPatientInformationTask =
                  patientOrchestrationServiceMock.Object.RecordPatientInformationAsync(
                     inputNhsNumber,
-                    inputCaptchaToken,
                     notificationPreferenceString,
                     false);
 
@@ -136,7 +130,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 .Should().BeEquivalentTo(expectedPatientOrchestrationDependencyException);
 
             patientOrchestrationServiceMock.Verify(broker =>
-                broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(inputCaptchaToken),
+                broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
@@ -158,8 +152,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             // given
             string randomNhsNumber = GenerateRandom10DigitNumber();
             string inputNhsNumber = randomNhsNumber.DeepClone();
-            string randomCaptchaToken = GetRandomString();
-            string inputCaptchaToken = randomCaptchaToken.DeepClone();
             NotificationPreference randomNotificationPreference = NotificationPreference.Email;
             NotificationPreference inputNotificationPreference = randomNotificationPreference.DeepClone();
             string notificationPreferenceString = inputNotificationPreference.ToString();
@@ -186,14 +178,13 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             { CallBase = true };
 
             patientOrchestrationServiceMock.Setup(broker =>
-                broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(inputCaptchaToken))
+                broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
                     .ThrowsAsync(serviceException);
 
             // when
             ValueTask recordPatientInformationTask =
                  patientOrchestrationServiceMock.Object.RecordPatientInformationAsync(
                     inputNhsNumber,
-                    inputCaptchaToken,
                     notificationPreferenceString,
                     false);
 
@@ -207,7 +198,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 expectedPatientOrchestrationServiceException);
 
             patientOrchestrationServiceMock.Verify(broker =>
-                 broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(inputCaptchaToken),
+                 broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
                      Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>

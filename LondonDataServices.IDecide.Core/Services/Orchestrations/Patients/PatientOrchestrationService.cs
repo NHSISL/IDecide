@@ -77,17 +77,15 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
 
         public ValueTask RecordPatientInformationAsync(
             string nhsNumber,
-            string captcha,
             string notificationPreference,
             bool generateNewCode = false) =>
             TryCatch(async () =>
             {
                 ValidateRecordPatientInformationArguments(
                     nhsNumber: nhsNumber,
-                    captchaToken: captcha,
                     notificationPreference: notificationPreference);
 
-                bool isAuthenticatedUserWithRole = await CheckIfIsAuthenticatedUserWithRequiredRoleAsync(captcha);
+                bool isAuthenticatedUserWithRole = await CheckIfIsAuthenticatedUserWithRequiredRoleAsync();
                 IQueryable<Patient> patients = await this.patientService.RetrieveAllPatientsAsync();
                 Patient maybeMatchingPatient = patients.FirstOrDefault(patient => patient.NhsNumber == nhsNumber);
                 Patient patientToRecord = null;
@@ -208,7 +206,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             return modifiedPatient;
         }
 
-        virtual internal async ValueTask<bool> CheckIfIsAuthenticatedUserWithRequiredRoleAsync(string captcha)
+        virtual internal async ValueTask<bool> CheckIfIsAuthenticatedUserWithRequiredRoleAsync()
         {
             var currentUserIsAuthenticated = await this.securityBroker.IsCurrentUserAuthenticatedAsync();
 
@@ -237,7 +235,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             }
             else
             {
-                bool isCaptchaValid = await this.securityBroker.ValidateCaptchaAsync(captcha);
+                bool isCaptchaValid = await this.securityBroker.ValidateCaptchaAsync();
 
                 if (isCaptchaValid is false)
                 {

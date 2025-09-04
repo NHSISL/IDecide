@@ -29,6 +29,11 @@ namespace LondonDataServices.IDecide.Core.Brokers.Storages.Sql
                 .IsUnique();
 
             model
+                .Property(consumer => consumer.AccessToken)
+                .HasMaxLength(36)
+                .IsRequired();
+
+            model
                 .Property(consumer => consumer.CreatedBy)
                 .HasMaxLength(255)
                 .IsRequired();
