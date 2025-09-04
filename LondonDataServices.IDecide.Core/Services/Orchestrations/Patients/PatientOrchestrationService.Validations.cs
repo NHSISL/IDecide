@@ -41,15 +41,11 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
 
         private static void ValidateRecordPatientInformationArguments(
             string nhsNumber,
-            string captchaToken,
             string notificationPreference)
         {
             Validate(
                 (Rule: IsInvalidIdentifier(nhsNumber),
                 Parameter: nameof(nhsNumber)),
-
-                (Rule: IsInvalid(captchaToken),
-                Parameter: nameof(captchaToken)),
 
                 (Rule: IsInvalidNotificationPreference(notificationPreference),
                 Parameter: nameof(notificationPreference)));

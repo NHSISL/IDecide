@@ -14,7 +14,6 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
 
         ValueTask RecordPatientInformationAsync(
             string nhsNumber,
-            string captcha,
             string notificationPreference,
             bool generateNewCode = false);
     }
