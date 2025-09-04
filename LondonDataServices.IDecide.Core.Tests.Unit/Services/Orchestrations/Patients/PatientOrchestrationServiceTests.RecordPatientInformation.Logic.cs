@@ -25,8 +25,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             int expireAfterMinutes = this.decisionConfigurations.PatientValidationCodeExpireAfterMinutes;
             string randomNhsNumber = GenerateRandom10DigitNumber();
             string inputNhsNumber = randomNhsNumber.DeepClone();
-            string randomCaptchaToken = GetRandomString();
-            string inputCaptchaToken = randomCaptchaToken.DeepClone();
             NotificationPreference randomNotificationPreference = NotificationPreference.Email;
             NotificationPreference inputNotificationPreference = randomNotificationPreference.DeepClone();
             string notificationPreferenceString = inputNotificationPreference.ToString();
@@ -60,7 +58,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             { CallBase = true };
 
             patientOrchestrationServiceMock.Setup(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(inputCaptchaToken))
+                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
                     .ReturnsAsync(true);
 
             this.patientServiceMock.Setup(service =>
@@ -81,13 +79,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             // when
             await patientOrchestrationServiceMock.Object.RecordPatientInformationAsync(
                 inputNhsNumber,
-                inputCaptchaToken,
                 notificationPreferenceString,
                 false);
 
             //then
             patientOrchestrationServiceMock.Verify(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(inputCaptchaToken),
+                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
                     Times.Once);
 
             this.patientServiceMock.Verify(service =>
@@ -124,8 +121,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             int expireAfterMinutes = this.decisionConfigurations.PatientValidationCodeExpireAfterMinutes;
             string randomNhsNumber = GenerateRandom10DigitNumber();
             string inputNhsNumber = randomNhsNumber.DeepClone();
-            string randomCaptchaToken = GetRandomString();
-            string inputCaptchaToken = randomCaptchaToken.DeepClone();
             NotificationPreference randomNotificationPreference = NotificationPreference.Email;
             NotificationPreference inputNotificationPreference = randomNotificationPreference.DeepClone();
             string notificationPreferenceString = inputNotificationPreference.ToString();
@@ -159,7 +154,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             { CallBase = true };
 
             patientOrchestrationServiceMock.Setup(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(inputCaptchaToken))
+                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
                     .ReturnsAsync(false);
 
             this.patientServiceMock.Setup(service =>
@@ -184,13 +179,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             // when
             await patientOrchestrationServiceMock.Object.RecordPatientInformationAsync(
                 inputNhsNumber,
-                inputCaptchaToken,
                 notificationPreferenceString,
                 false);
 
             //then
             patientOrchestrationServiceMock.Verify(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(inputCaptchaToken),
+                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
                     Times.Once);
 
             this.patientServiceMock.Verify(service =>
@@ -228,8 +222,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             int expireAfterMinutes = this.decisionConfigurations.PatientValidationCodeExpireAfterMinutes;
             string randomNhsNumber = GenerateRandom10DigitNumber();
             string inputNhsNumber = randomNhsNumber.DeepClone();
-            string randomCaptchaToken = GetRandomString();
-            string inputCaptchaToken = randomCaptchaToken.DeepClone();
             NotificationPreference randomNotificationPreference = NotificationPreference.Email;
             NotificationPreference inputNotificationPreference = randomNotificationPreference.DeepClone();
             string notificationPreferenceString = inputNotificationPreference.ToString();
@@ -265,7 +257,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             { CallBase = true };
 
             patientOrchestrationServiceMock.Setup(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(inputCaptchaToken))
+                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
                     .ReturnsAsync(true);
 
             this.patientServiceMock.Setup(service =>
@@ -279,7 +271,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             // when
             ValueTask recordPatientInformationTask = patientOrchestrationServiceMock.Object.RecordPatientInformationAsync(
                 inputNhsNumber,
-                inputCaptchaToken,
                 notificationPreferenceString,
                 false);
 
@@ -293,7 +284,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 .Should().BeEquivalentTo(expectedPatientOrchestrationValidationException);
 
             patientOrchestrationServiceMock.Verify(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(inputCaptchaToken),
+                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
                     Times.Once);
 
             this.patientServiceMock.Verify(service =>
@@ -325,8 +316,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             int expireAfterMinutes = this.decisionConfigurations.PatientValidationCodeExpireAfterMinutes;
             string randomNhsNumber = GenerateRandom10DigitNumber();
             string inputNhsNumber = randomNhsNumber.DeepClone();
-            string randomCaptchaToken = GetRandomString();
-            string inputCaptchaToken = randomCaptchaToken.DeepClone();
             NotificationPreference randomNotificationPreference = NotificationPreference.Email;
             NotificationPreference inputNotificationPreference = randomNotificationPreference.DeepClone();
             string notificationPreferenceString = inputNotificationPreference.ToString();
@@ -362,7 +351,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             { CallBase = true };
 
             patientOrchestrationServiceMock.Setup(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(inputCaptchaToken))
+                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
                     .ReturnsAsync(false);
 
             this.patientServiceMock.Setup(service =>
@@ -376,7 +365,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             // when
             ValueTask recordPatientInformationTask = patientOrchestrationServiceMock.Object.RecordPatientInformationAsync(
                 inputNhsNumber,
-                inputCaptchaToken,
                 notificationPreferenceString,
                 false);
 
@@ -390,7 +378,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 .Should().BeEquivalentTo(expectedPatientOrchestrationValidationException);
 
             patientOrchestrationServiceMock.Verify(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(inputCaptchaToken),
+                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
                     Times.Once);
 
             this.patientServiceMock.Verify(service =>
@@ -421,8 +409,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             int expireAfterMinutes = this.decisionConfigurations.PatientValidationCodeExpireAfterMinutes;
             string randomNhsNumber = GenerateRandom10DigitNumber();
             string inputNhsNumber = randomNhsNumber.DeepClone();
-            string randomCaptchaToken = GetRandomString();
-            string inputCaptchaToken = randomCaptchaToken.DeepClone();
             NotificationPreference randomNotificationPreference = NotificationPreference.Email;
             NotificationPreference inputNotificationPreference = randomNotificationPreference.DeepClone();
             string notificationPreferenceString = inputNotificationPreference.ToString();
@@ -459,7 +445,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             { CallBase = true };
 
             patientOrchestrationServiceMock.Setup(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(inputCaptchaToken))
+                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
                     .ReturnsAsync(true);
 
             this.patientServiceMock.Setup(service =>
@@ -481,13 +467,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             // when
             await patientOrchestrationServiceMock.Object.RecordPatientInformationAsync(
                 inputNhsNumber,
-                inputCaptchaToken,
                 notificationPreferenceString,
                 true);
 
             //then
             patientOrchestrationServiceMock.Verify(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(inputCaptchaToken),
+                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
                     Times.Once);
 
             this.patientServiceMock.Verify(service =>
@@ -525,8 +510,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             int expireAfterMinutes = this.decisionConfigurations.PatientValidationCodeExpireAfterMinutes;
             string randomNhsNumber = GenerateRandom10DigitNumber();
             string inputNhsNumber = randomNhsNumber.DeepClone();
-            string randomCaptchaToken = GetRandomString();
-            string inputCaptchaToken = randomCaptchaToken.DeepClone();
             NotificationPreference randomNotificationPreference = NotificationPreference.Email;
             NotificationPreference inputNotificationPreference = randomNotificationPreference.DeepClone();
             string notificationPreferenceString = inputNotificationPreference.ToString();
@@ -563,7 +546,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             { CallBase = true };
 
             patientOrchestrationServiceMock.Setup(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(inputCaptchaToken))
+                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
                     .ReturnsAsync(false);
 
             this.patientServiceMock.Setup(service =>
@@ -585,13 +568,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             // when
             await patientOrchestrationServiceMock.Object.RecordPatientInformationAsync(
                 inputNhsNumber,
-                inputCaptchaToken,
                 notificationPreferenceString,
                 false);
 
             //then
             patientOrchestrationServiceMock.Verify(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(inputCaptchaToken),
+                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
                     Times.Once);
 
             this.patientServiceMock.Verify(service =>
@@ -629,8 +611,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             int expireAfterMinutes = this.decisionConfigurations.PatientValidationCodeExpireAfterMinutes;
             string randomNhsNumber = GenerateRandom10DigitNumber();
             string inputNhsNumber = randomNhsNumber.DeepClone();
-            string randomCaptchaToken = GetRandomString();
-            string inputCaptchaToken = randomCaptchaToken.DeepClone();
             NotificationPreference randomNotificationPreference = NotificationPreference.Email;
             NotificationPreference inputNotificationPreference = randomNotificationPreference.DeepClone();
             string notificationPreferenceString = inputNotificationPreference.ToString();
@@ -667,7 +647,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             { CallBase = true };
 
             patientOrchestrationServiceMock.Setup(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(inputCaptchaToken))
+                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
                     .ReturnsAsync(false);
 
             this.patientServiceMock.Setup(service =>
@@ -681,7 +661,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             // when
             ValueTask recordPatientInformationTask = patientOrchestrationServiceMock.Object.RecordPatientInformationAsync(
                 inputNhsNumber,
-                inputCaptchaToken,
                 notificationPreferenceString,
                 true);
 
@@ -695,7 +674,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 .Should().BeEquivalentTo(expectedPatientOrchestrationValidationException);
 
             patientOrchestrationServiceMock.Verify(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(inputCaptchaToken),
+                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
                     Times.Once);
 
             this.patientServiceMock.Verify(service =>
@@ -726,8 +705,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             int expireAfterMinutes = this.decisionConfigurations.PatientValidationCodeExpireAfterMinutes;
             string randomNhsNumber = GenerateRandom10DigitNumber();
             string inputNhsNumber = randomNhsNumber.DeepClone();
-            string randomCaptchaToken = GetRandomString();
-            string inputCaptchaToken = randomCaptchaToken.DeepClone();
             NotificationPreference randomNotificationPreference = NotificationPreference.Email;
             NotificationPreference inputNotificationPreference = randomNotificationPreference.DeepClone();
             string notificationPreferenceString = inputNotificationPreference.ToString();
@@ -764,7 +741,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             { CallBase = true };
 
             patientOrchestrationServiceMock.Setup(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(inputCaptchaToken))
+                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
                     .ReturnsAsync(false);
 
             this.patientServiceMock.Setup(service =>
@@ -786,13 +763,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             // when
             await patientOrchestrationServiceMock.Object.RecordPatientInformationAsync(
                 inputNhsNumber,
-                inputCaptchaToken,
                 notificationPreferenceString,
                 false);
 
             //then
             patientOrchestrationServiceMock.Verify(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(inputCaptchaToken),
+                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
                     Times.Once);
 
             this.patientServiceMock.Verify(service =>
