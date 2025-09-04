@@ -76,6 +76,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis
 
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(now)
+                .OnProperty(decisionType => decisionType.Name).Use(GetRandomStringWithLengthOf(255))
                 .OnProperty(decisionType => decisionType.CreatedDate).Use(now)
                 .OnProperty(decisionType => decisionType.CreatedBy).Use(user)
                 .OnProperty(decisionType => decisionType.UpdatedDate).Use(now)
