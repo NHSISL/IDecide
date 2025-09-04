@@ -5,11 +5,11 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Brokers;
-using LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Models.Decisions;
+using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Brokers;
+using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.Decisions;
 using Tynamix.ObjectFiller;
 
-namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Apis
+namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis
 {
     [Collection(nameof(ApiTestCollection))]
     public partial class DecisionApiTests
@@ -76,9 +76,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Apis
 
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(now)
-                
-                // TODO:  Add your property configurations here
-
+                .OnProperty(decision => decision.DecisionChoice).Use(GetRandomStringWithLengthOf(255))
                 .OnProperty(decision => decision.CreatedDate).Use(now)
                 .OnProperty(decision => decision.CreatedBy).Use(user)
                 .OnProperty(decision => decision.UpdatedDate).Use(now)

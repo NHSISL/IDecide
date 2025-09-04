@@ -63,9 +63,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Integration.Apis
 
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(now)
-
-                // TODO:  Add your property configurations here
-
+                .OnProperty(decision => decision.DecisionChoice).Use(GetRandomStringWithLengthOf(255))
                 .OnProperty(decision => decision.CreatedDate).Use(now)
                 .OnProperty(decision => decision.CreatedBy).Use(user)
                 .OnProperty(decision => decision.UpdatedDate).Use(now)

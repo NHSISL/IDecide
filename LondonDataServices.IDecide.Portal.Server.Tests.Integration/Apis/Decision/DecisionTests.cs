@@ -5,11 +5,11 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Brokers;
-using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.Decisions;
+using LondonDataServices.IDecide.Portal.Server.Tests.Integration.Brokers;
+using LondonDataServices.IDecide.Portal.Server.Tests.Integration.Models.Decisions;
 using Tynamix.ObjectFiller;
 
-namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis
+namespace LondonDataServices.IDecide.Portal.Server.Tests.Integration.Apis
 {
     [Collection(nameof(ApiTestCollection))]
     public partial class DecisionApiTests
@@ -19,17 +19,57 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis
         public DecisionApiTests(ApiBroker apiBroker) =>
             this.apiBroker = apiBroker;
 
-        private int GetRandomNumber() =>
+        private static int GetRandomNumber() =>
             new IntRange(min: 2, max: 10).GetValue();
 
-        private static DateTimeOffset GetRandomDateTime() =>
+        private static int GetRandomNegativeNumber() =>
+            -1 * new IntRange(min: 2, max: 10).GetValue();
+
+        private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
+
+        private static DateTimeOffset GetRandomPastDateTimeOffset()
+        {
+            DateTime now = DateTimeOffset.UtcNow.Date;
+            int randomDaysInPast = GetRandomNegativeNumber();
+            DateTime pastDateTime = now.AddDays(randomDaysInPast).Date;
+
+            return new DateTimeRange(earliestDate: pastDateTime, latestDate: now).GetValue();
+        }
 
         private static string GetRandomStringWithLengthOf(int length)
         {
             string result = new MnemonicString(wordCount: 1, wordMinLength: length, wordMaxLength: length).GetValue();
 
             return result.Length > length ? result.Substring(0, length) : result;
+        }
+
+        private static string GetRandomEmail()
+        {
+            string randomPrefix = GetRandomStringWithLengthOf(15);
+            string emailSuffix = "@email.com";
+
+            return randomPrefix + emailSuffix;
+        }
+
+        private static Decision CreateRandomDecision() =>
+            CreateRandomDecisionFiller().Create();
+
+        private static Filler<Decision> CreateRandomDecisionFiller()
+        {
+            string user = Guid.NewGuid().ToString();
+            DateTime now = DateTime.UtcNow;
+            var filler = new Filler<Decision>();
+
+            filler.Setup()
+                .OnType<DateTimeOffset>().Use(now)
+                .OnProperty(decision => decision.DecisionChoice).Use(GetRandomStringWithLengthOf(255))
+                .OnProperty(decision => decision.CreatedDate).Use(now)
+                .OnProperty(decision => decision.CreatedBy).Use(user)
+                .OnProperty(decision => decision.UpdatedDate).Use(now)
+                .OnProperty(decision => decision.UpdatedBy).Use(user);
+
+            return filler;
         }
 
         private static Decision UpdateDecisionWithRandomValues(Decision inputDecision)
@@ -47,9 +87,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis
         private async ValueTask<Decision> PostRandomDecisionAsync()
         {
             Decision randomDecision = CreateRandomDecision();
-            Decision createdDecision = await this.apiBroker.PostDecisionAsync(randomDecision);
-
-            return createdDecision;
+            return await this.apiBroker.PostDecisionAsync(randomDecision);
         }
 
         private async ValueTask<List<Decision>> PostRandomDecisionsAsync()
@@ -63,28 +101,6 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis
             }
 
             return randomDecisions;
-        }
-
-        private static Decision CreateRandomDecision() =>
-            CreateRandomDecisionFiller().Create();
-
-        private static Filler<Decision> CreateRandomDecisionFiller()
-        {
-            string user = Guid.NewGuid().ToString();
-            DateTime now = DateTime.UtcNow;
-            var filler = new Filler<Decision>();
-
-            filler.Setup()
-                .OnType<DateTimeOffset>().Use(now)
-                
-                // TODO:  Add your property configurations here
-
-                .OnProperty(decision => decision.CreatedDate).Use(now)
-                .OnProperty(decision => decision.CreatedBy).Use(user)
-                .OnProperty(decision => decision.UpdatedDate).Use(now)
-                .OnProperty(decision => decision.UpdatedBy).Use(user);
-
-            return filler;
         }
     }
 }
