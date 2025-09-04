@@ -18,19 +18,19 @@ class PatientBroker {
     }
 
     async PostPatientNhsNumberAsync(patientLookup: PatientLookup) {
-        const url = `${this.relativePatientsUrl}/PostPatientSearch`;
+        const url = `${this.relativePatientsUrl}/PatientSearch`;
         return await this.apiBroker.PostAsync(url, patientLookup)
             .then(result => new Patient(result.data));
     }
 
     async PostPatientSearchByNhsNumberAsync(patientLookup: PatientLookup) {
-        const url = `${this.relativePatientsUrl}/PostPatientByNhsNumber`;
+        const url = `${this.relativePatientsUrl}/PatientByNhsNumber`;
         return await this.apiBroker.PostAsync(url, patientLookup)
             .then(result => new Patient(result.data));
     }
 
     async PostPatientWithNotificationPreference(patient: GenerateCodeRequest, headers?: Record<string, string>) {
-        const url = `${this.relativePatientsUrl}/PostPatientByNhsNumber`;
+        const url = `${this.relativePatientsUrl}/PatientGenerationRequest`;
         return await this.apiBroker.PostAsync(url, patient, headers)
             .then(() => undefined);
     }

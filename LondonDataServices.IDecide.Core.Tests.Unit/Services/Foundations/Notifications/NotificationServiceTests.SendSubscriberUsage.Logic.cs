@@ -43,7 +43,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
 
                     this.notificationBrokerMock.Setup(broker =>
                         broker.SendSmsAsync(
-                            this.notificationConfig.SmsSubscriberUsageTemplateId, personalisation))
+                            this.notificationConfig.SmsSubscriberUsageTemplateId, inputNotificationInfo.Patient.Phone, personalisation))
                         .ReturnsAsync(result);
 
                     break;
@@ -80,7 +80,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                 case NotificationPreference.Sms:
                     this.notificationBrokerMock.Verify(broker =>
                         broker.SendSmsAsync(
-                            this.notificationConfig.SmsSubscriberUsageTemplateId, personalisation),
+                            this.notificationConfig.SmsSubscriberUsageTemplateId, inputNotificationInfo.Patient.Phone, personalisation),
                         Times.Once);
 
                     break;

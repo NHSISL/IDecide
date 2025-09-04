@@ -24,7 +24,7 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
 
     const patientToUpdate = new GenerateCodeRequest(createdPatient);
 
-    const handleSubmit = async (method: "Email" | "SMS" | "Letter") => {
+    const handleSubmit = async (method: "Email" | "Sms" | "Letter") => {
         patientToUpdate.notificationPreference = method;
 
         if (powerOfAttourney) {
@@ -138,7 +138,7 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                             type="button"
                             className="nhsuk-button"
                             style={{ flex: 1, minWidth: 120 }}
-                            onClick={() => handleSubmit("SMS")}
+                            onClick={() => handleSubmit("Sms")}
                             disabled={!createdPatient.phone}
                         >
                             {translate("PositiveConfirmation.methodSMS")}

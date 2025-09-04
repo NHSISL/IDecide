@@ -11,6 +11,12 @@ using RESTFulSense.Controllers;
 
 namespace LondonDataServices.IDecide.Portal.Server.Controllers
 {
+    public class VerifyCodeRequest
+    {
+        public string NhsNumber { get; set; }
+        public string VerificationCode { get; set; }
+    }
+
     [ApiController]
     [Route("api/[controller]")]
     public class PatientDecisionController : RESTFulController
@@ -20,7 +26,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
         public PatientDecisionController(IDecisionOrchestrationService decisionOrchestrationService) =>
             this.decisionOrchestrationService = decisionOrchestrationService;
 
-        [HttpPost("PostPatientDecision")]
+        [HttpPost("PatientDecision")]
         public async ValueTask<ActionResult> PostPatientDecisionAsync([FromBody] Decision decision)
         {
             try
@@ -47,5 +53,6 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
                 return InternalServerError(decisionOrchestrationServiceException);
             }
         }
+
     }
 }

@@ -258,5 +258,8 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
 
             await this.notificationService.SendCodeNotificationAsync(notificationInfo);
         }
+
+        public ValueTask VerifyPatientCodeAsync(string nhsNumber, string VeriicationCode) =>
+            throw new NotImplementedException();
     }
 }

@@ -162,25 +162,23 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                 { "patient.address", notificationInfo.Patient.Address },
                 { "patient.postCode", notificationInfo.Patient.PostCode },
                 { "patient.validationCode", notificationInfo.Patient.ValidationCode },
-                { "patient.validationCodeExpiresOn", notificationInfo.Patient.ValidationCodeExpiresOn },
-                { "decision.decisionChoice", notificationInfo.Decision.DecisionChoice },
-                { "decision.decisionType.name", notificationInfo.Decision.DecisionType.Name }
+                { "patient.validationCodeExpiresOn", notificationInfo.Patient.ValidationCodeExpiresOn }
             };
 
-            if (!string.IsNullOrWhiteSpace(notificationInfo.Decision.ResponsiblePersonGivenName))
+            //if (!string.IsNullOrWhiteSpace(notificationInfo.Decision.ResponsiblePersonGivenName))
 
-                personalisation.Add(
-                    "decision.responsiblePersonGivenName", notificationInfo.Decision.ResponsiblePersonGivenName);
+            //    personalisation.Add(
+            //        "decision.responsiblePersonGivenName", notificationInfo.Decision.ResponsiblePersonGivenName);
 
-            if (!string.IsNullOrWhiteSpace(notificationInfo.Decision.ResponsiblePersonSurname))
+            //if (!string.IsNullOrWhiteSpace(notificationInfo.Decision.ResponsiblePersonSurname))
 
-                personalisation.Add(
-                    "decision.responsiblePersonSurname", notificationInfo.Decision.ResponsiblePersonSurname);
+            //    personalisation.Add(
+            //        "decision.responsiblePersonSurname", notificationInfo.Decision.ResponsiblePersonSurname);
 
-            if (!string.IsNullOrWhiteSpace(notificationInfo.Decision.ResponsiblePersonRelationship))
+            //if (!string.IsNullOrWhiteSpace(notificationInfo.Decision.ResponsiblePersonRelationship))
 
-                personalisation.Add(
-                    "decision.responsiblePersonRelationship", notificationInfo.Decision.ResponsiblePersonRelationship);
+            //    personalisation.Add(
+            //        "decision.responsiblePersonRelationship", notificationInfo.Decision.ResponsiblePersonRelationship);
 
             return personalisation;
         }

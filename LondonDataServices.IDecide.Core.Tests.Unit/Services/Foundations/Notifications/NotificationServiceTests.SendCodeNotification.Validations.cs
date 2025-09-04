@@ -77,14 +77,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                 },
                 Decision = new Decision
                 {
-                    DecisionChoice = invalidText,
                     ResponsiblePersonGivenName = invalidText,
                     ResponsiblePersonSurname = invalidText,
                     ResponsiblePersonRelationship = invalidText,
-                    DecisionType = new DecisionType
-                    {
-                        Name = invalidText
-                    }
                 }
             };
 
@@ -143,14 +138,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
             invalidArgumentsNotificationException.AddData(
                 key: nameof(NotificationInfo.Patient.NotificationPreference),
                 values: "Value is required");
-
-            invalidArgumentsNotificationException.AddData(
-                key: nameof(NotificationInfo.Decision.DecisionChoice),
-                values: "Text is required");
-
-            invalidArgumentsNotificationException.AddData(
-                key: nameof(NotificationInfo.Decision.DecisionType.Name),
-                values: "Text is required");
 
             var expectedNotificationValidationException =
                 new NotificationValidationException(
