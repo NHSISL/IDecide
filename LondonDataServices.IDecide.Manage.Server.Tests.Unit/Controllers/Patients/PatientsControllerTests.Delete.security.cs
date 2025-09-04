@@ -79,27 +79,5 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Patien
             attribute.Should().BeNull();
         }
 
-        //[Fact]
-        //public void DeleteShouldHaveInvisibleApiAttribute()
-        //{
-        //    // Given
-        //    var controllerType = typeof(PatientsController);
-        //    var methodInfo = controllerType.GetMethod("DeletePatientByIdAsync");
-        //    Type attributeType = typeof(InvisibleApiAttribute);
-
-        //    // When
-        //    var methodAttribute = methodInfo?
-        //        .GetCustomAttributes(attributeType, inherit: true)
-        //        .FirstOrDefault();
-
-        //    var controllerAttribute = controllerType
-        //        .GetCustomAttributes(attributeType, inherit: true)
-        //        .FirstOrDefault();
-
-        //    var attribute = methodAttribute ?? controllerAttribute;
-
-        //    // Then
-        //    attribute.Should().NotBeNull();
-        //}
     }
 }
