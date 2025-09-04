@@ -2,6 +2,9 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using LondonDataServices.IDecide.Manage.Server.Tests.Integration.Brokers;
 using LondonDataServices.IDecide.Manage.Server.Tests.Integration.Models.Patients;
 using Tynamix.ObjectFiller;
@@ -55,7 +58,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Integration.Apis
         private static Filler<Patient> CreateRandomPatientFiller()
         {
             string user = Guid.NewGuid().ToString();
-            DateTime now = DateTime.UtcNow;
+            DateTimeOffset now = DateTime.UtcNow;
             var filler = new Filler<Patient>();
 
             filler.Setup()

@@ -7,8 +7,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using LondonDataServices.IDecide.Manage.Server.Tests.Integration.Models.Decisions;
+using LondonDataServices.IDecide.Manage.Server.Tests.Integration.Models.DecisionTypes;
+using LondonDataServices.IDecide.Manage.Server.Tests.Integration.Models.Patients;
 
-namespace LondonDataServices.IDecide.Manage.Server.Tests.Integration.Apis
+namespace LondonDataServices.IDecide.Manage.Server.Tests.Integration.Apis.Decisions
 {
     public partial class DecisionApiTests
     {
@@ -16,7 +18,12 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Integration.Apis
         public async Task ShouldGetAllDecisionsAsync()
         {
             // given
-            List<Decision> randomDecisions = await PostRandomDecisionsAsync();
+            Patient randomPatient = await PostRandomPatientAsync();
+            DecisionType randomDecisionType = await PostRandomDecisionTypeAsync();
+
+            List<Decision> randomDecisions =
+                await PostRandomDecisionsAsync(patientId: randomPatient.Id, decisionTypeId: randomDecisionType.Id);
+
             List<Decision> expectedDecisions = randomDecisions;
 
             // when

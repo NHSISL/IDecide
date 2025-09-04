@@ -7,8 +7,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.Decisions;
+using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.DecisionTypes;
+using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.Patients;
 
-namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis
+namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.Decisions
 {
     public partial class DecisionApiTests
     {
@@ -16,7 +18,12 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis
         public async Task ShouldDeleteDecisionByIdAsync()
         {
             // given
-            Decision randomDecision = await PostRandomDecisionAsync();
+            Patient randomPatient = await PostRandomPatientAsync();
+            DecisionType randomDecisionType = await PostRandomDecisionTypeAsync();
+
+            Decision randomDecision = await PostRandomDecisionAsync(
+                patientId: randomPatient.Id, decisionTypeId: randomDecisionType.Id);
+
             Decision inputDecision = randomDecision;
             Decision expectedDecision = inputDecision;
 

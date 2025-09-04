@@ -4,7 +4,7 @@
 
 using System.Threading.Tasks;
 using Force.DeepCloner;
-using LondonDataServices.IDecide.Manage.Server.Models.Foundations.Decisions;
+using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using RESTFulSense.Clients.Extensions;

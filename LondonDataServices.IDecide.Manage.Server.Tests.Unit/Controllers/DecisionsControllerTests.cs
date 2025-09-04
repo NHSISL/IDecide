@@ -4,10 +4,10 @@
 
 using System;
 using System.Linq;
+using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
+using LondonDataServices.IDecide.Core.Models.Foundations.Decisions.Exceptions;
+using LondonDataServices.IDecide.Core.Services.Foundations.Decisions;
 using LondonDataServices.IDecide.Manage.Server.Controllers;
-using LondonDataServices.IDecide.Manage.Server.Models.Foundations.Decisions;
-using LondonDataServices.IDecide.Manage.Server.Models.Foundations.Decisions.Exceptions;
-using LondonDataServices.IDecide.Manage.Server.Services.Foundations.Decisions;
 using Moq;
 using RESTFulSense.Controllers;
 using Tynamix.ObjectFiller;
@@ -96,7 +96,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Decisi
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
                 .OnType<DateTimeOffset?>().Use(dateTimeOffset)
-                
+
                 // TODO:  Add your property configurations here
 
                 .OnProperty(decision => decision.CreatedBy).Use(user)

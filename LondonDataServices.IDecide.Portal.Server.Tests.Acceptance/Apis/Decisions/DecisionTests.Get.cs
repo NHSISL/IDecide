@@ -6,9 +6,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.Decisions;
+using LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Models.Decisions;
+using LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Models.DecisionTypes;
+using LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Models.Patients;
 
-namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis
+namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Apis.Decisions
 {
     public partial class DecisionApiTests
     {
@@ -16,7 +18,12 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis
         public async Task ShouldGetAllDecisionsAsync()
         {
             // given
-            List<Decision> randomDecisions = await PostRandomDecisionsAsync();
+            Patient randomPatient = await PostRandomPatientAsync();
+            DecisionType randomDecisionType = await PostRandomDecisionTypeAsync();
+
+            List<Decision> randomDecisions =
+                await PostRandomDecisionsAsync(patientId: randomPatient.Id, decisionTypeId: randomDecisionType.Id);
+
             List<Decision> expectedDecisions = randomDecisions;
 
             // when
@@ -25,7 +32,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis
             // then
             foreach (Decision expectedDecision in expectedDecisions)
             {
-                Decision actualDecision = 
+                Decision actualDecision =
                     actualDecisions.Single(approval => approval.Id == expectedDecision.Id);
 
                 actualDecision.Should().BeEquivalentTo(expectedDecision, options => options

@@ -2,29 +2,31 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.Decisions;
+using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.DecisionTypes;
+using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.Patients;
 
-namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis
+namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.Decisions
 {
     public partial class DecisionApiTests
     {
         [Fact]
-        public async Task ShouldPostDecisionAsync()
+        public async Task ShouldGetDecisionByIdAsync()
         {
             // given
-            Decision randomDecision = CreateRandomDecision();
-            Decision inputDecision = randomDecision;
-            Decision expectedDecision = inputDecision;
+            Patient randomPatient = await PostRandomPatientAsync();
+            DecisionType randomDecisionType = await PostRandomDecisionTypeAsync();
 
-            // when 
-            await this.apiBroker.PostDecisionAsync(inputDecision);
+            Decision randomDecision =
+                await PostRandomDecisionAsync(patientId: randomPatient.Id, decisionTypeId: randomDecisionType.Id);
 
+            Decision expectedDecision = randomDecision;
+
+            // when
             Decision actualDecision =
-                await this.apiBroker.GetDecisionByIdAsync(inputDecision.Id);
+                await this.apiBroker.GetDecisionByIdAsync(randomDecision.Id);
 
             // then
             actualDecision.Should().BeEquivalentTo(expectedDecision, options => options

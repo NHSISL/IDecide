@@ -4,9 +4,11 @@
 
 using System.Threading.Tasks;
 using FluentAssertions;
-using LondonDataServices.IDecide.Portal.Server.Tests.Integration.Models.Decisions;
+using LondonDataServices.IDecide.Manage.Server.Tests.Integration.Models.Decisions;
+using LondonDataServices.IDecide.Manage.Server.Tests.Integration.Models.DecisionTypes;
+using LondonDataServices.IDecide.Manage.Server.Tests.Integration.Models.Patients;
 
-namespace LondonDataServices.IDecide.Portal.Server.Tests.Integration.Apis
+namespace LondonDataServices.IDecide.Manage.Server.Tests.Integration.Apis.Decisions
 {
     public partial class DecisionApiTests
     {
@@ -14,11 +16,16 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Integration.Apis
         public async Task ShouldGetDecisionByIdAsync()
         {
             // given
-            Decision randomDecision = await PostRandomDecisionAsync();
+            Patient randomPatient = await PostRandomPatientAsync();
+            DecisionType randomDecisionType = await PostRandomDecisionTypeAsync();
+
+            Decision randomDecision =
+                await PostRandomDecisionAsync(patientId: randomPatient.Id, decisionTypeId: randomDecisionType.Id);
+
             Decision expectedDecision = randomDecision;
 
             // when
-            Decision actualDecision = 
+            Decision actualDecision =
                 await this.apiBroker.GetDecisionByIdAsync(randomDecision.Id);
 
             // then

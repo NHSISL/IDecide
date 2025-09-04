@@ -4,8 +4,8 @@
 
 using System;
 using System.Threading.Tasks;
-using LondonDataServices.IDecide.Manage.Server.Models.Foundations.Decisions;
-using LondonDataServices.IDecide.Manage.Server.Models.Foundations.Decisions.Exceptions;
+using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
+using LondonDataServices.IDecide.Core.Models.Foundations.Decisions.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using RESTFulSense.Clients.Extensions;

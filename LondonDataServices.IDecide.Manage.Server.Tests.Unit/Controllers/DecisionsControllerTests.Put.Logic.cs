@@ -4,7 +4,7 @@
 
 using System.Threading.Tasks;
 using Force.DeepCloner;
-using LondonDataServices.IDecide.Manage.Server.Models.Foundations.Decisions;
+using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using RESTFulSense.Clients.Extensions;
@@ -33,7 +33,8 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Decisi
                     .ReturnsAsync(storageDecision);
 
             // when
-            ActionResult<Decision> actualActionResult = await decisionsController.PutDecisionAsync(randomDecision);
+            ActionResult<Decision> actualActionResult =
+                await decisionsController.PutDecisionAsync(randomDecision);
 
             // then
             actualActionResult.ShouldBeEquivalentTo(expectedActionResult);
