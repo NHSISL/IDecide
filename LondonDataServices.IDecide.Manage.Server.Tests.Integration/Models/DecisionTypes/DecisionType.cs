@@ -2,6 +2,8 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
+
 namespace LondonDataServices.IDecide.Manage.Server.Tests.Integration.Models.DecisionTypes
 {
     public class DecisionType

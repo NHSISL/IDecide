@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using LondonDataServices.IDecide.Manage.Server.Tests.Integration.Models.DecisionTypes;
 
-namespace LondonDataServices.IDecide.Manage.Server.Tests.Integration.Apis
+namespace LondonDataServices.IDecide.Manage.Server.Tests.Integration.Apis.DecisionTypes
 {
     public partial class DecisionTypeApiTests
     {
@@ -18,7 +18,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Integration.Apis
             DecisionType expectedDecisionType = randomDecisionType;
 
             // when
-            DecisionType actualDecisionType = 
+            DecisionType actualDecisionType =
                 await this.apiBroker.GetDecisionTypeByIdAsync(randomDecisionType.Id);
 
             // then

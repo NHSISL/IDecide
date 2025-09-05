@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.Patients;
 
-namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis
+namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.Patients
 {
     public partial class PatientApiTests
     {
@@ -25,7 +25,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis
             // then
             foreach (Patient expectedPatient in expectedPatients)
             {
-                Patient actualPatient = 
+                Patient actualPatient =
                     actualPatients.Single(approval => approval.Id == expectedPatient.Id);
 
                 actualPatient.Should().BeEquivalentTo(expectedPatient, options => options

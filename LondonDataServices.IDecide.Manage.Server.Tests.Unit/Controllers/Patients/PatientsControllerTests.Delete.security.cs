@@ -78,6 +78,5 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Patien
             // Then
             attribute.Should().BeNull();
         }
-
     }
 }

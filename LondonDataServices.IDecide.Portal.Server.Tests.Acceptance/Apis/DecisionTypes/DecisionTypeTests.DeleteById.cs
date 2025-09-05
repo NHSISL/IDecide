@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Models.DecisionTypes;
 
-namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Apis
+namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Apis.DecisionTypes
 {
     public partial class DecisionTypeApiTests
     {

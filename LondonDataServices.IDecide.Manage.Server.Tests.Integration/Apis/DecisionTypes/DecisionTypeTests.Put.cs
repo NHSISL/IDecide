@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using LondonDataServices.IDecide.Manage.Server.Tests.Integration.Models.DecisionTypes;
 
-namespace LondonDataServices.IDecide.Manage.Server.Tests.Integration.Apis
+namespace LondonDataServices.IDecide.Manage.Server.Tests.Integration.Apis.DecisionTypes
 {
     public partial class DecisionTypeApiTests
     {

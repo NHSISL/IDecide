@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using LondonDataServices.IDecide.Portal.Server.Tests.Integration.Models.Patients;
 using RESTFulSense.Exceptions;
 
-namespace LondonDataServices.IDecide.Portal.Server.Tests.Integration.Apis
+namespace LondonDataServices.IDecide.Portal.Server.Tests.Integration.Apis.Patients
 {
     public partial class PatientApiTests
     {
@@ -20,7 +20,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Integration.Apis
             await this.apiBroker.DeletePatientByIdAsync(randomPatient.Id);
 
             // then
-            ValueTask<Patient> getPatientByIdTask = 
+            ValueTask<Patient> getPatientByIdTask =
                 this.apiBroker.GetPatientByIdAsync(randomPatient.Id);
 
             await Assert.ThrowsAsync<HttpResponseNotFoundException>(getPatientByIdTask.AsTask);

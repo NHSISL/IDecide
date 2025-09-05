@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 
 namespace LondonDataServices.IDecide.Manage.Server.Tests.Integration.Models.Patients

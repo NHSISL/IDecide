@@ -66,10 +66,10 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Patien
             Decision randomDecision = GetRandomDecision(randomPatient);
             Decision inputDecision = randomDecision.DeepClone();
 
-            InternalServerErrorObjectResult expectedBadRequestObjectResult =
+            InternalServerErrorObjectResult expectedInternalServerErrorObjectResult =
                 InternalServerError(validationException);
 
-            var expectedActionResult = expectedBadRequestObjectResult;
+            var expectedActionResult = expectedInternalServerErrorObjectResult;
 
             this.decisionOrchestrationServiceMock.Setup(service =>
                 service.VerifyAndRecordDecisionAsync(inputDecision))

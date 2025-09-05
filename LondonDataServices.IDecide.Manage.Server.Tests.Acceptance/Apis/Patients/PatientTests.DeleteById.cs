@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.Patients;
 
-namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis
+namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.Patients
 {
     public partial class PatientApiTests
     {
