@@ -79,6 +79,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                 values: "Id is required");
 
             invalidConsumerStatusException.AddData(
+               key: nameof(ConsumerStatus.AdoptionDate),
+               values: "Date is required");
+
+            invalidConsumerStatusException.AddData(
                 key: nameof(ConsumerStatus.CreatedDate),
                 values: "Date is required");
 
