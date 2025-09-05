@@ -85,6 +85,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.Decisio
                 .OnProperty(decision => decision.PatientId).Use(patientId)
                 .OnProperty(decision => decision.DecisionTypeId).Use(decisionTypeId)
                 .OnProperty(decision => decision.DecisionChoice).Use(GetRandomStringWithLengthOf(255))
+                .OnProperty(decision => decision.PatientNhsNumber).Use(GetRandomStringWithLengthOf(10))
                 .OnProperty(decision => decision.CreatedDate).Use(now)
                 .OnProperty(decision => decision.CreatedBy).Use(user)
                 .OnProperty(decision => decision.UpdatedDate).Use(now)
