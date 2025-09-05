@@ -62,7 +62,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
             {
                 await this.patientOrchestrationService.VerifyPatientCodeAsync(
                     patientCodeRequest.NhsNumber,
-                    patientCodeRequest.VeriicationCode
+                    patientCodeRequest.VerificationCode
                 );
 
                 return Ok();
