@@ -7,7 +7,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using KellermanSoftware.CompareNetObjects;
+using LondonDataServices.IDecide.Core.Brokers.Audits;
 using LondonDataServices.IDecide.Core.Brokers.DateTimes;
+using LondonDataServices.IDecide.Core.Brokers.Identifiers;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
@@ -32,6 +34,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         private readonly Mock<ILoggingBroker> loggingBrokerMock = new Mock<ILoggingBroker>();
         private readonly Mock<ISecurityBroker> securityBrokerMock = new Mock<ISecurityBroker>();
         private readonly Mock<IDateTimeBroker> dateTimeBrokerMock = new Mock<IDateTimeBroker>();
+        private readonly Mock<IAuditBroker> auditBrokerMock = new Mock<IAuditBroker>();
+        private readonly Mock<IIdentifierBroker> identifierBrokerMock = new Mock<IIdentifierBroker>();
         private readonly Mock<IPdsService> pdsServiceMock = new Mock<IPdsService>();
         private readonly Mock<IPatientService> patientServiceMock = new Mock<IPatientService>();
         private readonly Mock<INotificationService> notificationServiceMock = new Mock<INotificationService>();
@@ -47,6 +51,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
             this.securityBrokerMock = new Mock<ISecurityBroker>();
             this.dateTimeBrokerMock = new Mock<IDateTimeBroker>();
+            this.auditBrokerMock = new Mock<IAuditBroker>();
+            this.identifierBrokerMock = new Mock<IIdentifierBroker>();
             this.pdsServiceMock = new Mock<IPdsService>();
             this.patientServiceMock = new Mock<IPatientService>();
             this.notificationServiceMock = new Mock<INotificationService>();
@@ -63,6 +69,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 loggingBroker: this.loggingBrokerMock.Object,
                 securityBroker: this.securityBrokerMock.Object,
                 dateTimeBroker: this.dateTimeBrokerMock.Object,
+                auditBroker: this.auditBrokerMock.Object,
+                identifierBroker: this.identifierBrokerMock.Object,
                 pdsService: this.pdsServiceMock.Object,
                 patientService: this.patientServiceMock.Object,
                 notificationService: this.notificationServiceMock.Object,
