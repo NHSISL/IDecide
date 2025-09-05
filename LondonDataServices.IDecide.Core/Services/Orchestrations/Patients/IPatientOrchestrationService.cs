@@ -16,5 +16,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             string nhsNumber,
             string notificationPreference,
             bool generateNewCode = false);
+
+        ValueTask VerifyPatientCodeAsync(string nhsNumber, string verificationCode);
     }
 }
