@@ -145,5 +145,12 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
         /// <returns>True if the user request is successfully validated; otherwise, false.</returns>
         public async ValueTask<bool> ValidateCaptchaAsync() =>
             await this.captchaAbstractionProvider.ValidateCaptchaAsync(this.captchaToken, this.remoteIpAddress);
+
+        /// <summary>
+        /// Retrieves the ip address of the current user.
+        /// </summary>
+        /// <returns>An <see cref="string"/> object containing user details.</returns>
+        public async ValueTask<string> GetIpAddressAsync() =>
+            await Task.FromResult(this.remoteIpAddress);
     }
 }

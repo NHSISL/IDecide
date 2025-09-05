@@ -168,6 +168,36 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             return filler;
         }
 
+        private static Patient GetRandomPatient(
+            DateTimeOffset validationCodeExpiresOn,
+            string inputNhsNumber = "1234567890",
+            string validationCode = "A1B2C",
+            int retryCount = 0) =>
+            CreatePatientFiller(validationCodeExpiresOn, inputNhsNumber, validationCode, retryCount).Create();
+
+        private static List<Patient> GetRandomPatients(DateTimeOffset validationCodeExpiresOn) =>
+            CreatePatientFiller(validationCodeExpiresOn).Create(GetRandomNumber()).ToList();
+
+        private static Filler<Patient> CreatePatientFiller(
+            DateTimeOffset validationCodeExpiresOn,
+            string inputNhsNumber = "1234567890",
+            string validationCode = "A1B2C",
+            int retryCount = 0)
+        {
+            DateTimeOffset dateTimeOffset = DateTimeOffset.UtcNow;
+            var filler = new Filler<Patient>();
+
+            filler.Setup()
+                .OnType<DateTimeOffset>().Use(dateTimeOffset)
+                .OnType<DateTimeOffset?>().Use(dateTimeOffset)
+                .OnProperty(n => n.ValidationCodeExpiresOn).Use(validationCodeExpiresOn)
+                .OnProperty(n => n.NhsNumber).Use(inputNhsNumber)
+                .OnProperty(n => n.ValidationCode).Use(validationCode)
+                .OnProperty(n => n.RetryCount).Use(retryCount);
+
+            return filler;
+        }
+
         private Expression<Func<Patient, bool>> SamePatientAs(Patient expectedPatient) =>
             actualPatient => this.compareLogic.Compare(expectedPatient, actualPatient).AreEqual;
 

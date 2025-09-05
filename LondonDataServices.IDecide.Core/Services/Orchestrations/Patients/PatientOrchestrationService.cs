@@ -161,6 +161,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             bool isAuthenticatedUserWithRole = await CheckIfIsAuthenticatedUserWithRequiredRoleAsync();
             IQueryable<Patient> patients = await this.patientService.RetrieveAllPatientsAsync();
             Patient maybeMatchingPatient = patients.FirstOrDefault(patient => patient.NhsNumber == nhsNumber);
+            Patient patientToUpdate = maybeMatchingPatient;
             Guid correlationId = await this.identifierBroker.GetIdentifierAsync();
 
             // Validate patient exists
@@ -201,6 +202,15 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             }
             else
             {
+                string ipAddress = await this.securityBroker.GetIpAddressAsync();
+
+                await this.auditBroker.LogInformationAsync(
+                    auditType: "Patient Code",
+                    title: "Validating Patient Code",
+                    message: $"Patient with IP address {ipAddress} is validating a code for patient {nhsNumber}.",
+                    fileName: null,
+                    correlationId: correlationId.ToString());
+
                 if (maybeMatchingPatient.RetryCount > this.decisionConfigurations.MaxRetryCount)
                 {
                     await this.auditBroker.LogInformationAsync(
@@ -219,14 +229,13 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
 
                 if (maybeMatchingPatient.ValidationCode != verificationCode)
                 {
-                    Patient patientToUpdate = maybeMatchingPatient;
                     patientToUpdate.RetryCount += 1;
                     await this.patientService.ModifyPatientAsync(patientToUpdate);
 
                     await this.auditBroker.LogInformationAsync(
                         auditType: "Patient Code",
                         title: "Patient Code Validation Failed",
-                        message: $"The validation code provided was incorrect.",
+                        message: "The validation code provided was incorrect.",
                         fileName: null,
                         correlationId: correlationId.ToString());
 
@@ -238,7 +247,6 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                 if (maybeMatchingPatient.ValidationCodeExpiresOn < currentDateTime)
                 {
                     string newValidationCode = await this.patientService.GenerateValidationCodeAsync();
-                    Patient patientToUpdate = maybeMatchingPatient;
                     patientToUpdate.ValidationCode = newValidationCode;
                     patientToUpdate.ValidationCodeMatchedOn = null;
                     patientToUpdate.RetryCount = 0;
@@ -252,7 +260,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                     await this.auditBroker.LogInformationAsync(
                         auditType: "Patient Code",
                         title: "New Validation Code Generated",
-                        message: $"The validation code was expired so a new code was issued.",
+                        message: "The validation code was expired so a new code was issued.",
                         fileName: null,
                         correlationId: correlationId.ToString());
 
@@ -261,6 +269,16 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                         "your prefered contact method");
                 }
             }
+
+            patientToUpdate.ValidationCodeMatchedOn = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
+            await this.patientService.ModifyPatientAsync(patientToUpdate);
+
+            await this.auditBroker.LogInformationAsync(
+                auditType: "Patient Code",
+                title: "Patient Code Validation Succeeded",
+                message: "The validation code provided was valid and successfully verified.",
+                fileName: null,
+                correlationId: correlationId.ToString());
         }
 
         virtual internal async ValueTask<Patient> GenerateNewPatientWithCodeAsync(
