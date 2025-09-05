@@ -96,9 +96,6 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Decisi
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
                 .OnType<DateTimeOffset?>().Use(dateTimeOffset)
-
-                // TODO:  Add your property configurations here
-
                 .OnProperty(decision => decision.CreatedBy).Use(user)
                 .OnProperty(decision => decision.UpdatedBy).Use(user);
 
