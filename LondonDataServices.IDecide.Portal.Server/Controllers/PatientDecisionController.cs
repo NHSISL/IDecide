@@ -20,7 +20,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
         public PatientDecisionController(IDecisionOrchestrationService decisionOrchestrationService) =>
             this.decisionOrchestrationService = decisionOrchestrationService;
 
-        [HttpPost("PostPatientDecision")]
+        [HttpPost("PatientDecision")]
         public async ValueTask<ActionResult> PostPatientDecisionAsync([FromBody] Decision decision)
         {
             try
