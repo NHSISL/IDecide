@@ -26,12 +26,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
             ConsumerStatus expectedConsumerStatus = deletedConsumerStatus.DeepClone();
 
             this.storageBrokerMock.Setup(broker =>
-                    broker.SelectConsumerStatusByIdAsync(inputConsumerStatusId))
-                .ReturnsAsync(storageConsumerStatus);
+                broker.SelectConsumerStatusByIdAsync(inputConsumerStatusId))
+                    .ReturnsAsync(storageConsumerStatus);
 
             this.storageBrokerMock.Setup(broker =>
-                    broker.DeleteConsumerStatusAsync(expectedInputConsumerStatus))
-                .ReturnsAsync(deletedConsumerStatus);
+                broker.DeleteConsumerStatusAsync(expectedInputConsumerStatus))
+                    .ReturnsAsync(deletedConsumerStatus);
 
             // when
             ConsumerStatus actualConsumerStatus = await this.consumerStatusService
