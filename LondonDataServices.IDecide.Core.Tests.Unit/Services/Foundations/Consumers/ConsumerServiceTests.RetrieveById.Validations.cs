@@ -75,8 +75,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                     innerException: notFoundConsumerException);
 
             this.storageBrokerMock.Setup(broker =>
-                    broker.SelectConsumerByIdAsync(It.IsAny<Guid>()))
-                .ReturnsAsync(noConsumer);
+                broker.SelectConsumerByIdAsync(It.IsAny<Guid>()))
+                    .ReturnsAsync(noConsumer);
 
             //when
             ValueTask<Consumer> retrieveConsumerByIdTask =
