@@ -15,7 +15,6 @@ using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions;
-using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
 using LondonDataServices.IDecide.Core.Services.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
@@ -166,18 +165,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
 
             // Validate patient exists
 
-            bool userIsInWorkflowRole = false;
-
-            foreach (string role in this.decisionConfigurations.DecisionWorkflowRoles)
-            {
-                if (await this.securityBroker.IsInRoleAsync(role))
-                {
-                    userIsInWorkflowRole = true;
-                    break;
-                }
-            }
-
-            if (userIsInWorkflowRole)
+            if (isAuthenticatedUserWithRole)
             {
                 var currentUser = await this.securityBroker.GetCurrentUserAsync();
 
@@ -193,7 +181,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                     await this.auditBroker.LogInformationAsync(
                         auditType: "Patient Code",
                         title: "Patient Code Validation Failed",
-                        message: $"The validation code provided was incorrect.",
+                        message: "The validation code provided was incorrect.",
                         fileName: null,
                         correlationId: correlationId.ToString());
 

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Security.Claims;
 using KellermanSoftware.CompareNetObjects;
 using LondonDataServices.IDecide.Core.Brokers.Audits;
 using LondonDataServices.IDecide.Core.Brokers.DateTimes;
@@ -19,6 +20,7 @@ using LondonDataServices.IDecide.Core.Models.Foundations.Patients.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions;
+using LondonDataServices.IDecide.Core.Models.Securities;
 using LondonDataServices.IDecide.Core.Services.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Services.Foundations.Pds;
@@ -196,6 +198,32 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 .OnProperty(n => n.RetryCount).Use(retryCount);
 
             return filler;
+        }
+
+        private static List<Claim> CreateRandomClaims()
+        {
+            string randomString = GetRandomString();
+
+            return Enumerable.Range(start: 1, count: GetRandomNumber())
+                .Select(_ => new Claim(type: randomString, value: randomString)).ToList();
+        }
+
+        private static User CreateRandomUser()
+        {
+            string randomId = GetRandomStringWithLengthOf(255);
+            string randomString = GetRandomString();
+
+            User user = new User(
+                userId: randomId,
+                givenName: randomString,
+                surname: randomString,
+                displayName: randomString,
+                email: randomString,
+                jobTitle: randomString,
+                roles: new List<string> { randomString },
+                claims: CreateRandomClaims());
+
+            return user;
         }
 
         private Expression<Func<Patient, bool>> SamePatientAs(Patient expectedPatient) =>
