@@ -147,15 +147,6 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
         }
 
         /// <summary>
-        /// Validates the Captcha request
-        /// </summary>
-        /// <param name="captchaToken">The captcha token to check.</param>
-        /// <param name="userIp">An optional ip address for the requesting user.</param>
-        /// <returns>True if the user request is successfully validated; otherwise, false.</returns>
-        public async ValueTask<bool> ValidateCaptchaAsync() =>
-            await this.captchaAbstractionProvider.ValidateCaptchaAsync(this.captchaToken, this.remoteIpAddress);
-
-        /// <summary>
         /// Retrieves the ip address of the current user.
         /// </summary>
         /// <returns>An <see cref="string"/> object containing user details.</returns>
