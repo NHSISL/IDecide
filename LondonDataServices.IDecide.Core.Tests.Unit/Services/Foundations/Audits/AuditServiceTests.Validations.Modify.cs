@@ -26,6 +26,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
                     message: "Audit validation errors occurred, please try again.",
                     innerException: nullAuditException);
 
+            securityAuditBrokerMock.Setup(broker =>
+                broker.ApplyModifyAuditValuesAsync(nullAudit))
+                    .ReturnsAsync(nullAudit);
+
             // when
             ValueTask<Audit> modifyAuditTask =
                 this.auditService.ModifyAuditAsync(nullAudit);
@@ -37,6 +41,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
             // then
             actualAuditValidationException.Should()
                 .BeEquivalentTo(expectedAuditValidationException);
+
+            securityAuditBrokerMock.Verify(broker =>
+                broker.ApplyModifyAuditValuesAsync(nullAudit),
+                    Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
