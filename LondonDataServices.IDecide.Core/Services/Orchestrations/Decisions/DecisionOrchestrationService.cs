@@ -5,7 +5,9 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using LondonDataServices.IDecide.Core.Brokers.Audits;
 using LondonDataServices.IDecide.Core.Brokers.DateTimes;
+using LondonDataServices.IDecide.Core.Brokers.Identifiers;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
@@ -13,6 +15,7 @@ using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions.Exceptions;
+using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
 using LondonDataServices.IDecide.Core.Services.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Services.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
@@ -24,15 +27,19 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
         private readonly ILoggingBroker loggingBroker;
         private readonly IDateTimeBroker dateTimeBroker;
         private readonly ISecurityBroker securityBroker;
+        private readonly IAuditBroker auditBroker;
+        private readonly IIdentifierBroker identifierBroker;
         private readonly IPatientService patientService;
         private readonly IDecisionService decisionService;
         private readonly INotificationService notificationService;
-        private readonly DecisionConfigurations decisionConfiguration;
+        private readonly DecisionConfigurations decisionConfigurations;
 
         public DecisionOrchestrationService(
             ILoggingBroker loggingBroker,
             IDateTimeBroker dateTimeBroker,
             ISecurityBroker securityBroker,
+            IAuditBroker auditBroker,
+            IIdentifierBroker identifierBroker,
             IPatientService patientService,
             IDecisionService decisionService,
             INotificationService notificationService,
@@ -41,10 +48,12 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
             this.loggingBroker = loggingBroker;
             this.dateTimeBroker = dateTimeBroker;
             this.securityBroker = securityBroker;
+            this.auditBroker = auditBroker;
+            this.identifierBroker = identifierBroker;
             this.patientService = patientService;
             this.decisionService = decisionService;
             this.notificationService = notificationService;
-            this.decisionConfiguration = decisionConfigurations;
+            this.decisionConfigurations = decisionConfigurations;
         }
 
         public ValueTask VerifyAndRecordDecisionAsync(Decision decision) =>
@@ -55,74 +64,65 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
                 IQueryable<Patient> patients = await this.patientService.RetrieveAllPatientsAsync();
                 Patient maybeMatchingPatient = patients.FirstOrDefault(patient => patient.NhsNumber == maybeNhsNumber);
                 ValidatePatientExists(maybeMatchingPatient);
+                Guid correlationId = await this.identifierBroker.GetIdentifierAsync();
 
-                bool userIsInWorkflowRole = false;
+                bool isAuthenticatedUserWithRole = await CheckIfIsAuthenticatedUserWithRequiredRoleAsync();
+                string verifyingDecisionAuditMessage;
 
-                foreach (string role in this.decisionConfiguration.DecisionWorkflowRoles)
+                if (isAuthenticatedUserWithRole)
                 {
-                    if (await this.securityBroker.IsInRoleAsync(role))
-                    {
-                        userIsInWorkflowRole = true;
-                        break;
-                    }
-                }
-
-                if (userIsInWorkflowRole)
-                {
-                    if (maybeMatchingPatient.ValidationCode != decision.Patient.ValidationCode)
-                    {
-                        throw new IncorrectValidationCodeException("The validation code provided is incorrect.");
-                    }
+                    var currentUser = await this.securityBroker.GetCurrentUserAsync();
+                    verifyingDecisionAuditMessage = $"User {currentUser.UserId} is verifying the decision for " +
+                        $"patient {maybeMatchingPatient.NhsNumber}.";
                 }
                 else
                 {
-                    if (maybeMatchingPatient.RetryCount > this.decisionConfiguration.MaxRetryCount)
-                    {
-                        throw new ExceededMaxRetryCountException(
-                            $"The maximum retry count of {this.decisionConfiguration.MaxRetryCount} exceeded.");
-                    }
+                    string ipAddress = await this.securityBroker.GetIpAddressAsync();
 
-                    if (maybeMatchingPatient.ValidationCode != decision.Patient.ValidationCode)
-                    {
-                        Patient patientToUpdate = maybeMatchingPatient;
-                        patientToUpdate.RetryCount += 1;
-                        await this.patientService.ModifyPatientAsync(patientToUpdate);
-
-                        throw new IncorrectValidationCodeException("The validation code provided is incorrect.");
-                    }
-
-                    DateTimeOffset currentDateTime = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
-
-                    if (maybeMatchingPatient.ValidationCodeExpiresOn < currentDateTime)
-                    {
-                        string newValidationCode = await this.patientService.GenerateValidationCodeAsync();
-                        Patient patientToUpdate = maybeMatchingPatient;
-                        patientToUpdate.ValidationCode = newValidationCode;
-                        patientToUpdate.ValidationCodeMatchedOn = null;
-                        patientToUpdate.RetryCount = 0;
-
-                        patientToUpdate.ValidationCodeExpiresOn =
-                            currentDateTime.AddMinutes(
-                                this.decisionConfiguration.PatientValidationCodeExpireAfterMinutes);
-
-                        await this.patientService.ModifyPatientAsync(patientToUpdate);
-
-                        NotificationInfo codeNotificationInfo = new NotificationInfo
-                        {
-                            Patient = patientToUpdate,
-                            Decision = decision
-                        };
-
-                        await this.notificationService.SendCodeNotificationAsync(codeNotificationInfo);
-
-                        throw new RenewedValidationCodeException(
-                            "The validation code has expired, but we have issued a new code that will be sent via " +
-                            $"{decision.Patient.NotificationPreference.ToString()}");
-                    }
+                    verifyingDecisionAuditMessage = $"Patient with IP address {ipAddress} is validating a code for " +
+                        $"patient {maybeMatchingPatient.NhsNumber}.";
                 }
 
-                maybeMatchingPatient.ValidationCodeMatchedOn =
-                    await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
+                await this.auditBroker.LogInformationAsync(
+                    auditType: "Decision",
+                    title: "Verifying Decision",
+
+                    message: verifyingDecisionAuditMessage,
+
+                    fileName: null,
+                    correlationId: correlationId.ToString());
+
+                if (maybeMatchingPatient.ValidationCodeMatchedOn is null)
+                {
+                    await this.auditBroker.LogInformationAsync(
+                    auditType: "Decision",
+                    title: "Decision Submission Failed",
+                    message: "There was no matched validation code found for this patient.",
+                    fileName: null,
+                    correlationId: correlationId.ToString());
+
+                    throw new ValidationCodeNotMatchedException(
+                        "The validation code for this patient has not been succesfully matched");
+                }
+
+                DateTimeOffset now = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
+                DateTimeOffset validationCodeMatchedOn = maybeMatchingPatient.ValidationCodeMatchedOn.Value;
+
+                DateTimeOffset validatedCodeValidUntil =
+                    validationCodeMatchedOn.AddMinutes(this.decisionConfigurations.ValidatedCodeValidForMinutes);
+
+                if (now > validatedCodeValidUntil)
+                {
+                    await this.auditBroker.LogInformationAsync(
+                    auditType: "Decision",
+                    title: "Decision Submission Failed",
+                    message: "There was a matched validation code found but the matching period has now expired.",
+                    fileName: null,
+                    correlationId: correlationId.ToString());
+
+                    throw new ValidationCodeMatchExpiredException(
+                        "The validation code for this patient has been matched but the matching period has now expired");
+                }
 
                 Decision addedDecision = await this.decisionService.AddDecisionAsync(decision);
 
@@ -133,6 +133,56 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
                 };
 
                 await this.notificationService.SendSubmissionSuccessNotificationAsync(notificationInfo);
+
+                await this.auditBroker.LogInformationAsync(
+                    auditType: "Decision",
+                    title: "Decision Submitted",
+                    message: "The patients decision has been succesfully submitted",
+                    fileName: null,
+                    correlationId: correlationId.ToString());
             });
+
+        virtual internal async ValueTask<bool> CheckIfIsAuthenticatedUserWithRequiredRoleAsync()
+        {
+            var currentUserIsAuthenticated = await this.securityBroker.IsCurrentUserAuthenticatedAsync();
+
+            if (currentUserIsAuthenticated)
+            {
+                bool userIsInWorkflowRole = false;
+
+                foreach (string role in this.decisionConfigurations.DecisionWorkflowRoles)
+                {
+                    if (await this.securityBroker.IsInRoleAsync(role))
+                    {
+                        userIsInWorkflowRole = true;
+                        break;
+                    }
+                }
+
+                if (userIsInWorkflowRole is false)
+                {
+                    throw new UnauthorizedPatientOrchestrationServiceException(
+                        message: "The current user is not authorized to perform this operation.");
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                bool isCaptchaValid = await this.securityBroker.ValidateCaptchaAsync();
+
+                if (isCaptchaValid is false)
+                {
+                    throw new InvalidCaptchaPatientOrchestrationServiceException(
+                        message: "The provided captcha token is invalid.");
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
     }
 }
