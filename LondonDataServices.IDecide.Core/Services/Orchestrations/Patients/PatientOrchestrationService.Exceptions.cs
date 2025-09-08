@@ -96,6 +96,14 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             {
                 throw await CreateAndLogValidationExceptionAsync(incorrectValidationCodeException);
             }
+            catch (ExceededMaxRetryCountException exceededMaxRetryCountException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(exceededMaxRetryCountException);
+            }
+            catch (RenewedValidationCodeException renewedValidationCodeException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(renewedValidationCodeException);
+            }
             catch (InvalidPatientOrchestrationArgumentException invalidPatientOrchestrationArgumentException)
             {
                 throw await CreateAndLogValidationExceptionAsync(invalidPatientOrchestrationArgumentException);
