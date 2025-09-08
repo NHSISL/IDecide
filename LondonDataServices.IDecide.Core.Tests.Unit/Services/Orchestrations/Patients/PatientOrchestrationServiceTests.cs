@@ -338,5 +338,41 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     innerException),
             };
         }
+
+        public static TheoryData<Xeption> VerifyPatientCodeDependencyValidationExceptions()
+        {
+            string randomMessage = GetRandomString();
+            string exceptionMessage = randomMessage;
+            var innerException = new Xeption(exceptionMessage);
+
+            return new TheoryData<Xeption>
+            {
+                new PatientValidationException(
+                    message: "Patient validation errors occured, please try again",
+                    innerException),
+
+                new PatientDependencyValidationException(
+                    message: "Patient dependency validation occurred, please try again.",
+                    innerException),
+            };
+        }
+
+        public static TheoryData<Xeption> VerifyPatientCodeDependencyExceptions()
+        {
+            string randomMessage = GetRandomString();
+            string exceptionMessage = randomMessage;
+            var innerException = new Xeption(exceptionMessage);
+
+            return new TheoryData<Xeption>
+            {
+                new PatientDependencyException(
+                    message: "Patient dependency error occurred, please contact support.",
+                    innerException),
+
+                new PatientServiceException(
+                    message: "Patient service error occurred, please contact support.",
+                    innerException),
+            };
+        }
     }
 }
