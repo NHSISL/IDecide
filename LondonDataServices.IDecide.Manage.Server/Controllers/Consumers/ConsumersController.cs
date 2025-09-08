@@ -25,7 +25,6 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
             this.consumerService = consumerService;
 
         [HttpPost]
-        //[InvisibleApi]
         [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,Consumers.Create")]
         public async ValueTask<ActionResult<Consumer>> PostConsumerAsync([FromBody] Consumer consumer)
         {
