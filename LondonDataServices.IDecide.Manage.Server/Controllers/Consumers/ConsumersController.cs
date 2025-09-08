@@ -65,7 +65,6 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
 #if DEBUG
         [EnableQuery(PageSize = 5000)]
 #endif
-        //[InvisibleApi]
         [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,Consumers.Read")]
         public async ValueTask<ActionResult<IQueryable<Consumer>>> Get()
         {
@@ -87,7 +86,6 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
         }
 
         [HttpGet("{consumerId}")]
-        //[InvisibleApi]
         [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,Consumers.Read")]
         public async ValueTask<ActionResult<Consumer>> GetConsumerByIdAsync(Guid consumerId)
         {
@@ -121,7 +119,6 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
         }
 
         [HttpPut]
-        //[InvisibleApi]
         [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,Consumers.Update")]
         public async ValueTask<ActionResult<Consumer>> PutConsumerAsync([FromBody] Consumer consumer)
         {
@@ -161,7 +158,6 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
         }
 
         [HttpDelete("{consumerId}")]
-        //[InvisibleApi]
         [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,Consumers.Delete")]
         public async ValueTask<ActionResult<Consumer>> DeleteConsumerByIdAsync(Guid consumerId)
         {
