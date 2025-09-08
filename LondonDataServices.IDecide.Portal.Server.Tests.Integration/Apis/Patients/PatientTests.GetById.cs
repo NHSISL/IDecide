@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using LondonDataServices.IDecide.Portal.Server.Tests.Integration.Models.Patients;
 
-namespace LondonDataServices.IDecide.Portal.Server.Tests.Integration.Apis
+namespace LondonDataServices.IDecide.Portal.Server.Tests.Integration.Apis.Patients
 {
     public partial class PatientApiTests
     {
@@ -18,7 +18,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Integration.Apis
             Patient expectedPatient = randomPatient;
 
             // when
-            Patient actualPatient = 
+            Patient actualPatient =
                 await this.apiBroker.GetPatientByIdAsync(randomPatient.Id);
 
             // then
