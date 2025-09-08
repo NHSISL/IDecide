@@ -157,13 +157,13 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
 
         public async ValueTask VerifyPatientCodeAsync(string nhsNumber, string verificationCode)
         {
+            ValidateVerifyPatientCodeArguments(nhsNumber: nhsNumber, verificationCode: verificationCode);
             bool isAuthenticatedUserWithRole = await CheckIfIsAuthenticatedUserWithRequiredRoleAsync();
             IQueryable<Patient> patients = await this.patientService.RetrieveAllPatientsAsync();
             Patient maybeMatchingPatient = patients.FirstOrDefault(patient => patient.NhsNumber == nhsNumber);
             Patient patientToUpdate = maybeMatchingPatient;
+            ValidatePatientExists(maybeMatchingPatient);
             Guid correlationId = await this.identifierBroker.GetIdentifierAsync();
-
-            // Validate patient exists
 
             if (isAuthenticatedUserWithRole)
             {
