@@ -60,7 +60,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
 
             this.securityAuditBrokerMock.Verify(broker =>
                 broker.GetCurrentUserIdAsync(),
-                    Times.Exactly(2));
+                    Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertAuditAsync(inputAudit),

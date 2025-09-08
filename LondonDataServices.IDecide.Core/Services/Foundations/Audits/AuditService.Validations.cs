@@ -14,6 +14,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Audits
     {
         private async ValueTask ValidateAuditOnAddAsync(Audit audit)
         {
+            ValidateAuditIsNotNull(audit);
             string currentUserId = await this.securityAuditBroker.GetCurrentUserIdAsync();
 
             Validate(
@@ -55,6 +56,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Audits
 
         private async ValueTask ValidateAuditOnModifyAsync(Audit audit)
         {
+            ValidateAuditIsNotNull(audit);
             string currentUserId = await this.securityAuditBroker.GetCurrentUserIdAsync();
 
             Validate(
@@ -84,6 +86,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Audits
             Audit audit,
             Audit maybeAudit)
         {
+            ValidateAuditIsNotNull(audit);
             string currentUserId = await this.securityAuditBroker.GetCurrentUserIdAsync();
 
             Validate(
