@@ -15,7 +15,6 @@ using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions.Exceptions;
-using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
 using LondonDataServices.IDecide.Core.Services.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Services.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
@@ -161,7 +160,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
 
                 if (userIsInWorkflowRole is false)
                 {
-                    throw new UnauthorizedPatientOrchestrationServiceException(
+                    throw new UnauthorizedDecisionOrchestrationServiceException(
                         message: "The current user is not authorized to perform this operation.");
                 }
                 else
@@ -175,7 +174,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
 
                 if (isCaptchaValid is false)
                 {
-                    throw new InvalidCaptchaPatientOrchestrationServiceException(
+                    throw new InvalidCaptchaDecisionOrchestrationServiceException(
                         message: "The provided captcha token is invalid.");
                 }
                 else
