@@ -25,7 +25,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
     {
         private readonly Mock<IStorageBroker> storageBrokerMock;
         private readonly Mock<IDateTimeBroker> dateTimeBrokerMock;
-        private readonly Mock<ISecurityBroker> securityBrokerMock;
         private readonly Mock<ISecurityAuditBroker> securityAuditBrokerMock;
         private readonly Mock<ILoggingBroker> loggingBrokerMock;
         private readonly IConsumerService consumerService;
@@ -34,14 +33,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
         {
             this.storageBrokerMock = new Mock<IStorageBroker>();
             this.dateTimeBrokerMock = new Mock<IDateTimeBroker>();
-            this.securityBrokerMock = new Mock<ISecurityBroker>();
             this.securityAuditBrokerMock = new Mock<ISecurityAuditBroker>();
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
 
             this.consumerService = new ConsumerService(
                 storageBroker: this.storageBrokerMock.Object,
                 dateTimeBroker: this.dateTimeBrokerMock.Object,
-                securityBroker: this.securityBrokerMock.Object,
                 securityAuditBroker: this.securityAuditBrokerMock.Object,
                 loggingBroker: this.loggingBrokerMock.Object);
         }

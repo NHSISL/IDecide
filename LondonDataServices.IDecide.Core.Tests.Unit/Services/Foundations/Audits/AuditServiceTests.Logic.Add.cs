@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Force.DeepCloner;
 using LondonDataServices.IDecide.Core.Models.Foundations.Audits;
-using LondonDataServices.IDecide.Core.Models.Securities;
 using Moq;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
@@ -19,22 +18,26 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
         {
             // given
             DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
-            User randomUser = CreateRandomUser();
+            string randomUserId = GetRandomStringWithLengthOf(50);
 
             Audit randomAudit =
-                CreateRandomAudit(randomDateTimeOffset, randomUser.UserId);
+                CreateRandomAudit(randomDateTimeOffset, randomUserId);
 
             Audit inputAudit = randomAudit;
             Audit storageAudit = inputAudit;
             Audit expectedAudit = storageAudit.DeepClone();
 
+            this.securityAuditBrokerMock.Setup(broker =>
+                broker.ApplyAddAuditValuesAsync(inputAudit))
+                    .ReturnsAsync(inputAudit);
+
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
                     .ReturnsAsync(randomDateTimeOffset);
 
-            this.securityBrokerMock.Setup(broker =>
-                broker.GetCurrentUserAsync())
-                    .ReturnsAsync(randomUser);
+            this.securityAuditBrokerMock.Setup(broker =>
+                broker.GetCurrentUserIdAsync())
+                    .ReturnsAsync(randomUserId);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.InsertAuditAsync(inputAudit))
@@ -47,20 +50,24 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
             // then
             actualAudit.Should().BeEquivalentTo(expectedAudit);
 
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.ApplyAddAuditValuesAsync(inputAudit),
+                    Times.Once);
+
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffsetAsync(),
-                    Times.Exactly(2));
+                    Times.Once);
 
-            this.securityBrokerMock.Verify(broker =>
-                broker.GetCurrentUserAsync(),
-                    Times.Exactly(2));
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.GetCurrentUserIdAsync(),
+                    Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertAuditAsync(inputAudit),
                     Times.Once);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
+            this.securityAuditBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }

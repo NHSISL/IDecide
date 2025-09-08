@@ -58,8 +58,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                     expectedConsumerStatusDependencyException))),
                         Times.Once);
 
-            this.securityBrokerMock.Verify(broker =>
-                broker.GetCurrentUserAsync(),
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.GetCurrentUserIdAsync(),
                     Times.Never);
 
             this.dateTimeBrokerMock.Verify(broker =>
@@ -71,8 +71,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                     Times.Never);
 
             this.securityAuditBrokerMock.Verify(broker => broker
-                .EnsureAddAuditValuesRemainsUnchangedOnModifyAsync(It.IsAny<ConsumerStatus>(), It.IsAny<ConsumerStatus>()),
-                    Times.Never);
+                .EnsureAddAuditValuesRemainsUnchangedOnModifyAsync(
+                    It.IsAny<ConsumerStatus>(),
+                    It.IsAny<ConsumerStatus>()),
+                        Times.Never);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.UpdateConsumerStatusAsync(It.IsAny<ConsumerStatus>()),
@@ -82,7 +84,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
+            this.securityAuditBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -131,8 +133,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                     SameExceptionAs(expectedConsumerStatusDependencyValidationException))),
                     Times.Once);
 
-            this.securityBrokerMock.Verify(broker =>
-                broker.GetCurrentUserAsync(),
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.GetCurrentUserIdAsync(),
                     Times.Never);
 
             this.dateTimeBrokerMock.Verify(broker =>
@@ -157,7 +159,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
+            this.securityAuditBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -202,8 +204,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                     expectedConsumerStatusDependencyException))),
                         Times.Once);
 
-            this.securityBrokerMock.Verify(broker =>
-                broker.GetCurrentUserAsync(),
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.GetCurrentUserIdAsync(),
                     Times.Never);
 
             this.dateTimeBrokerMock.Verify(broker =>
@@ -228,7 +230,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
+            this.securityAuditBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -273,8 +275,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                     expectedConsumerStatusDependencyValidationException))),
                         Times.Once);
 
-            this.securityBrokerMock.Verify(broker =>
-                broker.GetCurrentUserAsync(),
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.GetCurrentUserIdAsync(),
                     Times.Never);
 
             this.dateTimeBrokerMock.Verify(broker =>
@@ -299,7 +301,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
+            this.securityAuditBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -344,8 +346,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                     expectedConsumerStatusServiceException))),
                         Times.Once);
 
-            this.securityBrokerMock.Verify(broker =>
-                broker.GetCurrentUserAsync(),
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.GetCurrentUserIdAsync(),
                     Times.Never);
 
             this.dateTimeBrokerMock.Verify(broker =>
@@ -370,7 +372,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
+            this.securityAuditBrokerMock.VerifyNoOtherCalls();
         }
     }
 }

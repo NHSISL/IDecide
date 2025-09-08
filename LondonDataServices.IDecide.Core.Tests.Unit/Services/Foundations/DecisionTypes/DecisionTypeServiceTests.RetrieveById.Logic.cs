@@ -38,7 +38,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.securityAuditBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }

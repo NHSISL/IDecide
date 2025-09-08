@@ -33,8 +33,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
                     message: "Audit dependency error occurred, please contact support.",
                     innerException: failedAuditStorageException);
 
-            this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffsetAsync())
+            this.securityAuditBrokerMock.Setup(broker =>
+                broker.ApplyAddAuditValuesAsync(It.IsAny<Audit>()))
                     .ThrowsAsync(sqlException);
 
             // when
@@ -49,8 +49,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
             actualAuditDependencyException.Should()
                 .BeEquivalentTo(expectedAuditDependencyException);
 
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffsetAsync(),
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.ApplyAddAuditValuesAsync(It.IsAny<Audit>()),
                     Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
@@ -62,7 +62,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
                     expectedAuditDependencyException))),
                         Times.Once);
 
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.securityAuditBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
@@ -88,8 +88,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
                     message: "Audit dependency validation occurred, please try again.",
                     innerException: alreadyExistsAuditException);
 
-            this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffsetAsync())
+            this.securityAuditBrokerMock.Setup(broker =>
+                broker.ApplyAddAuditValuesAsync(It.IsAny<Audit>()))
                     .ThrowsAsync(duplicateKeyException);
 
             // when
@@ -104,8 +104,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
             actualAuditDependencyValidationException.Should()
                 .BeEquivalentTo(expectedAuditDependencyValidationException);
 
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffsetAsync(),
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.ApplyAddAuditValuesAsync(It.IsAny<Audit>()),
                     Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
@@ -117,7 +117,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
                     expectedAuditDependencyValidationException))),
                         Times.Once);
 
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.securityAuditBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.identifierBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
@@ -144,8 +144,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
                     message: "Audit dependency validation occurred, please try again.",
                     innerException: invalidAuditReferenceException);
 
-            this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffsetAsync())
+            this.securityAuditBrokerMock.Setup(broker =>
+                broker.ApplyAddAuditValuesAsync(It.IsAny<Audit>()))
                     .ThrowsAsync(foreignKeyConstraintConflictException);
 
             // when
@@ -160,8 +160,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
             actualAuditDependencyValidationException.Should()
                 .BeEquivalentTo(expectedAuditValidationException);
 
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffsetAsync(),
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.ApplyAddAuditValuesAsync(It.IsAny<Audit>()),
                     Times.Once());
 
             this.loggingBrokerMock.Verify(broker =>
@@ -173,7 +173,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
                 broker.InsertAuditAsync(someAudit),
                     Times.Never());
 
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.securityAuditBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.identifierBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
@@ -198,8 +198,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
                     message: "Audit dependency error occurred, please contact support.",
                     innerException: failedAuditStorageException);
 
-            this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffsetAsync())
+            this.securityAuditBrokerMock.Setup(broker =>
+                broker.ApplyAddAuditValuesAsync(It.IsAny<Audit>()))
                     .ThrowsAsync(databaseUpdateException);
 
             // when
@@ -214,8 +214,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
             actualAuditDependencyException.Should()
                 .BeEquivalentTo(expectedAuditDependencyException);
 
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffsetAsync(),
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.ApplyAddAuditValuesAsync(It.IsAny<Audit>()),
                     Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
@@ -227,7 +227,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
                     expectedAuditDependencyException))),
                         Times.Once);
 
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.securityAuditBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.identifierBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
@@ -250,8 +250,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
                     message: "Audit service error occurred, please contact support.",
                     innerException: failedAuditServiceException);
 
-            this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffsetAsync())
+            this.securityAuditBrokerMock.Setup(broker =>
+                broker.ApplyAddAuditValuesAsync(It.IsAny<Audit>()))
                     .ThrowsAsync(serviceException);
 
             // when
@@ -266,8 +266,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
             actualAuditServiceException.Should()
                 .BeEquivalentTo(expectedAuditServiceException);
 
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffsetAsync(),
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.ApplyAddAuditValuesAsync(It.IsAny<Audit>()),
                     Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
@@ -279,7 +279,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
                     expectedAuditServiceException))),
                         Times.Once);
 
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.securityAuditBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.identifierBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();

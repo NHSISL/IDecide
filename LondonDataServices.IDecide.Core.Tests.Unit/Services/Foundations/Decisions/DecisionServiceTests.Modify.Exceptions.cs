@@ -58,8 +58,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                     expectedDecisionDependencyException))),
                         Times.Once);
 
-            this.securityBrokerMock.Verify(broker =>
-                broker.GetCurrentUserAsync(),
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.GetCurrentUserIdAsync(),
                     Times.Never);
 
             this.dateTimeBrokerMock.Verify(broker =>
@@ -82,7 +82,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -130,8 +129,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                 broker.LogErrorAsync(It.Is(SameExceptionAs(expectedDecisionDependencyValidationException))),
                     Times.Once);
 
-            this.securityBrokerMock.Verify(broker =>
-                broker.GetCurrentUserAsync(),
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.GetCurrentUserIdAsync(),
                     Times.Never);
 
             this.dateTimeBrokerMock.Verify(broker =>
@@ -154,7 +153,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -199,8 +197,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                     expectedDecisionDependencyException))),
                         Times.Once);
 
-            this.securityBrokerMock.Verify(broker =>
-                broker.GetCurrentUserAsync(),
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.GetCurrentUserIdAsync(),
                     Times.Never);
 
             this.dateTimeBrokerMock.Verify(broker =>
@@ -223,7 +221,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -268,8 +265,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                     expectedDecisionDependencyValidationException))),
                         Times.Once);
 
-            this.securityBrokerMock.Verify(broker =>
-                broker.GetCurrentUserAsync(),
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.GetCurrentUserIdAsync(),
                     Times.Never);
 
             this.dateTimeBrokerMock.Verify(broker =>
@@ -292,7 +289,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -337,8 +333,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                     expectedDecisionServiceException))),
                         Times.Once);
 
-            this.securityBrokerMock.Verify(broker =>
-                broker.GetCurrentUserAsync(),
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.GetCurrentUserIdAsync(),
                     Times.Never);
 
             this.dateTimeBrokerMock.Verify(broker =>
@@ -361,7 +357,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
         }
     }
 }

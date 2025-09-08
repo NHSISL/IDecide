@@ -44,6 +44,7 @@ namespace LondonDataServices.IDecide.Core.Brokers.Notifications
         /// <exception cref="NotificationServiceProviderException" />
         ValueTask<string> SendSmsAsync(
             string templateId,
+            string mobileNumber,
             Dictionary<string, dynamic> personalisation);
 
         /// <summary>

@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Models.Foundations.Audits;
 using LondonDataServices.IDecide.Core.Models.Foundations.Audits.Exceptions;
-using LondonDataServices.IDecide.Core.Models.Securities;
 
 namespace LondonDataServices.IDecide.Core.Services.Foundations.Audits
 {
@@ -15,7 +14,8 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Audits
     {
         private async ValueTask ValidateAuditOnAddAsync(Audit audit)
         {
-            User currentUser = await this.securityBroker.GetCurrentUserAsync();
+            ValidateAuditIsNotNull(audit);
+            string currentUserId = await this.securityAuditBroker.GetCurrentUserIdAsync();
 
             Validate(
                 (Rule: IsInvalid(audit.Id), Parameter: nameof(Audit.Id)),
@@ -27,7 +27,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Audits
                 (Rule: IsInvalid(audit.UpdatedBy), Parameter: nameof(Audit.UpdatedBy)),
 
                 (Rule: IsNotSame(
-                    first: currentUser.UserId,
+                    first: currentUserId,
                     second: audit.CreatedBy),
                 Parameter: nameof(Audit.CreatedBy)),
 
@@ -56,7 +56,8 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Audits
 
         private async ValueTask ValidateAuditOnModifyAsync(Audit audit)
         {
-            User currentUser = await this.securityBroker.GetCurrentUserAsync();
+            ValidateAuditIsNotNull(audit);
+            string currentUserId = await this.securityAuditBroker.GetCurrentUserIdAsync();
 
             Validate(
                 (Rule: IsInvalid(audit.Id), Parameter: nameof(Audit.Id)),
@@ -68,7 +69,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Audits
                 (Rule: IsInvalid(audit.UpdatedBy), Parameter: nameof(Audit.UpdatedBy)),
 
                 (Rule: IsNotSame(
-                    first: currentUser.UserId,
+                    first: currentUserId,
                     second: audit.UpdatedBy),
                 Parameter: nameof(Audit.UpdatedBy)),
 
@@ -85,7 +86,8 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Audits
             Audit audit,
             Audit maybeAudit)
         {
-            User auditUser = await this.securityBroker.GetCurrentUserAsync();
+            ValidateAuditIsNotNull(audit);
+            string currentUserId = await this.securityAuditBroker.GetCurrentUserIdAsync();
 
             Validate(
                 (Rule: IsNotSame(
@@ -107,7 +109,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Audits
                  Parameter: nameof(Audit.UpdatedDate)),
 
                 (Rule: IsNotSame(
-                    auditUser.UserId.ToString(),
+                    currentUserId,
                     audit.UpdatedBy,
                     nameof(Audit.UpdatedBy)),
                  Parameter: nameof(Audit.UpdatedBy))

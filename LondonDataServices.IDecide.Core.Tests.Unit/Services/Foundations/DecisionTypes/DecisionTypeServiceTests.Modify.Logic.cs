@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Force.DeepCloner;
 using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
-using LondonDataServices.IDecide.Core.Models.Securities;
 using Moq;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.DecisionTypes
@@ -20,7 +19,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
             // given
             DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
             string randomUserId = GetRandomString();
-            User randomUser = CreateRandomUser(userId: randomUserId);
             DecisionType randomDecisionType = CreateRandomModifyDecisionType(randomDateTimeOffset);
             DecisionType inputDecisionType = randomDecisionType;
             DecisionType storageDecisionType = inputDecisionType.DeepClone();
@@ -37,9 +35,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                 broker.ApplyModifyAuditValuesAsync(inputDecisionType))
                     .ReturnsAsync(auditAppliedDecisionType);
 
-            this.securityBrokerMock.Setup(broker =>
-                broker.GetCurrentUserAsync())
-                    .ReturnsAsync(randomUser);
+            this.securityAuditBrokerMock.Setup(broker =>
+                broker.GetCurrentUserIdAsync())
+                    .ReturnsAsync(randomUserId);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
@@ -68,8 +66,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                 broker.ApplyModifyAuditValuesAsync(inputDecisionType),
                     Times.Once);
 
-            this.securityBrokerMock.Verify(broker =>
-                broker.GetCurrentUserAsync(),
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.GetCurrentUserIdAsync(),
                     Times.Once);
 
             this.dateTimeBrokerMock.Verify(broker =>
@@ -89,7 +87,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                     Times.Once);
 
             this.securityAuditBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
+            this.securityAuditBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
