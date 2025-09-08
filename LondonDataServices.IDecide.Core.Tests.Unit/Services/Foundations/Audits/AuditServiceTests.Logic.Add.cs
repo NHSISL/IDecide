@@ -27,6 +27,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
             Audit storageAudit = inputAudit;
             Audit expectedAudit = storageAudit.DeepClone();
 
+            this.securityAuditBrokerMock.Setup(broker =>
+                broker.ApplyAddAuditValuesAsync(inputAudit))
+                    .ReturnsAsync(inputAudit);
+
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
                     .ReturnsAsync(randomDateTimeOffset);
@@ -46,9 +50,13 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
             // then
             actualAudit.Should().BeEquivalentTo(expectedAudit);
 
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.ApplyAddAuditValuesAsync(inputAudit),
+                    Times.Once);
+
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffsetAsync(),
-                    Times.Exactly(2));
+                    Times.Once);
 
             this.securityAuditBrokerMock.Verify(broker =>
                 broker.GetCurrentUserIdAsync(),
