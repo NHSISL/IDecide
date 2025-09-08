@@ -84,7 +84,9 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                            this.notificationConfig.SmsCodeTemplateId, personalisation);
 
                         await this.notificationBroker.SendSmsAsync(
-                            this.notificationConfig.SmsCodeTemplateId, personalisation);
+                            this.notificationConfig.SmsCodeTemplateId,
+                            notificationInfo.Patient.Phone,
+                            personalisation);
 
                         break;
 
@@ -159,7 +161,9 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                             this.notificationConfig.SmsSubmissionSuccessTemplateId, personalisation);
 
                         await this.notificationBroker.SendSmsAsync(
-                            this.notificationConfig.SmsSubmissionSuccessTemplateId, personalisation);
+                            this.notificationConfig.SmsSubmissionSuccessTemplateId,
+                            notificationInfo.Patient.Phone,
+                            personalisation);
 
                         break;
 
@@ -234,7 +238,9 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                             this.notificationConfig.SmsSubscriberUsageTemplateId, personalisation);
 
                         await this.notificationBroker.SendSmsAsync(
-                            this.notificationConfig.SmsSubscriberUsageTemplateId, personalisation);
+                            this.notificationConfig.SmsSubscriberUsageTemplateId,
+                            notificationInfo.Patient.Phone,
+                            personalisation);
 
                         break;
 

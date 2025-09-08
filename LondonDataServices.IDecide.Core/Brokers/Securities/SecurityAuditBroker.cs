@@ -84,8 +84,8 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
         /// <typeparam name="T">The type of the entity.</typeparam>
         /// <param name="entity">The entity to audit.</param>
         /// <returns>The audited entity with add metadata applied.</returns>
-        public ValueTask<T> ApplyAddAuditValuesAsync<T>(T entity) =>
-            this.securityClient.Audits.ApplyAddAuditValuesAsync(entity, claimsPrincipal, securityConfigurations);
+        public async ValueTask<T> ApplyAddAuditValuesAsync<T>(T entity) =>
+            await this.securityClient.Audits.ApplyAddAuditValuesAsync(entity, claimsPrincipal, securityConfigurations);
 
         /// <summary>
         /// Applies auditing metadata for a modify operation to the specified entity.
@@ -94,8 +94,8 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
         /// <typeparam name="T">The type of the entity.</typeparam>
         /// <param name="entity">The entity to audit.</param>
         /// <returns>The audited entity with modify metadata applied.</returns>
-        public ValueTask<T> ApplyModifyAuditValuesAsync<T>(T entity) =>
-                this.securityClient.Audits.ApplyModifyAuditValuesAsync(entity, claimsPrincipal, securityConfigurations);
+        public async ValueTask<T> ApplyModifyAuditValuesAsync<T>(T entity) =>
+            await this.securityClient.Audits.ApplyModifyAuditValuesAsync(entity, claimsPrincipal, securityConfigurations);
 
         /// <summary>
         /// Applies auditing metadata for a remove (soft delete) operation to the specified entity.
@@ -103,8 +103,8 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
         /// <typeparam name="T">The type of the entity.</typeparam>
         /// <param name="entity">The entity to audit for removal.</param>
         /// <returns>The audited entity with remove metadata applied.</returns>
-        public ValueTask<T> ApplyRemoveAuditValuesAsync<T>(T entity) =>
-                this.securityClient.Audits.ApplyRemoveAuditValuesAsync(entity, claimsPrincipal, securityConfigurations);
+        public async ValueTask<T> ApplyRemoveAuditValuesAsync<T>(T entity) =>
+            await this.securityClient.Audits.ApplyRemoveAuditValuesAsync(entity, claimsPrincipal, securityConfigurations);
 
         /// <summary>
         /// Ensures that add audit values (e.g., created by/date) remain unchanged during modify operations.
@@ -113,10 +113,28 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
         /// <param name="entity">The entity being modified.</param>
         /// <param name="storageEntity">The original stored entity used to preserve original audit values.</param>
         /// <returns>The entity with original add audit values retained.</returns>
-        public ValueTask<T> EnsureAddAuditValuesRemainsUnchangedOnModifyAsync<T>(
+        public async ValueTask<T> EnsureAddAuditValuesRemainsUnchangedOnModifyAsync<T>(
             T entity,
             T storageEntity) =>
-                this.securityClient.Audits
+                await this.securityClient.Audits
                     .EnsureAddAuditValuesRemainsUnchangedOnModifyAsync(entity, storageEntity, securityConfigurations);
+
+
+        /// <summary>
+        /// Retrieves the current user identifier from the given claims principal.
+        /// </summary>
+        /// <param name="claimsPrincipal">The user context containing claims.</param>
+        /// <returns>The user identifier string.</returns>
+        /// <remarks>
+        /// If no valid user identifier is found, a fallback (such as <c>"Anonymous"</c>) may be returned.
+        /// </remarks>
+        /// <example>
+        /// <code>
+        /// string userId = await auditClient.GetCurrentUserIdAsync(User);
+        /// // e.g. "Alice" or "Anonymous"
+        /// </code>
+        /// </example>
+        public async ValueTask<string> GetCurrentUserIdAsync() =>
+            await this.securityClient.Audits.GetCurrentUserIdAsync(claimsPrincipal);
     }
 }

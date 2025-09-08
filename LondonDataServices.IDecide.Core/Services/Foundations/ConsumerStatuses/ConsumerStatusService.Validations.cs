@@ -6,7 +6,6 @@ using System;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerStatuses;
 using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerStatuses.Exceptions;
-using LondonDataServices.IDecide.Core.Models.Securities;
 using Xeptions;
 
 namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
@@ -16,11 +15,12 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
         private async ValueTask ValidateConsumerStatusOnAdd(ConsumerStatus consumerStatus)
         {
             ValidateConsumerStatusIsNotNull(consumerStatus);
-            User currentUser = await this.securityBroker.GetCurrentUserAsync();
+            string currentUserId = await this.securityAuditBroker.GetCurrentUserIdAsync();
 
             Validate<InvalidConsumerStatusException>(
                 message: "Invalid consumerStatus. Please correct the errors and try again.",
                 (Rule: IsInvalid(consumerStatus.Id), Parameter: nameof(ConsumerStatus.Id)),
+                (Rule: IsInvalid(consumerStatus.AdoptionDate), Parameter: nameof(ConsumerStatus.AdoptionDate)),
                 (Rule: IsInvalid(consumerStatus.CreatedDate), Parameter: nameof(ConsumerStatus.CreatedDate)),
                 (Rule: IsInvalid(consumerStatus.CreatedBy), Parameter: nameof(ConsumerStatus.CreatedBy)),
                 (Rule: IsInvalid(consumerStatus.UpdatedDate), Parameter: nameof(ConsumerStatus.UpdatedDate)),
@@ -35,7 +35,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
                     Parameter: nameof(ConsumerStatus.UpdatedDate)),
 
                 (Rule: IsNotSame(
-                        first: currentUser.UserId,
+                        first: currentUserId,
                         second: consumerStatus.CreatedBy),
                     Parameter: nameof(ConsumerStatus.CreatedBy)),
 
@@ -52,11 +52,12 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
         private async ValueTask ValidateConsumerStatusOnModify(ConsumerStatus consumerStatus)
         {
             ValidateConsumerStatusIsNotNull(consumerStatus);
-            User currentUser = await this.securityBroker.GetCurrentUserAsync();
+            string currentUserId = await this.securityAuditBroker.GetCurrentUserIdAsync();
 
             Validate<InvalidConsumerStatusException>(
                 message: "Invalid consumerStatus. Please correct the errors and try again.",
                 (Rule: IsInvalid(consumerStatus.Id), Parameter: nameof(ConsumerStatus.Id)),
+                (Rule: IsInvalid(consumerStatus.AdoptionDate), Parameter: nameof(ConsumerStatus.AdoptionDate)),
                 (Rule: IsInvalid(consumerStatus.CreatedDate), Parameter: nameof(ConsumerStatus.CreatedDate)),
                 (Rule: IsInvalid(consumerStatus.CreatedBy), Parameter: nameof(ConsumerStatus.CreatedBy)),
                 (Rule: IsInvalid(consumerStatus.UpdatedDate), Parameter: nameof(ConsumerStatus.UpdatedDate)),
@@ -65,7 +66,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
                 (Rule: IsGreaterThan(consumerStatus.UpdatedBy, 255), Parameter: nameof(ConsumerStatus.UpdatedBy)),
 
                 (Rule: IsNotSame(
-                        first: currentUser.UserId,
+                        first: currentUserId,
                         second: consumerStatus.UpdatedBy),
                     Parameter: nameof(ConsumerStatus.UpdatedBy)),
 
@@ -77,6 +78,11 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
 
                 (Rule: await IsNotRecentAsync(consumerStatus.UpdatedDate), Parameter: nameof(ConsumerStatus.UpdatedDate)));
         }
+
+        private static void ValidateConsumerStatusId(Guid consumerStatusId) =>
+            Validate<InvalidConsumerStatusException>(
+                message: "Invalid consumerStatus. Please correct the errors and try again.",
+                validations: (Rule: IsInvalid(consumerStatusId), Parameter: nameof(ConsumerStatus.Id)));
 
         private static void ValidateStorageConsumerStatus(ConsumerStatus maybeConsumerStatus, Guid consumerStatusId)
         {

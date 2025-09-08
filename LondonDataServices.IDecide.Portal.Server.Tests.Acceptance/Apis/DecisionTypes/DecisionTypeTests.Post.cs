@@ -2,13 +2,11 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Models.DecisionTypes;
 
-namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Apis
+namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Apis.DecisionTypes
 {
     public partial class DecisionTypeApiTests
     {

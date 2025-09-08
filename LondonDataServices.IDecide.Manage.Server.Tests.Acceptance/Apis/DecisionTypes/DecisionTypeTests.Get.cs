@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.DecisionTypes;
 
-namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis
+namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.DecisionTypes
 {
     public partial class DecisionTypeApiTests
     {
@@ -25,7 +25,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis
             // then
             foreach (DecisionType expectedDecisionType in expectedDecisionTypes)
             {
-                DecisionType actualDecisionType = 
+                DecisionType actualDecisionType =
                     actualDecisionTypes.Single(approval => approval.Id == expectedDecisionType.Id);
 
                 actualDecisionType.Should().BeEquivalentTo(expectedDecisionType, options => options

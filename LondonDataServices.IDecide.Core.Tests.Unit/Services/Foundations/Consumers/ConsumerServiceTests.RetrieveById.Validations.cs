@@ -54,7 +54,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.securityAuditBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
@@ -75,8 +74,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                     innerException: notFoundConsumerException);
 
             this.storageBrokerMock.Setup(broker =>
-                    broker.SelectConsumerByIdAsync(It.IsAny<Guid>()))
-                .ReturnsAsync(noConsumer);
+                broker.SelectConsumerByIdAsync(It.IsAny<Guid>()))
+                    .ReturnsAsync(noConsumer);
 
             //when
             ValueTask<Consumer> retrieveConsumerByIdTask =
@@ -99,7 +98,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.securityAuditBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
