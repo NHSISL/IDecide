@@ -1,56 +1,205 @@
-﻿// ---------------------------------------------------------
+// ---------------------------------------------------------
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
 using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Attrify.Attributes;
+using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
+using LondonDataServices.IDecide.Core.Models.Foundations.Decisions.Exceptions;
+using LondonDataServices.IDecide.Core.Services.Foundations.Decisions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.OData.Query;
+using RESTFulSense.Controllers;
 
 namespace LondonDataServices.IDecide.Portal.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class DecisionsController : ControllerBase
+    public class DecisionsController : RESTFulController
     {
-        private readonly IConfiguration configuration;
+        private readonly IDecisionService decisionService;
 
-        public DecisionsController(IConfiguration configuration)
-        {
-            this.configuration = configuration;
-        }
+        public DecisionsController(IDecisionService decisionService) =>
+            this.decisionService = decisionService;
 
-        // Mock Decision model for demonstration
-        public class Decision
-        {
-            public string Id { get; set; }
-            public string PatientNhsNumber { get; set; }
-            public int? DecisionTypeId { get; set; }
-            public string DecisionChoice { get; set; }
-            public string Code { get; set; }
-            public string CreatedBy { get; set; }
-            public DateTime CreatedDate { get; set; }
-            public string UpdatedBy { get; set; }
-            public DateTime UpdatedDate { get; set; }
-        }
-
-        //Recapture
         [HttpPost]
-        public ActionResult<Decision> CreateDecision([FromBody] Decision decision)
+        [InvisibleApi]
+        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators,Decisions.Create")]
+        public async ValueTask<ActionResult<Decision>> PostDecisionAsync([FromBody] Decision decision)
         {
-            // Mocked response - in a real app, save to DB and return the saved entity
-            var createdDecision = new Decision
+            try
             {
-                Id = Guid.NewGuid().ToString(),
-                PatientNhsNumber = decision?.PatientNhsNumber ?? "1234567890",
-                DecisionTypeId = decision?.DecisionTypeId ?? 1,
-                DecisionChoice = decision?.DecisionChoice ?? "optin",
-                CreatedBy = "system",
-                CreatedDate = DateTime.UtcNow,
-                UpdatedBy = "system",
-                UpdatedDate = DateTime.UtcNow
-            };
+                Decision addedDecision =
+                    await this.decisionService.AddDecisionAsync(decision);
 
-            return Ok(createdDecision);
+                return Created(addedDecision);
+            }
+            catch (DecisionValidationException decisionValidationException)
+            {
+                return BadRequest(decisionValidationException.InnerException);
+            }
+            catch (DecisionDependencyValidationException decisionDependencyValidationException)
+               when (decisionDependencyValidationException.InnerException is AlreadyExistsDecisionException)
+            {
+                return Conflict(decisionDependencyValidationException.InnerException);
+            }
+            catch (DecisionDependencyValidationException decisionDependencyValidationException)
+            {
+                return BadRequest(decisionDependencyValidationException.InnerException);
+            }
+            catch (DecisionDependencyException decisionDependencyException)
+            {
+                return InternalServerError(decisionDependencyException);
+            }
+            catch (DecisionServiceException decisionServiceException)
+            {
+                return InternalServerError(decisionServiceException);
+            }
+        }
+
+        [HttpGet]
+#if !DEBUG
+        [EnableQuery(PageSize = 50)]
+#endif
+#if DEBUG
+        [EnableQuery(PageSize = 5000)]
+#endif
+        [InvisibleApi]
+        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators,Decisions.Read")]
+        public async ValueTask<ActionResult<IQueryable<Decision>>> Get()
+        {
+            try
+            {
+                IQueryable<Decision> retrievedDecisions =
+                    await this.decisionService.RetrieveAllDecisionsAsync();
+
+                return Ok(retrievedDecisions);
+            }
+            catch (DecisionDependencyException decisionDependencyException)
+            {
+                return InternalServerError(decisionDependencyException);
+            }
+            catch (DecisionServiceException decisionServiceException)
+            {
+                return InternalServerError(decisionServiceException);
+            }
+        }
+
+        [HttpGet("{decisionId}")]
+        [InvisibleApi]
+        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators,Decisions.Read")]
+        public async ValueTask<ActionResult<Decision>> GetDecisionByIdAsync(Guid decisionId)
+        {
+            try
+            {
+                Decision decision = await this.decisionService.RetrieveDecisionByIdAsync(decisionId);
+
+                return Ok(decision);
+            }
+            catch (DecisionValidationException decisionValidationException)
+                when (decisionValidationException.InnerException is NotFoundDecisionException)
+            {
+                return NotFound(decisionValidationException.InnerException);
+            }
+            catch (DecisionValidationException decisionValidationException)
+            {
+                return BadRequest(decisionValidationException.InnerException);
+            }
+            catch (DecisionDependencyValidationException decisionDependencyValidationException)
+            {
+                return BadRequest(decisionDependencyValidationException.InnerException);
+            }
+            catch (DecisionDependencyException decisionDependencyException)
+            {
+                return InternalServerError(decisionDependencyException);
+            }
+            catch (DecisionServiceException decisionServiceException)
+            {
+                return InternalServerError(decisionServiceException);
+            }
+        }
+
+        [HttpPut]
+        [InvisibleApi]
+        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators,Decisions.Update")]
+        public async ValueTask<ActionResult<Decision>> PutDecisionAsync([FromBody] Decision decision)
+        {
+            try
+            {
+                Decision modifiedDecision =
+                    await this.decisionService.ModifyDecisionAsync(decision);
+
+                return Ok(modifiedDecision);
+            }
+            catch (DecisionValidationException decisionValidationException)
+                when (decisionValidationException.InnerException is NotFoundDecisionException)
+            {
+                return NotFound(decisionValidationException.InnerException);
+            }
+            catch (DecisionValidationException decisionValidationException)
+            {
+                return BadRequest(decisionValidationException.InnerException);
+            }
+            catch (DecisionDependencyValidationException decisionDependencyValidationException)
+               when (decisionDependencyValidationException.InnerException is AlreadyExistsDecisionException)
+            {
+                return Conflict(decisionDependencyValidationException.InnerException);
+            }
+            catch (DecisionDependencyValidationException decisionDependencyValidationException)
+            {
+                return BadRequest(decisionDependencyValidationException.InnerException);
+            }
+            catch (DecisionDependencyException decisionDependencyException)
+            {
+                return InternalServerError(decisionDependencyException);
+            }
+            catch (DecisionServiceException decisionServiceException)
+            {
+                return InternalServerError(decisionServiceException);
+            }
+        }
+
+        [HttpDelete("{decisionId}")]
+        [InvisibleApi]
+        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators,Decisions.Delete")]
+        public async ValueTask<ActionResult<Decision>> DeleteDecisionByIdAsync(Guid decisionId)
+        {
+            try
+            {
+                Decision deletedDecision =
+                    await this.decisionService.RemoveDecisionByIdAsync(decisionId);
+
+                return Ok(deletedDecision);
+            }
+            catch (DecisionValidationException decisionValidationException)
+                when (decisionValidationException.InnerException is NotFoundDecisionException)
+            {
+                return NotFound(decisionValidationException.InnerException);
+            }
+            catch (DecisionValidationException decisionValidationException)
+            {
+                return BadRequest(decisionValidationException.InnerException);
+            }
+            catch (DecisionDependencyValidationException decisionDependencyValidationException)
+                when (decisionDependencyValidationException.InnerException is LockedDecisionException)
+            {
+                return Locked(decisionDependencyValidationException.InnerException);
+            }
+            catch (DecisionDependencyValidationException decisionDependencyValidationException)
+            {
+                return BadRequest(decisionDependencyValidationException.InnerException);
+            }
+            catch (DecisionDependencyException decisionDependencyException)
+            {
+                return InternalServerError(decisionDependencyException);
+            }
+            catch (DecisionServiceException decisionServiceException)
+            {
+                return InternalServerError(decisionServiceException);
+            }
         }
     }
 }
