@@ -2,6 +2,8 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Brokers.DateTimes;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
@@ -42,6 +44,22 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
                 return await this.storageBroker.InsertConsumerStatusAsync(consumerStatus);
             });
 
+        public ValueTask<IQueryable<ConsumerStatus>> RetrieveAllConsumerStatusesAsync() =>
+            TryCatch(async () => await this.storageBroker.SelectAllConsumerStatusesAsync());
+
+        public ValueTask<ConsumerStatus> RetrieveConsumerStatusByIdAsync(Guid consumerStatusId) =>
+            TryCatch(async () =>
+            {
+                ValidateConsumerStatusId(consumerStatusId);
+
+                ConsumerStatus maybeConsumerStatus = await this.storageBroker
+                    .SelectConsumerStatusByIdAsync(consumerStatusId);
+
+                ValidateStorageConsumerStatus(maybeConsumerStatus, consumerStatusId);
+
+                return maybeConsumerStatus;
+            });
+
         public ValueTask<ConsumerStatus> ModifyConsumerStatusAsync(ConsumerStatus consumerStatus) =>
             TryCatch(async () =>
             {
@@ -61,6 +79,19 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
                     storageConsumerStatus: maybeConsumerStatus);
 
                 return await this.storageBroker.UpdateConsumerStatusAsync(consumerStatus);
+            });
+
+        public ValueTask<ConsumerStatus> RemoveConsumerStatusByIdAsync(Guid consumerStatusId) =>
+            TryCatch(async () =>
+            {
+                ValidateConsumerStatusId(consumerStatusId);
+
+                ConsumerStatus maybeConsumerStatus = await this.storageBroker
+                    .SelectConsumerStatusByIdAsync(consumerStatusId);
+
+                ValidateStorageConsumerStatus(maybeConsumerStatus, consumerStatusId);
+
+                return await this.storageBroker.DeleteConsumerStatusAsync(maybeConsumerStatus);
             });
     }
 }

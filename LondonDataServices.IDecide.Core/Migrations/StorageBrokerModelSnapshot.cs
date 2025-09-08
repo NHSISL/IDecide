@@ -85,6 +85,9 @@ namespace LondonDataServices.IDecide.Core.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTimeOffset>("AdoptionDate")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<Guid>("ConsumerId")
                         .HasColumnType("uniqueidentifier");
 
