@@ -26,20 +26,20 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             string randomValidationCode = GetRandomStringWithLengthOf(5);
 
             var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
-                this.loggingBrokerMock.Object,
-                this.securityBrokerMock.Object,
-                this.dateTimeBrokerMock.Object,
-                this.auditBrokerMock.Object,
-                this.identifierBrokerMock.Object,
-                this.pdsServiceMock.Object,
-                this.patientServiceMock.Object,
-                this.notificationServiceMock.Object,
-                this.decisionConfigurations)
+               this.loggingBrokerMock.Object,
+               this.securityBrokerMock.Object,
+               this.dateTimeBrokerMock.Object,
+               this.auditBrokerMock.Object,
+               this.identifierBrokerMock.Object,
+               this.pdsServiceMock.Object,
+               this.patientServiceMock.Object,
+               this.notificationServiceMock.Object,
+               this.decisionConfigurations)
             { CallBase = true };
 
             var invalidPatientOrchestrationArgumentException =
                 new InvalidPatientOrchestrationArgumentException(
-                    "Invalid decision orchestration argument. Please correct the errors and try again.");
+                    "Invalid patient orchestration argument. Please correct the errors and try again.");
 
             invalidPatientOrchestrationArgumentException.AddData(
                 key: "nhsNumber",
@@ -51,7 +51,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                    innerException: invalidPatientOrchestrationArgumentException);
 
             patientOrchestrationServiceMock.Setup(service =>
-                service.VerifyPatientCodeAsync(invalidNhsNumber, randomValidationCode))
+                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
                     .ThrowsAsync(expectedPatientOrchestrationValidationException);
 
             // when
@@ -108,10 +108,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             var invalidPatientOrchestrationArgumentException =
                 new InvalidPatientOrchestrationArgumentException(
-                    "Invalid decision orchestration argument. Please correct the errors and try again.");
+                    "Invalid patient orchestration argument. Please correct the errors and try again.");
 
             invalidPatientOrchestrationArgumentException.AddData(
-                key: "validationCode",
+                key: "verificationCode",
                 values: "Code must be 5 characters long.");
 
             var expectedPatientOrchestrationValidationException =
@@ -120,7 +120,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                    innerException: invalidPatientOrchestrationArgumentException);
 
             patientOrchestrationServiceMock.Setup(service =>
-                service.VerifyPatientCodeAsync(randomNhsNumber, invalidValidationCode))
+                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
                     .ThrowsAsync(expectedPatientOrchestrationValidationException);
 
             // when
