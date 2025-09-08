@@ -2,6 +2,9 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using LondonDataServices.IDecide.Manage.Server.Tests.Integration.Brokers;
 using LondonDataServices.IDecide.Manage.Server.Tests.Integration.Models.Consumers;
 using Tynamix.ObjectFiller;
