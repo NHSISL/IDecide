@@ -17,7 +17,6 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Consum
 {
     public partial class ConsumersControllerTests : RESTFulController
     {
-
         private readonly Mock<IConsumerService> consumerServiceMock;
         private readonly ConsumersController consumersController;
 
