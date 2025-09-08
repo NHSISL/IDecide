@@ -20,6 +20,7 @@ using ISL.Providers.PDS.FakeFHIR.Providers.FakeFHIR;
 using ISL.Providers.PDS.FHIR.Models.Brokers.PdsFHIR;
 using ISL.Providers.PDS.FHIR.Providers;
 using ISL.Security.Client.Models.Clients;
+using LondonDataServices.IDecide.Core.Brokers.Audits;
 using LondonDataServices.IDecide.Core.Brokers.DateTimes;
 using LondonDataServices.IDecide.Core.Brokers.Identifiers;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
@@ -27,6 +28,7 @@ using LondonDataServices.IDecide.Core.Brokers.Notifications;
 using LondonDataServices.IDecide.Core.Brokers.Pds;
 using LondonDataServices.IDecide.Core.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Brokers.Storages.Sql;
+using LondonDataServices.IDecide.Core.Clients.Audits;
 using LondonDataServices.IDecide.Core.Models.Brokers.Notifications;
 using LondonDataServices.IDecide.Core.Models.Foundations.Audits;
 using LondonDataServices.IDecide.Core.Models.Foundations.Consumers;
@@ -127,6 +129,7 @@ namespace LondonDataServices.IDecide.Portal.Server
             AddBrokers(builder.Services, builder.Configuration);
             AddFoundationServices(builder.Services);
             AddOrchestrationServices(builder.Services, builder.Configuration);
+            AddClients(builder.Services);
             //     AddProcessingServices(builder.Services);
             //     AddCoordinationServices(builder.Services, builder.Configuration);
 
@@ -268,6 +271,7 @@ namespace LondonDataServices.IDecide.Portal.Server
             services.AddTransient<IStorageBroker, StorageBroker>();
             services.AddTransient<INotificationBroker, NotificationBroker>();
             services.AddTransient<IPdsBroker, PdsBroker>();
+            services.AddTransient<IAuditBroker, AuditBroker>();
         }
 
         private static void AddFoundationServices(IServiceCollection services)
@@ -298,5 +302,10 @@ namespace LondonDataServices.IDecide.Portal.Server
 
         private static void AddCoordinationServices(IServiceCollection services, IConfiguration configuration)
         { }
+
+        private static void AddClients(IServiceCollection services)
+        {
+            services.AddTransient<IAuditClient, AuditClient>();
+        }
     }
 }
