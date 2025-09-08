@@ -112,16 +112,25 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
         /// <param name="claimType">The type of the claim.</param>
         /// <param name="claimValue">The value of the claim.</param>
         /// <returns>True if the user has the claim with the specified value; otherwise, false.</returns>
-        public async ValueTask<bool> HasClaimTypeAsync(string claimType, string claimValue) =>
-            await this.securityClient.Users.UserHasClaimTypeAsync(claimsPrincipal, claimType, claimValue);
+        public async ValueTask<bool> HasClaimAsync(string claimType, string claimValue) =>
+            await this.securityClient.Users.UserHasClaimAsync(claimsPrincipal, claimType, claimValue);
 
         /// <summary>
         /// Checks whether the current user has a specific claim type.
         /// </summary>
         /// <param name="claimType">The type of the claim.</param>
         /// <returns>True if the user has the claim; otherwise, false.</returns>
-        public async ValueTask<bool> HasClaimTypeAsync(string claimType) =>
-            await this.securityClient.Users.UserHasClaimTypeAsync(claimsPrincipal, claimType);
+        public async ValueTask<bool> HasClaimAsync(string claimType) =>
+            await this.securityClient.Users.UserHasClaimAsync(claimsPrincipal, claimType);
+
+        /// <summary>
+        /// Validates the Captcha request
+        /// </summary>
+        /// <param name="captchaToken">The captcha token to check.</param>
+        /// <param name="userIp">An optional ip address for the requesting user.</param>
+        /// <returns>True if the user request is successfully validated; otherwise, false.</returns>
+        public async ValueTask<bool> ValidateCaptchaAsync() =>
+            await this.captchaAbstractionProvider.ValidateCaptchaAsync(this.captchaToken, this.remoteIpAddress);
 
         /// <summary>
         /// Extracts a <see cref="ClaimsPrincipal"/> from a given JWT token.
@@ -136,14 +145,5 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
 
             return new ClaimsPrincipal(identity);
         }
-
-        /// <summary>
-        /// Validates the Captcha request
-        /// </summary>
-        /// <param name="captchaToken">The captcha token to check.</param>
-        /// <param name="userIp">An optional ip address for the requesting user.</param>
-        /// <returns>True if the user request is successfully validated; otherwise, false.</returns>
-        public async ValueTask<bool> ValidateCaptchaAsync() =>
-            await this.captchaAbstractionProvider.ValidateCaptchaAsync(this.captchaToken, this.remoteIpAddress);
     }
 }

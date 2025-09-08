@@ -6,7 +6,6 @@ using System;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Models.Foundations.Consumers;
 using LondonDataServices.IDecide.Core.Models.Foundations.Consumers.Exceptions;
-using LondonDataServices.IDecide.Core.Models.Securities;
 using Xeptions;
 
 namespace LondonDataServices.IDecide.Core.Services.Foundations.Consumers
@@ -16,7 +15,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Consumers
         private async ValueTask ValidateConsumerOnAdd(Consumer consumer)
         {
             ValidateConsumerIsNotNull(consumer);
-            User currentUser = await this.securityBroker.GetCurrentUserAsync();
+            string currentUserId = await this.securityAuditBroker.GetCurrentUserIdAsync();
 
             Validate<InvalidConsumerException>(
                 message: "Invalid consumer. Please correct the errors and try again.",
@@ -39,7 +38,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Consumers
                 Parameter: nameof(Consumer.UpdatedDate)),
 
                 (Rule: IsNotSame(
-                    first: currentUser.UserId,
+                    first: currentUserId,
                     second: consumer.CreatedBy),
                 Parameter: nameof(Consumer.CreatedBy)),
 
@@ -55,7 +54,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Consumers
         private async ValueTask ValidateConsumerOnModify(Consumer consumer)
         {
             ValidateConsumerIsNotNull(consumer);
-            User currentUser = await this.securityBroker.GetCurrentUserAsync();
+            string currentUserId = await this.securityAuditBroker.GetCurrentUserIdAsync();
 
             Validate<InvalidConsumerException>(
                 message: "Invalid consumer. Please correct the errors and try again.",
@@ -72,7 +71,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Consumers
                 (Rule: IsGreaterThan(consumer.UpdatedBy, 255), Parameter: nameof(Consumer.UpdatedBy)),
 
                 (Rule: IsNotSame(
-                    first: currentUser.UserId,
+                    first: currentUserId,
                     second: consumer.UpdatedBy),
                 Parameter: nameof(Consumer.UpdatedBy)),
 

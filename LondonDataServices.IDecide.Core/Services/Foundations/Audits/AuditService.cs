@@ -12,7 +12,6 @@ using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Brokers.Storages.Sql;
 using LondonDataServices.IDecide.Core.Models.Foundations.Audits;
-using LondonDataServices.IDecide.Core.Models.Securities;
 
 namespace LondonDataServices.IDecide.Core.Services.Foundations.Audits
 {
@@ -21,20 +20,20 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Audits
         private readonly IStorageBroker storageBroker;
         private readonly IIdentifierBroker identifierBroker;
         private readonly IDateTimeBroker dateTimeBroker;
-        private readonly ISecurityBroker securityBroker;
+        private readonly ISecurityAuditBroker securityAuditBroker;
         private readonly ILoggingBroker loggingBroker;
 
         public AuditService(
             IStorageBroker storageBroker,
             IIdentifierBroker identifierBroker,
             IDateTimeBroker dateTimeBroker,
-            ISecurityBroker securityBroker,
+            ISecurityAuditBroker securityAuditBroker,
             ILoggingBroker loggingBroker)
         {
             this.storageBroker = storageBroker;
             this.identifierBroker = identifierBroker;
             this.dateTimeBroker = dateTimeBroker;
-            this.securityBroker = securityBroker;
+            this.securityAuditBroker = securityAuditBroker;
             this.loggingBroker = loggingBroker;
         }
 
@@ -48,7 +47,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Audits
         TryCatch(async () =>
         {
             DateTimeOffset dateTimeOffset = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
-            var auditUser = await this.securityBroker.GetCurrentUserAsync();
+            var auditUserId = await this.securityAuditBroker.GetCurrentUserIdAsync();
 
             Audit audit = new Audit
             {
@@ -59,9 +58,9 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Audits
                 CorrelationId = correlationId,
                 FileName = fileName,
                 LogLevel = logLevel,
-                CreatedBy = auditUser?.UserId.ToString() ?? string.Empty,
+                CreatedBy = auditUserId ?? string.Empty,
                 CreatedDate = dateTimeOffset,
-                UpdatedBy = auditUser?.UserId.ToString() ?? string.Empty,
+                UpdatedBy = auditUserId ?? string.Empty,
                 UpdatedDate = dateTimeOffset,
             };
 
@@ -73,7 +72,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Audits
         public ValueTask<Audit> AddAuditAsync(Audit audit) =>
             TryCatch(async () =>
             {
-                Audit auditWithAddAuditApplied = await ApplyAddAuditAsync(audit);
+                Audit auditWithAddAuditApplied = await this.securityAuditBroker.ApplyAddAuditValuesAsync(audit);
                 await ValidateAuditOnAddAsync(auditWithAddAuditApplied);
 
                 return await this.storageBroker.InsertAuditAsync(auditWithAddAuditApplied);
@@ -129,7 +128,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Audits
         public ValueTask<Audit> ModifyAuditAsync(Audit audit) =>
             TryCatch(async () =>
             {
-                Audit auditWithModifyAuditApplied = await ApplyModifyAuditAsync(audit);
+                Audit auditWithModifyAuditApplied = await this.securityAuditBroker.ApplyModifyAuditValuesAsync(audit);
                 await ValidateAuditOnModifyAsync(auditWithModifyAuditApplied);
                 Audit maybeAudit = await this.storageBroker.SelectAuditByIdAsync(audit.Id);
                 ValidateStorageAudit(maybeAudit, audit.Id);
@@ -149,7 +148,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Audits
             ValidateStorageAudit(maybeAudit, auditId);
 
             Audit auditWithDeleteAuditApplied =
-                await ApplyDeleteAuditAsync(maybeAudit);
+                await securityAuditBroker.ApplyRemoveAuditValuesAsync(maybeAudit);
 
             Audit updatedAudit =
                 await this.storageBroker.UpdateAuditAsync(auditWithDeleteAuditApplied);
@@ -161,41 +160,6 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Audits
             return await this.storageBroker.DeleteAuditAsync(updatedAudit);
         });
 
-        virtual internal async ValueTask<Audit> ApplyAddAuditAsync(Audit audit)
-        {
-            ValidateAuditIsNotNull(audit);
-            var auditDateTimeOffset = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
-            var auditUser = await this.securityBroker.GetCurrentUserAsync();
-            audit.CreatedBy = auditUser?.UserId.ToString() ?? string.Empty;
-            audit.CreatedDate = auditDateTimeOffset;
-            audit.UpdatedBy = auditUser?.UserId.ToString() ?? string.Empty;
-            audit.UpdatedDate = auditDateTimeOffset;
-
-            return audit;
-        }
-
-        virtual internal async ValueTask<Audit> ApplyModifyAuditAsync(Audit audit)
-        {
-            ValidateAuditIsNotNull(audit);
-            var auditDateTimeOffset = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
-            var auditUser = await this.securityBroker.GetCurrentUserAsync();
-            audit.UpdatedBy = auditUser?.UserId.ToString() ?? string.Empty;
-            audit.UpdatedDate = auditDateTimeOffset;
-
-            return audit;
-        }
-
-        virtual internal async ValueTask<Audit> ApplyDeleteAuditAsync(Audit audit)
-        {
-            ValidateAuditIsNotNull(audit);
-            var auditDateTimeOffset = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
-            var auditUser = await this.securityBroker.GetCurrentUserAsync();
-            audit.UpdatedBy = auditUser?.UserId.ToString() ?? string.Empty;
-            audit.UpdatedDate = auditDateTimeOffset;
-
-            return audit;
-        }
-
         virtual internal async ValueTask<List<Audit>> ValidateAuditsAndAssignIdAndAuditAsync(List<Audit> audits)
         {
             List<Audit> validatedAudites = new List<Audit>();
@@ -204,13 +168,13 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Audits
             {
                 try
                 {
-                    User currentUser = await this.securityBroker.GetCurrentUserAsync();
+                    string currentUserId = await this.securityAuditBroker.GetCurrentUserIdAsync();
                     var currentDateTime = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
                     address.Id = await this.identifierBroker.GetIdentifierAsync();
                     address.CreatedDate = currentDateTime;
-                    address.CreatedBy = currentUser.UserId;
+                    address.CreatedBy = currentUserId;
                     address.UpdatedDate = address.CreatedDate;
-                    address.UpdatedBy = address.CreatedBy;
+                    address.UpdatedBy = currentUserId;
                     await ValidateAuditOnAddAsync(address);
                     validatedAudites.Add(address);
                 }
@@ -220,7 +184,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Audits
                 }
             }
 
-            return await ValueTask.FromResult(validatedAudites);
+            return validatedAudites;
         }
     }
 }

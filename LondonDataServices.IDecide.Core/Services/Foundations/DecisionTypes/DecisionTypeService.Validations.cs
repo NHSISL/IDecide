@@ -6,7 +6,6 @@ using System;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
 using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes.Exceptions;
-using LondonDataServices.IDecide.Core.Models.Securities;
 using Xeptions;
 
 namespace LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes
@@ -16,7 +15,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes
         private async ValueTask ValidateDecisionTypeOnAdd(DecisionType decisionType)
         {
             ValidateDecisionTypeIsNotNull(decisionType);
-            User currentUser = await this.securityBroker.GetCurrentUserAsync();
+            string currentUserId = await this.securityAuditBroker.GetCurrentUserIdAsync();
 
             Validate<InvalidDecisionTypeException>(
                 message: "Invalid decisionType. Please correct the errors and try again.",
@@ -37,7 +36,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes
                 Parameter: nameof(DecisionType.UpdatedDate)),
 
                 (Rule: IsNotSame(
-                    first: currentUser.UserId,
+                    first: currentUserId,
                     second: decisionType.CreatedBy),
                 Parameter: nameof(DecisionType.CreatedBy)),
 
@@ -53,7 +52,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes
         private async ValueTask ValidateDecisionTypeOnModify(DecisionType decisionType)
         {
             ValidateDecisionTypeIsNotNull(decisionType);
-            User currentUser = await this.securityBroker.GetCurrentUserAsync();
+            string currentUserId = await this.securityAuditBroker.GetCurrentUserIdAsync();
 
             Validate<InvalidDecisionTypeException>(
                 message: "Invalid decisionType. Please correct the errors and try again.",
@@ -68,7 +67,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes
                 (Rule: IsGreaterThan(decisionType.UpdatedBy, 255), Parameter: nameof(DecisionType.UpdatedBy)),
 
                  (Rule: IsNotSame(
-                    first: currentUser.UserId,
+                    first: currentUserId,
                     second: decisionType.UpdatedBy),
                 Parameter: nameof(DecisionType.UpdatedBy)),
 

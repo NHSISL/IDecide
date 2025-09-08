@@ -6,7 +6,6 @@ using System;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerStatuses;
 using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerStatuses.Exceptions;
-using LondonDataServices.IDecide.Core.Models.Securities;
 using Xeptions;
 
 namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
@@ -16,7 +15,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
         private async ValueTask ValidateConsumerStatusOnAdd(ConsumerStatus consumerStatus)
         {
             ValidateConsumerStatusIsNotNull(consumerStatus);
-            User currentUser = await this.securityBroker.GetCurrentUserAsync();
+            string currentUserId = await this.securityAuditBroker.GetCurrentUserIdAsync();
 
             Validate<InvalidConsumerStatusException>(
                 message: "Invalid consumerStatus. Please correct the errors and try again.",
@@ -36,7 +35,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
                     Parameter: nameof(ConsumerStatus.UpdatedDate)),
 
                 (Rule: IsNotSame(
-                        first: currentUser.UserId,
+                        first: currentUserId,
                         second: consumerStatus.CreatedBy),
                     Parameter: nameof(ConsumerStatus.CreatedBy)),
 
@@ -53,7 +52,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
         private async ValueTask ValidateConsumerStatusOnModify(ConsumerStatus consumerStatus)
         {
             ValidateConsumerStatusIsNotNull(consumerStatus);
-            User currentUser = await this.securityBroker.GetCurrentUserAsync();
+            string currentUserId = await this.securityAuditBroker.GetCurrentUserIdAsync();
 
             Validate<InvalidConsumerStatusException>(
                 message: "Invalid consumerStatus. Please correct the errors and try again.",
@@ -67,7 +66,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
                 (Rule: IsGreaterThan(consumerStatus.UpdatedBy, 255), Parameter: nameof(ConsumerStatus.UpdatedBy)),
 
                 (Rule: IsNotSame(
-                        first: currentUser.UserId,
+                        first: currentUserId,
                         second: consumerStatus.UpdatedBy),
                     Parameter: nameof(ConsumerStatus.UpdatedBy)),
 

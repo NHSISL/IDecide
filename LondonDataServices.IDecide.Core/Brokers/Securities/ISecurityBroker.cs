@@ -12,8 +12,8 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
         ValueTask<User> GetCurrentUserAsync();
         ValueTask<bool> IsCurrentUserAuthenticatedAsync();
         ValueTask<bool> IsInRoleAsync(string roleName);
-        ValueTask<bool> HasClaimTypeAsync(string claimType, string claimValue);
-        ValueTask<bool> HasClaimTypeAsync(string claimType);
+        ValueTask<bool> HasClaimAsync(string claimType, string claimValue);
+        ValueTask<bool> HasClaimAsync(string claimType);
         ValueTask<bool> ValidateCaptchaAsync();
     }
 }

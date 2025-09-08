@@ -50,8 +50,9 @@ namespace LondonDataServices.IDecide.Core.Brokers.Notifications
         /// <exception cref="NotificationServiceProviderException" />
         public async ValueTask<string> SendSmsAsync(
             string templateId,
+            string mobileNumber,
             Dictionary<string, dynamic> personalisation) =>
-            await notificationAbstractionProvider.SendSmsAsync(templateId, personalisation);
+            await notificationAbstractionProvider.SendSmsAsync(templateId, mobileNumber, personalisation);
 
         /// <summary>
         /// Sends a letter using the specified template ID and personalisation contents.
