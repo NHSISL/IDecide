@@ -43,6 +43,9 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.Decisio
 
                 await this.apiBroker.DeleteDecisionByIdAsync(actualDecision.Id);
             }
+
+            await this.apiBroker.DeletePatientByIdAsync(randomPatient.Id);
+            await this.apiBroker.DeleteDecisionTypeByIdAsync(randomDecisionType.Id);
         }
     }
 }

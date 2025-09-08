@@ -30,6 +30,8 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Integration.Apis.Decisi
                 this.apiBroker.GetDecisionByIdAsync(randomDecision.Id);
 
             await Assert.ThrowsAsync<HttpResponseNotFoundException>(getDecisionByIdTask.AsTask);
+            await this.apiBroker.DeletePatientByIdAsync(randomPatient.Id);
+            await this.apiBroker.DeleteDecisionTypeByIdAsync(randomDecisionType.Id);
         }
     }
 }
