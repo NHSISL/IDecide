@@ -145,5 +145,12 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
 
             return new ClaimsPrincipal(identity);
         }
+
+        /// <summary>
+        /// Retrieves the ip address of the current user.
+        /// </summary>
+        /// <returns>An <see cref="string"/> object containing user details.</returns>
+        public async ValueTask<string> GetIpAddressAsync() =>
+            await Task.FromResult(this.remoteIpAddress);
     }
 }
