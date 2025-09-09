@@ -6,8 +6,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Security.Claims;
 using KellermanSoftware.CompareNetObjects;
+using LondonDataServices.IDecide.Core.Brokers.Audits;
 using LondonDataServices.IDecide.Core.Brokers.DateTimes;
+using LondonDataServices.IDecide.Core.Brokers.Identifiers;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
@@ -17,6 +20,7 @@ using LondonDataServices.IDecide.Core.Models.Foundations.Patients.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions;
+using LondonDataServices.IDecide.Core.Models.Securities;
 using LondonDataServices.IDecide.Core.Services.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Services.Foundations.Pds;
@@ -32,6 +36,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         private readonly Mock<ILoggingBroker> loggingBrokerMock = new Mock<ILoggingBroker>();
         private readonly Mock<ISecurityBroker> securityBrokerMock = new Mock<ISecurityBroker>();
         private readonly Mock<IDateTimeBroker> dateTimeBrokerMock = new Mock<IDateTimeBroker>();
+        private readonly Mock<IAuditBroker> auditBrokerMock = new Mock<IAuditBroker>();
+        private readonly Mock<IIdentifierBroker> identifierBrokerMock = new Mock<IIdentifierBroker>();
         private readonly Mock<IPdsService> pdsServiceMock = new Mock<IPdsService>();
         private readonly Mock<IPatientService> patientServiceMock = new Mock<IPatientService>();
         private readonly Mock<INotificationService> notificationServiceMock = new Mock<INotificationService>();
@@ -48,6 +54,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
             this.securityBrokerMock = new Mock<ISecurityBroker>();
             this.dateTimeBrokerMock = new Mock<IDateTimeBroker>();
+            this.auditBrokerMock = new Mock<IAuditBroker>();
+            this.identifierBrokerMock = new Mock<IIdentifierBroker>();
             this.pdsServiceMock = new Mock<IPdsService>();
             this.patientServiceMock = new Mock<IPatientService>();
             this.notificationServiceMock = new Mock<INotificationService>();
@@ -65,6 +73,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 loggingBroker: this.loggingBrokerMock.Object,
                 securityBroker: this.securityBrokerMock.Object,
                 dateTimeBroker: this.dateTimeBrokerMock.Object,
+                auditBroker: this.auditBrokerMock.Object,
+                identifierBroker: this.identifierBrokerMock.Object,
                 pdsService: this.pdsServiceMock.Object,
                 patientService: this.patientServiceMock.Object,
                 notificationService: this.notificationServiceMock.Object,
@@ -160,6 +170,62 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 .OnProperty(n => n.RetryCount).Use(0);
 
             return filler;
+        }
+
+        private static Patient GetRandomPatient(
+            DateTimeOffset validationCodeExpiresOn,
+            string inputNhsNumber = "1234567890",
+            string validationCode = "A1B2C",
+            int retryCount = 0) =>
+            CreatePatientFiller(validationCodeExpiresOn, inputNhsNumber, validationCode, retryCount).Create();
+
+        private static List<Patient> GetRandomPatients(DateTimeOffset validationCodeExpiresOn) =>
+            CreatePatientFiller(validationCodeExpiresOn).Create(GetRandomNumber()).ToList();
+
+        private static Filler<Patient> CreatePatientFiller(
+            DateTimeOffset validationCodeExpiresOn,
+            string inputNhsNumber = "1234567890",
+            string validationCode = "A1B2C",
+            int retryCount = 0)
+        {
+            DateTimeOffset dateTimeOffset = DateTimeOffset.UtcNow;
+            var filler = new Filler<Patient>();
+
+            filler.Setup()
+                .OnType<DateTimeOffset>().Use(dateTimeOffset)
+                .OnType<DateTimeOffset?>().Use(dateTimeOffset)
+                .OnProperty(n => n.ValidationCodeExpiresOn).Use(validationCodeExpiresOn)
+                .OnProperty(n => n.NhsNumber).Use(inputNhsNumber)
+                .OnProperty(n => n.ValidationCode).Use(validationCode)
+                .OnProperty(n => n.RetryCount).Use(retryCount);
+
+            return filler;
+        }
+
+        private static List<Claim> CreateRandomClaims()
+        {
+            string randomString = GetRandomString();
+
+            return Enumerable.Range(start: 1, count: GetRandomNumber())
+                .Select(_ => new Claim(type: randomString, value: randomString)).ToList();
+        }
+
+        private static User CreateRandomUser()
+        {
+            string randomId = GetRandomStringWithLengthOf(255);
+            string randomString = GetRandomString();
+
+            User user = new User(
+                userId: randomId,
+                givenName: randomString,
+                surname: randomString,
+                displayName: randomString,
+                email: randomString,
+                jobTitle: randomString,
+                roles: new List<string> { randomString },
+                claims: CreateRandomClaims());
+
+            return user;
         }
 
         private Expression<Func<Patient, bool>> SamePatientAs(Patient expectedPatient) =>
@@ -271,6 +337,42 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
                 new NotificationServiceException(
                     message: "Notification service error occurred, please contact support.",
+                    innerException),
+            };
+        }
+
+        public static TheoryData<Xeption> VerifyPatientCodeDependencyValidationExceptions()
+        {
+            string randomMessage = GetRandomString();
+            string exceptionMessage = randomMessage;
+            var innerException = new Xeption(exceptionMessage);
+
+            return new TheoryData<Xeption>
+            {
+                new PatientValidationException(
+                    message: "Patient validation errors occured, please try again",
+                    innerException),
+
+                new PatientDependencyValidationException(
+                    message: "Patient dependency validation occurred, please try again.",
+                    innerException),
+            };
+        }
+
+        public static TheoryData<Xeption> VerifyPatientCodeDependencyExceptions()
+        {
+            string randomMessage = GetRandomString();
+            string exceptionMessage = randomMessage;
+            var innerException = new Xeption(exceptionMessage);
+
+            return new TheoryData<Xeption>
+            {
+                new PatientDependencyException(
+                    message: "Patient dependency error occurred, please contact support.",
+                    innerException),
+
+                new PatientServiceException(
+                    message: "Patient service error occurred, please contact support.",
                     innerException),
             };
         }

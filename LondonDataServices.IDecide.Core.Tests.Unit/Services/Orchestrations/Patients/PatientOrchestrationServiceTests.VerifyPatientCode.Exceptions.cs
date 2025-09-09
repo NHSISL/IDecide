@@ -6,7 +6,6 @@ using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Force.DeepCloner;
-using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
 using Moq;
@@ -17,16 +16,15 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
     public partial class PatientOrchestrationServiceTests
     {
         [Theory]
-        [MemberData(nameof(RecordPatientInformationDependencyValidationExceptions))]
-        public async Task ShouldThrowDependencyValidationOnRecordPatientInformationAndLogItAsync(
+        [MemberData(nameof(VerifyPatientCodeDependencyValidationExceptions))]
+        public async Task ShouldThrowDependencyValidationOnVerifyPatientCodeAndLogItAsync(
             Xeption dependencyValidationException)
         {
             // given
             string randomNhsNumber = GenerateRandom10DigitNumber();
             string inputNhsNumber = randomNhsNumber.DeepClone();
-            NotificationPreference randomNotificationPreference = NotificationPreference.Email;
-            NotificationPreference inputNotificationPreference = randomNotificationPreference.DeepClone();
-            string notificationPreferenceString = inputNotificationPreference.ToString();
+            string randomValidationCode = GetRandomStringWithLengthOf(5);
+            string inputValidationCode = randomValidationCode.DeepClone();
 
             var expectedPatientOrchestrationDependencyValidationException =
                 new PatientOrchestrationDependencyValidationException(
@@ -51,16 +49,15 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     .ThrowsAsync(dependencyValidationException);
 
             // when
-            ValueTask recordPatientInformationTask =
-                 patientOrchestrationServiceMock.Object.RecordPatientInformationAsync(
+            ValueTask verifyPatientCodeTask =
+                 patientOrchestrationServiceMock.Object.VerifyPatientCodeAsync(
                     inputNhsNumber,
-                    notificationPreferenceString,
-                    false);
+                    inputValidationCode);
 
             PatientOrchestrationDependencyValidationException
                 actualPatientOrchestrationDependencyValidationException =
                     await Assert.ThrowsAsync<PatientOrchestrationDependencyValidationException>(
-                        testCode: recordPatientInformationTask.AsTask);
+                        testCode: verifyPatientCodeTask.AsTask);
 
             // then
             actualPatientOrchestrationDependencyValidationException
@@ -86,16 +83,15 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         }
 
         [Theory]
-        [MemberData(nameof(RecordPatientInformationDependencyExceptions))]
-        public async Task ShouldThrowDependencyOnRecordPatientInformationAndLogItAsync(
+        [MemberData(nameof(VerifyPatientCodeDependencyExceptions))]
+        public async Task ShouldThrowDependencyOnVerifyPatientCodeAndLogItAsync(
             Xeption dependencyException)
         {
             // given
             string randomNhsNumber = GenerateRandom10DigitNumber();
             string inputNhsNumber = randomNhsNumber.DeepClone();
-            NotificationPreference randomNotificationPreference = NotificationPreference.Email;
-            NotificationPreference inputNotificationPreference = randomNotificationPreference.DeepClone();
-            string notificationPreferenceString = inputNotificationPreference.ToString();
+            string randomValidationCode = GetRandomStringWithLengthOf(5);
+            string inputValidationCode = randomValidationCode.DeepClone();
 
             var expectedPatientOrchestrationDependencyException =
                  new PatientOrchestrationDependencyException(
@@ -120,16 +116,15 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     .ThrowsAsync(dependencyException);
 
             // when
-            ValueTask recordPatientInformationTask =
-                 patientOrchestrationServiceMock.Object.RecordPatientInformationAsync(
+            ValueTask verifyPatientCodeTask =
+                 patientOrchestrationServiceMock.Object.VerifyPatientCodeAsync(
                     inputNhsNumber,
-                    notificationPreferenceString,
-                    false);
+                    inputValidationCode);
 
             PatientOrchestrationDependencyException
                 actualPatientOrchestrationDependencyException =
                     await Assert.ThrowsAsync<PatientOrchestrationDependencyException>(
-                        testCode: recordPatientInformationTask.AsTask);
+                        testCode: verifyPatientCodeTask.AsTask);
 
             // then
             actualPatientOrchestrationDependencyException
@@ -155,14 +150,13 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         }
 
         [Fact]
-        public async Task ShouldThrowServiceExceptionOnRecordPatientInformationIfServiceErrorOccurredAndLogItAsync()
+        public async Task ShouldThrowServiceExceptionOnVerifyPatientCodeIfServiceErrorOccurredAndLogItAsync()
         {
             // given
             string randomNhsNumber = GenerateRandom10DigitNumber();
             string inputNhsNumber = randomNhsNumber.DeepClone();
-            NotificationPreference randomNotificationPreference = NotificationPreference.Email;
-            NotificationPreference inputNotificationPreference = randomNotificationPreference.DeepClone();
-            string notificationPreferenceString = inputNotificationPreference.ToString();
+            string randomValidationCode = GetRandomStringWithLengthOf(5);
+            string inputValidationCode = randomValidationCode.DeepClone();
             var serviceException = new Exception();
 
             var failedServicePatientOrchestrationException =
@@ -192,16 +186,15 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     .ThrowsAsync(serviceException);
 
             // when
-            ValueTask recordPatientInformationTask =
-                 patientOrchestrationServiceMock.Object.RecordPatientInformationAsync(
+            ValueTask verifyPatientCodeTask =
+                 patientOrchestrationServiceMock.Object.VerifyPatientCodeAsync(
                     inputNhsNumber,
-                    notificationPreferenceString,
-                    false);
+                    inputValidationCode);
 
             PatientOrchestrationServiceException
                 actualPatientOrchestrationValidationException =
                     await Assert.ThrowsAsync<PatientOrchestrationServiceException>(
-                        testCode: recordPatientInformationTask.AsTask);
+                        testCode: verifyPatientCodeTask.AsTask);
 
             // then
             actualPatientOrchestrationValidationException.Should().BeEquivalentTo(
