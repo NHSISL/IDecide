@@ -41,17 +41,13 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
             {
                 throw await CreateAndLogValidationExceptionAsync(notFoundPatientException);
             }
-            catch (ExceededMaxRetryCountException exceededMaxRetryCountException)
+            catch (ValidationCodeNotMatchedException validationCodeNotMatchedException)
             {
-                throw await CreateAndLogValidationExceptionAsync(exceededMaxRetryCountException);
+                throw await CreateAndLogValidationExceptionAsync(validationCodeNotMatchedException);
             }
-            catch (RenewedValidationCodeException expiredValidationCodeException)
+            catch (ValidationCodeMatchExpiredException validationCodeMatchExpiredException)
             {
-                throw await CreateAndLogValidationExceptionAsync(expiredValidationCodeException);
-            }
-            catch (IncorrectValidationCodeException incorrectValidationCodeException)
-            {
-                throw await CreateAndLogValidationExceptionAsync(incorrectValidationCodeException);
+                throw await CreateAndLogValidationExceptionAsync(validationCodeMatchExpiredException);
             }
             catch (PatientValidationException patientValidationException)
             {

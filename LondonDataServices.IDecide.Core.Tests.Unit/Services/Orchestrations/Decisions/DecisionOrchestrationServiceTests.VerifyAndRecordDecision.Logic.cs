@@ -12,6 +12,8 @@ using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions.Exceptions;
+using LondonDataServices.IDecide.Core.Models.Securities;
+using LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions;
 using Moq;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Decisions
@@ -25,6 +27,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             string randomNhsNumber = GenerateRandom10DigitNumber();
             string randomValidationCode = GetRandomStringWithLengthOf(5);
             DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
+            Guid randomGuid = Guid.NewGuid();
+            string randomIpAddress = GetRandomString();
             Patient randomPatient = GetRandomPatient(randomDateTime, randomNhsNumber, randomValidationCode);
             List<Patient> randomPatients = GetRandomPatients(randomDateTime);
             randomPatients.Add(randomPatient);
@@ -32,25 +36,40 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             Decision randomDecision = GetRandomDecision(randomPatient);
             Decision inputDecision = randomDecision.DeepClone();
             Decision outputDecision = inputDecision.DeepClone();
-            Patient patientToUpdate = randomPatient.DeepClone();
-            patientToUpdate.ValidationCodeMatchedOn = randomDateTime;
 
             NotificationInfo inputNotificationInfo = new NotificationInfo
             {
-                Patient = patientToUpdate,
+                Patient = randomPatient,
                 Decision = outputDecision
             };
+
+            var decisionOrchestrationServiceMock = new Mock<DecisionOrchestrationService>(
+                this.loggingBrokerMock.Object,
+                this.dateTimeBrokerMock.Object,
+                this.securityBrokerMock.Object,
+                this.auditBrokerMock.Object,
+                this.identifierBrokerMock.Object,
+                this.patientServiceMock.Object,
+                this.decisionServiceMock.Object,
+                this.notificationServiceMock.Object,
+                this.decisionConfigurations)
+            { CallBase = true };
 
             this.patientServiceMock.Setup(service =>
                 service.RetrieveAllPatientsAsync())
                     .ReturnsAsync(outputPatients.AsQueryable);
 
-            foreach (string role in this.decisionConfigurations.DecisionWorkflowRoles)
-            {
-                this.securityBrokerMock.Setup(broker =>
-                broker.IsInRoleAsync(role))
+            this.identifierBrokerMock.Setup(broker =>
+                broker.GetIdentifierAsync())
+                    .ReturnsAsync(randomGuid);
+
+            decisionOrchestrationServiceMock.Setup(service =>
+                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
                     .ReturnsAsync(false);
-            }
+
+            this.securityBrokerMock.Setup(broker =>
+                broker.GetIpAddressAsync())
+                    .ReturnsAsync(randomIpAddress);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
@@ -61,23 +80,37 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                     .ReturnsAsync(outputDecision);
 
             // when
-            await this.decisionOrchestrationService.VerifyAndRecordDecisionAsync(inputDecision);
+            await decisionOrchestrationServiceMock.Object.VerifyAndRecordDecisionAsync(inputDecision);
 
             //then
             this.patientServiceMock.Verify(service =>
                 service.RetrieveAllPatientsAsync(),
                     Times.Once);
 
-            foreach (string role in this.decisionConfigurations.DecisionWorkflowRoles)
-            {
-                this.securityBrokerMock.Verify(broker =>
-                broker.IsInRoleAsync(role),
+            this.identifierBrokerMock.Verify(broker =>
+                broker.GetIdentifierAsync(),
                     Times.Once);
-            }
+
+            decisionOrchestrationServiceMock.Verify(service =>
+                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
+                    Times.Once);
+
+            this.securityBrokerMock.Verify(broker =>
+                broker.GetIpAddressAsync(),
+                    Times.Once);
+
+            this.auditBrokerMock.Verify(broker =>
+                broker.LogInformationAsync(
+                    "Decision",
+                    "Verifying Decision",
+                    $"Patient with IP address {randomIpAddress} is validating a code for patient {randomNhsNumber}.",
+                    null,
+                    randomGuid.ToString()),
+                        Times.Once);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffsetAsync(),
-                    Times.Exactly(2));
+                    Times.Once());
 
             this.decisionServiceMock.Verify(service =>
                 service.AddDecisionAsync(It.Is(SameDecisionAs(inputDecision))),
@@ -87,9 +120,20 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 service.SendSubmissionSuccessNotificationAsync(It.Is(SameNotificationInfoAs(inputNotificationInfo))),
                     Times.Once);
 
+            this.auditBrokerMock.Verify(broker =>
+                broker.LogInformationAsync(
+                    "Decision",
+                    "Decision Submitted",
+                    "The patients decision has been succesfully submitted",
+                    null,
+                    randomGuid.ToString()),
+                        Times.Once);
+
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.securityBrokerMock.VerifyNoOtherCalls();
+            this.auditBrokerMock.VerifyNoOtherCalls();
+            this.identifierBrokerMock.VerifyNoOtherCalls();
             this.patientServiceMock.VerifyNoOtherCalls();
             this.notificationServiceMock.VerifyNoOtherCalls();
             this.decisionServiceMock.VerifyNoOtherCalls();
@@ -102,6 +146,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             string randomNhsNumber = GenerateRandom10DigitNumber();
             string randomValidationCode = GetRandomStringWithLengthOf(5);
             DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
+            Guid randomGuid = Guid.NewGuid();
+            User randomUser = CreateRandomUser();
             Patient randomPatient = GetRandomPatient(randomDateTime, randomNhsNumber, randomValidationCode);
             List<Patient> randomPatients = GetRandomPatients(randomDateTime);
             randomPatients.Add(randomPatient);
@@ -109,45 +155,81 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             Decision randomDecision = GetRandomDecision(randomPatient);
             Decision inputDecision = randomDecision.DeepClone();
             Decision outputDecision = inputDecision.DeepClone();
-            Patient patientToUpdate = randomPatient.DeepClone();
-            patientToUpdate.ValidationCodeMatchedOn = randomDateTime;
 
             NotificationInfo inputNotificationInfo = new NotificationInfo
             {
-                Patient = patientToUpdate,
+                Patient = randomPatient,
                 Decision = outputDecision
             };
+
+            var decisionOrchestrationServiceMock = new Mock<DecisionOrchestrationService>(
+                this.loggingBrokerMock.Object,
+                this.dateTimeBrokerMock.Object,
+                this.securityBrokerMock.Object,
+                this.auditBrokerMock.Object,
+                this.identifierBrokerMock.Object,
+                this.patientServiceMock.Object,
+                this.decisionServiceMock.Object,
+                this.notificationServiceMock.Object,
+                this.decisionConfigurations)
+            { CallBase = true };
 
             this.patientServiceMock.Setup(service =>
                 service.RetrieveAllPatientsAsync())
                     .ReturnsAsync(outputPatients.AsQueryable);
 
-            foreach (string role in this.decisionConfigurations.DecisionWorkflowRoles)
-            {
-                this.securityBrokerMock.Setup(broker =>
-                broker.IsInRoleAsync(role))
-                    .ReturnsAsync(true);
-            }
+            this.identifierBrokerMock.Setup(broker =>
+                broker.GetIdentifierAsync())
+                    .ReturnsAsync(randomGuid);
 
-            this.decisionServiceMock.Setup(service =>
-                service.AddDecisionAsync(It.Is(SameDecisionAs(inputDecision))))
-                    .ReturnsAsync(outputDecision);
+            decisionOrchestrationServiceMock.Setup(service =>
+                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
+                    .ReturnsAsync(true);
+
+            this.securityBrokerMock.Setup(broker =>
+                broker.GetCurrentUserAsync())
+                    .ReturnsAsync(randomUser);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
                     .ReturnsAsync(randomDateTime);
 
+            this.decisionServiceMock.Setup(service =>
+                service.AddDecisionAsync(It.Is(SameDecisionAs(inputDecision))))
+                    .ReturnsAsync(outputDecision);
+
             // when
-            await this.decisionOrchestrationService.VerifyAndRecordDecisionAsync(inputDecision);
+            await decisionOrchestrationServiceMock.Object.VerifyAndRecordDecisionAsync(inputDecision);
 
             //then
             this.patientServiceMock.Verify(service =>
                 service.RetrieveAllPatientsAsync(),
                     Times.Once);
 
-            this.securityBrokerMock.Verify(broker =>
-                broker.IsInRoleAsync(this.decisionConfigurations.DecisionWorkflowRoles.First()),
+            this.identifierBrokerMock.Verify(broker =>
+                broker.GetIdentifierAsync(),
                     Times.Once);
+
+            decisionOrchestrationServiceMock.Verify(service =>
+                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
+                    Times.Once);
+
+            this.securityBrokerMock.Verify(broker =>
+                broker.GetCurrentUserAsync(),
+                    Times.Once);
+
+            this.auditBrokerMock.Verify(broker =>
+                broker.LogInformationAsync(
+                    "Decision",
+                    "Verifying Decision",
+                    $"User {randomUser.UserId} is verifying the decision for patient {randomNhsNumber}.",
+                    null,
+                    randomGuid.ToString()),
+                        Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once());
 
             this.decisionServiceMock.Verify(service =>
                 service.AddDecisionAsync(It.Is(SameDecisionAs(inputDecision))),
@@ -157,59 +239,89 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 service.SendSubmissionSuccessNotificationAsync(It.Is(SameNotificationInfoAs(inputNotificationInfo))),
                     Times.Once);
 
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffsetAsync(),
-                    Times.Once);
+            this.auditBrokerMock.Verify(broker =>
+                broker.LogInformationAsync(
+                    "Decision",
+                    "Decision Submitted",
+                    "The patients decision has been succesfully submitted",
+                    null,
+                    randomGuid.ToString()),
+                        Times.Once);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.securityBrokerMock.VerifyNoOtherCalls();
+            this.auditBrokerMock.VerifyNoOtherCalls();
+            this.identifierBrokerMock.VerifyNoOtherCalls();
             this.patientServiceMock.VerifyNoOtherCalls();
             this.notificationServiceMock.VerifyNoOtherCalls();
             this.decisionServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task ShouldErrorOnVerifyAndRecordDecisionAsyncWithInvalidValidationCodeAndDecisionWorflowRoleUser()
+        public async Task ShouldErrorOnVerifyAndRecordDecisionAsyncWithDecisionWorflowRoleUserAndNoMatchedOnDate()
         {
             // given
             string randomNhsNumber = GenerateRandom10DigitNumber();
             string randomValidationCode = GetRandomStringWithLengthOf(5);
             DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
+            Guid randomGuid = Guid.NewGuid();
+            User randomUser = CreateRandomUser();
             Patient randomPatient = GetRandomPatient(randomDateTime, randomNhsNumber, randomValidationCode);
-            Patient invalidCodePatient = randomPatient.DeepClone();
-            string invalidValidationCode = GetRandomStringWithLengthOf(5);
-            invalidCodePatient.ValidationCode = invalidValidationCode;
+            randomPatient.ValidationCodeMatchedOn = null;
             List<Patient> randomPatients = GetRandomPatients(randomDateTime);
             randomPatients.Add(randomPatient);
             List<Patient> outputPatients = randomPatients.DeepClone();
-            Decision randomDecision = GetRandomDecision(invalidCodePatient);
+            Decision randomDecision = GetRandomDecision(randomPatient);
             Decision inputDecision = randomDecision.DeepClone();
             Decision outputDecision = inputDecision.DeepClone();
 
-            var incorrectValidationCodeException =
-                new IncorrectValidationCodeException("The validation code provided is incorrect.");
+            NotificationInfo inputNotificationInfo = new NotificationInfo
+            {
+                Patient = randomPatient,
+                Decision = outputDecision
+            };
 
-            var expectedDecisionOrchestrationValidationException =
-                new DecisionOrchestrationValidationException(
-                    message: "Decision orchestration validation error occurred, please fix the errors and try again.",
-                    innerException: incorrectValidationCodeException);
+            var decisionOrchestrationServiceMock = new Mock<DecisionOrchestrationService>(
+                this.loggingBrokerMock.Object,
+                this.dateTimeBrokerMock.Object,
+                this.securityBrokerMock.Object,
+                this.auditBrokerMock.Object,
+                this.identifierBrokerMock.Object,
+                this.patientServiceMock.Object,
+                this.decisionServiceMock.Object,
+                this.notificationServiceMock.Object,
+                this.decisionConfigurations)
+            { CallBase = true };
 
             this.patientServiceMock.Setup(service =>
                 service.RetrieveAllPatientsAsync())
                     .ReturnsAsync(outputPatients.AsQueryable);
 
-            foreach (string role in this.decisionConfigurations.DecisionWorkflowRoles)
-            {
-                this.securityBrokerMock.Setup(broker =>
-                broker.IsInRoleAsync(role))
+            this.identifierBrokerMock.Setup(broker =>
+                broker.GetIdentifierAsync())
+                    .ReturnsAsync(randomGuid);
+
+            decisionOrchestrationServiceMock.Setup(service =>
+                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
                     .ReturnsAsync(true);
-            }
+
+            this.securityBrokerMock.Setup(broker =>
+                broker.GetCurrentUserAsync())
+                    .ReturnsAsync(randomUser);
+
+            var validationCodeNotMatchedException =
+               new ValidationCodeNotMatchedException(
+                   "The validation code for this patient has not been succesfully matched");
+
+            var expectedDecisionOrchestrationValidationException =
+                new DecisionOrchestrationValidationException(
+                    message: "Decision orchestration validation error occurred, please fix the errors and try again.",
+                    innerException: validationCodeNotMatchedException);
 
             // when
             ValueTask verifyAndRecordDecisionTask =
-               this.decisionOrchestrationService
-                   .VerifyAndRecordDecisionAsync(inputDecision);
+                decisionOrchestrationServiceMock.Object.VerifyAndRecordDecisionAsync(inputDecision);
 
             DecisionOrchestrationValidationException
                 actualDecisionOrchestrationValidationException =
@@ -224,9 +336,35 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 service.RetrieveAllPatientsAsync(),
                     Times.Once);
 
+            this.identifierBrokerMock.Verify(broker =>
+                broker.GetIdentifierAsync(),
+                    Times.Once);
+
+            decisionOrchestrationServiceMock.Verify(service =>
+                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
+                    Times.Once);
+
             this.securityBrokerMock.Verify(broker =>
-                broker.IsInRoleAsync(this.decisionConfigurations.DecisionWorkflowRoles.First()),
+                broker.GetCurrentUserAsync(),
                     Times.Once);
+
+            this.auditBrokerMock.Verify(broker =>
+                broker.LogInformationAsync(
+                    "Decision",
+                    "Verifying Decision",
+                    $"User {randomUser.UserId} is verifying the decision for patient {randomNhsNumber}.",
+                    null,
+                    randomGuid.ToString()),
+                        Times.Once);
+
+            this.auditBrokerMock.Verify(broker =>
+                broker.LogInformationAsync(
+                    "Decision",
+                    "Decision Submission Failed",
+                    "There was no matched validation code found for this patient.",
+                    null,
+                    randomGuid.ToString()),
+                        Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                broker.LogErrorAsync(It.Is(SameExceptionAs(
@@ -236,237 +374,93 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.securityBrokerMock.VerifyNoOtherCalls();
+            this.auditBrokerMock.VerifyNoOtherCalls();
+            this.identifierBrokerMock.VerifyNoOtherCalls();
             this.patientServiceMock.VerifyNoOtherCalls();
             this.notificationServiceMock.VerifyNoOtherCalls();
             this.decisionServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task ShouldErrorOnVerifyAndRecordDecisionAsyncWithExceededRetryAndNonDecisionWorflowRoleUser()
+        public async Task ShouldErrorOnVerifyAndRecordDecisionAsyncWithDecisionWorflowRoleUserAndMatchedOnDateExpired()
         {
             // given
             string randomNhsNumber = GenerateRandom10DigitNumber();
             string randomValidationCode = GetRandomStringWithLengthOf(5);
             DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
+
+            DateTimeOffset expiredMatchedOn =
+                randomDateTime.AddMinutes((-1 * this.decisionConfigurations.ValidatedCodeValidForMinutes) - 1);
+
+            Guid randomGuid = Guid.NewGuid();
+            User randomUser = CreateRandomUser();
             Patient randomPatient = GetRandomPatient(randomDateTime, randomNhsNumber, randomValidationCode);
-            Patient updatedPatient = randomPatient.DeepClone();
-            updatedPatient.RetryCount = 4;
-            List<Patient> randomPatients = GetRandomPatients(randomDateTime);
-            randomPatients.Add(updatedPatient);
-            List<Patient> outputPatients = randomPatients.DeepClone();
-            Decision randomDecision = GetRandomDecision(updatedPatient);
-            Decision inputDecision = randomDecision.DeepClone();
-            Decision outputDecision = inputDecision.DeepClone();
-
-            this.patientServiceMock.Setup(service =>
-                service.RetrieveAllPatientsAsync())
-                    .ReturnsAsync(outputPatients.AsQueryable);
-
-            foreach (string role in this.decisionConfigurations.DecisionWorkflowRoles)
-            {
-                this.securityBrokerMock.Setup(broker =>
-                broker.IsInRoleAsync(role))
-                    .ReturnsAsync(false);
-            }
-
-            var exceededMaxRetryCountException =
-                new ExceededMaxRetryCountException(
-                    $"The maximum retry count of {this.decisionConfigurations.MaxRetryCount} exceeded.");
-
-            var expectedDecisionOrchestrationValidationException =
-                new DecisionOrchestrationValidationException(
-                    message: "Decision orchestration validation error occurred, please fix the errors and try again.",
-                    innerException: exceededMaxRetryCountException);
-
-            ValueTask verifyAndRecordDecisionTask =
-               this.decisionOrchestrationService
-                   .VerifyAndRecordDecisionAsync(inputDecision);
-
-            DecisionOrchestrationValidationException
-                actualDecisionOrchestrationValidationException =
-                    await Assert.ThrowsAsync<DecisionOrchestrationValidationException>(
-                        testCode: verifyAndRecordDecisionTask.AsTask);
-
-            // then
-            actualDecisionOrchestrationValidationException
-                .Should().BeEquivalentTo(expectedDecisionOrchestrationValidationException);
-
-            this.patientServiceMock.Verify(service =>
-                service.RetrieveAllPatientsAsync(),
-                    Times.Once);
-
-            foreach (string role in this.decisionConfigurations.DecisionWorkflowRoles)
-            {
-                this.securityBrokerMock.Verify(broker =>
-                broker.IsInRoleAsync(role),
-                    Times.Once);
-            }
-
-            this.loggingBrokerMock.Verify(broker =>
-               broker.LogErrorAsync(It.Is(SameExceptionAs(
-                   expectedDecisionOrchestrationValidationException))),
-                       Times.Once);
-
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
-            this.patientServiceMock.VerifyNoOtherCalls();
-            this.notificationServiceMock.VerifyNoOtherCalls();
-            this.decisionServiceMock.VerifyNoOtherCalls();
-        }
-
-        [Fact]
-        public async Task
-            ShouldErrorOnVerifyAndRecordDecisionAsyncWithIncorrectValidationCodeAndNonDecisionWorflowRoleUser()
-        {
-            // given
-            string randomNhsNumber = GenerateRandom10DigitNumber();
-            string randomValidationCode = GetRandomStringWithLengthOf(5);
-            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
-            Patient randomPatient = GetRandomPatient(randomDateTime, randomNhsNumber, randomValidationCode);
-            Patient updatedPatient = randomPatient.DeepClone();
-            string invalidValidationCode = GetRandomStringWithLengthOf(5);
-            updatedPatient.ValidationCode = invalidValidationCode;
-            List<Patient> randomPatients = GetRandomPatients(randomDateTime);
-            randomPatients.Add(randomPatient);
-            List<Patient> outputPatients = randomPatients.DeepClone();
-            Decision randomDecision = GetRandomDecision(updatedPatient);
-            Decision inputDecision = randomDecision.DeepClone();
-            Decision outputDecision = inputDecision.DeepClone();
-            Patient patientToUpdate = randomPatient.DeepClone();
-            patientToUpdate.RetryCount += 1;
-
-            this.patientServiceMock.Setup(service =>
-                service.RetrieveAllPatientsAsync())
-                    .ReturnsAsync(outputPatients.AsQueryable);
-
-            foreach (string role in this.decisionConfigurations.DecisionWorkflowRoles)
-            {
-                this.securityBrokerMock.Setup(broker =>
-                broker.IsInRoleAsync(role))
-                    .ReturnsAsync(false);
-            }
-
-            var incorrectValidationCodeException =
-                new IncorrectValidationCodeException("The validation code provided is incorrect.");
-
-            var expectedDecisionOrchestrationValidationException =
-                new DecisionOrchestrationValidationException(
-                    message: "Decision orchestration validation error occurred, please fix the errors and try again.",
-                    innerException: incorrectValidationCodeException);
-
-            ValueTask verifyAndRecordDecisionTask =
-               this.decisionOrchestrationService
-                   .VerifyAndRecordDecisionAsync(inputDecision);
-
-            DecisionOrchestrationValidationException
-                actualDecisionOrchestrationValidationException =
-                    await Assert.ThrowsAsync<DecisionOrchestrationValidationException>(
-                        testCode: verifyAndRecordDecisionTask.AsTask);
-
-            // then
-            actualDecisionOrchestrationValidationException
-                .Should().BeEquivalentTo(expectedDecisionOrchestrationValidationException);
-
-            this.patientServiceMock.Verify(service =>
-                service.RetrieveAllPatientsAsync(),
-                    Times.Once);
-
-            foreach (string role in this.decisionConfigurations.DecisionWorkflowRoles)
-            {
-                this.securityBrokerMock.Verify(broker =>
-                broker.IsInRoleAsync(role),
-                    Times.Once);
-            }
-
-            this.patientServiceMock.Verify(service =>
-                service.ModifyPatientAsync(It.Is(SamePatientAs(patientToUpdate))),
-                    Times.Once);
-
-            this.loggingBrokerMock.Verify(broker =>
-               broker.LogErrorAsync(It.Is(SameExceptionAs(
-                   expectedDecisionOrchestrationValidationException))),
-                       Times.Once);
-
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
-            this.patientServiceMock.VerifyNoOtherCalls();
-            this.notificationServiceMock.VerifyNoOtherCalls();
-            this.decisionServiceMock.VerifyNoOtherCalls();
-        }
-
-        [Fact]
-        public async Task
-            ShouldErrorOnVerifyAndRecordDecisionAsyncWithExpiredValidationCodeAndNonDecisionWorflowRoleUser()
-        {
-            // given
-            string randomNhsNumber = GenerateRandom10DigitNumber();
-            string randomValidationCode = GetRandomStringWithLengthOf(5);
-            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
-            DateTimeOffset expiredDateTimeOffset = randomDateTime.AddDays(-1);
-            Patient randomPatient = GetRandomPatient(expiredDateTimeOffset, randomNhsNumber, randomValidationCode);
+            randomPatient.ValidationCodeMatchedOn = expiredMatchedOn;
             List<Patient> randomPatients = GetRandomPatients(randomDateTime);
             randomPatients.Add(randomPatient);
             List<Patient> outputPatients = randomPatients.DeepClone();
             Decision randomDecision = GetRandomDecision(randomPatient);
             Decision inputDecision = randomDecision.DeepClone();
             Decision outputDecision = inputDecision.DeepClone();
-            Patient patientToUpdate = randomPatient.DeepClone();
-            string randomNewValidationCode = GetRandomStringWithLengthOf(5);
-
-            DateTimeOffset newExpiryDateTimeOffset =
-                randomDateTime.AddMinutes(this.decisionConfigurations.PatientValidationCodeExpireAfterMinutes);
-
-            patientToUpdate.RetryCount = 0;
-            patientToUpdate.ValidationCode = randomNewValidationCode;
-            patientToUpdate.ValidationCodeExpiresOn = newExpiryDateTimeOffset;
-            patientToUpdate.ValidationCodeMatchedOn = null;
 
             NotificationInfo inputNotificationInfo = new NotificationInfo
             {
-                Patient = patientToUpdate,
-                Decision = inputDecision
+                Patient = randomPatient,
+                Decision = outputDecision
             };
+
+            var decisionOrchestrationServiceMock = new Mock<DecisionOrchestrationService>(
+                this.loggingBrokerMock.Object,
+                this.dateTimeBrokerMock.Object,
+                this.securityBrokerMock.Object,
+                this.auditBrokerMock.Object,
+                this.identifierBrokerMock.Object,
+                this.patientServiceMock.Object,
+                this.decisionServiceMock.Object,
+                this.notificationServiceMock.Object,
+                this.decisionConfigurations)
+            { CallBase = true };
 
             this.patientServiceMock.Setup(service =>
                 service.RetrieveAllPatientsAsync())
                     .ReturnsAsync(outputPatients.AsQueryable);
 
-            foreach (string role in this.decisionConfigurations.DecisionWorkflowRoles)
-            {
-                this.securityBrokerMock.Setup(broker =>
-                broker.IsInRoleAsync(role))
-                    .ReturnsAsync(false);
-            }
+            this.identifierBrokerMock.Setup(broker =>
+                broker.GetIdentifierAsync())
+                    .ReturnsAsync(randomGuid);
+
+            decisionOrchestrationServiceMock.Setup(service =>
+                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
+                    .ReturnsAsync(true);
+
+            this.securityBrokerMock.Setup(broker =>
+                broker.GetCurrentUserAsync())
+                    .ReturnsAsync(randomUser);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
                     .ReturnsAsync(randomDateTime);
 
-            this.patientServiceMock.Setup(service =>
-                service.GenerateValidationCodeAsync())
-                    .ReturnsAsync(randomNewValidationCode);
-
-            var renewedValidationCodeException =
-                new RenewedValidationCodeException("The validation code has expired, but we have issued a new code " +
-                $"that will be sent via {inputDecision.Patient.NotificationPreference.ToString()}");
+            var validationCodeMatchExpiredException =
+               new ValidationCodeMatchExpiredException(
+                   "The validation code for this patient is no longer active. " +
+                        "Please complete validation process again.");
 
             var expectedDecisionOrchestrationValidationException =
                 new DecisionOrchestrationValidationException(
                     message: "Decision orchestration validation error occurred, please fix the errors and try again.",
-                    innerException: renewedValidationCodeException);
+                    innerException: validationCodeMatchExpiredException);
 
+            // when
             ValueTask verifyAndRecordDecisionTask =
-              this.decisionOrchestrationService
-                  .VerifyAndRecordDecisionAsync(randomDecision);
+                decisionOrchestrationServiceMock.Object.VerifyAndRecordDecisionAsync(inputDecision);
 
             DecisionOrchestrationValidationException
                 actualDecisionOrchestrationValidationException =
                     await Assert.ThrowsAsync<DecisionOrchestrationValidationException>(
                         testCode: verifyAndRecordDecisionTask.AsTask);
 
-            // then
+            //then
             actualDecisionOrchestrationValidationException
                 .Should().BeEquivalentTo(expectedDecisionOrchestrationValidationException);
 
@@ -474,28 +468,39 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 service.RetrieveAllPatientsAsync(),
                     Times.Once);
 
-            foreach (string role in this.decisionConfigurations.DecisionWorkflowRoles)
-            {
-                this.securityBrokerMock.Verify(broker =>
-                broker.IsInRoleAsync(role),
-                    Times.Once);
-            }
-
-            this.dateTimeBrokerMock.Verify(service =>
-                service.GetCurrentDateTimeOffsetAsync(),
+            this.identifierBrokerMock.Verify(broker =>
+                broker.GetIdentifierAsync(),
                     Times.Once);
 
-            this.patientServiceMock.Verify(service =>
-                service.GenerateValidationCodeAsync(),
+            decisionOrchestrationServiceMock.Verify(service =>
+                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
                     Times.Once);
 
-            this.patientServiceMock.Verify(service =>
-                service.ModifyPatientAsync(It.Is(SamePatientAs(patientToUpdate))),
+            this.securityBrokerMock.Verify(broker =>
+                broker.GetCurrentUserAsync(),
                     Times.Once);
 
-            this.notificationServiceMock.Verify(service =>
-                service.SendCodeNotificationAsync(It.Is(SameNotificationInfoAs(inputNotificationInfo))),
-                    Times.Once);
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once());
+
+            this.auditBrokerMock.Verify(broker =>
+                broker.LogInformationAsync(
+                    "Decision",
+                    "Verifying Decision",
+                    $"User {randomUser.UserId} is verifying the decision for patient {randomNhsNumber}.",
+                    null,
+                    randomGuid.ToString()),
+                        Times.Once);
+
+            this.auditBrokerMock.Verify(broker =>
+                broker.LogInformationAsync(
+                    "Decision",
+                    "Decision Submission Failed",
+                    "There was a matched validation code found but the matching period has now expired.",
+                    null,
+                    randomGuid.ToString()),
+                        Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                broker.LogErrorAsync(It.Is(SameExceptionAs(
@@ -505,6 +510,268 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.securityBrokerMock.VerifyNoOtherCalls();
+            this.auditBrokerMock.VerifyNoOtherCalls();
+            this.identifierBrokerMock.VerifyNoOtherCalls();
+            this.patientServiceMock.VerifyNoOtherCalls();
+            this.notificationServiceMock.VerifyNoOtherCalls();
+            this.decisionServiceMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldErrorOnVerifyAndRecordDecisionAsyncWithNonDecisionWorflowRoleUserAndNoMatchedOnDate()
+        {
+            // given
+            string randomNhsNumber = GenerateRandom10DigitNumber();
+            string randomValidationCode = GetRandomStringWithLengthOf(5);
+            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
+            Guid randomGuid = Guid.NewGuid();
+            string randomIpAddress = GetRandomString();
+            Patient randomPatient = GetRandomPatient(randomDateTime, randomNhsNumber, randomValidationCode);
+            randomPatient.ValidationCodeMatchedOn = null;
+            List<Patient> randomPatients = GetRandomPatients(randomDateTime);
+            randomPatients.Add(randomPatient);
+            List<Patient> outputPatients = randomPatients.DeepClone();
+            Decision randomDecision = GetRandomDecision(randomPatient);
+            Decision inputDecision = randomDecision.DeepClone();
+            Decision outputDecision = inputDecision.DeepClone();
+
+            NotificationInfo inputNotificationInfo = new NotificationInfo
+            {
+                Patient = randomPatient,
+                Decision = outputDecision
+            };
+
+            var decisionOrchestrationServiceMock = new Mock<DecisionOrchestrationService>(
+                this.loggingBrokerMock.Object,
+                this.dateTimeBrokerMock.Object,
+                this.securityBrokerMock.Object,
+                this.auditBrokerMock.Object,
+                this.identifierBrokerMock.Object,
+                this.patientServiceMock.Object,
+                this.decisionServiceMock.Object,
+                this.notificationServiceMock.Object,
+                this.decisionConfigurations)
+            { CallBase = true };
+
+            this.patientServiceMock.Setup(service =>
+                service.RetrieveAllPatientsAsync())
+                    .ReturnsAsync(outputPatients.AsQueryable);
+
+            this.identifierBrokerMock.Setup(broker =>
+                broker.GetIdentifierAsync())
+                    .ReturnsAsync(randomGuid);
+
+            decisionOrchestrationServiceMock.Setup(service =>
+                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
+                    .ReturnsAsync(false);
+
+            this.securityBrokerMock.Setup(broker =>
+                broker.GetIpAddressAsync())
+                    .ReturnsAsync(randomIpAddress);
+
+            var validationCodeNotMatchedException =
+               new ValidationCodeNotMatchedException(
+                   "The validation code for this patient has not been succesfully matched");
+
+            var expectedDecisionOrchestrationValidationException =
+                new DecisionOrchestrationValidationException(
+                    message: "Decision orchestration validation error occurred, please fix the errors and try again.",
+                    innerException: validationCodeNotMatchedException);
+
+            // when
+            ValueTask verifyAndRecordDecisionTask =
+                decisionOrchestrationServiceMock.Object.VerifyAndRecordDecisionAsync(inputDecision);
+
+            DecisionOrchestrationValidationException
+                actualDecisionOrchestrationValidationException =
+                    await Assert.ThrowsAsync<DecisionOrchestrationValidationException>(
+                        testCode: verifyAndRecordDecisionTask.AsTask);
+
+            //then
+            actualDecisionOrchestrationValidationException
+                .Should().BeEquivalentTo(expectedDecisionOrchestrationValidationException);
+
+            this.patientServiceMock.Verify(service =>
+                service.RetrieveAllPatientsAsync(),
+                    Times.Once);
+
+            this.identifierBrokerMock.Verify(broker =>
+                broker.GetIdentifierAsync(),
+                    Times.Once);
+
+            decisionOrchestrationServiceMock.Verify(service =>
+                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
+                    Times.Once);
+
+            this.securityBrokerMock.Verify(broker =>
+                broker.GetIpAddressAsync(),
+                    Times.Once);
+
+            this.auditBrokerMock.Verify(broker =>
+                broker.LogInformationAsync(
+                    "Decision",
+                    "Verifying Decision",
+                    $"Patient with IP address {randomIpAddress} is validating a code for patient {randomNhsNumber}.",
+                    null,
+                    randomGuid.ToString()),
+                        Times.Once);
+
+            this.auditBrokerMock.Verify(broker =>
+                broker.LogInformationAsync(
+                    "Decision",
+                    "Decision Submission Failed",
+                    "There was no matched validation code found for this patient.",
+                    null,
+                    randomGuid.ToString()),
+                        Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+               broker.LogErrorAsync(It.Is(SameExceptionAs(
+                   expectedDecisionOrchestrationValidationException))),
+                       Times.Once);
+
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.securityBrokerMock.VerifyNoOtherCalls();
+            this.auditBrokerMock.VerifyNoOtherCalls();
+            this.identifierBrokerMock.VerifyNoOtherCalls();
+            this.patientServiceMock.VerifyNoOtherCalls();
+            this.notificationServiceMock.VerifyNoOtherCalls();
+            this.decisionServiceMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task
+            ShouldErrorOnVerifyAndRecordDecisionAsyncWithNonDecisionWorflowRoleUserAndMatchedOnDateExpired()
+        {
+            // given
+            string randomNhsNumber = GenerateRandom10DigitNumber();
+            string randomValidationCode = GetRandomStringWithLengthOf(5);
+            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
+
+            DateTimeOffset expiredMatchedOn =
+                randomDateTime.AddMinutes((-1 * this.decisionConfigurations.ValidatedCodeValidForMinutes) - 1);
+
+            Guid randomGuid = Guid.NewGuid();
+            string randomIpAddress = GetRandomString();
+            Patient randomPatient = GetRandomPatient(randomDateTime, randomNhsNumber, randomValidationCode);
+            randomPatient.ValidationCodeMatchedOn = expiredMatchedOn;
+            List<Patient> randomPatients = GetRandomPatients(randomDateTime);
+            randomPatients.Add(randomPatient);
+            List<Patient> outputPatients = randomPatients.DeepClone();
+            Decision randomDecision = GetRandomDecision(randomPatient);
+            Decision inputDecision = randomDecision.DeepClone();
+            Decision outputDecision = inputDecision.DeepClone();
+
+            NotificationInfo inputNotificationInfo = new NotificationInfo
+            {
+                Patient = randomPatient,
+                Decision = outputDecision
+            };
+
+            var decisionOrchestrationServiceMock = new Mock<DecisionOrchestrationService>(
+                this.loggingBrokerMock.Object,
+                this.dateTimeBrokerMock.Object,
+                this.securityBrokerMock.Object,
+                this.auditBrokerMock.Object,
+                this.identifierBrokerMock.Object,
+                this.patientServiceMock.Object,
+                this.decisionServiceMock.Object,
+                this.notificationServiceMock.Object,
+                this.decisionConfigurations)
+            { CallBase = true };
+
+            this.patientServiceMock.Setup(service =>
+                service.RetrieveAllPatientsAsync())
+                    .ReturnsAsync(outputPatients.AsQueryable);
+
+            this.identifierBrokerMock.Setup(broker =>
+                broker.GetIdentifierAsync())
+                    .ReturnsAsync(randomGuid);
+
+            decisionOrchestrationServiceMock.Setup(service =>
+                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
+                    .ReturnsAsync(false);
+
+            this.securityBrokerMock.Setup(broker =>
+                broker.GetIpAddressAsync())
+                    .ReturnsAsync(randomIpAddress);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTime);
+
+            var validationCodeMatchExpiredException =
+               new ValidationCodeMatchExpiredException(
+                   "The validation code for this patient is no longer active. " +
+                        "Please complete validation process again.");
+
+            var expectedDecisionOrchestrationValidationException =
+                new DecisionOrchestrationValidationException(
+                    message: "Decision orchestration validation error occurred, please fix the errors and try again.",
+                    innerException: validationCodeMatchExpiredException);
+
+            // when
+            ValueTask verifyAndRecordDecisionTask =
+                decisionOrchestrationServiceMock.Object.VerifyAndRecordDecisionAsync(inputDecision);
+
+            DecisionOrchestrationValidationException
+                actualDecisionOrchestrationValidationException =
+                    await Assert.ThrowsAsync<DecisionOrchestrationValidationException>(
+                        testCode: verifyAndRecordDecisionTask.AsTask);
+
+            //then
+            actualDecisionOrchestrationValidationException
+                .Should().BeEquivalentTo(expectedDecisionOrchestrationValidationException);
+
+            this.patientServiceMock.Verify(service =>
+                service.RetrieveAllPatientsAsync(),
+                    Times.Once);
+
+            this.identifierBrokerMock.Verify(broker =>
+                broker.GetIdentifierAsync(),
+                    Times.Once);
+
+            decisionOrchestrationServiceMock.Verify(service =>
+                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
+                    Times.Once);
+
+            this.securityBrokerMock.Verify(broker =>
+                broker.GetIpAddressAsync(),
+                    Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once());
+
+            this.auditBrokerMock.Verify(broker =>
+                broker.LogInformationAsync(
+                    "Decision",
+                    "Verifying Decision",
+                    $"Patient with IP address {randomIpAddress} is validating a code for patient {randomNhsNumber}.",
+                    null,
+                    randomGuid.ToString()),
+                        Times.Once);
+
+            this.auditBrokerMock.Verify(broker =>
+                broker.LogInformationAsync(
+                    "Decision",
+                    "Decision Submission Failed",
+                    "There was a matched validation code found but the matching period has now expired.",
+                    null,
+                    randomGuid.ToString()),
+                        Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+               broker.LogErrorAsync(It.Is(SameExceptionAs(
+                   expectedDecisionOrchestrationValidationException))),
+                       Times.Once);
+
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.securityBrokerMock.VerifyNoOtherCalls();
+            this.auditBrokerMock.VerifyNoOtherCalls();
+            this.identifierBrokerMock.VerifyNoOtherCalls();
             this.patientServiceMock.VerifyNoOtherCalls();
             this.notificationServiceMock.VerifyNoOtherCalls();
             this.decisionServiceMock.VerifyNoOtherCalls();

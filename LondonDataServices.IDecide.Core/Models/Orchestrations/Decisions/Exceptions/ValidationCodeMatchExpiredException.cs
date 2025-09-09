@@ -6,9 +6,9 @@ using Xeptions;
 
 namespace LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions.Exceptions
 {
-    public class RenewedValidationCodeException : Xeption
+    public class ValidationCodeMatchExpiredException : Xeption
     {
-        public RenewedValidationCodeException(string message)
+        public ValidationCodeMatchExpiredException(string message)
             : base(message)
         { }
     }

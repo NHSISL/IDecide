@@ -6,9 +6,9 @@ using Xeptions;
 
 namespace LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions.Exceptions
 {
-    public class IncorrectValidationCodeException : Xeption
+    public class UnauthorizedDecisionOrchestrationServiceException : Xeption
     {
-        public IncorrectValidationCodeException(string message)
+        public UnauthorizedDecisionOrchestrationServiceException(string message)
             : base(message)
         { }
     }

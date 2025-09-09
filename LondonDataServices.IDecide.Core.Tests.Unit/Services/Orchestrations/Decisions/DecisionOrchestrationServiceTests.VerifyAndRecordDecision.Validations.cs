@@ -52,6 +52,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.securityBrokerMock.VerifyNoOtherCalls();
+            this.auditBrokerMock.VerifyNoOtherCalls();
+            this.identifierBrokerMock.VerifyNoOtherCalls();
             this.patientServiceMock.VerifyNoOtherCalls();
             this.notificationServiceMock.VerifyNoOtherCalls();
             this.decisionServiceMock.VerifyNoOtherCalls();
@@ -110,6 +112,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.securityBrokerMock.VerifyNoOtherCalls();
+            this.auditBrokerMock.VerifyNoOtherCalls();
+            this.identifierBrokerMock.VerifyNoOtherCalls();
             this.patientServiceMock.VerifyNoOtherCalls();
             this.notificationServiceMock.VerifyNoOtherCalls();
             this.decisionServiceMock.VerifyNoOtherCalls();
@@ -174,6 +178,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.securityBrokerMock.VerifyNoOtherCalls();
+            this.auditBrokerMock.VerifyNoOtherCalls();
+            this.identifierBrokerMock.VerifyNoOtherCalls();
             this.patientServiceMock.VerifyNoOtherCalls();
             this.notificationServiceMock.VerifyNoOtherCalls();
             this.decisionServiceMock.VerifyNoOtherCalls();
@@ -233,167 +239,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.securityBrokerMock.VerifyNoOtherCalls();
-            this.patientServiceMock.VerifyNoOtherCalls();
-            this.notificationServiceMock.VerifyNoOtherCalls();
-            this.decisionServiceMock.VerifyNoOtherCalls();
-        }
-
-        [Fact]
-        public async Task ShouldThrowValidationExceptionOnVerifyAndRecordDecisionAsyncWithExceededRetries()
-        {
-            // given
-            string randomNhsNumber = GenerateRandom10DigitNumber();
-            string randomValidationCode = GetRandomStringWithLengthOf(5);
-            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
-            Patient randomPatient = GetRandomPatient(randomDateTime, randomNhsNumber, randomValidationCode);
-            Decision randomDecision = GetRandomDecision(randomPatient);
-
-            var exceededMaxRetryCountException =
-                new ExceededMaxRetryCountException(
-                    $"The maximum retry count of {this.decisionConfigurations.MaxRetryCount} exceeded.");
-
-            var expectedDecisionOrchestrationValidationException =
-                new DecisionOrchestrationValidationException(
-                    message: "Decision orchestration validation error occurred, please fix the errors and try again.",
-                    innerException: exceededMaxRetryCountException);
-
-            this.patientServiceMock.Setup(service =>
-                service.RetrieveAllPatientsAsync())
-                    .ThrowsAsync(exceededMaxRetryCountException);
-
-            // when
-            ValueTask verifyAndRecordDecisionTask =
-               this.decisionOrchestrationService
-                   .VerifyAndRecordDecisionAsync(randomDecision);
-
-            DecisionOrchestrationValidationException
-                actualPatientOrchestrationValidationException =
-                    await Assert.ThrowsAsync<DecisionOrchestrationValidationException>(
-                        testCode: verifyAndRecordDecisionTask.AsTask);
-
-            // then
-            actualPatientOrchestrationValidationException
-                .Should().BeEquivalentTo(expectedDecisionOrchestrationValidationException);
-
-            this.patientServiceMock.Verify(service =>
-                service.RetrieveAllPatientsAsync(),
-                    Times.Once);
-
-            this.loggingBrokerMock.Verify(broker =>
-               broker.LogErrorAsync(It.Is(SameExceptionAs(
-                   expectedDecisionOrchestrationValidationException))),
-                       Times.Once);
-
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
-            this.patientServiceMock.VerifyNoOtherCalls();
-            this.notificationServiceMock.VerifyNoOtherCalls();
-            this.decisionServiceMock.VerifyNoOtherCalls();
-        }
-
-        [Fact]
-        public async Task ShouldThrowValidationExceptionOnVerifyAndRecordDecisionAsyncWithExpiredValidationCode()
-        {
-            // given
-            string randomNhsNumber = GenerateRandom10DigitNumber();
-            string randomValidationCode = GetRandomStringWithLengthOf(5);
-            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
-            Patient randomPatient = GetRandomPatient(randomDateTime, randomNhsNumber, randomValidationCode);
-            Decision randomDecision = GetRandomDecision(randomPatient);
-
-            var renewedValidationCodeException =
-                new RenewedValidationCodeException("The validation code has expired, but we have issued a new code " +
-                $"that will be sent via {randomDecision.Patient.NotificationPreference.ToString()}");
-
-            var expectedDecisionOrchestrationValidationException =
-                new DecisionOrchestrationValidationException(
-                    message: "Decision orchestration validation error occurred, please fix the errors and try again.",
-                    innerException: renewedValidationCodeException);
-
-            this.patientServiceMock.Setup(service =>
-                service.RetrieveAllPatientsAsync())
-                    .ThrowsAsync(renewedValidationCodeException);
-
-            // when
-            ValueTask verifyAndRecordDecisionTask =
-               this.decisionOrchestrationService
-                   .VerifyAndRecordDecisionAsync(randomDecision);
-
-            DecisionOrchestrationValidationException
-                actualPatientOrchestrationValidationException =
-                    await Assert.ThrowsAsync<DecisionOrchestrationValidationException>(
-                        testCode: verifyAndRecordDecisionTask.AsTask);
-
-            // then
-            actualPatientOrchestrationValidationException
-                .Should().BeEquivalentTo(expectedDecisionOrchestrationValidationException);
-
-            this.patientServiceMock.Verify(service =>
-                service.RetrieveAllPatientsAsync(),
-                    Times.Once);
-
-            this.loggingBrokerMock.Verify(broker =>
-               broker.LogErrorAsync(It.Is(SameExceptionAs(
-                   expectedDecisionOrchestrationValidationException))),
-                       Times.Once);
-
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
-            this.patientServiceMock.VerifyNoOtherCalls();
-            this.notificationServiceMock.VerifyNoOtherCalls();
-            this.decisionServiceMock.VerifyNoOtherCalls();
-        }
-
-        [Fact]
-        public async Task ShouldThrowValidationExceptionOnVerifyAndRecordDecisionAsyncWithIncorrectValidationCode()
-        {
-            // given
-            string randomNhsNumber = GenerateRandom10DigitNumber();
-            string randomValidationCode = GetRandomStringWithLengthOf(5);
-            DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
-            Patient randomPatient = GetRandomPatient(randomDateTime, randomNhsNumber, randomValidationCode);
-            Decision randomDecision = GetRandomDecision(randomPatient);
-
-            var incorrectValidationCodeException =
-                new IncorrectValidationCodeException("The validation code provided is incorrect.");
-
-            var expectedDecisionOrchestrationValidationException =
-                new DecisionOrchestrationValidationException(
-                    message: "Decision orchestration validation error occurred, please fix the errors and try again.",
-                    innerException: incorrectValidationCodeException);
-
-            this.patientServiceMock.Setup(service =>
-                service.RetrieveAllPatientsAsync())
-                    .ThrowsAsync(incorrectValidationCodeException);
-
-            // when
-            ValueTask verifyAndRecordDecisionTask =
-               this.decisionOrchestrationService
-                   .VerifyAndRecordDecisionAsync(randomDecision);
-
-            DecisionOrchestrationValidationException
-                actualPatientOrchestrationValidationException =
-                    await Assert.ThrowsAsync<DecisionOrchestrationValidationException>(
-                        testCode: verifyAndRecordDecisionTask.AsTask);
-
-            // then
-            actualPatientOrchestrationValidationException
-                .Should().BeEquivalentTo(expectedDecisionOrchestrationValidationException);
-
-            this.patientServiceMock.Verify(service =>
-                service.RetrieveAllPatientsAsync(),
-                    Times.Once);
-
-            this.loggingBrokerMock.Verify(broker =>
-               broker.LogErrorAsync(It.Is(SameExceptionAs(
-                   expectedDecisionOrchestrationValidationException))),
-                       Times.Once);
-
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
+            this.auditBrokerMock.VerifyNoOtherCalls();
+            this.identifierBrokerMock.VerifyNoOtherCalls();
             this.patientServiceMock.VerifyNoOtherCalls();
             this.notificationServiceMock.VerifyNoOtherCalls();
             this.decisionServiceMock.VerifyNoOtherCalls();

@@ -6,9 +6,9 @@ using Xeptions;
 
 namespace LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions.Exceptions
 {
-    public class ExceededMaxRetryCountException : Xeption
+    public class InvalidCaptchaDecisionOrchestrationServiceException : Xeption
     {
-        public ExceededMaxRetryCountException(string message)
+        public InvalidCaptchaDecisionOrchestrationServiceException(string message)
             : base(message)
         { }
     }
