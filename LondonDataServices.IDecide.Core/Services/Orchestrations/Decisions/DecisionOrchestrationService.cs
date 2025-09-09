@@ -118,7 +118,8 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
                     correlationId: correlationId.ToString());
 
                     throw new ValidationCodeMatchExpiredException(
-                        "The validation code for this patient has been matched but the matching period has now expired");
+                        "The validation code for this patient is no longer active. " +
+                        "Please complete validation process again.");
                 }
 
                 Decision addedDecision = await this.decisionService.AddDecisionAsync(decision);

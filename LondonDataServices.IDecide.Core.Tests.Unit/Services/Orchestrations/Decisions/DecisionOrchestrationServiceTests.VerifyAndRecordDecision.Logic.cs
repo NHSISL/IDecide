@@ -443,7 +443,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
 
             var validationCodeMatchExpiredException =
                new ValidationCodeMatchExpiredException(
-                   "The validation code for this patient has been matched but the matching period has now expired");
+                   "The validation code for this patient is no longer active. " +
+                        "Please complete validation process again.");
 
             var expectedDecisionOrchestrationValidationException =
                 new DecisionOrchestrationValidationException(
@@ -702,7 +703,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
 
             var validationCodeMatchExpiredException =
                new ValidationCodeMatchExpiredException(
-                   "The validation code for this patient has been matched but the matching period has now expired");
+                   "The validation code for this patient is no longer active. " +
+                        "Please complete validation process again.");
 
             var expectedDecisionOrchestrationValidationException =
                 new DecisionOrchestrationValidationException(
