@@ -35,9 +35,6 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
                 (Rule: IsInvalidIdentifier(decision.Patient?.NhsNumber),
                 Parameter: nameof(decision.Patient.NhsNumber)),
 
-                (Rule: IsInvalidIdentifier(decision.PatientNhsNumber),
-                Parameter: nameof(decision.PatientNhsNumber)),
-
                 (Rule: IsInvalidValidationCode(decision.Patient?.ValidationCode),
                 Parameter: nameof(decision.Patient.ValidationCode)));
         }

@@ -59,7 +59,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
             TryCatch(async () =>
             {
                 ValidateVerifyAndRecordDecisionArguments(decision);
-                string maybeNhsNumber = decision.PatientNhsNumber;
+                string maybeNhsNumber = decision.Patient.NhsNumber;
                 IQueryable<Patient> patients = await this.patientService.RetrieveAllPatientsAsync();
                 Patient maybeMatchingPatient = patients.FirstOrDefault(patient => patient.NhsNumber == maybeNhsNumber);
                 ValidatePatientExists(maybeMatchingPatient);

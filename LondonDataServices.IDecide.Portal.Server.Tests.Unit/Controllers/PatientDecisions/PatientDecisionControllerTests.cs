@@ -90,8 +90,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Patien
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
                 .OnType<DateTimeOffset?>().Use(dateTimeOffset)
-                .OnProperty(n => n.Patient).Use(patient)
-                .OnProperty(n => n.PatientNhsNumber).Use(patient.NhsNumber);
+                .OnProperty(n => n.Patient).Use(patient);
 
             return filler;
         }

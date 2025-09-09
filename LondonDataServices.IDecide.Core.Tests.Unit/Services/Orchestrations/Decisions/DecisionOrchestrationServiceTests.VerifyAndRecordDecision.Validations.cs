@@ -143,10 +143,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 key: "NhsNumber",
                 values: "Text must be exactly 10 digits.");
 
-            invalidDecisionOrchestrationArgumentException.AddData(
-                key: "PatientNhsNumber",
-                values: "Text must be exactly 10 digits.");
-
             var expectedDecisionOrchestrationValidationException =
                 new DecisionOrchestrationValidationException(
                     message: "Decision orchestration validation error occurred, please fix the errors and try again.",
