@@ -85,9 +85,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
                 await this.auditBroker.LogInformationAsync(
                     auditType: "Decision",
                     title: "Verifying Decision",
-
                     message: verifyingDecisionAuditMessage,
-
                     fileName: null,
                     correlationId: correlationId.ToString());
 
