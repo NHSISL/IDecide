@@ -64,7 +64,6 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
                 Patient maybeMatchingPatient = patients.FirstOrDefault(patient => patient.NhsNumber == maybeNhsNumber);
                 ValidatePatientExists(maybeMatchingPatient);
                 Guid correlationId = await this.identifierBroker.GetIdentifierAsync();
-
                 bool isAuthenticatedUserWithRole = await CheckIfIsAuthenticatedUserWithRequiredRoleAsync();
                 string verifyingDecisionAuditMessage;
 

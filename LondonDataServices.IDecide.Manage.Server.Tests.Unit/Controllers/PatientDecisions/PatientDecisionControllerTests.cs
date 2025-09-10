@@ -71,10 +71,10 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Patien
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
                 .OnType<DateTimeOffset?>().Use(dateTimeOffset)
-                .OnProperty(n => n.ValidationCodeExpiresOn).Use(validationCodeExpiresOn)
-                .OnProperty(n => n.NhsNumber).Use(inputNhsNumber)
-                .OnProperty(n => n.ValidationCode).Use(validationCode)
-                .OnProperty(n => n.RetryCount).Use(retryCount);
+                .OnProperty(patient => patient.ValidationCodeExpiresOn).Use(validationCodeExpiresOn)
+                .OnProperty(patient => patient.NhsNumber).Use(inputNhsNumber)
+                .OnProperty(patient => patient.ValidationCode).Use(validationCode)
+                .OnProperty(patient => patient.RetryCount).Use(retryCount);
 
             return filler;
         }
@@ -90,7 +90,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Patien
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
                 .OnType<DateTimeOffset?>().Use(dateTimeOffset)
-                .OnProperty(n => n.Patient).Use(patient);
+                .OnProperty(decision => decision.Patient).Use(patient);
 
             return filler;
         }

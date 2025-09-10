@@ -30,13 +30,13 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
         {
             Validate(
                 (Rule: IsPatientNull(decision.Patient),
-                Parameter: nameof(decision.Patient)),
+                Parameter: nameof(Decision.Patient)),
 
                 (Rule: IsInvalidIdentifier(decision.Patient?.NhsNumber),
-                Parameter: nameof(decision.Patient.NhsNumber)),
+                Parameter: $"{nameof(Decision.Patient)}.{nameof(Patient.NhsNumber)}"),
 
                 (Rule: IsInvalidValidationCode(decision.Patient?.ValidationCode),
-                Parameter: nameof(decision.Patient.ValidationCode)));
+                Parameter: $"{nameof(Decision.Patient)}.{nameof(Patient.ValidationCode)}"));
         }
 
         private static void ValidatePatientExists(Patient patient)
