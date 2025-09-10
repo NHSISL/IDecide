@@ -22,8 +22,13 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
         return <div>{translate("PositiveConfirmation.noPatientDetails")}</div>;
     }
 
-    const patientToUpdate = new PatientCodeRequest(createdPatient);
-
+    const patientToUpdate = new PatientCodeRequest({
+        nhsNumber: createdPatient.nhsNumber,
+        verificationCode: createdPatient.validationCode,
+        notificationPreference: "", 
+        generateNewCode: false 
+    });
+    
     const handleSubmit = async (method: "Email" | "Sms" | "Letter") => {
         patientToUpdate.notificationPreference = method;
 
