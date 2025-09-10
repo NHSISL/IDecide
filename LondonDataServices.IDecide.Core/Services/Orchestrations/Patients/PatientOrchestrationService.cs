@@ -176,18 +176,6 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                         message: $"User {currentUser.UserId} is validating a code for patient {nhsNumber}.",
                         fileName: null,
                         correlationId: correlationId.ToString());
-
-                    if (maybeMatchingPatient.ValidationCode != verificationCode)
-                    {
-                        await this.auditBroker.LogInformationAsync(
-                            auditType: "Patient Code",
-                            title: "Patient Code Validation Failed",
-                            message: "The validation code provided was incorrect.",
-                            fileName: null,
-                            correlationId: correlationId.ToString());
-
-                        throw new IncorrectValidationCodeException("The validation code provided is incorrect.");
-                    }
                 }
                 else
                 {
