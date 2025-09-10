@@ -28,7 +28,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
         private readonly Mock<IStorageBroker> storageBrokerMock;
         private readonly Mock<IIdentifierBroker> identifierBrokerMock;
         private readonly Mock<IDateTimeBroker> dateTimeBrokerMock;
-        private readonly Mock<ISecurityBroker> securityBrokerMock;
+        private readonly Mock<ISecurityAuditBroker> securityAuditBrokerMock;
         private readonly Mock<ILoggingBroker> loggingBrokerMock;
         private readonly IAuditService auditService;
         private readonly ICompareLogic compareLogic;
@@ -38,7 +38,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
             this.storageBrokerMock = new Mock<IStorageBroker>();
             this.identifierBrokerMock = new Mock<IIdentifierBroker>();
             this.dateTimeBrokerMock = new Mock<IDateTimeBroker>();
-            this.securityBrokerMock = new Mock<ISecurityBroker>();
+            this.securityAuditBrokerMock = new Mock<ISecurityAuditBroker>();
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
             this.compareLogic = new CompareLogic();
 
@@ -46,7 +46,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
                 storageBroker: this.storageBrokerMock.Object,
                 identifierBroker: this.identifierBrokerMock.Object,
                 dateTimeBroker: this.dateTimeBrokerMock.Object,
-                securityBroker: this.securityBrokerMock.Object,
+                securityAuditBroker: this.securityAuditBrokerMock.Object,
                 loggingBroker: this.loggingBrokerMock.Object);
         }
 

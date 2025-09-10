@@ -6,7 +6,6 @@ using System;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions.Exceptions;
-using LondonDataServices.IDecide.Core.Models.Securities;
 using Xeptions;
 
 namespace LondonDataServices.IDecide.Core.Services.Foundations.Decisions
@@ -16,16 +15,11 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Decisions
         private async ValueTask ValidateDecisionOnAdd(Decision decision)
         {
             ValidateDecisionIsNotNull(decision);
-            User currentUser = await this.securityBroker.GetCurrentUserAsync();
+            string currentUserId = await this.securityAuditBroker.GetCurrentUserIdAsync();
 
             Validate<InvalidDecisionException>(
                 message: "Invalid decision. Please correct the errors and try again.",
                 (Rule: IsInvalid(decision.Id), Parameter: nameof(Decision.Id)),
-                (Rule: IsInvalid(decision.PatientNhsNumber), Parameter: nameof(Decision.PatientNhsNumber)),
-
-                (Rule: IsGreaterThan(decision.PatientNhsNumber, 10),
-                    Parameter: nameof(Decision.PatientNhsNumber)),
-
                 (Rule: IsInvalid(decision.DecisionChoice), Parameter: nameof(Decision.DecisionChoice)),
                 (Rule: IsInvalid(decision.CreatedDate), Parameter: nameof(Decision.CreatedDate)),
                 (Rule: IsInvalid(decision.CreatedBy), Parameter: nameof(Decision.CreatedBy)),
@@ -51,7 +45,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Decisions
                 Parameter: nameof(Decision.UpdatedDate)),
 
                 (Rule: IsNotSame(
-                    first: currentUser.UserId,
+                    first: currentUserId,
                     second: decision.CreatedBy),
                 Parameter: nameof(Decision.CreatedBy)),
 
@@ -67,16 +61,11 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Decisions
         private async ValueTask ValidateDecisionOnModify(Decision decision)
         {
             ValidateDecisionIsNotNull(decision);
-            User currentUser = await this.securityBroker.GetCurrentUserAsync();
+            string currentUserId = await this.securityAuditBroker.GetCurrentUserIdAsync();
 
             Validate<InvalidDecisionException>(
                 message: "Invalid decision. Please correct the errors and try again.",
                 (Rule: IsInvalid(decision.Id), Parameter: nameof(Decision.Id)),
-                (Rule: IsInvalid(decision.PatientNhsNumber), Parameter: nameof(Decision.PatientNhsNumber)),
-
-                (Rule: IsGreaterThan(decision.PatientNhsNumber, 10),
-                    Parameter: nameof(Decision.PatientNhsNumber)),
-
                 (Rule: IsInvalid(decision.DecisionChoice), Parameter: nameof(Decision.DecisionChoice)),
                 (Rule: IsInvalid(decision.CreatedDate), Parameter: nameof(Decision.CreatedDate)),
                 (Rule: IsInvalid(decision.CreatedBy), Parameter: nameof(Decision.CreatedBy)),
@@ -95,7 +84,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Decisions
                     Parameter: nameof(Decision.ResponsiblePersonRelationship)),
 
                 (Rule: IsNotSame(
-                    first: currentUser.UserId,
+                    first: currentUserId,
                     second: decision.UpdatedBy),
                 Parameter: nameof(Decision.UpdatedBy)),
 

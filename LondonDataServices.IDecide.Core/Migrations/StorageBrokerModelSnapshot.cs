@@ -79,46 +79,14 @@ namespace LondonDataServices.IDecide.Core.Migrations
                     b.ToTable("Audits", "Audit");
                 });
 
-            modelBuilder.Entity("LondonDataServices.IDecide.Core.Models.Foundations.Consumers.Consumer", b =>
+            modelBuilder.Entity("LondonDataServices.IDecide.Core.Models.Foundations.ConsumerStatuses.ConsumerStatus", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<DateTimeOffset>("CreatedDate")
+                    b.Property<DateTimeOffset>("AdoptionDate")
                         .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("UpdatedBy")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<DateTimeOffset>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("Consumers", "Consumer");
-                });
-
-            modelBuilder.Entity("LondonDataServices.IDecide.Core.Models.Foundations.Consumers.ConsumerStatus", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ConsumerId")
                         .HasColumnType("uniqueidentifier");
@@ -150,6 +118,46 @@ namespace LondonDataServices.IDecide.Core.Migrations
                         .IsUnique();
 
                     b.ToTable("ConsumerStatuses", "Consumer");
+                });
+
+            modelBuilder.Entity("LondonDataServices.IDecide.Core.Models.Foundations.Consumers.Consumer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AccessToken")
+                        .IsRequired()
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTimeOffset>("UpdatedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Consumers", "Consumer");
                 });
 
             modelBuilder.Entity("LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes.DecisionType", b =>
@@ -208,11 +216,6 @@ namespace LondonDataServices.IDecide.Core.Migrations
 
                     b.Property<Guid>("PatientId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("PatientNhsNumber")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
 
                     b.Property<string>("ResponsiblePersonGivenName")
                         .HasMaxLength(255)
@@ -331,7 +334,7 @@ namespace LondonDataServices.IDecide.Core.Migrations
                     b.ToTable("Patients", "Decision");
                 });
 
-            modelBuilder.Entity("LondonDataServices.IDecide.Core.Models.Foundations.Consumers.ConsumerStatus", b =>
+            modelBuilder.Entity("LondonDataServices.IDecide.Core.Models.Foundations.ConsumerStatuses.ConsumerStatus", b =>
                 {
                     b.HasOne("LondonDataServices.IDecide.Core.Models.Foundations.Consumers.Consumer", "Consumer")
                         .WithMany("ConsumerStatuses")

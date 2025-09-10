@@ -10,6 +10,7 @@ namespace LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions
     {
         public int MaxRetryCount { get; set; }
         public int PatientValidationCodeExpireAfterMinutes { get; set; }
+        public int ValidatedCodeValidForMinutes { get; set; }
         public List<string> DecisionWorkflowRoles { get; set; }
     }
 }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
+using LondonDataServices.IDecide.Portal.Server.Models;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
 
@@ -30,13 +31,15 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
         }
 
         [HttpPost("PatientGenerationRequest")]
-        public async ValueTask<ActionResult<Patient>> PostPatientGenerationRequestAsync([FromBody] PatientCodeRequest patientCodeRequest)
+        public async ValueTask<ActionResult> PostPatientGenerationRequestAsync(
+            [FromBody] PatientCodeRequest patientCodeRequest)
         {
             try
             {
                 await this.patientOrchestrationService.RecordPatientInformationAsync(
                     patientCodeRequest.NhsNumber,
-                    patientCodeRequest.NotificationPreference
+                    patientCodeRequest.NotificationPreference,
+                    patientCodeRequest.GenerateNewCode
                 );
 
                 return Ok();
@@ -63,33 +66,32 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
         [HttpPost("VerifyPatientCode")]
         public async ValueTask<ActionResult> VerifyPatientCodeAsync([FromBody] PatientCodeRequest patientCodeRequest)
         {
-            return Ok(true);
-            //try
-            //{
-            //    await this.patientOrchestrationService.VerifyPatientCodeAsync(
-            //        patientCodeRequest.NhsNumber,
-            //        patientCodeRequest.VeriicationCode
-            //    );
+            try
+            {
+                await this.patientOrchestrationService.VerifyPatientCodeAsync(
+                    patientCodeRequest.NhsNumber,
+                    patientCodeRequest.VerificationCode
+                );
 
-            //    return Ok();
-            //}
-            //catch (PatientOrchestrationValidationException patientOrchestrationValidationException)
-            //{
-            //    return BadRequest(patientOrchestrationValidationException.InnerException);
-            //}
-            //catch (PatientOrchestrationDependencyValidationException
-            //    patientOrchestrationDependencyValidationException)
-            //{
-            //    return BadRequest(patientOrchestrationDependencyValidationException.InnerException);
-            //}
-            //catch (PatientOrchestrationDependencyException patientOrchestrationDependencyException)
-            //{
-            //    return InternalServerError(patientOrchestrationDependencyException);
-            //}
-            //catch (PatientOrchestrationServiceException patientOrchestrationServiceException)
-            //{
-            //    return InternalServerError(patientOrchestrationServiceException);
-            //}
+                return Ok();
+            }
+            catch (PatientOrchestrationValidationException patientOrchestrationValidationException)
+            {
+                return BadRequest(patientOrchestrationValidationException.InnerException);
+            }
+            catch (PatientOrchestrationDependencyValidationException
+                patientOrchestrationDependencyValidationException)
+            {
+                return BadRequest(patientOrchestrationDependencyValidationException.InnerException);
+            }
+            catch (PatientOrchestrationDependencyException patientOrchestrationDependencyException)
+            {
+                return InternalServerError(patientOrchestrationDependencyException);
+            }
+            catch (PatientOrchestrationServiceException patientOrchestrationServiceException)
+            {
+                return InternalServerError(patientOrchestrationServiceException);
+            }
         }
     }
 }

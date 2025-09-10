@@ -2,6 +2,8 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Brokers.DateTimes;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
@@ -15,20 +17,17 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
     {
         private readonly IStorageBroker storageBroker;
         private readonly IDateTimeBroker dateTimeBroker;
-        private readonly ISecurityBroker securityBroker;
         private readonly ISecurityAuditBroker securityAuditBroker;
         private readonly ILoggingBroker loggingBroker;
 
         public ConsumerStatusService(
             IStorageBroker storageBroker,
             IDateTimeBroker dateTimeBroker,
-            ISecurityBroker securityBroker,
             ISecurityAuditBroker securityAuditBroker,
             ILoggingBroker loggingBroker)
         {
             this.storageBroker = storageBroker;
             this.dateTimeBroker = dateTimeBroker;
-            this.securityBroker = securityBroker;
             this.securityAuditBroker = securityAuditBroker;
             this.loggingBroker = loggingBroker;
         }
@@ -40,6 +39,22 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
                 await ValidateConsumerStatusOnAdd(consumerStatus);
 
                 return await this.storageBroker.InsertConsumerStatusAsync(consumerStatus);
+            });
+
+        public ValueTask<IQueryable<ConsumerStatus>> RetrieveAllConsumerStatusesAsync() =>
+            TryCatch(async () => await this.storageBroker.SelectAllConsumerStatusesAsync());
+
+        public ValueTask<ConsumerStatus> RetrieveConsumerStatusByIdAsync(Guid consumerStatusId) =>
+            TryCatch(async () =>
+            {
+                ValidateConsumerStatusId(consumerStatusId);
+
+                ConsumerStatus maybeConsumerStatus = await this.storageBroker
+                    .SelectConsumerStatusByIdAsync(consumerStatusId);
+
+                ValidateStorageConsumerStatus(maybeConsumerStatus, consumerStatusId);
+
+                return maybeConsumerStatus;
             });
 
         public ValueTask<ConsumerStatus> ModifyConsumerStatusAsync(ConsumerStatus consumerStatus) =>
@@ -61,6 +76,19 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses
                     storageConsumerStatus: maybeConsumerStatus);
 
                 return await this.storageBroker.UpdateConsumerStatusAsync(consumerStatus);
+            });
+
+        public ValueTask<ConsumerStatus> RemoveConsumerStatusByIdAsync(Guid consumerStatusId) =>
+            TryCatch(async () =>
+            {
+                ValidateConsumerStatusId(consumerStatusId);
+
+                ConsumerStatus maybeConsumerStatus = await this.storageBroker
+                    .SelectConsumerStatusByIdAsync(consumerStatusId);
+
+                ValidateStorageConsumerStatus(maybeConsumerStatus, consumerStatusId);
+
+                return await this.storageBroker.DeleteConsumerStatusAsync(maybeConsumerStatus);
             });
     }
 }

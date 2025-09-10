@@ -5,7 +5,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Force.DeepCloner;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
 using Moq;
 
@@ -17,8 +16,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         public async Task ShouldCheckIfIsAuthenticatedUserWithRequiredRoleAsyncWithAuthenticatedUserInRole()
         {
             // given
-            string randomCaptchaToken = GetRandomString();
-            string inputCaptchaToken = randomCaptchaToken.DeepClone();
             bool expectedResult = true;
 
             this.securityBrokerMock.Setup(broker =>
@@ -47,6 +44,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.securityBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.auditBrokerMock.VerifyNoOtherCalls();
+            this.identifierBrokerMock.VerifyNoOtherCalls();
             this.pdsServiceMock.VerifyNoOtherCalls();
             this.patientServiceMock.VerifyNoOtherCalls();
             this.notificationServiceMock.VerifyNoOtherCalls();
@@ -56,9 +55,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         public async Task ShouldErrorOnCheckIfIsAuthenticatedUserWithRequiredRoleAsyncWithAuthenticatedUserNotInRole()
         {
             // given
-            string randomCaptchaToken = GetRandomString();
-            string inputCaptchaToken = randomCaptchaToken.DeepClone();
-
             this.securityBrokerMock.Setup(broker =>
                 broker.IsCurrentUserAuthenticatedAsync())
                     .ReturnsAsync(true);
@@ -101,6 +97,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.securityBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.auditBrokerMock.VerifyNoOtherCalls();
+            this.identifierBrokerMock.VerifyNoOtherCalls();
             this.pdsServiceMock.VerifyNoOtherCalls();
             this.patientServiceMock.VerifyNoOtherCalls();
             this.notificationServiceMock.VerifyNoOtherCalls();
@@ -111,9 +109,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             ShouldErrorOnCheckIfIsAuthenticatedUserWithRequiredRoleAsyncWithNonAuthenticatedUserInvalidCaptcha()
         {
             // given
-            string randomCaptchaToken = GetRandomString();
-            string inputCaptchaToken = randomCaptchaToken.DeepClone();
-
             this.securityBrokerMock.Setup(broker =>
                 broker.IsCurrentUserAuthenticatedAsync())
                     .ReturnsAsync(false);
@@ -150,6 +145,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.securityBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.auditBrokerMock.VerifyNoOtherCalls();
+            this.identifierBrokerMock.VerifyNoOtherCalls();
             this.pdsServiceMock.VerifyNoOtherCalls();
             this.patientServiceMock.VerifyNoOtherCalls();
             this.notificationServiceMock.VerifyNoOtherCalls();
@@ -159,8 +156,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         public async Task ShouldCheckIfIsAuthenticatedUserWithRequiredRoleAsyncWithNonAuthenticatedUserValidCaptcha()
         {
             // given
-            string randomCaptchaToken = GetRandomString();
-            string inputCaptchaToken = randomCaptchaToken.DeepClone();
             bool expectedResult = false;
 
             this.securityBrokerMock.Setup(broker =>
@@ -189,6 +184,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.securityBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.auditBrokerMock.VerifyNoOtherCalls();
+            this.identifierBrokerMock.VerifyNoOtherCalls();
             this.pdsServiceMock.VerifyNoOtherCalls();
             this.patientServiceMock.VerifyNoOtherCalls();
             this.notificationServiceMock.VerifyNoOtherCalls();

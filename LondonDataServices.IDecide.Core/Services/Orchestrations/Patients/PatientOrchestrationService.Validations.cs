@@ -35,8 +35,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
         private static void ValidatePatientLookupByNhsNumberArguments(string nhsNumber)
         {
             Validate(
-                (Rule: IsInvalidIdentifier(nhsNumber),
-                Parameter: nameof(nhsNumber)));
+                (Rule: IsInvalidIdentifier(nhsNumber), Parameter: nameof(nhsNumber)));
         }
 
         private static void ValidateRecordPatientInformationArguments(
@@ -44,11 +43,19 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             string notificationPreference)
         {
             Validate(
-                (Rule: IsInvalidIdentifier(nhsNumber),
-                Parameter: nameof(nhsNumber)),
+                (Rule: IsInvalidIdentifier(nhsNumber), Parameter: nameof(nhsNumber)),
 
                 (Rule: IsInvalidNotificationPreference(notificationPreference),
                 Parameter: nameof(notificationPreference)));
+        }
+
+        private static void ValidateVerifyPatientCodeArguments(
+            string nhsNumber,
+            string verificationCode)
+        {
+            Validate(
+                (Rule: IsInvalidIdentifier(nhsNumber), Parameter: nameof(nhsNumber)),
+                (Rule: IsInvalidValidationCode(verificationCode), Parameter: nameof(verificationCode)));
         }
 
         private static void ValidatePatientIsNotNull(Patient patient)
@@ -56,6 +63,14 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             if (patient is null)
             {
                 throw new NullPatientException("Patient is null.");
+            }
+        }
+
+        private static void ValidatePatientExists(Patient patient)
+        {
+            if (patient is null)
+            {
+                throw new NotFoundPatientException("Patient does not exist");
             }
         }
 
@@ -84,6 +99,19 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
         private static bool IsExactTenDigits(string input)
         {
             bool result = input.Length == 10 && input.All(char.IsDigit);
+
+            return result;
+        }
+
+        private static dynamic IsInvalidValidationCode(string validationCode) => new
+        {
+            Condition = String.IsNullOrWhiteSpace(validationCode) || IsExactFiveCharacters(validationCode) is false,
+            Message = "Code must be 5 characters long."
+        };
+
+        private static bool IsExactFiveCharacters(string input)
+        {
+            bool result = input.Length == 5;
 
             return result;
         }

@@ -24,8 +24,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             // given
             string randomNhsNumber = GenerateRandom10DigitNumber();
             string inputNhsNumber = randomNhsNumber.DeepClone();
-            string randomCaptchaToken = GetRandomString();
-            string inputCaptchaToken = randomCaptchaToken.DeepClone();
             NotificationPreference randomNotificationPreference = NotificationPreference.Email;
             NotificationPreference inputNotificationPreference = randomNotificationPreference.DeepClone();
             string notificationPreferenceString = inputNotificationPreference.ToString();
@@ -40,6 +38,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 this.loggingBrokerMock.Object,
                 this.securityBrokerMock.Object,
                 this.dateTimeBrokerMock.Object,
+                this.auditBrokerMock.Object,
+                this.identifierBrokerMock.Object,
                 this.pdsServiceMock.Object,
                 this.patientServiceMock.Object,
                 this.notificationServiceMock.Object,
@@ -79,6 +79,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.securityBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.auditBrokerMock.VerifyNoOtherCalls();
+            this.identifierBrokerMock.VerifyNoOtherCalls();
             this.pdsServiceMock.VerifyNoOtherCalls();
             this.patientServiceMock.VerifyNoOtherCalls();
             this.notificationServiceMock.VerifyNoOtherCalls();
@@ -92,8 +94,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             // given
             string randomNhsNumber = GenerateRandom10DigitNumber();
             string inputNhsNumber = randomNhsNumber.DeepClone();
-            string randomCaptchaToken = GetRandomString();
-            string inputCaptchaToken = randomCaptchaToken.DeepClone();
             NotificationPreference randomNotificationPreference = NotificationPreference.Email;
             NotificationPreference inputNotificationPreference = randomNotificationPreference.DeepClone();
             string notificationPreferenceString = inputNotificationPreference.ToString();
@@ -108,6 +108,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 this.loggingBrokerMock.Object,
                 this.securityBrokerMock.Object,
                 this.dateTimeBrokerMock.Object,
+                this.auditBrokerMock.Object,
+                this.identifierBrokerMock.Object,
                 this.pdsServiceMock.Object,
                 this.patientServiceMock.Object,
                 this.notificationServiceMock.Object,
@@ -147,6 +149,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.securityBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.auditBrokerMock.VerifyNoOtherCalls();
+            this.identifierBrokerMock.VerifyNoOtherCalls();
             this.pdsServiceMock.VerifyNoOtherCalls();
             this.patientServiceMock.VerifyNoOtherCalls();
             this.notificationServiceMock.VerifyNoOtherCalls();
@@ -159,8 +163,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             // given
             string randomNhsNumber = GenerateRandom10DigitNumber();
             string inputNhsNumber = randomNhsNumber.DeepClone();
-            string randomCaptchaToken = GetRandomString();
-            string inputCaptchaToken = randomCaptchaToken.DeepClone();
             NotificationPreference randomNotificationPreference = NotificationPreference.Email;
             NotificationPreference inputNotificationPreference = randomNotificationPreference.DeepClone();
             string notificationPreferenceString = inputNotificationPreference.ToString();
@@ -180,6 +182,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 this.loggingBrokerMock.Object,
                 this.securityBrokerMock.Object,
                 this.dateTimeBrokerMock.Object,
+                this.auditBrokerMock.Object,
+                this.identifierBrokerMock.Object,
                 this.pdsServiceMock.Object,
                 this.patientServiceMock.Object,
                 this.notificationServiceMock.Object,
@@ -219,6 +223,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.securityBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.auditBrokerMock.VerifyNoOtherCalls();
+            this.identifierBrokerMock.VerifyNoOtherCalls();
             this.pdsServiceMock.VerifyNoOtherCalls();
             this.patientServiceMock.VerifyNoOtherCalls();
             this.notificationServiceMock.VerifyNoOtherCalls();

@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Force.DeepCloner;
 using LondonDataServices.IDecide.Core.Models.Foundations.Audits;
-using LondonDataServices.IDecide.Core.Models.Securities;
 using Moq;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
@@ -19,12 +18,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
         {
             // given
             DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
-            User randomUser = CreateRandomUser();
-            Audit randomAudit = CreateRandomAudit(randomDateTimeOffset, randomUser.UserId);
+            string randomUserId = GetRandomStringWithLengthOf(50);
+            Audit randomAudit = CreateRandomAudit(randomDateTimeOffset, randomUserId);
             Guid inputAuditId = randomAudit.Id;
             Audit storageAudit = randomAudit;
             Audit ingestionTrackingWithDeleteAuditApplied = storageAudit.DeepClone();
-            ingestionTrackingWithDeleteAuditApplied.UpdatedBy = randomUser.UserId.ToString();
+            ingestionTrackingWithDeleteAuditApplied.UpdatedBy = randomUserId;
             ingestionTrackingWithDeleteAuditApplied.UpdatedDate = randomDateTimeOffset;
             Audit updatedAudit = storageAudit;
             Audit deletedAudit = updatedAudit;
@@ -34,12 +33,16 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
                 broker.GetCurrentDateTimeOffsetAsync())
                     .ReturnsAsync(randomDateTimeOffset);
 
-            this.securityBrokerMock.Setup(broker =>
-                broker.GetCurrentUserAsync())
-                    .ReturnsAsync(randomUser);
+            this.securityAuditBrokerMock.Setup(broker =>
+                broker.GetCurrentUserIdAsync())
+                    .ReturnsAsync(randomUserId);
 
             this.storageBrokerMock.Setup(broker =>
                 broker.SelectAuditByIdAsync(inputAuditId))
+                    .ReturnsAsync(storageAudit);
+
+            this.securityAuditBrokerMock.Setup(broker =>
+                broker.ApplyRemoveAuditValuesAsync(storageAudit))
                     .ReturnsAsync(storageAudit);
 
             this.storageBrokerMock.Setup(broker =>
@@ -61,13 +64,13 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
                 broker.SelectAuditByIdAsync(inputAuditId),
                     Times.Once);
 
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffsetAsync(),
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.GetCurrentUserIdAsync(),
                     Times.Once);
 
-            this.securityBrokerMock.Verify(broker =>
-                broker.GetCurrentUserAsync(),
-                    Times.Exactly(2));
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.ApplyRemoveAuditValuesAsync(storageAudit),
+                    Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.UpdateAuditAsync(randomAudit),
@@ -79,7 +82,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
+            this.securityAuditBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }

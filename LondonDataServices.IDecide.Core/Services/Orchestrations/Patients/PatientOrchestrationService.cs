@@ -5,6 +5,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using LondonDataServices.IDecide.Core.Brokers.Audits;
 using LondonDataServices.IDecide.Core.Brokers.DateTimes;
 using LondonDataServices.IDecide.Core.Brokers.Identifiers;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
@@ -26,6 +27,8 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
         private readonly ILoggingBroker loggingBroker;
         private readonly ISecurityBroker securityBroker;
         private readonly IDateTimeBroker dateTimeBroker;
+        private readonly IAuditBroker auditBroker;
+        private readonly IIdentifierBroker identifierBroker;
         private readonly IPdsService pdsService;
         private readonly IPatientService patientService;
         private readonly INotificationService notificationService;
@@ -36,6 +39,8 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             ILoggingBroker loggingBroker,
             ISecurityBroker securityBroker,
             IDateTimeBroker dateTimeBroker,
+            IAuditBroker auditBroker,
+            IIdentifierBroker identifierBroker,
             IPdsService pdsService,
             IPatientService patientService,
             INotificationService notificationService,
@@ -45,6 +50,8 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             this.loggingBroker = loggingBroker;
             this.securityBroker = securityBroker;
             this.dateTimeBroker = dateTimeBroker;
+            this.auditBroker = auditBroker;
+            this.identifierBroker = identifierBroker;
             this.pdsService = pdsService;
             this.patientService = patientService;
             this.notificationService = notificationService;
@@ -149,6 +156,121 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                     maybeMatchingPatient, notificationPreferenceType, now);
 
                 await SendValidationCodeNotificationAsync(patientToRecord);
+            });
+
+        public ValueTask VerifyPatientCodeAsync(string nhsNumber, string verificationCode) =>
+            TryCatch(async () =>
+            {
+                ValidateVerifyPatientCodeArguments(nhsNumber: nhsNumber, verificationCode: verificationCode);
+                bool isAuthenticatedUserWithRole = await CheckIfIsAuthenticatedUserWithRequiredRoleAsync();
+                IQueryable<Patient> patients = await this.patientService.RetrieveAllPatientsAsync();
+                Patient maybeMatchingPatient = patients.FirstOrDefault(patient => patient.NhsNumber == nhsNumber);
+                Patient patientToUpdate = maybeMatchingPatient;
+                ValidatePatientExists(maybeMatchingPatient);
+                Guid correlationId = await this.identifierBroker.GetIdentifierAsync();
+
+                if (isAuthenticatedUserWithRole)
+                {
+                    var currentUser = await this.securityBroker.GetCurrentUserAsync();
+
+                    await this.auditBroker.LogInformationAsync(
+                        auditType: "Patient Code",
+                        title: "Validating Patient Code",
+                        message: $"User {currentUser.UserId} is validating a code for patient {nhsNumber}.",
+                        fileName: null,
+                        correlationId: correlationId.ToString());
+
+                    if (maybeMatchingPatient.ValidationCode != verificationCode)
+                    {
+                        await this.auditBroker.LogInformationAsync(
+                            auditType: "Patient Code",
+                            title: "Patient Code Validation Failed",
+                            message: "The validation code provided was incorrect.",
+                            fileName: null,
+                            correlationId: correlationId.ToString());
+
+                        throw new IncorrectValidationCodeException("The validation code provided is incorrect.");
+                    }
+                }
+                else
+                {
+                    string ipAddress = await this.securityBroker.GetIpAddressAsync();
+
+                    await this.auditBroker.LogInformationAsync(
+                        auditType: "Patient Code",
+                        title: "Validating Patient Code",
+                        message: $"Patient with IP address {ipAddress} is validating a code for patient {nhsNumber}.",
+                        fileName: null,
+                        correlationId: correlationId.ToString());
+
+                    if (maybeMatchingPatient.RetryCount > this.decisionConfigurations.MaxRetryCount)
+                    {
+                        await this.auditBroker.LogInformationAsync(
+                            auditType: "Patient Code",
+                            title: "Patient Code Validation Failed",
+
+                            message: $"The maximum retry count of {this.decisionConfigurations.MaxRetryCount} exceeded " +
+                               $"for patient {nhsNumber}",
+
+                            fileName: null,
+                            correlationId: correlationId.ToString());
+
+                        throw new ExceededMaxRetryCountException(
+                            $"The maximum retry count of {this.decisionConfigurations.MaxRetryCount} exceeded.");
+                    }
+
+                    if (maybeMatchingPatient.ValidationCode != verificationCode)
+                    {
+                        patientToUpdate.RetryCount += 1;
+                        await this.patientService.ModifyPatientAsync(patientToUpdate);
+
+                        await this.auditBroker.LogInformationAsync(
+                            auditType: "Patient Code",
+                            title: "Patient Code Validation Failed",
+                            message: "The validation code provided was incorrect.",
+                            fileName: null,
+                            correlationId: correlationId.ToString());
+
+                        throw new IncorrectValidationCodeException("The validation code provided is incorrect.");
+                    }
+
+                    DateTimeOffset currentDateTime = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
+
+                    if (maybeMatchingPatient.ValidationCodeExpiresOn < currentDateTime)
+                    {
+                        string newValidationCode = await this.patientService.GenerateValidationCodeAsync();
+                        patientToUpdate.ValidationCode = newValidationCode;
+                        patientToUpdate.ValidationCodeMatchedOn = null;
+                        patientToUpdate.RetryCount = 0;
+
+                        patientToUpdate.ValidationCodeExpiresOn =
+                            currentDateTime.AddMinutes(
+                                this.decisionConfigurations.PatientValidationCodeExpireAfterMinutes);
+
+                        await this.patientService.ModifyPatientAsync(patientToUpdate);
+
+                        await this.auditBroker.LogInformationAsync(
+                            auditType: "Patient Code",
+                            title: "New Validation Code Generated",
+                            message: "The validation code was expired so a new code was issued.",
+                            fileName: null,
+                            correlationId: correlationId.ToString());
+
+                        throw new RenewedValidationCodeException(
+                            "The validation code has expired, but we have issued a new code that will be sent via " +
+                            "your prefered contact method");
+                    }
+                }
+
+                patientToUpdate.ValidationCodeMatchedOn = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
+                await this.patientService.ModifyPatientAsync(patientToUpdate);
+
+                await this.auditBroker.LogInformationAsync(
+                    auditType: "Patient Code",
+                    title: "Patient Code Validation Succeeded",
+                    message: "The validation code provided was valid and successfully verified.",
+                    fileName: null,
+                    correlationId: correlationId.ToString());
             });
 
         virtual internal async ValueTask<Patient> GenerateNewPatientWithCodeAsync(
