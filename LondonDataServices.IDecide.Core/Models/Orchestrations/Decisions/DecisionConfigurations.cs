@@ -12,6 +12,5 @@ namespace LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions
         public int PatientValidationCodeExpireAfterMinutes { get; set; }
         public int ValidatedCodeValidForMinutes { get; set; }
         public List<string> DecisionWorkflowRoles { get; set; }
-        public string AgentOverrideCode { get; set; }
     }
 }
