@@ -76,7 +76,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
 
             var invalidDecision = new Decision
             {
-                PatientNhsNumber = invalidText,
                 DecisionChoice = invalidText,
             };
 
@@ -87,10 +86,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
             invalidDecisionException.AddData(
                 key: nameof(Decision.Id),
                 values: "Id is required");
-
-            invalidDecisionException.AddData(
-                key: nameof(Decision.PatientNhsNumber),
-                values: "Text is required");
 
             invalidDecisionException.AddData(
                 key: nameof(Decision.DecisionChoice),
@@ -178,7 +173,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
             // given
             string randomUserId = GetRandomString();
             var invalidDecision = CreateRandomModifyDecision(GetRandomDateTimeOffset(), userId: randomUserId);
-            invalidDecision.PatientNhsNumber = GetRandomStringWithLengthOf(11);
             invalidDecision.ResponsiblePersonGivenName = GetRandomStringWithLengthOf(256);
             invalidDecision.ResponsiblePersonSurname = GetRandomStringWithLengthOf(256);
             invalidDecision.ResponsiblePersonRelationship = GetRandomStringWithLengthOf(256);
@@ -186,10 +180,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
             var invalidDecisionException =
                 new InvalidDecisionException(
                     message: "Invalid decision. Please correct the errors and try again.");
-
-            invalidDecisionException.AddData(
-                key: nameof(Decision.PatientNhsNumber),
-                values: $"Text exceed max length of {invalidDecision.PatientNhsNumber.Length - 1} characters");
 
             invalidDecisionException.AddData(
                 key: nameof(Decision.ResponsiblePersonGivenName),

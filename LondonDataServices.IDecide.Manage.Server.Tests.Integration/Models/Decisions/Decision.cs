@@ -10,7 +10,6 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Integration.Models.Deci
     {
         public Guid Id { get; set; }
         public Guid PatientId { get; set; }
-        public string PatientNhsNumber { get; set; }
         public Guid DecisionTypeId { get; set; }
         public string DecisionChoice { get; set; }
         public string CreatedBy { get; set; }
