@@ -35,10 +35,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                 broker.ApplyAddAuditValuesAsync(inputPatient))
                     .ReturnsAsync(auditAppliedPatient);
 
-            this.securityBrokerMock.Setup(broker =>
-                broker.GetCurrentUserAsync())
-                    .ReturnsAsync(randomUser);
-
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
                     .ReturnsAsync(randomDateTimeOffset);
@@ -56,10 +52,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
 
             this.securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyAddAuditValuesAsync(inputPatient),
-                    Times.Once);
-
-            this.securityBrokerMock.Verify(broker =>
-                broker.GetCurrentUserAsync(),
                     Times.Once);
 
             this.dateTimeBrokerMock.Verify(broker =>

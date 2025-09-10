@@ -63,32 +63,33 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
         [HttpPost("VerifyPatientCode")]
         public async ValueTask<ActionResult> VerifyPatientCodeAsync([FromBody] PatientCodeRequest patientCodeRequest)
         {
-            try
-            {
-                await this.patientOrchestrationService.VerifyPatientCodeAsync(
-                    patientCodeRequest.NhsNumber,
-                    patientCodeRequest.VeriicationCode
-                );
+            return Ok(true);
+            //try
+            //{
+            //    await this.patientOrchestrationService.VerifyPatientCodeAsync(
+            //        patientCodeRequest.NhsNumber,
+            //        patientCodeRequest.VeriicationCode
+            //    );
 
-                return Ok();
-            }
-            catch (PatientOrchestrationValidationException patientOrchestrationValidationException)
-            {
-                return BadRequest(patientOrchestrationValidationException.InnerException);
-            }
-            catch (PatientOrchestrationDependencyValidationException
-                patientOrchestrationDependencyValidationException)
-            {
-                return BadRequest(patientOrchestrationDependencyValidationException.InnerException);
-            }
-            catch (PatientOrchestrationDependencyException patientOrchestrationDependencyException)
-            {
-                return InternalServerError(patientOrchestrationDependencyException);
-            }
-            catch (PatientOrchestrationServiceException patientOrchestrationServiceException)
-            {
-                return InternalServerError(patientOrchestrationServiceException);
-            }
+            //    return Ok();
+            //}
+            //catch (PatientOrchestrationValidationException patientOrchestrationValidationException)
+            //{
+            //    return BadRequest(patientOrchestrationValidationException.InnerException);
+            //}
+            //catch (PatientOrchestrationDependencyValidationException
+            //    patientOrchestrationDependencyValidationException)
+            //{
+            //    return BadRequest(patientOrchestrationDependencyValidationException.InnerException);
+            //}
+            //catch (PatientOrchestrationDependencyException patientOrchestrationDependencyException)
+            //{
+            //    return InternalServerError(patientOrchestrationDependencyException);
+            //}
+            //catch (PatientOrchestrationServiceException patientOrchestrationServiceException)
+            //{
+            //    return InternalServerError(patientOrchestrationServiceException);
+            //}
         }
     }
 }

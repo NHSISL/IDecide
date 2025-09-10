@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Brokers.DateTimes;
+using LondonDataServices.IDecide.Core.Brokers.Identifiers;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Extensions.Patients;
@@ -28,6 +29,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
         private readonly IPdsService pdsService;
         private readonly IPatientService patientService;
         private readonly INotificationService notificationService;
+        private readonly IIdentifierBroker identifierBroker;
         private readonly DecisionConfigurations decisionConfigurations;
 
         public PatientOrchestrationService(
@@ -37,6 +39,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             IPdsService pdsService,
             IPatientService patientService,
             INotificationService notificationService,
+            IIdentifierBroker identifierBroker,
             DecisionConfigurations decisionConfigurations)
         {
             this.loggingBroker = loggingBroker;
@@ -45,6 +48,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             this.pdsService = pdsService;
             this.patientService = patientService;
             this.notificationService = notificationService;
+            this.identifierBroker = identifierBroker;
             this.decisionConfigurations = decisionConfigurations;
         }
 
@@ -163,7 +167,35 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             pdsPatient.ValidationCodeMatchedOn = null;
             pdsPatient.NotificationPreference = notificationPreference;
             Patient patientToRecord = pdsPatient;
-            Patient recordedPatient = await this.patientService.AddPatientAsync(patientToRecord);
+
+            IQueryable<Patient> patients = await this.patientService.RetrieveAllPatientsAsync();
+            Patient maybePatient = patients.FirstOrDefault(patient => patient.NhsNumber == nhsNumber);
+
+            if (maybePatient != null)
+            {
+                maybePatient.Title = pdsPatient.Title;
+                maybePatient.Surname = pdsPatient.Surname;
+                maybePatient.DateOfBirth = pdsPatient.DateOfBirth;
+                maybePatient.Gender = pdsPatient.Gender;
+                maybePatient.Email = pdsPatient.Email;
+                maybePatient.Phone = pdsPatient.Phone;
+                maybePatient.Address = pdsPatient.Address;
+                maybePatient.PostCode = pdsPatient.PostCode;
+                maybePatient.NotificationPreference = pdsPatient.NotificationPreference;
+                maybePatient.ValidationCode = pdsPatient.ValidationCode;
+                maybePatient.ValidationCodeExpiresOn = pdsPatient.ValidationCodeExpiresOn;
+                maybePatient.ValidationCodeMatchedOn = pdsPatient.ValidationCodeMatchedOn;
+                maybePatient = await this.patientService.ModifyPatientAsync(maybePatient);
+            }
+            else
+            {
+                maybePatient = new Patient();
+                maybePatient.Id = await this.identifierBroker.GetIdentifierAsync();
+                maybePatient = await this.patientService.AddPatientAsync(maybePatient);
+            }
+
+            Patient recordedPatient = 
+                await this.patientService.AddPatientAsync(patientToRecord);
 
             return recordedPatient;
         }

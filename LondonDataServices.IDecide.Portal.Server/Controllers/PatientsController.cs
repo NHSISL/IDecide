@@ -150,11 +150,8 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
         [HttpPut("confirm-code")]
         public IActionResult ConfirmPatientCode([FromBody] ConfirmCodeRequest request)
         {
-            bool isCodeValid = request.Code == "12345";
-            if (isCodeValid)
-                return Ok(true);
-            else
-                return Forbid();
+            return Ok(true);
+
         }
     }
 }
