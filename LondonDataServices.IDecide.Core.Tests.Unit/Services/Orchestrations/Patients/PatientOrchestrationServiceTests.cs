@@ -66,7 +66,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 PatientValidationCodeExpireAfterMinutes = expireAfterMinutes,
                 ValidatedCodeValidForMinutes = validatedCodeValidForMinutes,
                 MaxRetryCount = retryCount,
-                DecisionWorkflowRoles = decisionWorkflowRoles
+                DecisionWorkflowRoles = decisionWorkflowRoles,
+                AgentOverrideCode = "12345"
             };
 
             this.patientOrchestrationService = new PatientOrchestrationService(

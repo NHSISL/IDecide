@@ -137,6 +137,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             string randomIpAddress = GetRandomString();
             User randomUser = CreateRandomUser();
             DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
+            this.decisionConfigurations.AgentOverrideCode = randomValidationCode;
 
             Patient randomPatient = GetRandomPatient(
                 validationCodeExpiresOn: randomDateTime,
@@ -248,6 +249,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             string randomIpAddress = GetRandomString();
             User randomUser = CreateRandomUser();
             DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
+            this.decisionConfigurations.AgentOverrideCode = randomValidationCode;
 
             Patient randomPatient = GetRandomPatient(
                 validationCodeExpiresOn: randomDateTime,

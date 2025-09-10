@@ -177,7 +177,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                         fileName: null,
                         correlationId: correlationId.ToString());
 
-                    if (maybeMatchingPatient.ValidationCode != verificationCode)
+                    if (verificationCode != decisionConfigurations.AgentOverrideCode)
                     {
                         await this.auditBroker.LogInformationAsync(
                             auditType: "Patient Code",
