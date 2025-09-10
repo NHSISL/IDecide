@@ -103,7 +103,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Patien
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
                 .OnType<DateTimeOffset?>().Use(dateTimeOffset)
-                .OnProperty(n => n.Surname).Use(inputSurname);
+                .OnProperty(patient => patient.Surname).Use(inputSurname);
 
             return filler;
         }
@@ -119,7 +119,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Patien
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
                 .OnType<DateTimeOffset?>().Use(dateTimeOffset)
-                .OnProperty(n => n.NhsNumber).Use(nhsNumber);
+                .OnProperty(patient => patient.NhsNumber).Use(nhsNumber);
 
             return filler;
         }

@@ -4,11 +4,11 @@
 
 using System.Threading.Tasks;
 using FluentAssertions;
-using LondonDataServices.IDecide.Portal.Server.Models;
+using LondonDataServices.IDecide.Manage.Server.Models;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
-namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.PatientSearches
+namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.PatientSearches
 {
     public partial class PatientSearchControllerTests
     {
