@@ -3,155 +3,203 @@
 // ---------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Attrify.Attributes;
+using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
+using LondonDataServices.IDecide.Core.Models.Foundations.Patients.Exceptions;
+using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.OData.Query;
+using RESTFulSense.Controllers;
 
 namespace LondonDataServices.IDecide.Portal.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class PatientsController : ControllerBase
+    public class PatientsController : RESTFulController
     {
-        private readonly IConfiguration configuration;
+        private readonly IPatientService patientService;
 
-        public PatientsController(IConfiguration configuration)
-        {
-            this.configuration = configuration;
-        }
+        public PatientsController(IPatientService patientService) =>
+            this.patientService = patientService;
 
-        public class PatientLookup
+        [HttpPost]
+        [InvisibleApi]
+        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators,Patients.Create")]
+        public async ValueTask<ActionResult<Patient>> PostPatientAsync([FromBody] Patient patient)
         {
-            public SearchCriteria SearchCriteria { get; set; }
-            public List<Patient> Patients { get; set; }
-        }
-
-        public class Patient
-        {
-            public Guid Id { get; set; }
-            public string NhsNumber { get; set; }
-            public string Title { get; set; }
-            public string GivenName { get; set; }
-            public string Surname { get; set; }
-            public DateTimeOffset DateOfBirth { get; set; }
-            public string Gender { get; set; }
-            public string Email { get; set; }
-            public string Phone { get; set; }
-            public string Address { get; set; }
-            public string PostCode { get; set; }
-            public string ValidationCode { get; set; }
-            public DateTimeOffset ValidationCodeExpiresOn { get; set; }
-            public int RetryCount { get; set; }
-            public string CreatedBy { get; set; }
-            public DateTimeOffset CreatedDate { get; set; }
-            public string UpdatedBy { get; set; }
-            public DateTimeOffset UpdatedDate { get; set; }
-        }
-
-        public class SearchCriteria
-        {
-            public string NhsNumber { get; set; } = string.Empty;
-            public string FirstName { get; set; } = string.Empty;
-            public string Surname { get; set; } = string.Empty;
-            public string Gender { get; set; } = string.Empty;
-            public string Postcode { get; set; } = string.Empty;
-            public string DateOfBirth { get; set; } = string.Empty;
-            public string DateOfDeath { get; set; } = string.Empty;
-            public string RegisteredGpPractice { get; set; } = string.Empty;
-            public string Email { get; set; } = string.Empty;
-            public string PhoneNumber { get; set; } = string.Empty;
-        }
-
-        public class PatientSearchCriteria
-        {
-            public string NhsNumber { get; set; }
-            public string FirstName { get; set; } = string.Empty;
-            public string Surname { get; set; } = string.Empty;
-            public string Gender { get; set; } = string.Empty;
-            public string Postcode { get; set; } = string.Empty;
-            public string DateOfBirth { get; set; } = string.Empty;
-        }
-
-        public class GenerateCodeRequest
-        {
-            public string NhsNumber { get; set; }
-            public string NotificationPreference { get; set; }
-            public string PoaFirstName { get; set; }
-            public string PoaSurname { get; set; }
-            public string PoaRelationship { get; set; }
-        }
-
-        public class ConfirmCodeRequest
-        {
-            public string NhsNumber { get; set; }
-            public string Code { get; set; }
-        }
-
-        //recapture
-        [HttpPost("PostPatientByNhsNumber")]
-        public async ValueTask<ActionResult<Patient>> PostPatientByNhsNumberAsync([FromBody] PatientLookup patientLookup)
-        {
-            var createdPatient = new Patient
+            try
             {
-                Id = Guid.NewGuid(),
-                NhsNumber = patientLookup.SearchCriteria.NhsNumber,
-                GivenName = "D****",
-                Surname = "H****",
-                Gender = "Male",
-                Email = "",
-                DateOfBirth = new DateTime(1990, 5, 15),
-                Address = "9 T** W*********, S**********, S*****",
-                Phone = "07*******84",
-                ValidationCode = "",
-            };
+                Patient addedPatient =
+                    await this.patientService.AddPatientAsync(patient);
 
-            await Task.CompletedTask;
-
-            return Ok(createdPatient);
-        }
-
-        //recapture
-        [HttpPost("PostPatientByDetails")]
-        public async ValueTask<ActionResult<Patient>> GetPatientByDetails([FromBody] PatientLookup patientLookup)
-        {
-            var createdPatient = new Patient
-            {
-                Id = Guid.NewGuid(),
-                NhsNumber = patientLookup.SearchCriteria.NhsNumber,
-                GivenName = "D****",
-                Surname = "H****",
-                Gender = "Male",
-                Email = "",
-                DateOfBirth = new DateTime(1990, 5, 15),
-                Address = "9 T** W*********, S**********, S*****",
-                Phone = "07*******84",
-                ValidationCode = "",
-            };
-
-            await Task.CompletedTask;
-
-            return Ok(createdPatient);
-        }
-
-        //recapture
-        [HttpPut]
-        public IActionResult GenerateAndSendCode([FromBody] GenerateCodeRequest request)
-        {
-            if (string.IsNullOrWhiteSpace(request.NhsNumber) || string.IsNullOrWhiteSpace(request.NotificationPreference))
-            {
-                return BadRequest("NhsNumber and NotificationPreference are required.");
+                return Created(addedPatient);
             }
-
-            return NoContent();
+            catch (PatientValidationException patientValidationException)
+            {
+                return BadRequest(patientValidationException.InnerException);
+            }
+            catch (PatientDependencyValidationException patientDependencyValidationException)
+               when (patientDependencyValidationException.InnerException is AlreadyExistsPatientException)
+            {
+                return Conflict(patientDependencyValidationException.InnerException);
+            }
+            catch (PatientDependencyValidationException patientDependencyValidationException)
+            {
+                return BadRequest(patientDependencyValidationException.InnerException);
+            }
+            catch (PatientDependencyException patientDependencyException)
+            {
+                return InternalServerError(patientDependencyException);
+            }
+            catch (PatientServiceException patientServiceException)
+            {
+                return InternalServerError(patientServiceException);
+            }
         }
 
-        //recapture
-        [HttpPut("confirm-code")]
-        public IActionResult ConfirmPatientCode([FromBody] ConfirmCodeRequest request)
+        [HttpGet]
+#if !DEBUG
+        [EnableQuery(PageSize = 50)]
+#endif
+#if DEBUG
+        [EnableQuery(PageSize = 5000)]
+#endif
+        [InvisibleApi]
+        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators,Patients.Read")]
+        public async ValueTask<ActionResult<IQueryable<Patient>>> Get()
         {
-            return Ok(true);
+            try
+            {
+                IQueryable<Patient> retrievedPatients =
+                    await this.patientService.RetrieveAllPatientsAsync();
 
+                return Ok(retrievedPatients);
+            }
+            catch (PatientDependencyException patientDependencyException)
+            {
+                return InternalServerError(patientDependencyException);
+            }
+            catch (PatientServiceException patientServiceException)
+            {
+                return InternalServerError(patientServiceException);
+            }
+        }
+
+        [HttpGet("{patientId}")]
+        [InvisibleApi]
+        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators,Patients.Read")]
+        public async ValueTask<ActionResult<Patient>> GetPatientByIdAsync(Guid patientId)
+        {
+            try
+            {
+                Patient patient = await this.patientService.RetrievePatientByIdAsync(patientId);
+
+                return Ok(patient);
+            }
+            catch (PatientValidationException patientValidationException)
+                when (patientValidationException.InnerException is NotFoundPatientException)
+            {
+                return NotFound(patientValidationException.InnerException);
+            }
+            catch (PatientValidationException patientValidationException)
+            {
+                return BadRequest(patientValidationException.InnerException);
+            }
+            catch (PatientDependencyValidationException patientDependencyValidationException)
+            {
+                return BadRequest(patientDependencyValidationException.InnerException);
+            }
+            catch (PatientDependencyException patientDependencyException)
+            {
+                return InternalServerError(patientDependencyException);
+            }
+            catch (PatientServiceException patientServiceException)
+            {
+                return InternalServerError(patientServiceException);
+            }
+        }
+
+        [HttpPut]
+        [InvisibleApi]
+        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators,Patients.Update")]
+        public async ValueTask<ActionResult<Patient>> PutPatientAsync([FromBody] Patient patient)
+        {
+            try
+            {
+                Patient modifiedPatient =
+                    await this.patientService.ModifyPatientAsync(patient);
+
+                return Ok(modifiedPatient);
+            }
+            catch (PatientValidationException patientValidationException)
+                when (patientValidationException.InnerException is NotFoundPatientException)
+            {
+                return NotFound(patientValidationException.InnerException);
+            }
+            catch (PatientValidationException patientValidationException)
+            {
+                return BadRequest(patientValidationException.InnerException);
+            }
+            catch (PatientDependencyValidationException patientDependencyValidationException)
+               when (patientDependencyValidationException.InnerException is AlreadyExistsPatientException)
+            {
+                return Conflict(patientDependencyValidationException.InnerException);
+            }
+            catch (PatientDependencyValidationException patientDependencyValidationException)
+            {
+                return BadRequest(patientDependencyValidationException.InnerException);
+            }
+            catch (PatientDependencyException patientDependencyException)
+            {
+                return InternalServerError(patientDependencyException);
+            }
+            catch (PatientServiceException patientServiceException)
+            {
+                return InternalServerError(patientServiceException);
+            }
+        }
+
+        [HttpDelete("{patientId}")]
+        [InvisibleApi]
+        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators,Patients.Delete")]
+        public async ValueTask<ActionResult<Patient>> DeletePatientByIdAsync(Guid patientId)
+        {
+            try
+            {
+                Patient deletedPatient =
+                    await this.patientService.RemovePatientByIdAsync(patientId);
+
+                return Ok(deletedPatient);
+            }
+            catch (PatientValidationException patientValidationException)
+                when (patientValidationException.InnerException is NotFoundPatientException)
+            {
+                return NotFound(patientValidationException.InnerException);
+            }
+            catch (PatientValidationException patientValidationException)
+            {
+                return BadRequest(patientValidationException.InnerException);
+            }
+            catch (PatientDependencyValidationException patientDependencyValidationException)
+                when (patientDependencyValidationException.InnerException is LockedPatientException)
+            {
+                return Locked(patientDependencyValidationException.InnerException);
+            }
+            catch (PatientDependencyValidationException patientDependencyValidationException)
+            {
+                return BadRequest(patientDependencyValidationException.InnerException);
+            }
+            catch (PatientDependencyException patientDependencyException)
+            {
+                return InternalServerError(patientDependencyException);
+            }
+            catch (PatientServiceException patientServiceException)
+            {
+                return InternalServerError(patientServiceException);
+            }
         }
     }
 }

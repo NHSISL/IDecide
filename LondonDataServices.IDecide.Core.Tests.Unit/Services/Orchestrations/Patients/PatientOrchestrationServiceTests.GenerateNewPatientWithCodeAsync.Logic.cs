@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Force.DeepCloner;
@@ -20,59 +21,71 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         {
             // given
             int expireAfterMinutes = this.decisionConfigurations.PatientValidationCodeExpireAfterMinutes;
-            string randomNhsNumber = GenerateRandom10DigitNumber();
-            string inputNhsNumber = randomNhsNumber.DeepClone();
-            NotificationPreference randomNotificationPreference = NotificationPreference.Email;
-            NotificationPreference inputNotificationPreference = randomNotificationPreference.DeepClone();
-            string notificationPreferenceString = inputNotificationPreference.ToString();
+            string inputNhsNumber = GenerateRandom10DigitNumber();
+            NotificationPreference inputNotificationPreference = NotificationPreference.Email;
             string outputValidationCode = GetRandomStringWithLengthOf(5);
-            DateTimeOffset randomDateTimeOffest = GetRandomDateTimeOffset();
-            DateTimeOffset outputDateTimeOffset = randomDateTimeOffest.DeepClone();
-            Patient randomPatient = GetRandomPatientWithNhsNumber(inputNhsNumber);
-            randomPatient.NotificationPreference = inputNotificationPreference;
-            Patient outputPatient = randomPatient.DeepClone();
-            List<Patient> randomPatients = GetRandomPatients();
-            List<Patient> outputPatients = randomPatients.DeepClone();
+            DateTimeOffset inputDateTimeOffset = GetRandomDateTimeOffset();
+            Guid generatedId = Guid.NewGuid();
+
+            Patient inputPatient = GetRandomPatientWithNhsNumber(inputNhsNumber);
+            inputPatient.NotificationPreference = inputNotificationPreference;
+            Patient outputPatient = inputPatient.DeepClone();
+
             Patient updatedPatient = outputPatient.DeepClone();
             updatedPatient.ValidationCode = outputValidationCode;
+            updatedPatient.ValidationCodeExpiresOn = inputDateTimeOffset.AddMinutes(expireAfterMinutes);
             updatedPatient.ValidationCodeMatchedOn = null;
-            updatedPatient.ValidationCodeExpiresOn = outputDateTimeOffset.AddMinutes(expireAfterMinutes);
             updatedPatient.NotificationPreference = inputNotificationPreference;
-            Patient outputUpdatedPatient = updatedPatient.DeepClone();
-            Patient expectedPatient = outputUpdatedPatient.DeepClone();
+
+            Patient expectedPatient = updatedPatient.DeepClone();
 
             this.pdsServiceMock.Setup(service =>
                 service.PatientLookupByNhsNumberAsync(inputNhsNumber))
-                    .ReturnsAsync(outputPatient);
+                .ReturnsAsync(outputPatient);
 
             this.patientServiceMock.Setup(service =>
                 service.GenerateValidationCodeAsync())
-                    .ReturnsAsync(outputValidationCode);
+                .ReturnsAsync(outputValidationCode);
 
             this.patientServiceMock.Setup(service =>
-                service.AddPatientAsync(It.Is(SamePatientAs(updatedPatient))))
-                    .ReturnsAsync(outputUpdatedPatient);
+                service.RetrieveAllPatientsAsync())
+                .ReturnsAsync(new List<Patient>().AsQueryable());
+
+            this.identifierBrokerMock.Setup(broker =>
+                broker.GetIdentifierAsync())
+                .ReturnsAsync(generatedId);
+
+            this.patientServiceMock.Setup(service =>
+                service.AddPatientAsync(It.Is<Patient>(p =>
+                    p.NhsNumber == updatedPatient.NhsNumber &&
+                    p.ValidationCode == updatedPatient.ValidationCode &&
+                    p.ValidationCodeExpiresOn == updatedPatient.ValidationCodeExpiresOn &&
+                    p.NotificationPreference == updatedPatient.NotificationPreference)))
+                .ReturnsAsync(updatedPatient);
 
             // when
             Patient actualPatient = await patientOrchestrationService.GenerateNewPatientWithCodeAsync(
                 inputNhsNumber,
                 inputNotificationPreference,
-                outputDateTimeOffset);
+                inputDateTimeOffset);
 
-            //then
+            // then
             actualPatient.Should().BeEquivalentTo(expectedPatient);
 
             this.pdsServiceMock.Verify(service =>
-                service.PatientLookupByNhsNumberAsync(inputNhsNumber),
-                    Times.Once);
+                service.PatientLookupByNhsNumberAsync(inputNhsNumber), Times.Once);
 
             this.patientServiceMock.Verify(service =>
-                service.GenerateValidationCodeAsync(),
-                    Times.Once);
+                service.GenerateValidationCodeAsync(), Times.Once);
 
             this.patientServiceMock.Verify(service =>
-                service.AddPatientAsync(It.Is(SamePatientAs(updatedPatient))),
-                    Times.Once);
+                service.RetrieveAllPatientsAsync(), Times.Once);
+
+            this.identifierBrokerMock.Verify(broker =>
+                broker.GetIdentifierAsync(), Times.Once);
+
+            this.patientServiceMock.Verify(service =>
+                service.AddPatientAsync(It.IsAny<Patient>()), Times.Exactly(2));
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.securityBrokerMock.VerifyNoOtherCalls();
@@ -82,7 +95,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             this.pdsServiceMock.VerifyNoOtherCalls();
             this.patientServiceMock.VerifyNoOtherCalls();
             this.notificationServiceMock.VerifyNoOtherCalls();
-            this.identifierBrokerMock.VerifyNoOtherCalls();
         }
     }
 }

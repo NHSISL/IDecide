@@ -32,7 +32,6 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
         private readonly IPdsService pdsService;
         private readonly IPatientService patientService;
         private readonly INotificationService notificationService;
-        private readonly IIdentifierBroker identifierBroker;
         private readonly DecisionConfigurations decisionConfigurations;
 
         public PatientOrchestrationService(
@@ -44,7 +43,6 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             IPdsService pdsService,
             IPatientService patientService,
             INotificationService notificationService,
-            IIdentifierBroker identifierBroker,
             DecisionConfigurations decisionConfigurations)
         {
             this.loggingBroker = loggingBroker;
@@ -55,7 +53,6 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             this.pdsService = pdsService;
             this.patientService = patientService;
             this.notificationService = notificationService;
-            this.identifierBroker = identifierBroker;
             this.decisionConfigurations = decisionConfigurations;
         }
 
@@ -412,8 +409,5 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
 
             await this.notificationService.SendCodeNotificationAsync(notificationInfo);
         }
-
-        public ValueTask VerifyPatientCodeAsync(string nhsNumber, string VeriicationCode) =>
-            throw new NotImplementedException();
     }
 }

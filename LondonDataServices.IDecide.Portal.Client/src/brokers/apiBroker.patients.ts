@@ -1,11 +1,12 @@
 import { Patient } from "../models/patients/patient";
-import { GenerateCodeRequest } from "../models/patients/generateCodeRequest";
 import { PatientLookup } from "../models/patients/patientLookup";
+import { PatientCodeRequest } from "../models/patients/patientCodeRequest";
 import ApiBroker from "./apiBroker";
 import { AxiosResponse } from "axios";
 
 class PatientBroker {
     relativePatientsUrl = '/api/PatientSearch';
+    relativePatientCodeUrl = '/api/PatientCode';
     relativePatientsOdataUrl = '/odata/PatientSearch'
 
     private apiBroker: ApiBroker = new ApiBroker();
@@ -29,8 +30,8 @@ class PatientBroker {
             .then(result => new Patient(result.data));
     }
 
-    async PostPatientWithNotificationPreference(patient: GenerateCodeRequest, headers?: Record<string, string>) {
-        const url = `${this.relativePatientsUrl}/PatientGenerationRequest`;
+    async PostPatientWithNotificationPreference(patient: PatientCodeRequest, headers?: Record<string, string>) {
+        const url = `${this.relativePatientCodeUrl}/PatientGenerationRequest`;
         return await this.apiBroker.PostAsync(url, patient, headers)
             .then(() => undefined);
     }

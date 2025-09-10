@@ -56,7 +56,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 this.pdsServiceMock.Object,
                 this.patientServiceMock.Object,
                 this.notificationServiceMock.Object,
-                this.identifierBrokerMock.Object,
                 this.decisionConfigurations)
             { CallBase = true };
 
@@ -157,7 +156,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 this.pdsServiceMock.Object,
                 this.patientServiceMock.Object,
                 this.notificationServiceMock.Object,
-                this.identifierBrokerMock.Object,
                 this.decisionConfigurations)
             { CallBase = true };
 
@@ -265,7 +263,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 this.pdsServiceMock.Object,
                 this.patientServiceMock.Object,
                 this.notificationServiceMock.Object,
-                this.identifierBrokerMock.Object,
                 this.decisionConfigurations)
             { CallBase = true };
 
@@ -365,7 +362,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 this.pdsServiceMock.Object,
                 this.patientServiceMock.Object,
                 this.notificationServiceMock.Object,
-                this.identifierBrokerMock.Object,
                 this.decisionConfigurations)
             { CallBase = true };
 
@@ -464,7 +460,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 this.pdsServiceMock.Object,
                 this.patientServiceMock.Object,
                 this.notificationServiceMock.Object,
-                this.identifierBrokerMock.Object,
                 this.decisionConfigurations)
             { CallBase = true };
 
@@ -571,7 +566,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 this.pdsServiceMock.Object,
                 this.patientServiceMock.Object,
                 this.notificationServiceMock.Object,
-                this.identifierBrokerMock.Object,
                 this.decisionConfigurations)
             { CallBase = true };
 
@@ -678,7 +672,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 this.pdsServiceMock.Object,
                 this.patientServiceMock.Object,
                 this.notificationServiceMock.Object,
-                this.identifierBrokerMock.Object,
                 this.decisionConfigurations)
             { CallBase = true };
 
@@ -778,7 +771,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 this.pdsServiceMock.Object,
                 this.patientServiceMock.Object,
                 this.notificationServiceMock.Object,
-                this.identifierBrokerMock.Object,
                 this.decisionConfigurations)
             { CallBase = true };
 

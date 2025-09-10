@@ -41,7 +41,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         private readonly Mock<IPdsService> pdsServiceMock = new Mock<IPdsService>();
         private readonly Mock<IPatientService> patientServiceMock = new Mock<IPatientService>();
         private readonly Mock<INotificationService> notificationServiceMock = new Mock<INotificationService>();
-        private readonly Mock<IIdentifierBroker> identifierBrokerMock;
         private readonly DecisionConfigurations decisionConfigurations;
         private readonly PatientOrchestrationService patientOrchestrationService;
         private static readonly int expireAfterMinutes = 1440;
@@ -60,7 +59,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             this.pdsServiceMock = new Mock<IPdsService>();
             this.patientServiceMock = new Mock<IPatientService>();
             this.notificationServiceMock = new Mock<INotificationService>();
-            this.identifierBrokerMock = new Mock<IIdentifierBroker>();
             this.compareLogic = new CompareLogic();
 
             this.decisionConfigurations = new DecisionConfigurations
@@ -80,7 +78,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 pdsService: this.pdsServiceMock.Object,
                 patientService: this.patientServiceMock.Object,
                 notificationService: this.notificationServiceMock.Object,
-                identifierBroker: this.identifierBrokerMock.Object,
                 decisionConfigurations: this.decisionConfigurations);
 
         }

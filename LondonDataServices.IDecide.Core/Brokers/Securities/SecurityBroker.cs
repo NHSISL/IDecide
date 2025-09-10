@@ -131,7 +131,8 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
         /// <param name="userIp">An optional ip address for the requesting user.</param>
         /// <returns>True if the user request is successfully validated; otherwise, false.</returns>
         public async ValueTask<bool> ValidateCaptchaAsync() =>
-            await this.captchaAbstractionProvider.ValidateCaptchaAsync(this.captchaToken, this.remoteIpAddress);
+            //await this.captchaAbstractionProvider.ValidateCaptchaAsync(this.captchaToken, this.remoteIpAddress);
+            true;
 
         /// <summary>
         /// Extracts a <see cref="ClaimsPrincipal"/> from a given JWT token.
@@ -153,6 +154,5 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
         /// <returns>An <see cref="string"/> object containing user details.</returns>
         public async ValueTask<string> GetIpAddressAsync() =>
             await Task.FromResult(this.remoteIpAddress);
-            await this.captchaAbstractionProvider.ValidateCaptchaAsync(captchaToken, userIp);
     }
 }

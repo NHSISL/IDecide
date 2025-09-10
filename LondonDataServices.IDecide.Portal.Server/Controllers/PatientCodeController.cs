@@ -12,13 +12,6 @@ using RESTFulSense.Controllers;
 
 namespace LondonDataServices.IDecide.Portal.Server.Controllers
 {
-    public class PatientCodeRequest
-    {
-        public string NhsNumber { get; set; }
-        public string VeriicationCode { get; set; }
-        public string NotificationPreference { get; set; }
-    }
-
     [ApiController]
     [Route("api/[controller]")]
     public class PatientCodeController : RESTFulController
