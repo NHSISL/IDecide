@@ -127,10 +127,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
                 .OnType<DateTimeOffset?>().Use(dateTimeOffset)
-                .OnProperty(n => n.ValidationCodeExpiresOn).Use(validationCodeExpiresOn)
-                .OnProperty(n => n.NhsNumber).Use(inputNhsNumber)
-                .OnProperty(n => n.ValidationCode).Use(validationCode)
-                .OnProperty(n => n.RetryCount).Use(retryCount);
+                .OnProperty(patient => patient.ValidationCodeExpiresOn).Use(validationCodeExpiresOn)
+                .OnProperty(patient => patient.NhsNumber).Use(inputNhsNumber)
+                .OnProperty(patient => patient.ValidationCode).Use(validationCode)
+                .OnProperty(patient => patient.RetryCount).Use(retryCount);
 
             return filler;
         }
@@ -146,8 +146,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
                 .OnType<DateTimeOffset?>().Use(dateTimeOffset)
-                .OnProperty(n => n.Patient).Use(patient)
-                .OnProperty(n => n.PatientNhsNumber).Use(patient.NhsNumber);
+                .OnProperty(decision => decision.Patient).Use(patient);
 
             return filler;
         }
@@ -163,8 +162,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
                 .OnType<DateTimeOffset?>().Use(dateTimeOffset)
-                .OnProperty(d => d.Patient).Use((Patient)null)
-                .OnProperty(d => d.PatientNhsNumber).Use(GenerateRandom10DigitNumber());
+                .OnProperty(decision => decision.Patient).Use((Patient)null);
 
             return filler;
         }
