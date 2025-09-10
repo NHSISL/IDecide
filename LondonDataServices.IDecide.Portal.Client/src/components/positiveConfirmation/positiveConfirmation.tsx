@@ -1,13 +1,13 @@
 import React from "react";
 import { useStep } from "../../hooks/useStep";
 import { patientViewService } from "../../services/views/patientViewService";
-import { GenerateCodeRequest } from "../../models/patients/generateCodeRequest";
+import { PatientCodeRequest } from "../../models/patients/patientCodeRequest";
 import { Row, Col, Alert } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 import { loadRecaptchaScript } from "../../helpers/recaptureLoad";
 import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
 interface PositiveConfirmationProps {
-    goToConfirmCode: (createdPatient: GenerateCodeRequest) => void;
+    goToConfirmCode: (createdPatient: PatientCodeRequest) => void;
 }
 
 const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirmCode }) => {
@@ -22,7 +22,7 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
         return <div>{translate("PositiveConfirmation.noPatientDetails")}</div>;
     }
 
-    const patientToUpdate = new GenerateCodeRequest(createdPatient);
+    const patientToUpdate = new PatientCodeRequest(createdPatient);
 
     const handleSubmit = async (method: "Email" | "Sms" | "Letter") => {
         patientToUpdate.notificationPreference = method;
