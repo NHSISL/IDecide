@@ -1,5 +1,5 @@
 import { patientService } from "../foundations/patientService";
-import { GenerateCodeRequest } from "../../models/patients/generateCodeRequest";
+import { PatientCodeRequest } from "../../models/patients/patientCodeRequest";
 
 export const patientViewService = {
     usePostPatientSearch: () => {
@@ -11,7 +11,7 @@ export const patientViewService = {
     useAddPatient: () => {
         return {
             mutate: async (
-                patient: GenerateCodeRequest,
+                patient: PatientCodeRequest,
                 options?: {
                     headers?: Record<string, string>,
                     onSuccess?: () => void,
