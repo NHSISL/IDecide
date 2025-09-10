@@ -1,9 +1,9 @@
 import PatientBroker from "../../brokers/apiBroker.patients";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Patient } from "../../models/patients/patient";
-import { GenerateCodeRequest } from "../../models/patients/generateCodeRequest";
 import { ConfirmCodeRequest } from "../../models/patients/confirmCodeRequest";
 import { PatientLookup } from "../../models/patients/patientLookup";
+import { PatientCodeRequest } from "../../models/patients/patientCodeRequest";
 
 export const patientService = {
 
@@ -50,7 +50,7 @@ export const patientService = {
     //useGenerateCodeRequest: () => {
     //    const broker = new PatientBroker();
     //    const queryClient = useQueryClient();
-
+    //
     //    return useMutation({
     //        mutationFn: (request: GenerateCodeRequest) => {
     //            return broker.PostPatientWithNotificationPreference(request);
@@ -62,7 +62,7 @@ export const patientService = {
     //},
 
     usePostPatientWithNotificationPreference: async (
-        patient: GenerateCodeRequest,
+        patient: PatientCodeRequest,
         headers?: Record<string, string>
     ) => {
         const broker = new PatientBroker();

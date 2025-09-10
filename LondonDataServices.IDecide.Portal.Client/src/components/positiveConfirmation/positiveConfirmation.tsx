@@ -27,11 +27,11 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
     const handleSubmit = async (method: "Email" | "Sms" | "Letter") => {
         patientToUpdate.notificationPreference = method;
 
-        if (powerOfAttourney) {
-            patientToUpdate.poaFirstName = powerOfAttourney.firstName;
-            patientToUpdate.poaSurname = powerOfAttourney.surname;
-            patientToUpdate.poaRelationship = powerOfAttourney.relationship;
-        }
+        //if (powerOfAttourney) {
+        //    patientToUpdate.poaFirstName = powerOfAttourney.firstName;
+        //    patientToUpdate.poaSurname = powerOfAttourney.surname;
+        //    patientToUpdate.poaRelationship = powerOfAttourney.relationship;
+        //}
 
         await loadRecaptchaScript(RECAPTCHA_SITE_KEY);
 
