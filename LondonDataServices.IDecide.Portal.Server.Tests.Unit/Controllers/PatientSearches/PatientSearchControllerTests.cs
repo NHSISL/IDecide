@@ -8,6 +8,7 @@ using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
 using LondonDataServices.IDecide.Portal.Server.Controllers;
+using LondonDataServices.IDecide.Portal.Server.Models;
 using Moq;
 using RESTFulSense.Controllers;
 using Tynamix.ObjectFiller;
@@ -119,6 +120,17 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Patien
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
                 .OnType<DateTimeOffset?>().Use(dateTimeOffset)
                 .OnProperty(n => n.NhsNumber).Use(nhsNumber);
+
+            return filler;
+        }
+
+        private static RecordPatientInformationRequest GetRecordPatientInformationRequest() =>
+            CreateRecordPatientInformationRequestFiller().Create();
+
+        private static Filler<RecordPatientInformationRequest> CreateRecordPatientInformationRequestFiller()
+        {
+            var filler = new Filler<RecordPatientInformationRequest>();
+            filler.Setup();
 
             return filler;
         }
