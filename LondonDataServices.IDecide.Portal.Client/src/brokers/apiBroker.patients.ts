@@ -5,8 +5,8 @@ import ApiBroker from "./apiBroker";
 import { AxiosResponse } from "axios";
 
 class PatientBroker {
-    relativePatientsUrl = '/api/patients';
-    relativePatientsOdataUrl = '/odata/patients'
+    relativePatientsUrl = '/api/Patient';
+    relativePatientsOdataUrl = '/odata/Patient'
 
     private apiBroker: ApiBroker = new ApiBroker();
 
@@ -17,17 +17,17 @@ class PatientBroker {
         return { data, nextPage }
     }
 
-    async PostPatientNhsNumberAsync(patientLookup: PatientLookup) {
-        const url = `${this.relativePatientsUrl}/PostPatientByNhsNumber`;
-        return await this.apiBroker.PostAsync(url, patientLookup)
-            .then(result => new Patient(result.data));
-    }
+    //async PostPatientNhsNumberAsync(patientLookup: PatientLookup) {
+    //    const url = `${this.relativePatientsUrl}/PatientSearch`;
+    //    return await this.apiBroker.PostAsync(url, patientLookup)
+    //        .then(result => new Patient(result.data));
+    //}
 
-    async PostPatientDetailsAsync(patientLookup: PatientLookup) {
-        const url = `${this.relativePatientsUrl}/PostPatientByDetails`;
-        return await this.apiBroker.PostAsync(url, patientLookup)
-            .then(result => new Patient(result.data));
-    }
+    //async PostPatientDetailsAsync(patientLookup: PatientLookup) {
+    //    const url = `${this.relativePatientsUrl}/PostPatientByDetails`;
+    //    return await this.apiBroker.PostAsync(url, patientLookup)
+    //        .then(result => new Patient(result.data));
+    //}
 
     async GetAllPatientsAsync(queryString: string) {
         const url = this.relativePatientsUrl + queryString;

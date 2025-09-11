@@ -1,4 +1,5 @@
 import PatientBroker from "../../brokers/apiBroker.patients";
+import PatientSearchBroker from "../../brokers/apiBroker.patientSearch";
 import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { Patient } from "../../models/patients/patient";
 import { GenerateCodeRequest } from "../../models/patients/generateCodeRequest";
@@ -8,7 +9,7 @@ import { PatientLookup } from "../../models/patients/patientLookup";
 export const patientService = {
 
     useCreatePatientByNhsNumber: () => {
-        const broker = new PatientBroker();
+        const broker = new PatientSearchBroker();
 
         return useMutation({
             mutationFn: (patientLookup: PatientLookup) => {
@@ -17,15 +18,15 @@ export const patientService = {
         });
     },
 
-    useCreatePatientByDetails: () => {
-        const broker = new PatientBroker();
+    //useCreatePatientByDetails: () => {
+    //    const broker = new PatientBroker();
 
-        return useMutation({
-            mutationFn: (patientLookup: PatientLookup) => {
-                return broker.PostPatientDetailsAsync(patientLookup);
-            }
-        });
-    },
+    //    return useMutation({
+    //        mutationFn: (patientLookup: PatientLookup) => {
+    //            return broker.PostPatientDetailsAsync(patientLookup);
+    //        }
+    //    });
+    //},
 
     useRetrieveAllPatients: (query: string) => {
         const broker = new PatientBroker();

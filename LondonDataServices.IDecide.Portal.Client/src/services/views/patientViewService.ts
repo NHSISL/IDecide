@@ -1,12 +1,12 @@
 import { patientService } from "../foundations/patientService";
 
 export const patientViewService = {
-    usePostPatientNhsNumber: () => {
+    usePostPatientSearch: () => {
         return patientService.useCreatePatientByNhsNumber();
     },
-    usePostPatientDetails: () => {
-        return patientService.useCreatePatientByDetails();
-    },
+    //usePostPatientDetails: () => {
+    //    return patientService.useCreatePatientByDetails();
+    //},
     useUpdatePatient: () => {
         return patientService.useGenerateCodeRequest();
     },
