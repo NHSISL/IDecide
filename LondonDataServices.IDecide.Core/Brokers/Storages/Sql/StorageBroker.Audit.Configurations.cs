@@ -13,7 +13,7 @@ namespace LondonDataServices.IDecide.Core.Brokers.Storages.Sql
         private static void AddAuditConfigurations(EntityTypeBuilder<Audit> model)
         {
             model
-                .ToTable("Audits", "Audit");
+                .ToTable("Audits");
 
             model
                 .Property(audit => audit.Id)
