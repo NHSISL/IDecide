@@ -275,7 +275,6 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             patientToRecord.ValidationCodeExpiresOn = expirationDate;
             patientToRecord.ValidationCodeMatchedOn = null;
             patientToRecord.NotificationPreference = notificationPreference;
-
             Patient recordedPatient = await this.patientService.AddPatientAsync(patientToRecord);
 
             return recordedPatient;
