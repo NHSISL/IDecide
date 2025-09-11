@@ -13,7 +13,7 @@ namespace LondonDataServices.IDecide.Core.Brokers.Storages.Sql
         private static void AddPatientConfigurations(EntityTypeBuilder<Patient> model)
         {
             model
-                .ToTable("Patients", "Decision");
+                .ToTable("Patients");
 
             model
                 .Property(patient => patient.Id)
