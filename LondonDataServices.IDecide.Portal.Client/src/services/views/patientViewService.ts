@@ -1,4 +1,5 @@
 import { patientService } from "../foundations/patientService";
+import { PatientCodeRequest } from "../../models/patients/patientCodeRequest";
 
 export const patientViewService = {
     usePostPatientSearch: () => {
@@ -7,8 +8,26 @@ export const patientViewService = {
     //usePostPatientDetails: () => {
     //    return patientService.useCreatePatientByDetails();
     //},
-    useUpdatePatient: () => {
-        return patientService.useGenerateCodeRequest();
+
+    useAddPatientAndGenerateCode: () => {
+        return {
+            mutate: async (
+                patient: PatientCodeRequest,
+                options?: {
+                    headers?: Record<string, string>,
+                    onSuccess?: () => void,
+                    onError?: (error: unknown) => void
+                }
+            ) => {
+                try {
+                    await patientService
+                        .usePostPatientWithNotificationPreference(patient, options?.headers);
+                    options?.onSuccess?.();
+                } catch (error) {
+                    options?.onError?.(error);
+                }
+            }
+        };
     },
     useConfirmCode: () => {
         return patientService.useConfirmCode();

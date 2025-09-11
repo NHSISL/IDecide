@@ -1,8 +1,9 @@
 import PatientBroker from "../../brokers/apiBroker.patients";
 import PatientSearchBroker from "../../brokers/apiBroker.patientSearch";
-import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
+import PatientCodeBroker from "../../brokers/apiBroker.patientCode";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Patient } from "../../models/patients/patient";
-import { GenerateCodeRequest } from "../../models/patients/generateCodeRequest";
+import { PatientCodeRequest } from "../../models/patients/patientCodeRequest";
 import { ConfirmCodeRequest } from "../../models/patients/confirmCodeRequest";
 import { PatientLookup } from "../../models/patients/patientLookup";
 
@@ -17,6 +18,28 @@ export const patientService = {
             },
         });
     },
+
+    usePostPatientWithNotificationPreference: async (
+        patient: PatientCodeRequest,
+        headers?: Record<string, string>
+    ) => {
+        const broker = new PatientCodeBroker();
+        return await broker.PostPatientWithNotificationPreference(patient, headers);
+    },
+
+    //useGenerateCodeRequest: () => {
+    //    const broker = new PatientCodeBroker();
+    //    const queryClient = useQueryClient();
+
+    //    return useMutation({
+    //        mutationFn: (request: GenerateCodeRequest) => {
+    //            return broker.PutGenerateCodeRequestAsync(request);
+    //        },
+    //        onSuccess: () => {
+    //            queryClient.invalidateQueries({ queryKey: ["PatientGetAll"] });
+    //        }
+    //    });
+    //},
 
     //useCreatePatientByDetails: () => {
     //    const broker = new PatientBroker();
@@ -38,19 +61,6 @@ export const patientService = {
         });
     },
 
-    useGenerateCodeRequest: () => {
-        const broker = new PatientBroker();
-        const queryClient = useQueryClient();
-
-        return useMutation({
-            mutationFn: (request: GenerateCodeRequest) => {
-                return broker.PutGenerateCodeRequestAsync(request);
-            },
-            onSuccess: () => {
-                queryClient.invalidateQueries({ queryKey: ["PatientGetAll"] });
-            }
-        });
-    },
 
     useRetrievePatientById: (nhsNumber: string) => {
         const broker = new PatientBroker();

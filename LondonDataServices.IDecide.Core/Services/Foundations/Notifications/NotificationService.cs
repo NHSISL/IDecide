@@ -3,6 +3,7 @@
 // ---------------------------------------------------------
 
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Brokers.Notifications;
@@ -29,7 +30,8 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
         public ValueTask SendCodeNotificationAsync(NotificationInfo notificationInfo) =>
             TryCatch(async () =>
             {
-                await ValidateNotificationInfo(notificationInfo);
+
+                await ValidateOnSendCodeNotificationAsync(notificationInfo);
 
                 Dictionary<string, dynamic> personalisation = new Dictionary<string, dynamic>
                 {
@@ -45,24 +47,10 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                     { "patient.postCode", notificationInfo.Patient.PostCode },
                     { "patient.validationCode", notificationInfo.Patient.ValidationCode },
                     { "patient.validationCodeExpiresOn", notificationInfo.Patient.ValidationCodeExpiresOn },
-                    { "decision.decisionChoice", notificationInfo.Decision.DecisionChoice },
-                    { "decision.decisionType.name", notificationInfo.Decision.DecisionType.Name }
+                    //TODO: Check Notification Provider, we dont need Message but it is expected.
+                    //USER STORY : 24612
+                    { "message", string.Empty },
                 };
-
-                AddIfNotNull(
-                    personalisation,
-                    "decision.responsiblePersonGivenName",
-                    notificationInfo.Decision.ResponsiblePersonGivenName);
-
-                AddIfNotNull(
-                    personalisation,
-                    "decision.responsiblePersonSurname",
-                    notificationInfo.Decision.ResponsiblePersonSurname);
-
-                AddIfNotNull(
-                    personalisation,
-                    "decision.responsiblePersonRelationship",
-                    notificationInfo.Decision.ResponsiblePersonRelationship);
 
                 switch (notificationInfo.Patient.NotificationPreference)
                 {
@@ -106,7 +94,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
         public ValueTask SendSubmissionSuccessNotificationAsync(NotificationInfo notificationInfo) =>
             TryCatch(async () =>
             {
-                await ValidateNotificationInfo(notificationInfo);
+                await ValidateOnSendSubmissionSuccessNotificationAsync(notificationInfo);
 
                 Dictionary<string, dynamic> personalisation = new Dictionary<string, dynamic>
                 {
@@ -122,24 +110,24 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                     { "patient.postCode", notificationInfo.Patient.PostCode },
                     { "patient.validationCode", notificationInfo.Patient.ValidationCode },
                     { "patient.validationCodeExpiresOn", notificationInfo.Patient.ValidationCodeExpiresOn },
-                    { "decision.decisionChoice", notificationInfo.Decision.DecisionChoice },
-                    { "decision.decisionType.name", notificationInfo.Decision.DecisionType.Name }
+                    { "decision.decisionChoice", notificationInfo.Decision?.DecisionChoice },
+                    { "decision.decisionType.name", notificationInfo.Decision?.DecisionType.Name },
                 };
 
                 AddIfNotNull(
                     personalisation,
                     "decision.responsiblePersonGivenName",
-                    notificationInfo.Decision.ResponsiblePersonGivenName);
+                    notificationInfo.Decision?.ResponsiblePersonGivenName);
 
                 AddIfNotNull(
                     personalisation,
                     "decision.responsiblePersonSurname",
-                    notificationInfo.Decision.ResponsiblePersonSurname);
+                    notificationInfo.Decision?.ResponsiblePersonSurname);
 
                 AddIfNotNull(
                     personalisation,
                     "decision.responsiblePersonRelationship",
-                    notificationInfo.Decision.ResponsiblePersonRelationship);
+                    notificationInfo.Decision?.ResponsiblePersonRelationship);
 
                 switch (notificationInfo.Patient.NotificationPreference)
                 {
@@ -183,7 +171,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
         public ValueTask SendSubscriberUsageNotificationAsync(NotificationInfo notificationInfo) =>
             TryCatch(async () =>
             {
-                await ValidateNotificationInfo(notificationInfo);
+                await ValidateOnSendSubscriberUsageNotificationAsync(notificationInfo);
 
                 Dictionary<string, dynamic> personalisation = new Dictionary<string, dynamic>
                 {

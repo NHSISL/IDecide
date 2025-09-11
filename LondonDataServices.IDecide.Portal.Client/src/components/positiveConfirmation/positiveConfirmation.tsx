@@ -1,46 +1,63 @@
 import React from "react";
 import { useStep } from "../../hooks/useStep";
 import { patientViewService } from "../../services/views/patientViewService";
-import { GenerateCodeRequest } from "../../models/patients/generateCodeRequest";
+import { PatientCodeRequest } from "../../models/patients/patientCodeRequest";
 import { Row, Col, Alert } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
+import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
+import { loadRecaptchaScript } from "../../helpers/recaptureLoad";
 
 interface PositiveConfirmationProps {
-    goToConfirmCode: (createdPatient: GenerateCodeRequest) => void;
+    goToConfirmCode: (createdPatient: PatientCodeRequest) => void;
 }
 
 const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirmCode }) => {
     const { t: translate } = useTranslation();
     const { createdPatient, powerOfAttourney } = useStep();
-    const updatePatient = patientViewService.useUpdatePatient();
+    const { configuration } = useFrontendConfiguration();
+    const RECAPTCHA_SITE_KEY = configuration.recaptchaSiteKey;
+
+    const updatePatient
+        = patientViewService.useAddPatientAndGenerateCode();
 
     if (!createdPatient) {
         return <div>{translate("PositiveConfirmation.noPatientDetails")}</div>;
     }
 
-    const patientToUpdate = new GenerateCodeRequest(createdPatient);
+    const patientToUpdate = new PatientCodeRequest({
+        nhsNumber: createdPatient.nhsNumber,
+        verificationCode: createdPatient.validationCode,
+        notificationPreference: "",
+        generateNewCode: false
+    });
 
-    const handleSubmit = (method: "Email" | "SMS" | "Letter") => {
+    const handleSubmit = async (method: "Email" | "Sms" | "Letter") => {
         patientToUpdate.notificationPreference = method;
 
-        if (powerOfAttourney) {
-            patientToUpdate.poaFirstName = powerOfAttourney.firstName;
-            patientToUpdate.poaSurname = powerOfAttourney.surname;
-            patientToUpdate.poaRelationship = powerOfAttourney.relationship;
-        }
+        await loadRecaptchaScript(RECAPTCHA_SITE_KEY);
 
-        updatePatient.mutate(patientToUpdate, {
-            onSuccess: () => {
-                goToConfirmCode(patientToUpdate);
-            },
-            onError: (error: unknown) => {
-                if (error instanceof Error) {
-                    console.error("Error updating patient:", error.message);
-                } else {
-                    console.error("Error updating patient:", error);
+        try {
+            const token = await grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: "submit" });
+
+            updatePatient.mutate(
+                patientToUpdate,
+                {
+                    headers: { "X-Recaptcha-Token": token },
+                    onSuccess: () => {
+                        goToConfirmCode(patientToUpdate);
+                    },
+                    onError: (error: unknown) => {
+                        if (error instanceof Error) {
+                            console.error("Error updating patient:", error.message);
+                        } else {
+                            console.error("Error updating patient:", error);
+                        }
+                    }
                 }
-            }
-        });
+            );
+        } catch (err) {
+            console.error("Error executing reCAPTCHA:", err);
+        }
     };
 
     return (
@@ -117,7 +134,7 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                             type="button"
                             className="nhsuk-button"
                             style={{ flex: 1, minWidth: 120 }}
-                            onClick={() => handleSubmit("SMS")}
+                            onClick={() => handleSubmit("Sms")}
                             disabled={!createdPatient.phone}
                         >
                             {translate("PositiveConfirmation.methodSMS")}

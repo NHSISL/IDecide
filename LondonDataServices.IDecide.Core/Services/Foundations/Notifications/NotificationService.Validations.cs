@@ -13,7 +13,57 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
 {
     public partial class NotificationService
     {
-        private async ValueTask ValidateNotificationInfo(NotificationInfo notificationInfo)
+        private async ValueTask ValidateOnSendCodeNotificationAsync(NotificationInfo notificationInfo)
+        {
+            ValidateNotificationInfoIsNotNull(notificationInfo);
+
+            Validate<InvalidArgumentsNotificationException>(
+                message: "Invalid notification arguments. Please correct the errors and try again.",
+
+                (Rule: IsInvalid(
+                    notificationInfo.Patient.NhsNumber),
+                    Parameter: nameof(NotificationInfo.Patient.NhsNumber)),
+
+                (Rule: IsInvalid(notificationInfo.Patient.Title), Parameter: nameof(NotificationInfo.Patient.Title)),
+
+                (Rule: IsInvalid(
+                    notificationInfo.Patient.GivenName),
+                    Parameter: nameof(NotificationInfo.Patient.GivenName)),
+
+                (Rule: IsInvalid(
+                    notificationInfo.Patient.Surname),
+                    Parameter: nameof(NotificationInfo.Patient.Surname)),
+
+                (Rule: IsInvalid(
+                    notificationInfo.Patient.DateOfBirth),
+                    Parameter: nameof(NotificationInfo.Patient.DateOfBirth)),
+
+                (Rule: IsInvalid(notificationInfo.Patient.Gender), Parameter: nameof(NotificationInfo.Patient.Gender)),
+                (Rule: IsInvalid(notificationInfo.Patient.Email), Parameter: nameof(NotificationInfo.Patient.Email)),
+                (Rule: IsInvalid(notificationInfo.Patient.Phone), Parameter: nameof(NotificationInfo.Patient.Phone)),
+
+                (Rule: IsInvalid(
+                    notificationInfo.Patient.Address),
+                    Parameter: nameof(NotificationInfo.Patient.Address)),
+
+                (Rule: IsInvalid(
+                    notificationInfo.Patient.PostCode),
+                    Parameter: nameof(NotificationInfo.Patient.PostCode)),
+
+                (Rule: IsInvalid(
+                    notificationInfo.Patient.ValidationCode),
+                    Parameter: nameof(NotificationInfo.Patient.ValidationCode)),
+
+                (Rule: IsInvalid(
+                    notificationInfo.Patient.ValidationCodeExpiresOn),
+                    Parameter: nameof(NotificationInfo.Patient.ValidationCodeExpiresOn)),
+
+                (Rule: IsInvalid(
+                    notificationInfo.Patient.NotificationPreference),
+                    Parameter: nameof(NotificationInfo.Patient.NotificationPreference)));
+        }
+
+        private async ValueTask ValidateOnSendSubmissionSuccessNotificationAsync(NotificationInfo notificationInfo)
         {
             ValidateNotificationInfoIsNotNull(notificationInfo);
 
@@ -63,11 +113,69 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                     Parameter: nameof(NotificationInfo.Patient.NotificationPreference)),
 
                 (Rule: IsInvalid(
-                    notificationInfo.Decision.DecisionChoice),
+                    notificationInfo.Decision?.DecisionChoice),
                     Parameter: nameof(NotificationInfo.Decision.DecisionChoice)),
 
                 (Rule: IsInvalid(
-                    notificationInfo.Decision.DecisionType.Name),
+                    notificationInfo.Decision?.DecisionType.Name),
+                    Parameter: nameof(NotificationInfo.Decision.DecisionType.Name)));
+        }
+
+        private async ValueTask ValidateOnSendSubscriberUsageNotificationAsync(NotificationInfo notificationInfo)
+        {
+            ValidateNotificationInfoIsNotNull(notificationInfo);
+
+            Validate<InvalidArgumentsNotificationException>(
+                message: "Invalid notification arguments. Please correct the errors and try again.",
+
+                (Rule: IsInvalid(
+                    notificationInfo.Patient.NhsNumber),
+                    Parameter: nameof(NotificationInfo.Patient.NhsNumber)),
+
+                (Rule: IsInvalid(notificationInfo.Patient.Title), Parameter: nameof(NotificationInfo.Patient.Title)),
+
+                (Rule: IsInvalid(
+                    notificationInfo.Patient.GivenName),
+                    Parameter: nameof(NotificationInfo.Patient.GivenName)),
+
+                (Rule: IsInvalid(
+                    notificationInfo.Patient.Surname),
+                    Parameter: nameof(NotificationInfo.Patient.Surname)),
+
+                (Rule: IsInvalid(
+                    notificationInfo.Patient.DateOfBirth),
+                    Parameter: nameof(NotificationInfo.Patient.DateOfBirth)),
+
+                (Rule: IsInvalid(notificationInfo.Patient.Gender), Parameter: nameof(NotificationInfo.Patient.Gender)),
+                (Rule: IsInvalid(notificationInfo.Patient.Email), Parameter: nameof(NotificationInfo.Patient.Email)),
+                (Rule: IsInvalid(notificationInfo.Patient.Phone), Parameter: nameof(NotificationInfo.Patient.Phone)),
+
+                (Rule: IsInvalid(
+                    notificationInfo.Patient.Address),
+                    Parameter: nameof(NotificationInfo.Patient.Address)),
+
+                (Rule: IsInvalid(
+                    notificationInfo.Patient.PostCode),
+                    Parameter: nameof(NotificationInfo.Patient.PostCode)),
+
+                (Rule: IsInvalid(
+                    notificationInfo.Patient.ValidationCode),
+                    Parameter: nameof(NotificationInfo.Patient.ValidationCode)),
+
+                (Rule: IsInvalid(
+                    notificationInfo.Patient.ValidationCodeExpiresOn),
+                    Parameter: nameof(NotificationInfo.Patient.ValidationCodeExpiresOn)),
+
+                (Rule: IsInvalid(
+                    notificationInfo.Patient.NotificationPreference),
+                    Parameter: nameof(NotificationInfo.Patient.NotificationPreference)),
+
+                (Rule: IsInvalid(
+                    notificationInfo.Decision?.DecisionChoice),
+                    Parameter: nameof(NotificationInfo.Decision.DecisionChoice)),
+
+                (Rule: IsInvalid(
+                    notificationInfo.Decision?.DecisionType.Name),
                     Parameter: nameof(NotificationInfo.Decision.DecisionType.Name)));
         }
 
