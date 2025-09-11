@@ -77,6 +77,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                 },
                 Decision = new Decision
                 {
+                    DecisionChoice = invalidText,
                     ResponsiblePersonGivenName = invalidText,
                     ResponsiblePersonSurname = invalidText,
                     ResponsiblePersonRelationship = invalidText,

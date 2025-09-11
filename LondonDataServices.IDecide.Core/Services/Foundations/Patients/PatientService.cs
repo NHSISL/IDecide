@@ -19,20 +19,17 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Patients
     {
         private readonly IStorageBroker storageBroker;
         private readonly IDateTimeBroker dateTimeBroker;
-        private readonly ISecurityBroker securityBroker;
         private readonly ISecurityAuditBroker securityAuditBroker;
         private readonly ILoggingBroker loggingBroker;
 
         public PatientService(
             IStorageBroker storageBroker,
             IDateTimeBroker dateTimeBroker,
-            ISecurityBroker securityBroker,
             ISecurityAuditBroker securityAuditBroker,
             ILoggingBroker loggingBroker)
         {
             this.storageBroker = storageBroker;
             this.dateTimeBroker = dateTimeBroker;
-            this.securityBroker = securityBroker;
             this.securityAuditBroker = securityAuditBroker;
             this.loggingBroker = loggingBroker;
         }
@@ -42,6 +39,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Patients
             {
                 patient = await this.securityAuditBroker.ApplyAddAuditValuesAsync(patient);
                 await ValidatePatientOnAdd(patient);
+
                 return await this.storageBroker.InsertPatientAsync(patient);
             });
 

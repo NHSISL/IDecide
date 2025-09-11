@@ -165,20 +165,24 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                 { "patient.validationCodeExpiresOn", notificationInfo.Patient.ValidationCodeExpiresOn }
             };
 
-            //if (!string.IsNullOrWhiteSpace(notificationInfo.Decision.ResponsiblePersonGivenName))
-
-            //    personalisation.Add(
-            //        "decision.responsiblePersonGivenName", notificationInfo.Decision.ResponsiblePersonGivenName);
-
-            //if (!string.IsNullOrWhiteSpace(notificationInfo.Decision.ResponsiblePersonSurname))
-
-            //    personalisation.Add(
-            //        "decision.responsiblePersonSurname", notificationInfo.Decision.ResponsiblePersonSurname);
-
-            //if (!string.IsNullOrWhiteSpace(notificationInfo.Decision.ResponsiblePersonRelationship))
-
-            //    personalisation.Add(
-            //        "decision.responsiblePersonRelationship", notificationInfo.Decision.ResponsiblePersonRelationship);
+            if (notificationInfo.Decision != null &&
+                !string.IsNullOrWhiteSpace(notificationInfo.Decision.ResponsiblePersonGivenName))
+            {
+                personalisation.Add(
+                    "decision.responsiblePersonGivenName", notificationInfo.Decision.ResponsiblePersonGivenName);
+            }
+            if (notificationInfo.Decision != null &&
+                !string.IsNullOrWhiteSpace(notificationInfo.Decision.ResponsiblePersonSurname))
+            {
+                personalisation.Add(
+                    "decision.responsiblePersonSurname", notificationInfo.Decision.ResponsiblePersonSurname);
+            }
+            if (notificationInfo.Decision != null &&
+                !string.IsNullOrWhiteSpace(notificationInfo.Decision.ResponsiblePersonRelationship))
+            {
+                personalisation.Add(
+                    "decision.responsiblePersonRelationship", notificationInfo.Decision.ResponsiblePersonRelationship);
+            }
 
             return personalisation;
         }

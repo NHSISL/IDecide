@@ -66,7 +66,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Patients
         private async ValueTask ValidatePatientOnModify(Patient patient)
         {
             ValidatePatientIsNotNull(patient);
-            User currentUser = await this.securityBroker.GetCurrentUserAsync();
+            string userId = await this.securityAuditBroker.GetCurrentUserIdAsync();
 
             Validate<InvalidPatientException>(
                 message: "Invalid patient. Please correct the errors and try again.",
@@ -94,7 +94,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Patients
                 (Rule: IsGreaterThan(patient.UpdatedBy, 255), Parameter: nameof(Patient.UpdatedBy)),
 
                 (Rule: IsNotSame(
-                    first: currentUser.UserId,
+                    first: userId,
                     second: patient.UpdatedBy),
                 Parameter: nameof(Patient.UpdatedBy)),
 

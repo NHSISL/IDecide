@@ -45,7 +45,6 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                     { "patient.postCode", notificationInfo.Patient.PostCode },
                     { "patient.validationCode", notificationInfo.Patient.ValidationCode },
                     { "patient.validationCodeExpiresOn", notificationInfo.Patient.ValidationCodeExpiresOn },
-                    //{ "message", "Delete Me" },
                 };
 
                 switch (notificationInfo.Patient.NotificationPreference)

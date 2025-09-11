@@ -41,19 +41,19 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             this.pdsServiceMock.Setup(service =>
                 service.PatientLookupByNhsNumberAsync(inputNhsNumber))
-                .ReturnsAsync(outputPatient);
+                    .ReturnsAsync(outputPatient);
 
             this.patientServiceMock.Setup(service =>
                 service.GenerateValidationCodeAsync())
-                .ReturnsAsync(outputValidationCode);
+                    .ReturnsAsync(outputValidationCode);
 
             this.patientServiceMock.Setup(service =>
                 service.RetrieveAllPatientsAsync())
-                .ReturnsAsync(new List<Patient>().AsQueryable());
+                    .ReturnsAsync(new List<Patient>().AsQueryable());
 
             this.identifierBrokerMock.Setup(broker =>
                 broker.GetIdentifierAsync())
-                .ReturnsAsync(generatedId);
+                    .ReturnsAsync(generatedId);
 
             this.patientServiceMock.Setup(service =>
                 service.AddPatientAsync(It.Is<Patient>(p =>

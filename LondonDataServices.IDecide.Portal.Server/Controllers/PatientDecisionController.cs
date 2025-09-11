@@ -53,6 +53,5 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
                 return InternalServerError(decisionOrchestrationServiceException);
             }
         }
-
     }
 }

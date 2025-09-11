@@ -56,36 +56,5 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
                 return InternalServerError(patientOrchestrationServiceException);
             }
         }
-
-        [HttpPost("PatientGenerationRequest")]
-        public async ValueTask<ActionResult<Patient>> PostPatientGenerationRequestAsync([FromBody] GenerateCodeRequest generateCodeRequest)
-        {
-            try
-            {
-                await this.patientOrchestrationService.RecordPatientInformationAsync(
-                    generateCodeRequest.NhsNumber,
-                    generateCodeRequest.NotificationPreference
-                );
-
-                return Ok();
-            }
-            catch (PatientOrchestrationValidationException patientOrchestrationValidationException)
-            {
-                return BadRequest(patientOrchestrationValidationException.InnerException);
-            }
-            catch (PatientOrchestrationDependencyValidationException
-                patientOrchestrationDependencyValidationException)
-            {
-                return BadRequest(patientOrchestrationDependencyValidationException.InnerException);
-            }
-            catch (PatientOrchestrationDependencyException patientOrchestrationDependencyException)
-            {
-                return InternalServerError(patientOrchestrationDependencyException);
-            }
-            catch (PatientOrchestrationServiceException patientOrchestrationServiceException)
-            {
-                return InternalServerError(patientOrchestrationServiceException);
-            }
-        }
     }
 }
