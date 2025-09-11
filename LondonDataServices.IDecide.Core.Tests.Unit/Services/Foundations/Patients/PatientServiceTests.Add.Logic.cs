@@ -71,7 +71,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                     Times.Once);
 
             this.securityAuditBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();

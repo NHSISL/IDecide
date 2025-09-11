@@ -12,12 +12,6 @@ class PatientSearchBroker {
         return await this.apiBroker.PostAsync(url, patientLookup)
             .then(result => new Patient(result.data));
     }
-
-    //async PostPatientDetailsAsync(patientLookup: PatientLookup) {
-    //    const url = `${this.relativePatientsUrl}/PostPatientByDetails`;
-    //    return await this.apiBroker.PostAsync(url, patientLookup)
-    //        .then(result => new Patient(result.data));
-    //}
 }
 
 export default PatientSearchBroker;

@@ -16,9 +16,8 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
     const { createdPatient, powerOfAttourney } = useStep();
     const { configuration } = useFrontendConfiguration();
     const RECAPTCHA_SITE_KEY = configuration.recaptchaSiteKey;
-
-    const updatePatient
-        = patientViewService.useAddPatientAndGenerateCode();
+    const RECAPTCHA_ACTION_SUBMIT = "submit";
+    const updatePatient = patientViewService.useAddPatientAndGenerateCode();
 
     if (!createdPatient) {
         return <div>{translate("PositiveConfirmation.noPatientDetails")}</div>;
@@ -37,7 +36,7 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
         await loadRecaptchaScript(RECAPTCHA_SITE_KEY);
 
         try {
-            const token = await grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: "submit" });
+            const token = await grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: RECAPTCHA_ACTION_SUBMIT });
 
             updatePatient.mutate(
                 patientToUpdate,

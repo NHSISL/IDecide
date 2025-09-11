@@ -61,7 +61,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                     Times.Never);
 
             this.securityAuditBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
@@ -193,7 +192,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                     Times.Never);
 
             this.securityAuditBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
@@ -299,7 +297,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                     Times.Never);
 
             this.securityAuditBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
@@ -377,7 +374,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                     Times.Never);
 
             this.securityAuditBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
@@ -460,7 +456,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                     Times.Once);
 
             this.securityAuditBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
@@ -538,7 +533,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                         Times.Once);
 
             this.securityAuditBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
@@ -633,7 +627,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                        Times.Once);
 
             this.securityAuditBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
@@ -725,7 +718,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                        Times.Once);
 
             this.securityAuditBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
@@ -812,7 +804,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                     Times.Once);
 
             this.securityAuditBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();

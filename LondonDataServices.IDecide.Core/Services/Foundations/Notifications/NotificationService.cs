@@ -30,7 +30,6 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
         public ValueTask SendCodeNotificationAsync(NotificationInfo notificationInfo) =>
             TryCatch(async () =>
             {
-
                 await ValidateOnSendCodeNotificationAsync(notificationInfo);
 
                 Dictionary<string, dynamic> personalisation = new Dictionary<string, dynamic>
@@ -47,7 +46,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                     { "patient.postCode", notificationInfo.Patient.PostCode },
                     { "patient.validationCode", notificationInfo.Patient.ValidationCode },
                     { "patient.validationCodeExpiresOn", notificationInfo.Patient.ValidationCodeExpiresOn },
-                    //TODO: Check Notification Provider, we dont need Message but it is expected.
+                    //TODO: Check Notification Provider, we don't need Message but it is expected.
                     //USER STORY : 24612
                     { "message", string.Empty },
                 };
