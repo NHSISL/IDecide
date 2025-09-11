@@ -55,7 +55,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     .ReturnsAsync(outputUpdatedPatient);
 
             // when
-            Patient actualPatient = await patientOrchestrationService.UpdatePatientWithNewCodeAsync(
+            Patient actualPatient = await patientOrchestrationService.UpdatePatientAsync(
                 outputPatient,
                 inputNotificationPreference,
                 outputDateTimeOffset,
@@ -127,7 +127,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     .ReturnsAsync(outputUpdatedPatient);
 
             // when
-            Patient actualPatient = await patientOrchestrationService.UpdatePatientWithNewCodeAsync(
+            Patient actualPatient = await patientOrchestrationService.UpdatePatientAsync(
                 outputPatient,
                 inputNotificationPreference,
                 outputDateTimeOffset,

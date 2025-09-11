@@ -16,9 +16,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
     public partial class PatientOrchestrationServiceTests
     {
         [Fact]
-        public async Task ShouldGenerateNewPatientWithCodeAsync()
+        public async Task ShouldCreateNewPatientAsync()
         {
             // given
+            Guid randomIdentifier = Guid.NewGuid();
             int expireAfterMinutes = this.decisionConfigurations.PatientValidationCodeExpireAfterMinutes;
             string randomNhsNumber = GenerateRandom10DigitNumber();
             string inputNhsNumber = randomNhsNumber.DeepClone();
@@ -34,6 +35,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             List<Patient> randomPatients = GetRandomPatients();
             List<Patient> outputPatients = randomPatients.DeepClone();
             Patient updatedPatient = outputPatient.DeepClone();
+            updatedPatient.Id = randomIdentifier;
             updatedPatient.ValidationCode = outputValidationCode;
             updatedPatient.ValidationCodeMatchedOn = null;
             updatedPatient.ValidationCodeExpiresOn = outputDateTimeOffset.AddMinutes(expireAfterMinutes);
@@ -49,12 +51,16 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 service.GenerateValidationCodeAsync())
                     .ReturnsAsync(outputValidationCode);
 
+            this.identifierBrokerMock.Setup(broker =>
+                broker.GetIdentifierAsync())
+                    .ReturnsAsync(randomIdentifier);
+
             this.patientServiceMock.Setup(service =>
                 service.AddPatientAsync(It.Is(SamePatientAs(updatedPatient))))
                     .ReturnsAsync(outputUpdatedPatient);
 
             // when
-            Patient actualPatient = await patientOrchestrationService.GenerateNewPatientWithCodeAsync(
+            Patient actualPatient = await patientOrchestrationService.CreateNewPatientAsync(
                 inputNhsNumber,
                 inputNotificationPreference,
                 outputDateTimeOffset);
@@ -68,6 +74,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             this.patientServiceMock.Verify(service =>
                 service.GenerateValidationCodeAsync(),
+                    Times.Once);
+
+            this.identifierBrokerMock.Verify(service =>
+                service.GetIdentifierAsync(),
                     Times.Once);
 
             this.patientServiceMock.Verify(service =>
