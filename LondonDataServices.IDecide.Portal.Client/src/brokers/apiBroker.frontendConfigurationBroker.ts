@@ -8,6 +8,7 @@ export type FrontendConfigurationResponse = {
     application: string,
     version: string,
     bannerColour: string,
+    recaptchaSiteKey: string
 }
 
 export type FrontendConfiguration = {
@@ -18,6 +19,7 @@ export type FrontendConfiguration = {
     application: string,
     version: string,
     bannerColour: string,
+    recaptchaSiteKey: string
 }
 
 class FrontendConfigurationBroker {
@@ -46,6 +48,9 @@ class FrontendConfigurationBroker {
                 throw new Error("Scopes not provided");
             }
 
+            if (!result.recaptchaSiteKey.length) {
+                throw new Error("recaptchaSiteKey not provided");
+            }
             return result;
         } catch (error) {
             console.error("Error fetching configuration", error);

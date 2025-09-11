@@ -45,24 +45,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                     { "patient.postCode", notificationInfo.Patient.PostCode },
                     { "patient.validationCode", notificationInfo.Patient.ValidationCode },
                     { "patient.validationCodeExpiresOn", notificationInfo.Patient.ValidationCodeExpiresOn },
-                    { "decision.decisionChoice", notificationInfo.Decision.DecisionChoice },
-                    { "decision.decisionType.name", notificationInfo.Decision.DecisionType.Name }
                 };
-
-                AddIfNotNull(
-                    personalisation,
-                    "decision.responsiblePersonGivenName",
-                    notificationInfo.Decision.ResponsiblePersonGivenName);
-
-                AddIfNotNull(
-                    personalisation,
-                    "decision.responsiblePersonSurname",
-                    notificationInfo.Decision.ResponsiblePersonSurname);
-
-                AddIfNotNull(
-                    personalisation,
-                    "decision.responsiblePersonRelationship",
-                    notificationInfo.Decision.ResponsiblePersonRelationship);
 
                 switch (notificationInfo.Patient.NotificationPreference)
                 {
@@ -84,9 +67,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                            this.notificationConfig.SmsCodeTemplateId, personalisation);
 
                         await this.notificationBroker.SendSmsAsync(
-                            this.notificationConfig.SmsCodeTemplateId,
-                            notificationInfo.Patient.Phone,
-                            personalisation);
+                            this.notificationConfig.SmsCodeTemplateId, notificationInfo.Patient.Phone, personalisation);
 
                         break;
 
@@ -122,24 +103,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                     { "patient.postCode", notificationInfo.Patient.PostCode },
                     { "patient.validationCode", notificationInfo.Patient.ValidationCode },
                     { "patient.validationCodeExpiresOn", notificationInfo.Patient.ValidationCodeExpiresOn },
-                    { "decision.decisionChoice", notificationInfo.Decision.DecisionChoice },
-                    { "decision.decisionType.name", notificationInfo.Decision.DecisionType.Name }
                 };
-
-                AddIfNotNull(
-                    personalisation,
-                    "decision.responsiblePersonGivenName",
-                    notificationInfo.Decision.ResponsiblePersonGivenName);
-
-                AddIfNotNull(
-                    personalisation,
-                    "decision.responsiblePersonSurname",
-                    notificationInfo.Decision.ResponsiblePersonSurname);
-
-                AddIfNotNull(
-                    personalisation,
-                    "decision.responsiblePersonRelationship",
-                    notificationInfo.Decision.ResponsiblePersonRelationship);
 
                 switch (notificationInfo.Patient.NotificationPreference)
                 {
@@ -161,9 +125,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                             this.notificationConfig.SmsSubmissionSuccessTemplateId, personalisation);
 
                         await this.notificationBroker.SendSmsAsync(
-                            this.notificationConfig.SmsSubmissionSuccessTemplateId,
-                            notificationInfo.Patient.Phone,
-                            personalisation);
+                            this.notificationConfig.SmsSubmissionSuccessTemplateId, notificationInfo.Patient.Phone, personalisation);
 
                         break;
 
@@ -199,24 +161,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                     { "patient.postCode", notificationInfo.Patient.PostCode },
                     { "patient.validationCode", notificationInfo.Patient.ValidationCode },
                     { "patient.validationCodeExpiresOn", notificationInfo.Patient.ValidationCodeExpiresOn },
-                    { "decision.decisionChoice", notificationInfo.Decision.DecisionChoice },
-                    { "decision.decisionType.name", notificationInfo.Decision.DecisionType.Name }
                 };
-
-                AddIfNotNull(
-                    personalisation,
-                    "decision.responsiblePersonGivenName",
-                    notificationInfo.Decision.ResponsiblePersonGivenName);
-
-                AddIfNotNull(
-                    personalisation,
-                    "decision.responsiblePersonSurname",
-                    notificationInfo.Decision.ResponsiblePersonSurname);
-
-                AddIfNotNull(
-                    personalisation,
-                    "decision.responsiblePersonRelationship",
-                    notificationInfo.Decision.ResponsiblePersonRelationship);
 
                 switch (notificationInfo.Patient.NotificationPreference)
                 {
@@ -238,9 +183,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                             this.notificationConfig.SmsSubscriberUsageTemplateId, personalisation);
 
                         await this.notificationBroker.SendSmsAsync(
-                            this.notificationConfig.SmsSubscriberUsageTemplateId,
-                            notificationInfo.Patient.Phone,
-                            personalisation);
+                            this.notificationConfig.SmsSubscriberUsageTemplateId, notificationInfo.Patient.Phone, personalisation);
 
                         break;
 

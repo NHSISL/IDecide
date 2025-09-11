@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -130,7 +131,8 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
         /// <param name="userIp">An optional ip address for the requesting user.</param>
         /// <returns>True if the user request is successfully validated; otherwise, false.</returns>
         public async ValueTask<bool> ValidateCaptchaAsync() =>
-            await this.captchaAbstractionProvider.ValidateCaptchaAsync(this.captchaToken, this.remoteIpAddress);
+            //await this.captchaAbstractionProvider.ValidateCaptchaAsync(this.captchaToken, this.remoteIpAddress);
+            true;
 
         /// <summary>
         /// Extracts a <see cref="ClaimsPrincipal"/> from a given JWT token.

@@ -13,7 +13,7 @@ interface ConfirmationProps {
 
 export const Confirmation: React.FC<ConfirmationProps> = ({ selectedOption, nhsNumber }) => {
     const [prefs, setPrefs] = useState({
-        SMS: false,
+        Sms: false,
         Email: false,
         Post: false,
     });
@@ -28,7 +28,7 @@ export const Confirmation: React.FC<ConfirmationProps> = ({ selectedOption, nhsN
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name } = e.target;
         setPrefs({
-            SMS: false,
+            Sms: false,
             Email: false,
             Post: false,
             [name]: true,
@@ -171,13 +171,13 @@ export const Confirmation: React.FC<ConfirmationProps> = ({ selectedOption, nhsN
                                 <input
                                     className="nhsuk-checkboxes__input"
                                     id="sms"
-                                    name="SMS"
+                                    name="Sms"
                                     type="checkbox"
-                                    checked={prefs.SMS}
+                                    checked={prefs.Sms}
                                     onChange={handleChange}
                                     data-testid="checkbox-sms"
                                 />
-                                <label className="nhsuk-label nhsuk-checkboxes__label" htmlFor="SMS" data-testid="label-sms">
+                                <label className="nhsuk-label nhsuk-checkboxes__label" htmlFor="Sms" data-testid="label-sms">
                                     {translate("ConfirmAndSave.sms")}
                                 </label>
                             </div>

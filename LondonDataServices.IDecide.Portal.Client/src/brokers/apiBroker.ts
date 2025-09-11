@@ -16,9 +16,9 @@ class ApiBroker {
         });
     }
 
-    public async PostAsync(relativeUrl: string, data: unknown) {
+    public async PostAsync(relativeUrl: string, data: unknown, headers?: Record<string, string>) {
         const url = relativeUrl;
-        return axios.post(url, data);
+        return axios.post(url, data, { headers });
     }
 
     public async PostFormAsync(relativeUrl: string, data: FormData) {
@@ -30,9 +30,9 @@ class ApiBroker {
         });
     }
 
-    public async PutAsync(relativeUrl: string, data: unknown) {
+    public async PutAsync(relativeUrl: string, data: unknown, headers?: Record<string, string>) {
         const url = relativeUrl;
-        return axios.put(url, data);
+        return axios.put(url, data, { headers });
     }
 
     public async DeleteAsync(relativeUrl: string) {

@@ -109,15 +109,15 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     innerException: invalidPatientOrchestrationArgumentException);
 
             var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
-               this.loggingBrokerMock.Object,
-               this.securityBrokerMock.Object,
-               this.dateTimeBrokerMock.Object,
-               this.auditBrokerMock.Object,
-               this.identifierBrokerMock.Object,
-               this.pdsServiceMock.Object,
-               this.patientServiceMock.Object,
-               this.notificationServiceMock.Object,
-               this.decisionConfigurations)
+                this.loggingBrokerMock.Object,
+                this.securityBrokerMock.Object,
+                this.dateTimeBrokerMock.Object,
+                this.auditBrokerMock.Object,
+                this.identifierBrokerMock.Object,
+                this.pdsServiceMock.Object,
+                this.patientServiceMock.Object,
+                this.notificationServiceMock.Object,
+                this.decisionConfigurations)
             { CallBase = true };
 
             patientOrchestrationServiceMock.Setup(broker =>
@@ -173,15 +173,15 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     innerException: invalidCaptchaPatientOrchestrationServiceException);
 
             var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
-                 this.loggingBrokerMock.Object,
-                 this.securityBrokerMock.Object,
-                 this.dateTimeBrokerMock.Object,
-                 this.auditBrokerMock.Object,
-                 this.identifierBrokerMock.Object,
-                 this.pdsServiceMock.Object,
-                 this.patientServiceMock.Object,
-                 this.notificationServiceMock.Object,
-                 this.decisionConfigurations)
+                this.loggingBrokerMock.Object,
+                this.securityBrokerMock.Object,
+                this.dateTimeBrokerMock.Object,
+                this.auditBrokerMock.Object,
+                this.identifierBrokerMock.Object,
+                this.pdsServiceMock.Object,
+                this.patientServiceMock.Object,
+                this.notificationServiceMock.Object,
+                this.decisionConfigurations)
             { CallBase = true };
 
             patientOrchestrationServiceMock.Setup(broker =>

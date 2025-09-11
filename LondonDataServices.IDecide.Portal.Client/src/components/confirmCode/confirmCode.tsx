@@ -18,8 +18,9 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
     const confirmCodeMutation = patientViewService.useConfirmCode();
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value.replace(/\D/g, "").slice(0, 5);
-        setCode(value);
+        // Accept only alphanumeric characters, limit to 5, and convert to uppercase
+        const value = e.target.value.replace(/[^a-zA-Z0-9]/g, "").slice(0, 5).toUpperCase();
+        setCode(value)
     };
 
     const handleSubmit = (e: React.FormEvent) => {

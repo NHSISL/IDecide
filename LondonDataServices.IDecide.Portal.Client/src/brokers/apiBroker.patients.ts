@@ -1,12 +1,13 @@
 import { Patient } from "../models/patients/patient";
-import { GenerateCodeRequest } from "../models/patients/generateCodeRequest";
 import { PatientLookup } from "../models/patients/patientLookup";
+import { PatientCodeRequest } from "../models/patients/patientCodeRequest";
 import ApiBroker from "./apiBroker";
 import { AxiosResponse } from "axios";
 
 class PatientBroker {
-    relativePatientsUrl = '/api/patients';
-    relativePatientsOdataUrl = '/odata/patients'
+    relativePatientsUrl = '/api/PatientSearch';
+    relativePatientCodeUrl = '/api/PatientCode';
+    relativePatientsOdataUrl = '/odata/PatientSearch'
 
     private apiBroker: ApiBroker = new ApiBroker();
 
@@ -18,9 +19,21 @@ class PatientBroker {
     }
 
     async PostPatientNhsNumberAsync(patientLookup: PatientLookup) {
-        const url = `${this.relativePatientsUrl}/PostPatientByNhsNumber`;
+        const url = `${this.relativePatientsUrl}/PatientSearch`;
         return await this.apiBroker.PostAsync(url, patientLookup)
             .then(result => new Patient(result.data));
+    }
+
+    async PostPatientSearchByNhsNumberAsync(patientLookup: PatientLookup) {
+        const url = `${this.relativePatientsUrl}/PatientByNhsNumber`;
+        return await this.apiBroker.PostAsync(url, patientLookup)
+            .then(result => new Patient(result.data));
+    }
+
+    async PostPatientWithNotificationPreference(patient: PatientCodeRequest, headers?: Record<string, string>) {
+        const url = `${this.relativePatientCodeUrl}/PatientGenerationRequest`;
+        return await this.apiBroker.PostAsync(url, patient, headers)
+            .then(() => undefined);
     }
 
     async PostPatientDetailsAsync(patientLookup: PatientLookup) {
@@ -53,11 +66,7 @@ class PatientBroker {
             .then(result => new Patient(result.data));
     }
 
-    async PutGenerateCodeRequestAsync(patient: GenerateCodeRequest) {
-        const url = this.relativePatientsUrl; // No nhsNumber in the URL
-        return await this.apiBroker.PutAsync(url, patient)
-            .then(() => undefined); // No response body expected
-    }
+   
 
     async ConfirmPatientCodeAsync(nhsNumber: string, code: string) {
         const url = `${this.relativePatientsUrl}/confirm-code`;

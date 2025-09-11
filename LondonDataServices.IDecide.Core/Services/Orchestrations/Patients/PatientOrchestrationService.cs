@@ -274,7 +274,35 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             pdsPatient.ValidationCodeMatchedOn = null;
             pdsPatient.NotificationPreference = notificationPreference;
             Patient patientToRecord = pdsPatient;
-            Patient recordedPatient = await this.patientService.AddPatientAsync(patientToRecord);
+
+            IQueryable<Patient> patients = await this.patientService.RetrieveAllPatientsAsync();
+            Patient maybePatient = patients.FirstOrDefault(patient => patient.NhsNumber == nhsNumber);
+
+            if (maybePatient != null)
+            {
+                maybePatient.Title = pdsPatient.Title;
+                maybePatient.Surname = pdsPatient.Surname;
+                maybePatient.DateOfBirth = pdsPatient.DateOfBirth;
+                maybePatient.Gender = pdsPatient.Gender;
+                maybePatient.Email = pdsPatient.Email;
+                maybePatient.Phone = pdsPatient.Phone;
+                maybePatient.Address = pdsPatient.Address;
+                maybePatient.PostCode = pdsPatient.PostCode;
+                maybePatient.NotificationPreference = pdsPatient.NotificationPreference;
+                maybePatient.ValidationCode = pdsPatient.ValidationCode;
+                maybePatient.ValidationCodeExpiresOn = pdsPatient.ValidationCodeExpiresOn;
+                maybePatient.ValidationCodeMatchedOn = pdsPatient.ValidationCodeMatchedOn;
+                maybePatient = await this.patientService.ModifyPatientAsync(maybePatient);
+            }
+            else
+            {
+                maybePatient = new Patient();
+                maybePatient.Id = await this.identifierBroker.GetIdentifierAsync();
+                maybePatient = await this.patientService.AddPatientAsync(maybePatient);
+            }
+
+            Patient recordedPatient = 
+                await this.patientService.AddPatientAsync(patientToRecord);
 
             return recordedPatient;
         }
