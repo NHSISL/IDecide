@@ -5,10 +5,9 @@ export const patientViewService = {
     usePostPatientSearch: () => {
         return patientService.useCreatePatientByNhsNumber();
     },
-    //usePostPatientDetails: () => {
-    //    return patientService.useCreatePatientByDetails();
-    //},
-
+    usePostPatientDetails: () => {
+        return patientService.useCreatePatientByDetails();
+    },
     useAddPatientAndGenerateCode: () => {
         return {
             mutate: async (

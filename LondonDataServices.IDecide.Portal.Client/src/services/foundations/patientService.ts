@@ -27,29 +27,15 @@ export const patientService = {
         return await broker.PostPatientWithNotificationPreference(patient, headers);
     },
 
-    //useGenerateCodeRequest: () => {
-    //    const broker = new PatientCodeBroker();
-    //    const queryClient = useQueryClient();
+    useCreatePatientByDetails: () => {
+        const broker = new PatientBroker();
 
-    //    return useMutation({
-    //        mutationFn: (request: GenerateCodeRequest) => {
-    //            return broker.PutGenerateCodeRequestAsync(request);
-    //        },
-    //        onSuccess: () => {
-    //            queryClient.invalidateQueries({ queryKey: ["PatientGetAll"] });
-    //        }
-    //    });
-    //},
-
-    //useCreatePatientByDetails: () => {
-    //    const broker = new PatientBroker();
-
-    //    return useMutation({
-    //        mutationFn: (patientLookup: PatientLookup) => {
-    //            return broker.PostPatientDetailsAsync(patientLookup);
-    //        }
-    //    });
-    //},
+        return useMutation({
+            mutationFn: (patientLookup: PatientLookup) => {
+                return broker.PostPatientDetailsAsync(patientLookup);
+            }
+        });
+    },
 
     useRetrieveAllPatients: (query: string) => {
         const broker = new PatientBroker();
