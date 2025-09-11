@@ -32,7 +32,7 @@ using LondonDataServices.IDecide.Core.Clients.Audits;
 using LondonDataServices.IDecide.Core.Models.Brokers.Notifications;
 using LondonDataServices.IDecide.Core.Models.Foundations.Audits;
 using LondonDataServices.IDecide.Core.Models.Foundations.Consumers;
-using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerStatuses;
+using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerAdoptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
@@ -40,7 +40,7 @@ using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions;
 using LondonDataServices.IDecide.Core.Services.Foundations.Audits;
 using LondonDataServices.IDecide.Core.Services.Foundations.Consumers;
-using LondonDataServices.IDecide.Core.Services.Foundations.ConsumerStatuses;
+using LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions;
 using LondonDataServices.IDecide.Core.Services.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes;
 using LondonDataServices.IDecide.Core.Services.Foundations.Notifications;
@@ -195,7 +195,7 @@ namespace LondonDataServices.IDecide.Portal.Server
                new ODataConventionModelBuilder();
 
             builder.EntitySet<Consumer>("Consumers");
-            builder.EntitySet<ConsumerStatus>("ConsumerStatuses");
+            builder.EntitySet<ConsumerAdoption>("ConsumerAdoptions");
             builder.EntitySet<DecisionType>("DecisionTypes");
             builder.EntitySet<Decision>("Decisions");
             builder.EntitySet<Patient>("Patients");
@@ -291,7 +291,7 @@ namespace LondonDataServices.IDecide.Portal.Server
             services.AddTransient<IPatientService, PatientService>();
             services.AddTransient<INotificationService, NotificationService>();
             services.AddTransient<IConsumerService, ConsumerService>();
-            services.AddTransient<IConsumerStatusService, ConsumerStatusService>();
+            services.AddTransient<IConsumerAdoptionService, ConsumerAdoptionService>();
         }
 
         private static void AddProcessingServices(IServiceCollection services)

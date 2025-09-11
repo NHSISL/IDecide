@@ -11,32 +11,32 @@ using LondonDataServices.IDecide.Core.Brokers.DateTimes;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Brokers.Storages.Sql;
-using LondonDataServices.IDecide.Core.Models.Foundations.Consumers;
+using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerAdoptions;
 using LondonDataServices.IDecide.Core.Models.Securities;
-using LondonDataServices.IDecide.Core.Services.Foundations.Consumers;
+using LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions;
 using Microsoft.Data.SqlClient;
 using Moq;
 using Tynamix.ObjectFiller;
 using Xeptions;
 
-namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consumers
+namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.ConsumerAdoptions
 {
-    public partial class ConsumerServiceTests
+    public partial class ConsumerAdoptionServiceTests
     {
         private readonly Mock<IStorageBroker> storageBrokerMock;
         private readonly Mock<IDateTimeBroker> dateTimeBrokerMock;
         private readonly Mock<ISecurityAuditBroker> securityAuditBrokerMock;
         private readonly Mock<ILoggingBroker> loggingBrokerMock;
-        private readonly IConsumerService consumerService;
+        private readonly IConsumerAdoptionService consumerAdoptionService;
 
-        public ConsumerServiceTests()
+        public ConsumerAdoptionServiceTests()
         {
             this.storageBrokerMock = new Mock<IStorageBroker>();
             this.dateTimeBrokerMock = new Mock<IDateTimeBroker>();
             this.securityAuditBrokerMock = new Mock<ISecurityAuditBroker>();
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
 
-            this.consumerService = new ConsumerService(
+            this.consumerAdoptionService = new ConsumerAdoptionService(
                 storageBroker: this.storageBrokerMock.Object,
                 dateTimeBroker: this.dateTimeBrokerMock.Object,
                 securityAuditBroker: this.securityAuditBrokerMock.Object,
@@ -62,20 +62,20 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                 });
         }
 
-        private static IQueryable<Consumer> CreateRandomConsumers()
+        private static IQueryable<ConsumerAdoption> CreateRandomConsumerAdoptions()
         {
-            return CreateConsumerFiller(dateTimeOffset: GetRandomDateTimeOffset())
+            return CreateConsumerAdoptionFiller(dateTimeOffset: GetRandomDateTimeOffset())
                 .Create(count: GetRandomNumber())
                 .AsQueryable();
         }
 
-        private static Consumer CreateRandomModifyConsumer(DateTimeOffset dateTimeOffset, string userId = "")
+        private static ConsumerAdoption CreateRandomModifyConsumerAdoption(DateTimeOffset dateTimeOffset, string userId = "")
         {
             int randomDaysInPast = GetRandomNegativeNumber();
-            Consumer randomConsumer = CreateRandomConsumer(dateTimeOffset, userId);
-            randomConsumer.CreatedDate = randomConsumer.CreatedDate.AddDays(randomDaysInPast);
+            ConsumerAdoption randomConsumerAdoption = CreateRandomConsumerAdoption(dateTimeOffset, userId);
+            randomConsumerAdoption.CreatedDate = randomConsumerAdoption.CreatedDate.AddDays(randomDaysInPast);
 
-            return randomConsumer;
+            return randomConsumerAdoption;
         }
 
         private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
@@ -115,24 +115,25 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
-        private static Consumer CreateRandomConsumer() =>
-            CreateConsumerFiller(dateTimeOffset: GetRandomDateTimeOffset()).Create();
+        private static ConsumerAdoption CreateRandomConsumerAdoption() =>
+            CreateConsumerAdoptionFiller(dateTimeOffset: GetRandomDateTimeOffset()).Create();
 
-        private static Consumer CreateRandomConsumer(DateTimeOffset dateTimeOffset, string userId = "") =>
-            CreateConsumerFiller(dateTimeOffset, userId).Create();
+        private static ConsumerAdoption CreateRandomConsumerAdoption(DateTimeOffset dateTimeOffset, string userId = "") =>
+            CreateConsumerAdoptionFiller(dateTimeOffset, userId).Create();
 
-        private static Filler<Consumer> CreateConsumerFiller(DateTimeOffset dateTimeOffset, string userId = "")
+        private static Filler<ConsumerAdoption> CreateConsumerAdoptionFiller(
+            DateTimeOffset dateTimeOffset,
+            string userId = "")
         {
             userId = string.IsNullOrEmpty(userId) ? Guid.NewGuid().ToString() : userId;
-            var filler = new Filler<Consumer>();
+            var filler = new Filler<ConsumerAdoption>();
 
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
-                .OnProperty(consumer => consumer.Name).Use(GetRandomStringWithLengthOf(255))
-                .OnProperty(consumer => consumer.Name).Use(GetRandomStringWithLengthOf(36))
-                .OnProperty(consumer => consumer.CreatedBy).Use(userId)
-                .OnProperty(consumer => consumer.UpdatedBy).Use(userId)
-                .OnProperty(consumer => consumer.ConsumerAdoptions).IgnoreIt();
+                .OnProperty(consumerAdoption => consumerAdoption.CreatedBy).Use(userId)
+                .OnProperty(consumerAdoption => consumerAdoption.UpdatedBy).Use(userId)
+                .OnProperty(consumerAdoption => consumerAdoption.Consumer).IgnoreIt()
+                .OnProperty(consumerAdoption => consumerAdoption.Decision).IgnoreIt();
 
             return filler;
         }
