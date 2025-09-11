@@ -3,24 +3,28 @@
 // ---------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using LondonDataServices.IDecide.Core.Models.Bases;
-using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerAdoptions;
+using LondonDataServices.IDecide.Core.Models.Foundations.Consumers;
+using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace LondonDataServices.IDecide.Core.Models.Foundations.Consumers
+namespace LondonDataServices.IDecide.Core.Models.Foundations.ConsumerAdoptions
 {
-    public class Consumer : IKey, IAudit
+    public class ConsumerAdoption : IKey, IAudit
     {
         public Guid Id { get; set; }
-        public string Name { get; set; }
-        public string AccessToken { get; set; }
+        public Guid ConsumerId { get; set; }
+        public Guid DecisionId { get; set; }
         public string CreatedBy { get; set; }
+        public DateTimeOffset AdoptionDate { get; set; }
         public DateTimeOffset CreatedDate { get; set; }
         public string UpdatedBy { get; set; }
         public DateTimeOffset UpdatedDate { get; set; }
 
         [BindNever]
-        public List<ConsumerAdoption> ConsumerAdoptions { get; set; } = new List<ConsumerAdoption>();
+        public Consumer Consumer { get; set; } = null!;
+
+        [BindNever]
+        public Decision Decision { get; set; } = null!;
     }
 }

@@ -13,7 +13,7 @@ namespace LondonDataServices.IDecide.Core.Brokers.Storages.Sql
         private static void AddDecisionConfigurations(EntityTypeBuilder<Decision> model)
         {
             model
-                .ToTable("Decisions", "Decision");
+                .ToTable("Decisions");
 
             model
                 .Property(decision => decision.Id)
