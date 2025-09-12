@@ -27,6 +27,15 @@ export const patientService = {
         return await broker.PostPatientWithNotificationPreference(patient, headers);
     },
 
+    useConfirmCode: () => {
+        const broker = new PatientCodeBroker();
+        return useMutation({
+            mutationFn: (request: PatientCodeRequest) => {
+                return broker.ConfirmPatientCodeAsync(request.nhsNumber!, request.verificationCode!);
+            }
+        });
+    },
+
     useCreatePatientByDetails: () => {
         const broker = new PatientBroker();
 
@@ -58,12 +67,5 @@ export const patientService = {
         });
     },
 
-    useConfirmCode: () => {
-        const broker = new PatientBroker();
-        return useMutation({
-            mutationFn: (request: ConfirmCodeRequest) => {
-                return broker.ConfirmPatientCodeAsync(request.nhsNumber!, request.code!);
-            }
-        });
-    },
+    
 };
