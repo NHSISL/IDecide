@@ -5,8 +5,8 @@ import ApiBroker from "./apiBroker";
 import { AxiosResponse } from "axios";
 
 class PatientBroker {
-    relativePatientsUrl = '/api/patients';
-    relativePatientsOdataUrl = '/odata/patients'
+    relativePatientsUrl = '/api/Patient';
+    relativePatientsOdataUrl = '/odata/Patient'
 
     private apiBroker: ApiBroker = new ApiBroker();
 
@@ -15,12 +15,6 @@ class PatientBroker {
 
         const nextPage = result.data['@odata.nextLink'];
         return { data, nextPage }
-    }
-
-    async PostPatientNhsNumberAsync(patientLookup: PatientLookup) {
-        const url = `${this.relativePatientsUrl}/PostPatientByNhsNumber`;
-        return await this.apiBroker.PostAsync(url, patientLookup)
-            .then(result => new Patient(result.data));
     }
 
     async PostPatientDetailsAsync(patientLookup: PatientLookup) {

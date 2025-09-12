@@ -36,7 +36,7 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
     const [loading, setLoading] = useState(false);
     const [recaptchaReady, setRecaptchaReady] = useState(false);
     const { nextStep, setCreatedPatient } = useStep();
-    const addPatient = patientViewService.usePostPatientNhsNumber();
+    const addPatient = patientViewService.usePostPatientSearch();
 
     useEffect(() => {
         let isMounted = true;
