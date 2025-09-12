@@ -129,7 +129,8 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
 
         if (Object.keys(newErrors).length === 0) {
             setLoading(true);
-            const dateOfBirth = new Date(`${dobYear}-${dobMonth}-${dobDay}`);
+            const dateOfBirth = `${dobYear}/${dobMonth}/${dobDay}`;
+            //const dateOfBirth = new Date(`${dobDay}-${dobMonth}-${dobYear}`);
             const searchCriteria = new SearchCriteria({ surname: surname, postcode: postcode, dateOfBirth: dateOfBirth.toString() });
             const patientLookup = new PatientLookup(searchCriteria, []);
 
@@ -148,8 +149,29 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
                     nextStep(undefined, undefined, createdPatient, poaModel);
                     setLoading(false);
                 },
-                onError: () => {
-                    setErrors({ submit: translate("SearchByDetails.submitError") });
+                onError: (error: unknown) => {
+                    let apiTitle = "";
+                    if (
+                        typeof error === "object" &&
+                        error !== null &&
+                        "response" in error &&
+                        typeof (error as any).response === "object"
+                    ) {
+                        const errResponse = (error as any).response;
+                        apiTitle =
+                            errResponse.data?.title ||
+                            errResponse.data?.message ||
+                            errResponse.statusText ||
+                            translate("SearchByDetails.unknownApiError");
+                        setErrors({ submit: apiTitle });
+                        console.error("API Error submitting patient:", apiTitle, errResponse);
+                    } else if (error instanceof Error) {
+                        setErrors({ submit: error.message });
+                        console.error("Error submitting patient:", error.message, error);
+                    } else {
+                        setErrors({ submit: translate("SearchByDetails.unexpectedError") });
+                        console.error("Unexpected error submitting patient:", error);
+                    }
                     setLoading(false);
                 }
             });

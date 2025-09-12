@@ -4,12 +4,11 @@ import PatientCodeBroker from "../../brokers/apiBroker.patientCode";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Patient } from "../../models/patients/patient";
 import { PatientCodeRequest } from "../../models/patients/patientCodeRequest";
-import { ConfirmCodeRequest } from "../../models/patients/confirmCodeRequest";
 import { PatientLookup } from "../../models/patients/patientLookup";
 
 export const patientService = {
 
-    useCreatePatientByNhsNumber: () => {
+    useCreatePatient: () => {
         const broker = new PatientSearchBroker();
 
         return useMutation({

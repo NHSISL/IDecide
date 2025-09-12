@@ -3,10 +3,10 @@ import { PatientCodeRequest } from "../../models/patients/patientCodeRequest";
 
 export const patientViewService = {
     usePostPatientSearch: () => {
-        return patientService.useCreatePatientByNhsNumber();
+        return patientService.useCreatePatient();
     },
     usePostPatientDetails: () => {
-        return patientService.useCreatePatientByDetails();
+        return patientService.useCreatePatient();
     },
     useAddPatientAndGenerateCode: () => {
         return {
