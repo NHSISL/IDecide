@@ -38,13 +38,11 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
 
     const [recaptchaSiteKey, setRecaptchaSiteKey] = useState<string | undefined>(undefined);
     const { configuration } = useFrontendConfiguration();
-;
-    //const RECAPTCHA_SITE_KEY = configuration.recaptchaSiteKey;
     const RECAPTCHA_ACTION_SUBMIT = "submit";
     const { nextStep, setCreatedPatient } = useStep();
 
-    // Call the hook at the top level
     const addPatient = patientViewService.usePostPatientSearch();
+
     useEffect(() => {
         if (configuration?.recaptchaSiteKey) {
             setRecaptchaSiteKey(configuration.recaptchaSiteKey);

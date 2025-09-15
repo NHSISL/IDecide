@@ -9,8 +9,8 @@ export type FrontendConfigurationResponse = {
     version: string,
     bannerColour: string,
     recaptchaSiteKey: string,
-    heldeskContactEmail: string,
-    heldeskContactNumber: string,
+    helpdeskContactEmail: string,
+    helpdeskContactNumber: string,
 }
 
 export type FrontendConfiguration = {
@@ -22,8 +22,8 @@ export type FrontendConfiguration = {
     version: string,
     bannerColour: string,
     recaptchaSiteKey: string,
-    heldeskContactEmail: string
-    heldeskContactNumber: string
+    helpdeskContactEmail: string
+    helpdeskContactNumber: string
 }
 
 class FrontendConfigurationBroker {
@@ -56,11 +56,11 @@ class FrontendConfigurationBroker {
                 throw new Error("recaptchaSiteKey not provided");
             }
 
-            if (!result.heldeskContactEmail.length) {
+            if (!result.helpdeskContactEmail.length) {
                 throw new Error("heldesk contact email not provided");
             }
 
-            if (!result.heldeskContactNumber.length) {
+            if (!result.helpdeskContactNumber.length) {
                 throw new Error("heldesk contact number not provided");
             }
 
