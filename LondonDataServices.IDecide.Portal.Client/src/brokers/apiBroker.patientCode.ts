@@ -11,6 +11,13 @@ class PatientCodeBroker {
         return await this.apiBroker.PostAsync(url, patient, headers)
             .then(() => undefined);
     }
+
+    async ConfirmPatientCodeAsync(nhsNumber: string, verificationCode: string) {
+        const url = `${this.relativePatientCodeUrl}/VerifyPatientCode`;
+        const payload = { nhsNumber, verificationCode };
+        return await this.apiBroker.PostAsync(url, payload)
+            .then(result => result.data);
+    }
 }
 
 export default PatientCodeBroker;

@@ -7,9 +7,9 @@ class PatientSearchBroker {
 
     private apiBroker: ApiBroker = new ApiBroker();
 
-    async PostPatientNhsNumberAsync(patientLookup: PatientLookup) {
+    async PostPatientNhsNumberAsync(patientLookup: PatientLookup, headers?: Record<string, string>) {
         const url = `${this.relativePatientsUrl}/PatientSearch`;
-        return await this.apiBroker.PostAsync(url, patientLookup)
+        return await this.apiBroker.PostAsync(url, patientLookup, headers)
             .then(result => new Patient(result.data));
     }
 }
