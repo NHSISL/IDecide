@@ -23,7 +23,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
             actualValidationCode.Should().MatchRegex("^[A-Z0-9]+$");
 
             this.securityAuditBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();

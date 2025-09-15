@@ -31,12 +31,15 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
         /// This constructor is intended for REST API usage.
         /// </summary>
         /// <param name="httpContextAccessor">Provides access to the current HTTP context.</param>
-        public SecurityBroker(IHttpContextAccessor httpContextAccessor)
+        public SecurityBroker(
+            IHttpContextAccessor httpContextAccessor,
+            ICaptchaAbstractionProvider captchaAbstractionProvider)
         {
             claimsPrincipal = httpContextAccessor.HttpContext?.User ?? new ClaimsPrincipal();
             remoteIpAddress = httpContextAccessor.HttpContext.Connection.RemoteIpAddress?.ToString();
             httpContextAccessor.HttpContext.Request.Headers.TryGetValue("X-Recaptcha-Token", out captchaToken);
             this.securityClient = new SecurityClient();
+            this.captchaAbstractionProvider = captchaAbstractionProvider;
         }
 
         /// <summary>
@@ -44,10 +47,11 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
         /// This constructor is intended for Azure Function / non REST API usage.
         /// </summary>
         /// <param name="accessToken">A JWT access token containing user claims.</param>
-        public SecurityBroker(string accessToken)
+        public SecurityBroker(string accessToken, ICaptchaAbstractionProvider captchaAbstractionProvider)
         {
             claimsPrincipal = GetClaimsPrincipalFromToken(accessToken);
             this.securityClient = new SecurityClient();
+            this.captchaAbstractionProvider = captchaAbstractionProvider;
         }
 
         /// <summary>
@@ -55,20 +59,10 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
         /// This constructor is intended for Azure Functions or non-REST API usage.
         /// </summary>
         /// <param name="claimsPrincipal">A <see cref="ClaimsPrincipal"/> containing user claims.</param>
-        public SecurityBroker(ClaimsPrincipal claimsPrincipal)
+        public SecurityBroker(ClaimsPrincipal claimsPrincipal, ICaptchaAbstractionProvider captchaAbstractionProvider)
         {
             this.claimsPrincipal = claimsPrincipal;
             this.securityClient = new SecurityClient();
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SecurityBroker"/> class 
-        /// using <see cref="CaptchaAbstractionProvider"/>.
-        /// This constructor is intended for usage with the ReCaptcha functionality.
-        /// </summary>
-        /// <param name="captchaAbstractionProvider">Provides the captcha provider to use.</param>
-        public SecurityBroker(CaptchaAbstractionProvider captchaAbstractionProvider)
-        {
             this.captchaAbstractionProvider = captchaAbstractionProvider;
         }
 
@@ -130,7 +124,10 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
         /// <param name="userIp">An optional ip address for the requesting user.</param>
         /// <returns>True if the user request is successfully validated; otherwise, false.</returns>
         public async ValueTask<bool> ValidateCaptchaAsync() =>
-            await this.captchaAbstractionProvider.ValidateCaptchaAsync(this.captchaToken, this.remoteIpAddress);
+            //TODO: Capture Testing to be carried out in another branch
+            //USER STORY - 23123
+            //await this.captchaAbstractionProvider.ValidateCaptchaAsync(this.captchaToken, this.remoteIpAddress);
+            true;
 
         /// <summary>
         /// Extracts a <see cref="ClaimsPrincipal"/> from a given JWT token.

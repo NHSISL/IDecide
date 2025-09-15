@@ -61,7 +61,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                     Times.Never);
 
             this.securityAuditBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
@@ -155,9 +154,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                 broker.ApplyModifyAuditValuesAsync(invalidPatient))
                     .ReturnsAsync(invalidPatient);
 
-            this.securityBrokerMock.Setup(broker =>
-                broker.GetCurrentUserAsync())
-                    .ReturnsAsync(randomUser);
+            this.securityAuditBrokerMock.Setup(broker =>
+                broker.GetCurrentUserIdAsync())
+                    .ReturnsAsync(randomUserId);
 
             // when
             ValueTask<Patient> modifyPatientTask =
@@ -179,8 +178,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                 broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
 
-            this.securityBrokerMock.Verify(broker =>
-                broker.GetCurrentUserAsync(),
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.GetCurrentUserIdAsync(),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
@@ -193,7 +192,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                     Times.Never);
 
             this.securityAuditBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
@@ -261,9 +259,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                 broker.ApplyModifyAuditValuesAsync(invalidPatient))
                     .ReturnsAsync(invalidPatient);
 
-            this.securityBrokerMock.Setup(broker =>
-                broker.GetCurrentUserAsync())
-                    .ReturnsAsync(randomUser);
+            this.securityAuditBrokerMock.Setup(broker =>
+                broker.GetCurrentUserIdAsync())
+                    .ReturnsAsync(randomUserId);
 
             // when
             ValueTask<Patient> modifyPatientTask =
@@ -285,8 +283,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                 broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once());
 
-            this.securityBrokerMock.Verify(broker =>
-                broker.GetCurrentUserAsync(),
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.GetCurrentUserIdAsync(),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
@@ -299,7 +297,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                     Times.Never);
 
             this.securityAuditBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
@@ -339,9 +336,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                 broker.GetCurrentDateTimeOffsetAsync())
                     .ReturnsAsync(randomDateTimeOffset);
 
-            this.securityBrokerMock.Setup(broker =>
-                broker.GetCurrentUserAsync())
-                    .ReturnsAsync(randomUser);
+            this.securityAuditBrokerMock.Setup(broker =>
+                broker.GetCurrentUserIdAsync())
+                    .ReturnsAsync(randomUserId);
 
             // when
             ValueTask<Patient> modifyPatientTask =
@@ -363,8 +360,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                 broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
 
-            this.securityBrokerMock.Verify(broker =>
-                broker.GetCurrentUserAsync(),
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.GetCurrentUserIdAsync(),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
@@ -377,7 +374,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                     Times.Never);
 
             this.securityAuditBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
@@ -420,11 +416,11 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
-                .ReturnsAsync(randomDateTimeOffset);
+                    .ReturnsAsync(randomDateTimeOffset);
 
-            this.securityBrokerMock.Setup(broker =>
-                broker.GetCurrentUserAsync())
-                    .ReturnsAsync(randomUser);
+            this.securityAuditBrokerMock.Setup(broker =>
+                broker.GetCurrentUserIdAsync())
+                    .ReturnsAsync(randomUserId);
 
             // when
             ValueTask<Patient> modifyPatientTask =
@@ -455,12 +451,11 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                 broker.SelectPatientByIdAsync(It.IsAny<Guid>()),
                     Times.Never);
 
-            this.securityBrokerMock.Verify(broker =>
-                broker.GetCurrentUserAsync(),
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.GetCurrentUserIdAsync(),
                     Times.Once);
 
             this.securityAuditBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
@@ -500,9 +495,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                 broker.GetCurrentDateTimeOffsetAsync())
                     .ReturnsAsync(randomDateTimeOffset);
 
-            this.securityBrokerMock.Setup(broker =>
-                broker.GetCurrentUserAsync())
-                    .ReturnsAsync(randomUser);
+            this.securityAuditBrokerMock.Setup(broker =>
+                broker.GetCurrentUserIdAsync())
+                    .ReturnsAsync(randomUserId);
 
             // when 
             ValueTask<Patient> modifyPatientTask =
@@ -528,8 +523,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                 broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
 
-            this.securityBrokerMock.Verify(broker =>
-                broker.GetCurrentUserAsync(),
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.GetCurrentUserIdAsync(),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
@@ -538,7 +533,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                         Times.Once);
 
             this.securityAuditBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
@@ -587,9 +581,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                 broker.GetCurrentDateTimeOffsetAsync())
                     .ReturnsAsync(randomDateTimeOffset);
 
-            this.securityBrokerMock.Setup(broker =>
-                broker.GetCurrentUserAsync())
-                    .ReturnsAsync(randomUser);
+            this.securityAuditBrokerMock.Setup(broker =>
+                broker.GetCurrentUserIdAsync())
+                    .ReturnsAsync(randomUserId);
 
             this.securityAuditBrokerMock.Setup(broker =>
                 broker.EnsureAddAuditValuesRemainsUnchangedOnModifyAsync(invalidPatient, storagePatient))
@@ -619,8 +613,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                 broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
 
-            this.securityBrokerMock.Verify(broker =>
-                broker.GetCurrentUserAsync(),
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.GetCurrentUserIdAsync(),
                     Times.Once);
 
             this.securityAuditBrokerMock.Verify(broker =>
@@ -633,7 +627,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                        Times.Once);
 
             this.securityAuditBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
@@ -680,9 +673,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                 broker.GetCurrentDateTimeOffsetAsync())
                     .ReturnsAsync(randomDateTimeOffset);
 
-            this.securityBrokerMock.Setup(broker =>
-                broker.GetCurrentUserAsync())
-                    .ReturnsAsync(randomUser);
+            this.securityAuditBrokerMock.Setup(broker =>
+                 broker.GetCurrentUserIdAsync())
+                    .ReturnsAsync(randomUserId);
 
             this.securityAuditBrokerMock.Setup(broker =>
                 broker.EnsureAddAuditValuesRemainsUnchangedOnModifyAsync(invalidPatient, storagePatient))
@@ -711,8 +704,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                 broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
 
-            this.securityBrokerMock.Verify(broker =>
-                broker.GetCurrentUserAsync(),
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.GetCurrentUserIdAsync(),
                     Times.Once);
 
             this.securityAuditBrokerMock.Verify(broker =>
@@ -725,7 +718,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                        Times.Once);
 
             this.securityAuditBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
@@ -770,9 +762,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                 broker.GetCurrentDateTimeOffsetAsync())
                     .ReturnsAsync(randomDateTimeOffset);
 
-            this.securityBrokerMock.Setup(broker =>
-                broker.GetCurrentUserAsync())
-                    .ReturnsAsync(randomUser);
+            this.securityAuditBrokerMock.Setup(broker =>
+                broker.GetCurrentUserIdAsync())
+                    .ReturnsAsync(randomUserId);
 
             this.securityAuditBrokerMock.Setup(broker =>
                 broker.EnsureAddAuditValuesRemainsUnchangedOnModifyAsync(invalidPatient, storagePatient))
@@ -794,8 +786,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                 broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
 
-            this.securityBrokerMock.Verify(broker =>
-                broker.GetCurrentUserAsync(),
+            this.securityAuditBrokerMock.Verify(broker =>
+                broker.GetCurrentUserIdAsync(),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
@@ -812,7 +804,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                     Times.Once);
 
             this.securityAuditBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();

@@ -7,6 +7,11 @@
   - No line of code should exceed **120 characters** in length.
   - This includes comments, string literals, and code.
   - Exception: automatically generated files may be ignored if they cannot be reformatted safely.
+- **How to measure**:
+  - Enforce the limit **per physical line** as stored in the file (newline-delimited). **Do not** treat a multi-line
+    statement as a single line for length checks.
+  - Before counting, **trim trailing whitespace**. Tabs count as 4 spaces.
+  - It’s compliant if **each physical line ≤ 120 chars**, even when the overall statement spans multiple lines.
 
 ### Code Formatting
 - Single-line instructions must follow each other with **no blank lines** in between.
@@ -26,6 +31,10 @@
 ### Review Guidelines
 - When reviewing or completing code suggestions, Copilot should:
   - Scan `.cs` files for lines longer than 120 characters.
+  - Only flag a violation if a **single physical line** (after trimming trailing whitespace) exceeds 120 characters.
+    Do **not** flag lines merely because a statement spans multiple lines.
+  - When flagging, include the **line number** and the **measured character count** (e.g., “Line 42: 128 chars”),
+    and show the exact line being measured (truncated if needed).
   - Highlight or flag any violations.
   - Recommend a multiline formatting fix for flagged lines.
   - Flag missing blank lines before `return` statements.
@@ -50,7 +59,7 @@ return user;
 ### Code Formatting Rule Examples
 
 #### ✅ Correct
-```cs
+```csharp
 var activeUsers = users.Where(u => u.IsActive == false).Select(u => new { u.Id, u.Name }).ToList();
 var activeUsers = users.Where(u => u.IsActive).Select(u => new { u.Id, u.Name }).ToList();
 
@@ -73,7 +82,7 @@ return y;
 ```
 
 #### ❌ Incorrect
-```cs
+```csharp
 var activeUsers = users.Where(u => u.IsActive == false).Select(u => new { u.Id, u.Name }).ToList();
 var activeUsers = users.Where(u => u.IsActive).Select(u => new { u.Id, u.Name }).ToList();
 var filteredUsers = users
@@ -90,4 +99,19 @@ var filteredUsers = users
 var x = 1 + 2;
 var y = 2 + 2;
 return y;
+```
+
+---
+
+### Line Length Rule Examples
+
+#### ✅ Correct (wrapped invocation ≤ 120 chars per line)
+```csharp
+createException: () => new InvalidSupplierException(
+    message: "Invalid supplier. Please correct the errors and try again."),
+```
+
+#### ❌ Incorrect (single physical line > 120 chars)
+```csharp
+createException: () => new InvalidSupplierException(message: "Invalid supplier. Please correct the errors and try again."),
 ```

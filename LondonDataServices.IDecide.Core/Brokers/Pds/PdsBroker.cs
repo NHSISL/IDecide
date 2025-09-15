@@ -57,6 +57,6 @@ namespace LondonDataServices.IDecide.Core.Brokers.Pds
         /// A Patient object containing information on the corresponding patient 
         /// </returns>
         public async ValueTask<Patient> PatientLookupByNhsNumberAsync(string nhsNumber) =>
-            throw new NotImplementedException();
+            await pdsAbstractionProvider.PatientLookupByNhsNumberAsync(nhsNumber);
     }
 }
