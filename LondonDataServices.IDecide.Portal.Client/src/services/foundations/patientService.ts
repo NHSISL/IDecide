@@ -7,15 +7,12 @@ import { PatientCodeRequest } from "../../models/patients/patientCodeRequest";
 import { PatientLookup } from "../../models/patients/patientLookup";
 
 export const patientService = {
-
-    useCreatePatient: () => {
+    useCreatePatient: async (
+        patientLookup: PatientLookup,
+        headers?: Record<string, string>
+    ) => {
         const broker = new PatientSearchBroker();
-
-        return useMutation({
-            mutationFn: (patientLookup: PatientLookup) => {
-                return broker.PostPatientNhsNumberAsync(patientLookup);
-            },
-        });
+        return await broker.PostPatientNhsNumberAsync(patientLookup, headers);
     },
 
     usePostPatientWithNotificationPreference: async (

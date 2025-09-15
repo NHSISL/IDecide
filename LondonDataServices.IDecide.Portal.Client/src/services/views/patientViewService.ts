@@ -1,9 +1,34 @@
 import { patientService } from "../foundations/patientService";
 import { PatientCodeRequest } from "../../models/patients/patientCodeRequest";
+import { PatientLookup } from "../../models/patients/patientLookup";
+import { Patient } from "../../models/patients/patient";
 
 export const patientViewService = {
+    //usePostPatientSearch: (headers?: Record<string, string>) => {
+    //    return patientService.useCreatePatient(headers);
+    //},
+
     usePostPatientSearch: () => {
-        return patientService.useCreatePatient();
+        return {
+            mutate: async (
+                patientLookup: PatientLookup,
+                options?: {
+                    headers?: Record<string, string>,
+                    onSuccess?: (createdPatient: Patient) => void,
+                    onError?: (error: unknown) => void
+                }
+            ) => {
+                try {
+                    const createdPatient = await patientService.useCreatePatient(
+                        patientLookup,
+                        options?.headers
+                    );
+                    options?.onSuccess?.(createdPatient);
+                } catch (error) {
+                    options?.onError?.(error);
+                }
+            }
+        };
     },
     usePostPatientDetails: () => {
         return patientService.useCreatePatient();

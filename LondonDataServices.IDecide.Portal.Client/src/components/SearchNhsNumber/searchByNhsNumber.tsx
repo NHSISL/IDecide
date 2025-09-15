@@ -4,13 +4,13 @@ import { useStep } from "../../hooks/useStep";
 import { PowerOfAttourney } from "../../models/powerOfAttourneys/powerOfAttourney";
 import { patientViewService } from "../../services/views/patientViewService";
 import { TextInput, Button, Select, Card } from "nhsuk-react-components";
+import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
 import { loadRecaptchaScript } from "../../helpers/recaptureLoad";
 import { Container, Row, Col } from "react-bootstrap";
 import { StepContext } from "../context/stepContext";
 import { PatientLookup } from "../../models/patients/patientLookup";
+import { Patient } from "../../models/patients/patient";
 import { SearchCriteria } from "../../models/searchCriterias/searchCriteria";
-
-const RECAPTCHA_SITE_KEY = "6LcOJn4rAAAAAIUdB70R9BqkfPFD-bPYTk6ojRGg";
 
 export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
     onIDontKnow: (powerOfAttourney: boolean) => void;
@@ -35,29 +35,44 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
     const [poaRelationshipError, setPoaRelationshipError] = useState("");
     const [loading, setLoading] = useState(false);
     const [recaptchaReady, setRecaptchaReady] = useState(false);
+
+    const [recaptchaSiteKey, setRecaptchaSiteKey] = useState<string | undefined>(undefined);
+    const { configuration } = useFrontendConfiguration();
+;
+    //const RECAPTCHA_SITE_KEY = configuration.recaptchaSiteKey;
+    const RECAPTCHA_ACTION_SUBMIT = "submit";
     const { nextStep, setCreatedPatient } = useStep();
+
+    // Call the hook at the top level
     const addPatient = patientViewService.usePostPatientSearch();
+    useEffect(() => {
+        if (configuration?.recaptchaSiteKey) {
+            setRecaptchaSiteKey(configuration.recaptchaSiteKey);
+        }
+    }, [configuration]);
 
     useEffect(() => {
         let isMounted = true;
-        loadRecaptchaScript(RECAPTCHA_SITE_KEY)
-            .then(() => {
-                const waitForGrecaptcha = () => {
-                    if (window.grecaptcha && typeof window.grecaptcha.ready === "function") {
-                        window.grecaptcha.ready(() => {
-                            if (isMounted) setRecaptchaReady(true);
-                        });
-                    } else {
-                        setTimeout(waitForGrecaptcha, 50);
-                    }
-                };
-                waitForGrecaptcha();
-            })
-            .catch(() => {
-                if (isMounted) setError(translate("SearchBySHSNumber.errorRecaptchaLoad"));
-            });
+        if (recaptchaSiteKey) {
+            loadRecaptchaScript(recaptchaSiteKey)
+                .then(() => {
+                    const waitForGrecaptcha = () => {
+                        if (window.grecaptcha && typeof window.grecaptcha.ready === "function") {
+                            window.grecaptcha.ready(() => {
+                                if (isMounted) setRecaptchaReady(true);
+                            });
+                        } else {
+                            setTimeout(waitForGrecaptcha, 50);
+                        }
+                    };
+                    waitForGrecaptcha();
+                })
+                .catch(() => {
+                    if (isMounted) setError(translate("SearchBySHSNumber.errorRecaptchaLoad"));
+                });
+        }
         return () => { isMounted = false; };
-    }, [translate]);
+    }, [recaptchaSiteKey, translate]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value.replace(/\D/g, "").slice(0, 10);
@@ -122,13 +137,13 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
             }
         }
 
-        if (!recaptchaReady || typeof grecaptcha === "undefined") {
+        if (!recaptchaReady || typeof grecaptcha === "undefined" || !recaptchaSiteKey) {
             setError(translate("SearchBySHSNumber.errorRecaptchaNotReady"));
             return;
         }
         setLoading(true);
         try {
-            grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: "submit" }).then(() => {
+            grecaptcha.execute(recaptchaSiteKey, { action: RECAPTCHA_ACTION_SUBMIT }).then((token: string) => {
                 const nhsNumberToUse = powerOfAttourney ? poaNhsNumberInput : nhsNumberInput;
                 const searchCriteria = new SearchCriteria({ nhsNumber: nhsNumberToUse });
                 const patientLookup = new PatientLookup(searchCriteria, []);
@@ -142,17 +157,21 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
                     });
                 }
 
-                addPatient.mutate(patientLookup, {
-                    onSuccess: (createdPatient) => {
-                        setCreatedPatient(createdPatient);
-                        nextStep(undefined, nhsNumberToUse, createdPatient, poaModel);
-                        setLoading(false);
-                    },
-                    onError: () => {
-                        setError(translate("SearchBySHSNumber.errorCreatePatient"));
-                        setLoading(false);
+                addPatient.mutate(
+                    patientLookup,
+                    {
+                        headers: { "X-Recaptcha-Token": token },
+                        onSuccess: (createdPatient: Patient) => {
+                            setCreatedPatient(createdPatient);
+                            nextStep(undefined, nhsNumberToUse, createdPatient, poaModel);
+                            setLoading(false);
+                        },
+                        onError: () => {
+                            setError(translate("SearchBySHSNumber.errorCreatePatient"));
+                            setLoading(false);
+                        }
                     }
-                });
+                );
             });
         } catch {
             setError(translate("SearchBySHSNumber.errorRecaptchaFailed"));
