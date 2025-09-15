@@ -6,7 +6,7 @@ import { Row, Col, Alert } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
 import { loadRecaptchaScript } from "../../helpers/recaptureLoad";
-
+import { isApiErrorResponse } from "../../helpers/isApiErrorResponse";
 interface PositiveConfirmationProps {
     goToConfirmCode: (createdPatient: PatientCodeRequest) => void;
 }
@@ -50,19 +50,13 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                     },
                     onError: (error: unknown) => {
                         let apiTitle = "";
-                        if (
-                            typeof error === "object" &&
-                            error !== null &&
-                            "response" in error &&
-                            typeof (error as any).response === "object"
-                        ) {
-                            const errResponse = (error as any).response;
+                        if (isApiErrorResponse(error)) {
+                            const errResponse = error.response;
                             apiTitle =
                                 errResponse.data?.title ||
                                 errResponse.data?.message ||
                                 errResponse.statusText ||
                                 "Unknown API error";
-                            // Show link if specific error
                             if (
                                 apiTitle ===
                                 "A valid code already exists for this patient, please go to the enter code screen."
@@ -87,9 +81,14 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                             }
                             setError(apiTitle);
                             console.error("API Error updating patient:", apiTitle, errResponse);
-                        } else if (error instanceof Error) {
-                            setError(error.message);
-                            console.error("Error updating patient:", error.message, error);
+                        } else if (
+                            error &&
+                            typeof error === "object" &&
+                            "message" in error &&
+                            typeof (error as { message?: unknown }).message === "string"
+                        ) {
+                            setError((error as { message: string }).message);
+                            console.error("Error updating patient:", (error as { message: string }).message, error);
                         } else {
                             setError("An unexpected error occurred.");
                             console.error("Error updating patient:", error);

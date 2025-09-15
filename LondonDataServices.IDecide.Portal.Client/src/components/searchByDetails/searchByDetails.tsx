@@ -9,7 +9,7 @@ import { StepContext } from "../context/stepContext";
 import { useTranslation } from "react-i18next";
 import { PatientLookup } from "../../models/patients/patientLookup";
 import { SearchCriteria } from "../../models/searchCriterias/searchCriteria";
-
+import { isApiErrorResponse } from "../../helpers/isApiErrorResponse";
 interface SearchByDetailsProps {
     onBack: () => void;
     powerOfAttourney?: boolean;
@@ -151,13 +151,8 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
                 },
                 onError: (error: unknown) => {
                     let apiTitle = "";
-                    if (
-                        typeof error === "object" &&
-                        error !== null &&
-                        "response" in error &&
-                        typeof (error as any).response === "object"
-                    ) {
-                        const errResponse = (error as any).response;
+                    if (isApiErrorResponse(error)) {
+                        const errResponse = error.response;
                         apiTitle =
                             errResponse.data?.title ||
                             errResponse.data?.message ||
@@ -165,9 +160,14 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
                             translate("SearchByDetails.unknownApiError");
                         setErrors({ submit: apiTitle });
                         console.error("API Error submitting patient:", apiTitle, errResponse);
-                    } else if (error instanceof Error) {
-                        setErrors({ submit: error.message });
-                        console.error("Error submitting patient:", error.message, error);
+                    } else if (
+                        error &&
+                        typeof error === "object" &&
+                        "message" in error &&
+                        typeof (error as { message?: unknown }).message === "string"
+                    ) {
+                        setErrors({ submit: (error as { message: string }).message });
+                        console.error("Error submitting patient:", (error as { message: string }).message, error);
                     } else {
                         setErrors({ submit: translate("SearchByDetails.unexpectedError") });
                         console.error("Unexpected error submitting patient:", error);

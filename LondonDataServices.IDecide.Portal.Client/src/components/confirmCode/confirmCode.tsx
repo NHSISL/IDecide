@@ -6,7 +6,7 @@ import { Row, Col, Alert } from "react-bootstrap";
 import { PatientCodeRequest } from "../../models/patients/patientCodeRequest";
 import { useStep } from "../../hooks/useStep";
 import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
-
+import { isApiErrorResponse } from "../../helpers/isApiErrorResponse";
 interface ConfirmCodeProps {
     createdPatient: Patient | null;
 }
@@ -49,20 +49,20 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
             await confirmCodeMutation.mutateAsync(request);
             nextStep(undefined, undefined, createdPatient);
         } catch (error: unknown) {
-            if (
-                typeof error === "object" &&
-                error !== null &&
-                "response" in error &&
-                typeof (error as any).response === "object"
-            ) {
-                const errResponse = (error as any).response;
+            if (isApiErrorResponse(error)) {
+                const errResponse = error.response;
                 const apiTitle =
                     errResponse.data?.title ||
                     errResponse.data?.message ||
                     errResponse.statusText ||
                     "Unknown API error";
                 setError(apiTitle);
-            } else if (error instanceof Error) {
+            } else if (
+                error &&
+                typeof error === "object" &&
+                "message" in error &&
+                typeof (error as { message?: unknown }).message === "string"
+            ) {
                 setError(translate("ConfirmCode.errorInvalidCode"));
             } else {
                 setError(translate("ConfirmCode.errorGeneric"));
@@ -178,18 +178,18 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
                                         You have entered the code wrong 3 times, please call our helpdesk
                                         on{" "}
                                         <a
-                                            href={`tel:${configuration.heldeskContactNumber}`}
+                                            href={`tel:${configuration.helpdeskContactNumber}`}
                                             style={{ textDecoration: "underline" }}
                                         >
-                                            {configuration.heldeskContactNumber}
+                                            {configuration.helpdeskContactNumber}
                                         </a>{" "}
                                         to complete your opt-in or opt-out request,
                                         or alternatively email us at{" "}
                                         <a
-                                            href={`mailto:${configuration.heldeskContactEmail}`}
+                                            href={`mailto:${configuration.helpdeskContactEmail}`}
                                             style={{ textDecoration: "underline" }}
                                         >
-                                            {configuration.heldeskContactEmail}
+                                            {configuration.helpdeskContactEmail}
                                         </a>
                                     </div>
                                 )}
