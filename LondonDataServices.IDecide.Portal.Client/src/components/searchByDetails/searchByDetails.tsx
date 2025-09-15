@@ -10,6 +10,8 @@ import { useTranslation } from "react-i18next";
 import { PatientLookup } from "../../models/patients/patientLookup";
 import { SearchCriteria } from "../../models/searchCriterias/searchCriteria";
 import { isApiErrorResponse } from "../../helpers/isApiErrorResponse";
+import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
+import { loadRecaptchaScript } from "../../helpers/recaptureLoad";
 interface SearchByDetailsProps {
     onBack: () => void;
     powerOfAttourney?: boolean;
@@ -18,12 +20,7 @@ interface SearchByDetailsProps {
 const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttourney }) => {
     const { t: translate } = useTranslation();
     const stepContext = useContext(StepContext);
-
-    useEffect(() => {
-        if (stepContext && typeof stepContext.resetStepContext === "function") {
-            stepContext.resetStepContext();
-        }
-    }, [stepContext]);
+    const [recaptchaReady, setRecaptchaReady] = useState(false);
 
     // Standard fields
     const [surname, setSurname] = useState("");
@@ -42,8 +39,46 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
     const [poaSurnameError, setPoaSurnameError] = useState("");
     const [poaRelationshipError, setPoaRelationshipError] = useState("");
 
-    const { nextStep, setCreatedPatient } = useStep();
     const addPatient = patientViewService.usePostPatientDetails();
+
+    const [recaptchaSiteKey, setRecaptchaSiteKey] = useState<string | undefined>(undefined);
+    const { configuration } = useFrontendConfiguration();
+    const RECAPTCHA_ACTION_SUBMIT = "submit";
+    const { nextStep, setCreatedPatient } = useStep();
+
+    useEffect(() => {
+        if (configuration?.recaptchaSiteKey) {
+            setRecaptchaSiteKey(configuration.recaptchaSiteKey);
+        }
+    }, [configuration]);
+    useEffect(() => {
+        if (stepContext && typeof stepContext.resetStepContext === "function") {
+            stepContext.resetStepContext();
+        }
+    }, [stepContext]);
+
+    useEffect(() => {
+        let isMounted = true;
+        if (recaptchaSiteKey) {
+            loadRecaptchaScript(recaptchaSiteKey)
+                .then(() => {
+                    const waitForGrecaptcha = () => {
+                        if (window.grecaptcha && typeof window.grecaptcha.ready === "function") {
+                            window.grecaptcha.ready(() => {
+                                if (isMounted) setRecaptchaReady(true);
+                            });
+                        } else {
+                            setTimeout(waitForGrecaptcha, 50);
+                        }
+                    };
+                    waitForGrecaptcha();
+                })
+                .catch(() => {
+                    if (isMounted) setErrors(translate("SearchBySHSNumber.errorRecaptchaLoad"));
+                });
+        }
+        return () => { isMounted = false; };
+    }, [recaptchaSiteKey, translate]);
 
     // PoA handlers
     const handlePoaFirstnameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -130,8 +165,11 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
         if (Object.keys(newErrors).length === 0) {
             setLoading(true);
             const dateOfBirth = `${dobYear}/${dobMonth}/${dobDay}`;
-            //const dateOfBirth = new Date(`${dobDay}-${dobMonth}-${dobYear}`);
-            const searchCriteria = new SearchCriteria({ surname: surname, postcode: postcode, dateOfBirth: dateOfBirth.toString() });
+            const searchCriteria = new SearchCriteria({
+                surname: surname,
+                postcode: postcode,
+                dateOfBirth: dateOfBirth.toString()
+            });
             const patientLookup = new PatientLookup(searchCriteria, []);
 
             let poaModel = undefined;
@@ -143,37 +181,52 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
                 });
             }
 
-            addPatient.mutate(patientLookup, {
-                onSuccess: (createdPatient: Patient) => {
-                    setCreatedPatient(createdPatient);
-                    nextStep(undefined, undefined, createdPatient, poaModel);
-                    setLoading(false);
-                },
-                onError: (error: unknown) => {
-                    let apiTitle = "";
-                    if (isApiErrorResponse(error)) {
-                        const errResponse = error.response;
-                        apiTitle =
-                            errResponse.data?.title ||
-                            errResponse.data?.message ||
-                            errResponse.statusText ||
-                            translate("SearchByDetails.unknownApiError");
-                        setErrors({ submit: apiTitle });
-                        console.error("API Error submitting patient:", apiTitle, errResponse);
-                    } else if (
-                        error &&
-                        typeof error === "object" &&
-                        "message" in error &&
-                        typeof (error as { message?: unknown }).message === "string"
-                    ) {
-                        setErrors({ submit: (error as { message: string }).message });
-                        console.error("Error submitting patient:", (error as { message: string }).message, error);
-                    } else {
-                        setErrors({ submit: translate("SearchByDetails.unexpectedError") });
-                        console.error("Unexpected error submitting patient:", error);
+            if (!recaptchaReady || typeof grecaptcha === "undefined" || !recaptchaSiteKey) {
+                setErrors({ submit: translate("SearchBySHSNumber.errorRecaptchaNotReady") });
+                setLoading(false);
+                return;
+            }
+
+            grecaptcha.execute(recaptchaSiteKey, { action: RECAPTCHA_ACTION_SUBMIT }).then((token: string) => {
+                addPatient.mutate(
+                    patientLookup,
+                    {
+                        headers: { "X-Recaptcha-Token": token },
+                        onSuccess: (createdPatient: Patient) => {
+                            setCreatedPatient(createdPatient);
+                            nextStep(undefined, undefined, createdPatient, poaModel);
+                            setLoading(false);
+                        },
+                        onError: (error: unknown) => {
+                            let apiTitle = "";
+                            if (isApiErrorResponse(error)) {
+                                const errResponse = error.response;
+                                apiTitle =
+                                    errResponse.data?.title ||
+                                    errResponse.data?.message ||
+                                    errResponse.statusText ||
+                                    translate("SearchByDetails.unknownApiError");
+                                setErrors({ submit: apiTitle });
+                                console.error("API Error submitting patient:", apiTitle, errResponse);
+                            } else if (
+                                error &&
+                                typeof error === "object" &&
+                                "message" in error &&
+                                typeof (error as { message?: unknown }).message === "string"
+                            ) {
+                                setErrors({ submit: (error as { message: string }).message });
+                                console.error("Error submitting patient:", (error as { message: string }).message, error);
+                            } else {
+                                setErrors({ submit: translate("SearchByDetails.unexpectedError") });
+                                console.error("Unexpected error submitting patient:", error);
+                            }
+                            setLoading(false);
+                        }
                     }
-                    setLoading(false);
-                }
+                );
+            }).catch(() => {
+                setErrors({ submit: translate("SearchBySHSNumber.errorRecaptchaFailed") });
+                setLoading(false);
             });
         }
     };

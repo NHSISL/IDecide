@@ -1,5 +1,5 @@
 export class Decision {
-    public patientId?: string;
+    public patientNhsNumber?: string;
     public decisionTypeId?: number;
     public decisionChoice?: string;
     public responsiblePersonGivenName?: string;
@@ -11,7 +11,7 @@ export class Decision {
     public updatedDate?: Date;
 
     constructor(decision: Decision) {
-        this.patientId = decision.patientId || "";
+        this.patientNhsNumber = decision.patientNhsNumber || "";
         this.decisionTypeId = decision.decisionTypeId;
         this.decisionChoice = decision.decisionChoice || "";
         this.responsiblePersonGivenName = decision.responsiblePersonGivenName || "";
