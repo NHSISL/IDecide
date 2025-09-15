@@ -74,7 +74,7 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
                     waitForGrecaptcha();
                 })
                 .catch(() => {
-                    if (isMounted) setErrors(translate("SearchBySHSNumber.errorRecaptchaLoad"));
+                    if (isMounted) setErrors({ submit: translate("SearchBySHSNumber.errorRecaptchaLoad") });
                 });
         }
         return () => { isMounted = false; };

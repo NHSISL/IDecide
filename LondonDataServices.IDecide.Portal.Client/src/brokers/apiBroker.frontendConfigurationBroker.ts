@@ -57,11 +57,11 @@ class FrontendConfigurationBroker {
             }
 
             if (!result.helpdeskContactEmail.length) {
-                throw new Error("heldesk contact email not provided");
+                throw new Error("helpdesk contact email not provided");
             }
 
             if (!result.helpdeskContactNumber.length) {
-                throw new Error("heldesk contact number not provided");
+                throw new Error("helpdesk contact number not provided");
             }
 
             return result;

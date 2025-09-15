@@ -8,7 +8,7 @@ class DecisionBroker {
     async PostDecisionAsync(decision: Decision, headers?: Record<string, string>) {
         const url = `${this.relativeDecisionsUrl}/PatientDecision`;
 
-            return await this.apiBroker.PostAsync(url,decision, headers)
+            return await this.apiBroker.PostAsync(url, decision, headers)
                 .then(() => undefined);
     }
 }
