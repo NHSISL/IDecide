@@ -1,20 +1,27 @@
 import { useNavigate } from "react-router-dom";
-import { Button } from "nhsuk-react-components";
+import { Patient } from "../../models/patients/patient";
+import { useTranslation } from "react-i18next";
+import { Row, Col } from "react-bootstrap";
 
-export const ConfirmDetails = () => {
+interface ConfirmDetailsProps {
+    createdPatient: Patient;
+}
+
+export const ConfirmDetails = ({ createdPatient }: ConfirmDetailsProps) => {
+    const { t: translate } = useTranslation();
     const navigate = useNavigate();
 
-    const handleSubmit = (choice: string) => {
-        console.log("User clicked:", choice);
+    const handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
+        const choice = event.currentTarget.value;
         switch (choice) {
             case "yes":
-                navigate("/sendCode");
+                navigate("/sendCode", { state: { createdPatient } });
                 break;
             case "no":
-                navigate("/nhsNumberSearch");
+                navigate("/nhsNumberSearch", { state: { createdPatient } });
                 break;
             case "use-code":
-                navigate("/confirmCode");
+                navigate("/confirmCode", { state: { createdPatient } });
                 break;
             default:
                 break;
@@ -22,56 +29,99 @@ export const ConfirmDetails = () => {
     };
 
     return (
-        <div className="mt-4">
-            <h4>Is this them?</h4>
-            <form className="nhsuk-form-group">
-                <dl className="nhsuk-summary-list" style={{ marginBottom: "2rem" }}>
-                    <div className="nhsuk-summary-list__row">
-                        <dt className="nhsuk-summary-list__key">Name</dt>
-                        <dd className="nhsuk-summary-list__value">boo</dd>
-                    </div>
-                    <div className="nhsuk-summary-list__row">
-                        <dt className="nhsuk-summary-list__key">Email</dt>
-                        <dd className="nhsuk-summary-list__value">Blah</dd>
-                    </div>
-                    <div className="nhsuk-summary-list__row">
-                        <dt className="nhsuk-summary-list__key">Mobile Number</dt>
-                        <dd className="nhsuk-summary-list__value">07******084</dd>
-                    </div>
-                    <div className="nhsuk-summary-list__row">
-                        <dt className="nhsuk-summary-list__key">Address</dt>
-                        <dd className="nhsuk-summary-list__value">foo</dd>
-                    </div>
-                </dl>
+        <Row className="custom-col-spacing">
+            <Col xs={12} md={6} lg={6}>
+                <div className="mt-4">
+                    {/* Power of Attorney section can be added here if needed */}
+                    <h4
+                        style={{
+                            fontWeight: 700,
+                            fontSize: "1.5rem",
+                            margin: "1.5rem 0 1rem 0",
+                            color: "#212529"
+                        }}
+                    >
+                        {translate("ConfirmDetails.isThisYou")}
+                    </h4>
+                    <form className="nhsuk-form-group">
+                        <dl className="nhsuk-summary-list" style={{ marginBottom: "2rem" }}>
+                            <div className="nhsuk-summary-list__row">
+                                <dt className="nhsuk-summary-list__key">{translate("ConfirmDetails.name")}</dt>
+                                <dd className="nhsuk-summary-list__value">
+                                    {createdPatient.givenName + ',' + createdPatient.surname}
+                                </dd>
+                            </div>
+                            <div className="nhsuk-summary-list__row">
+                                <dt className="nhsuk-summary-list__key">{translate("ConfirmDetails.email")}</dt>
+                                <dd className="nhsuk-summary-list__value">{createdPatient.email}</dd>
+                            </div>
+                            <div className="nhsuk-summary-list__row">
+                                <dt className="nhsuk-summary-list__key">{translate("ConfirmDetails.mobileNumber")}</dt>
+                                <dd className="nhsuk-summary-list__value">07******084</dd>
+                            </div>
+                            <div className="nhsuk-summary-list__row">
+                                <dt className="nhsuk-summary-list__key">{translate("ConfirmDetails.address")}</dt>
+                                <dd className="nhsuk-summary-list__value">{createdPatient.address}</dd>
+                            </div>
+                        </dl>
 
-                <div style={{ display: "flex", gap: "1rem", marginBottom: "0.2rem" }}>
-                    <Button
-                        className="nhsuk-button nhsuk-button--success"
-                        type="button"
-                        style={{ flex: 1 }}
-                        onClick={() => handleSubmit("yes")}
-                    >
-                        Yes
-                    </Button>
-                    <Button
-                        className="nhsuk-button nhsuk-button--warning"
-                        type="button"
-                        style={{ flex: 1 }}
-                        onClick={() => handleSubmit("no")}
-                    >
-                        No
-                    </Button>
+                        <div style={{ display: "flex", gap: "1rem", marginBottom: "0.2rem" }}>
+                            <button
+                                type="button"
+                                className="nhsuk-button"
+                                style={{ flex: 1 }}
+                                value="yes"
+                                onClick={handleSubmit}
+                            >
+                                {translate("ConfirmDetails.yes")}
+                            </button>
+                            <button
+                                type="button"
+                                className="nhsuk-button nhsuk-button--secondary"
+                                style={{ flex: 1 }}
+                                value="no"
+                                onClick={handleSubmit}
+                            >
+                                {translate("ConfirmDetails.no")}
+                            </button>
+                        </div>
+
+                        <button
+                            type="button"
+                            className="nhsuk-button"
+                            style={{ width: "100%", marginBottom: 0, borderBottom: "none" }}
+                            value="use-code"
+                            onClick={handleSubmit}
+                        >
+                            {translate("ConfirmDetails.useExistingCode")}
+                        </button>
+                    </form>
                 </div>
-                <Button
-                    className="nhsuk-button nhsuk-button--secondary"
-                    type="button"
-                    style={{ width: "100%", marginBottom: 0, borderBottom: "none" }}
-                    onClick={() => handleSubmit("use-code")}
+            </Col>
+            <Col xs={12} md={6} lg={6} className="custom-col-spacing">
+                <div
+                    className="p-4 mb-4"
+                    style={{
+                        background: "#f4f8fb",
+                        border: "1px solid #d1e3f0",
+                        borderRadius: "8px",
+                        boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+                    }}
                 >
-                    They have already been sent you a code. Would you like to use that code to continue?
-                </Button>
-            </form>
-        </div>
+                    <h2 className="mb-3" style={{ color: "#005eb8" }}>
+                        {translate("ConfirmDetails.helpGuidance")}
+                    </h2>
+                    <h3 className="mb-3" style={{ color: "#005eb8" }}>
+                        {translate("ConfirmDetails.checkingYourDetails")}
+                    </h3>
+                    <p>{translate("ConfirmDetails.reviewDetails")}</p>
+                    <p>{translate("ConfirmDetails.detailsCorrect")}</p>
+                    <p>{translate("ConfirmDetails.detailsIncorrect")}</p>
+                    <p>{translate("ConfirmDetails.alreadyReceivedCode")}</p>
+                    <p>{translate("ConfirmDetails.securityInfo")}</p>
+                </div>
+            </Col>
+        </Row>
     );
 };
 

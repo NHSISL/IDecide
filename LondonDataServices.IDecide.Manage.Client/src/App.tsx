@@ -17,18 +17,27 @@ import { SendCodePage } from './pages/sendCodePage';
 import ConfirmCodePage from './pages/confirmCodePage';
 import { OptInOutPage } from './pages/optInOutPage';
 import { ThankyouPage } from './pages/thankyouPage';
+import { StepProvider } from './components/context/stepContext';
 
 function App({ instance }: any) {
 
     const router = createBrowserRouter([
         {
             path: "/",
-            element: <Root />,
+            element: (
+                <StepProvider>
+                    <Root />
+                </StepProvider>
+            ),
             errorElement: <ErrorPage />,
             children: [
                 {
                     path: "home",
                     element: <Home />
+                },
+                {
+                    path: "patientSearch",
+                    element: <PatientSearchPage />
                 },
                 {
                     path: "nhsNumberSearch",

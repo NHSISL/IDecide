@@ -1,9 +1,27 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { TextInput, Button, Select } from "nhsuk-react-components";
+import React, { useState, useEffect, useContext } from "react";
+import { useTranslation } from "react-i18next";
+import { useStep } from "../../hooks/useStep";
+import { PowerOfAttourney } from "../../models/powerOfAttourneys/powerOfAttourney";
+import { patientViewService } from "../../services/views/patientViewService";
+import { TextInput, Button, Select, Card } from "nhsuk-react-components";
 import { Container, Row, Col } from "react-bootstrap";
+import { StepContext } from "../context/stepContext";
+import { PatientLookup } from "../../models/patients/patientLookup";
+import { Patient } from "../../models/patients/patient";
+import { SearchCriteria } from "../../models/searchCriterias/searchCriteria";
+import { useNavigate } from "react-router-dom";
 
-export const SearchByNhsNumber = () => {
+export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
+    onIDontKnow: (powerOfAttourney: boolean) => void;
+    powerOfAttourney?: boolean;
+}) => {
+    const { t: translate } = useTranslation();
+    const stepContext = useContext(StepContext);
+
+    useEffect(() => {
+        stepContext?.resetStepContext?.();
+    }, [stepContext]);
+
     const [nhsNumberInput, setNhsNumberInput] = useState("1234567890");
     const [poaNhsNumberInput, setPoaNhsNumberInput] = useState("");
     const [poaFirstname, setPoaFirstname] = useState("");
@@ -14,9 +32,10 @@ export const SearchByNhsNumber = () => {
     const [poaFirstnameError, setPoaFirstnameError] = useState("");
     const [poaSurnameError, setPoaSurnameError] = useState("");
     const [poaRelationshipError, setPoaRelationshipError] = useState("");
-    const [isPowerOfAttorney, setIsPowerOfAttorney] = useState(false);
-
+    const [loading, setLoading] = useState(false);
+    const { nextStep, setCreatedPatient } = useStep();
     const navigate = useNavigate();
+    const addPatient = patientViewService.usePostPatientSearch();
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value.replace(/\D/g, "").slice(0, 10);
@@ -24,6 +43,7 @@ export const SearchByNhsNumber = () => {
         if (error) setError("");
     };
 
+    // PoA field handlers
     const handlePoaNhsNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value.replace(/\D/g, "").slice(0, 10);
         setPoaNhsNumberInput(value);
@@ -42,44 +62,28 @@ export const SearchByNhsNumber = () => {
         setPoaRelationshipError("");
     };
 
-    const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setIsPowerOfAttorney(e.target.checked);
-        setError("");
-        // Reset PoA fields when unchecked
-        if (!e.target.checked) {
-            setPoaNhsNumberInput("");
-            setPoaFirstname("");
-            setPoaSurname("");
-            setPoaRelationship("");
-            setPoaNhsNumberError("");
-            setPoaFirstnameError("");
-            setPoaSurnameError("");
-            setPoaRelationshipError("");
-        }
-    };
-
     const validatePoaFields = () => {
         let valid = true;
         if (poaNhsNumberInput.length !== 10) {
-            setPoaNhsNumberError("Enter a 10-digit NHS Number");
+            setPoaNhsNumberError(translate("SearchBySHSNumber.errorNhsNumber"));
             valid = false;
         }
         if (!poaFirstname.trim()) {
-            setPoaFirstnameError("Enter a first name");
+            setPoaFirstnameError(translate("SearchBySHSNumber.errorFirstname"));
             valid = false;
         }
         if (!poaSurname.trim()) {
-            setPoaSurnameError("Enter a surname");
+            setPoaSurnameError(translate("SearchBySHSNumber.errorSurname"));
             valid = false;
         }
         if (!poaRelationship) {
-            setPoaRelationshipError("Select a relationship");
+            setPoaRelationshipError(translate("SearchBySHSNumber.errorRelationship"));
             valid = false;
         }
         return valid;
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
         setPoaNhsNumberError("");
@@ -87,40 +91,57 @@ export const SearchByNhsNumber = () => {
         setPoaSurnameError("");
         setPoaRelationshipError("");
 
-        if (isPowerOfAttorney) {
+        if (powerOfAttourney) {
             if (!validatePoaFields()) return;
-            // Use PoA NHS number for navigation or API
-            navigate("/confirmDetails");
         } else {
             if (nhsNumberInput.length !== 10) {
-                setError("NHS Number must be exactly 10 digits.");
+                setError(translate("SearchBySHSNumber.errorNhsNumber"));
                 return;
             }
-            navigate("/confirmDetails");
         }
+
+
+        setLoading(true);
+
+        const nhsNumberToUse = powerOfAttourney ? poaNhsNumberInput : nhsNumberInput;
+        const searchCriteria = new SearchCriteria({ nhsNumber: nhsNumberToUse });
+        const patientLookup = new PatientLookup(searchCriteria, []);
+
+        let poaModel = undefined;
+        if (powerOfAttourney) {
+            poaModel = new PowerOfAttourney({
+                firstName: poaFirstname,
+                surname: poaSurname,
+                relationship: poaRelationship
+            });
+        }
+
+        addPatient.mutate(
+            patientLookup,
+            {
+                onSuccess: (createdPatient: Patient) => {
+                    setCreatedPatient(createdPatient);
+                    navigate("/confirmDetails", { state: { createdPatient } });
+                    setLoading(false);
+                },
+                onError: () => {
+                    setError(translate("SearchBySHSNumber.errorCreatePatient"));
+                    setLoading(false);
+                }
+            }
+        );
+
     };
 
     return (
-        <Container fluid>
-            <Row className="justify-content-center">
-                <Col md={6} lg={7} xl={6}>
+        <Container>
+            <Row className="custom-col-spacing">
+                <Col xs={12} md={6} lg={6}>
                     <form autoComplete="off" onSubmit={handleSubmit}>
-                        <div style={{ margin: "1rem 0" }}>
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    checked={isPowerOfAttorney}
-                                    onChange={handleCheckboxChange}
-                                    style={{ marginRight: "0.5rem" }}
-                                />
-                                Requesting an Opt-out on someone else's behalf.
-                            </label>
-                        </div>
-
-                        {!isPowerOfAttorney && (
+                        {!powerOfAttourney && (
                             <TextInput
-                                label="NHS Number"
-                                hint="It's on your National Insurance card, benefit letter, payslip or P60."
+                                label={translate("SearchBySHSNumber.nhsNumberLabel")}
+                                hint={translate("SearchBySHSNumber.nhsNumberHint")}
                                 id="nhs-number"
                                 name="nhs-number"
                                 inputMode="numeric"
@@ -134,113 +155,158 @@ export const SearchByNhsNumber = () => {
                             />
                         )}
 
-                        {isPowerOfAttorney && (
+                        {powerOfAttourney && (
                             <div style={{ marginBottom: "1.5rem" }}>
-                                <TextInput
-                                    label="NHS Number of the person they are representing"
-                                    id="poa-nhs-number"
-                                    name="poa-nhs-number"
-                                    inputMode="numeric"
-                                    pattern="\d*"
-                                    maxLength={10}
-                                    autoComplete="off"
-                                    value={poaNhsNumberInput}
-                                    onChange={handlePoaNhsNumberChange}
-                                    error={poaNhsNumberError || undefined}
-                                    style={{ maxWidth: "300px" }}
-                                />
-                                <TextInput
-                                    label="Firstname"
-                                    id="poa-firstname"
-                                    name="poa-firstname"
-                                    autoComplete="off"
-                                    value={poaFirstname}
-                                    onChange={handlePoaFirstnameChange}
-                                    error={poaFirstnameError || undefined}
-                                    style={{ maxWidth: "400px" }}
-                                />
-                                <TextInput
-                                    label="Surname"
-                                    id="poa-surname"
-                                    name="poa-surname"
-                                    autoComplete="off"
-                                    value={poaSurname}
-                                    onChange={handlePoaSurnameChange}
-                                    error={poaSurnameError || undefined}
-                                    style={{ maxWidth: "400px" }}
-                                />
-                                <div style={{ marginBottom: "1rem" }}>
-                                    <Select
-                                        label="Relationship"
-                                        id="poa-relationship"
-                                        name="poa-relationship"
-                                        aria-label="Relationship to the person you are representing"
-                                        aria-required="true"
-                                        required
-                                        value={poaRelationship}
-                                        onChange={handlePoaRelationshipChange}
-                                        error={poaRelationshipError || undefined}
-                                        style={{ maxWidth: "400px", marginBottom: "1rem" }}
-                                    >
-                                        <option value="" disabled>
-                                            Select relationship
-                                        </option>
-                                        <option value="Parent">The patient is under 13 and you are their parent</option>
-                                        <option value="Guardian">The patient is under 13 and you are their appointed guardian</option>
-                                        <option value="poa">The patient is over 13 and you have power of attorney with the right to act on their behalf.</option>
-                                    </Select>
-                                </div>
+                                <Card cardType="feature">
+                                    <Card.Content>
+                                        <Card.Heading>{translate("SearchBySHSNumber.poaNhsNumberLabel")}</Card.Heading>
+                                        <TextInput
+                                            label={translate("SearchBySHSNumber.nhsNumberLabel")}
+                                            id="poa-nhs-number"
+                                            name="poa-nhs-number"
+                                            inputMode="numeric"
+                                            pattern="\d*"
+                                            maxLength={10}
+                                            autoComplete="off"
+                                            value={poaNhsNumberInput}
+                                            onChange={handlePoaNhsNumberChange}
+                                            error={poaNhsNumberError || undefined}
+                                            style={{ maxWidth: "300px", marginBottom: "1rem" }}
+                                        />
+                                    </Card.Content>
+                                </Card>
+
+                                <Card cardType="feature">
+                                    <Card.Content>
+                                        <Card.Heading>{translate("SearchBySHSNumber.poaMyDetailsHeading")}</Card.Heading>
+                                        <TextInput
+                                            label={translate("SearchBySHSNumber.poaFirstnameLabel")}
+                                            id="poa-firstname"
+                                            name="poa-firstname"
+                                            autoComplete="off"
+                                            value={poaFirstname}
+                                            onChange={handlePoaFirstnameChange}
+                                            error={poaFirstnameError || undefined}
+                                            style={{ maxWidth: "400px", marginBottom: "1rem" }}
+                                        />
+                                        <TextInput
+                                            label={translate("SearchBySHSNumber.poaSurnameLabel")}
+                                            id="poa-surname"
+                                            name="poa-surname"
+                                            autoComplete="off"
+                                            value={poaSurname}
+                                            onChange={handlePoaSurnameChange}
+                                            error={poaSurnameError || undefined}
+                                            style={{ maxWidth: "400px", marginBottom: "1rem" }}
+                                        />
+                                        <div style={{ marginBottom: "1rem" }}>
+                                            <Select
+                                                label={translate("SearchBySHSNumber.poaRelationshipLabel")}
+                                                id="poa-relationship"
+                                                name="poa-relationship"
+                                                aria-label={translate("SearchBySHSNumber.poaRelationshipLabel")}
+                                                aria-required="true"
+                                                required
+                                                value={poaRelationship}
+                                                onChange={handlePoaRelationshipChange}
+                                                error={poaRelationshipError || undefined}
+                                                style={{ maxWidth: "400px", marginBottom: "1rem" }}
+                                            >
+                                                <option value="" disabled>
+                                                    {translate("SearchBySHSNumber.poaRelationshipSelect")}
+                                                </option>
+                                                <option value={translate("SearchBySHSNumber.poaRelationshipOptions.parent")}>
+                                                    {translate("SearchBySHSNumber.poaRelationshipOptions.parent")}
+                                                </option>
+                                                <option value={translate("SearchBySHSNumber.poaRelationshipOptions.guardian")}>
+                                                    {translate("SearchBySHSNumber.poaRelationshipOptions.guardian")}
+                                                </option>
+                                                <option value={translate("SearchBySHSNumber.poaRelationshipOptions.attorney")}>
+                                                    {translate("SearchBySHSNumber.poaRelationshipOptions.attorney")}
+                                                </option>
+                                            </Select>
+                                        </div>
+                                    </Card.Content>
+                                </Card>
                             </div>
                         )}
-
                         <div style={{ display: "flex", gap: "1rem", marginBottom: "0.2rem", marginTop: "1rem" }}>
                             <Button
                                 type="submit"
                                 disabled={
-                                    isPowerOfAttorney
+                                    loading ||
+                                    (powerOfAttourney
                                         ? !poaNhsNumberInput ||
                                         !poaFirstname.trim() ||
                                         !poaSurname.trim() ||
                                         !poaRelationship ||
                                         poaNhsNumberInput.length !== 10
-                                        : nhsNumberInput.length !== 10
+                                        : nhsNumberInput.length !== 10)
                                 }
                             >
-                                Search
+                                {loading ? translate("SearchBySHSNumber.submittingButton") : translate("SearchBySHSNumber.submitButton")}
+                            </Button>
+                            <Button
+                                type="button"
+                                secondary
+                                onClick={() => onIDontKnow(powerOfAttourney)}
+                                disabled={loading}
+                            >
+                                {translate("SearchBySHSNumber.idontknowButton")}
                             </Button>
                         </div>
                     </form>
                 </Col>
-                <Col md={6} lg={5} xl={6}>
-                    {isPowerOfAttorney && (
-                        <aside
+                <Col xs={12} md={6} lg={6} className="custom-col-spacing">
+                    {!powerOfAttourney && (
+                        <div
+                            className="p-4 mb-4"
                             style={{
-                                background: "#f8f8f8",
-                                border: "1px solid #e5e5e5",
-                                borderRadius: "4px",
-                                padding: "1.5rem",
-                                minWidth: "250px",
-                                marginTop: "3.6rem"
-                            }}>
-                            <h2 className="mb-3" style={{ color: "#005eb8" }}>Help & Guidance</h2>
+                                background: "#f4f8fb",
+                                border: "1px solid #d1e3f0",
+                                borderRadius: "8px",
+                                boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+                            }}
+                        >
+                            <h2 className="mb-3" style={{ color: "#005eb8" }}>{translate("SearchBySHSNumber.helpGuidanceTitle")}</h2>
                             <h3 className="mb-3" style={{ color: "#005eb8" }}>
-                                Requesting an Opt-out on someone else's behalf
+                                {translate("SearchBySHSNumber.helpGuidanceNhsNumberHeading")}
                             </h3>
-                            <p>
-                                You can make a request to opt-out on behalf of someone else to stop their personal data being used for secondary purposes if:
-                            </p>
-                            <ul>
-                                <li>The patient is under 13 and you are their parent</li>
-                                <li>The patient is under 13 and you are their appointed guardian</li>
-                                <li>The patient is over 13 and you have power of attorney with the right to act on their behalf.</li>
-                            </ul>
-                            <p>
-                                If you are in these circumstances then please enter your details in this blue box and in every other box use the patient's details.
-                            </p>
-                            <p>
-                                If one of these circumstances does not describe you then you cannot opt someone else out. Please click the back button.
-                            </p>
-                        </aside>
+                            <p>{translate("SearchBySHSNumber.helpGuidanceNhsNumberText1")}</p>
+                            <p>{translate("SearchBySHSNumber.helpGuidanceNhsNumberText2")}</p>
+                            <p>{translate("SearchBySHSNumber.helpGuidanceNhsNumberText3")}</p>
+                            <p>{translate("SearchBySHSNumber.helpGuidanceNhsNumberText4")}</p>
+                        </div>
+                    )}
+                    {powerOfAttourney && (
+                        <div
+                            className="p-4 mb-4"
+                            style={{
+                                background: "#f4f8fb",
+                                border: "1px solid #d1e3f0",
+                                borderRadius: "8px",
+                                boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+                            }}
+                        >
+                            <h2 className="mb-3" style={{ color: "#005eb8" }}>{translate("SearchBySHSNumber.helpGuidanceTitle")}</h2>
+
+                            <div style={{ marginBottom: "1.5rem" }}>
+                                <h3 style={{ color: "#005eb8" }}>{translate("SearchBySHSNumber.helpGuidanceEligibilityHeading")}</h3>
+                                <ul>
+                                    <li>{translate("SearchBySHSNumber.helpGuidanceEligibilityList.parent")}</li>
+                                    <li>{translate("SearchBySHSNumber.helpGuidanceEligibilityList.guardian")}</li>
+                                    <li>{translate("SearchBySHSNumber.helpGuidanceEligibilityList.attorney")}</li>
+                                </ul>
+                                <p>{translate("SearchBySHSNumber.helpGuidanceEligibilityText")}</p>
+                            </div>
+
+                            <div>
+                                <h3 style={{ color: "#005eb8" }}>{translate("SearchBySHSNumber.helpGuidancePoaNhsNumberHeading")}</h3>
+                                <p>{translate("SearchBySHSNumber.helpGuidancePoaNhsNumberText1")}</p>
+                                <p>{translate("SearchBySHSNumber.helpGuidancePoaNhsNumberText2")}</p>
+                                <p>{translate("SearchBySHSNumber.helpGuidancePoaNhsNumberText3")}</p>
+                            </div>
+                        </div>
                     )}
                 </Col>
             </Row>

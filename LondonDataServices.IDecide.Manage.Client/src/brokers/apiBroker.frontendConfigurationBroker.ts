@@ -4,12 +4,26 @@ export type FrontendConfigurationResponse = {
     clientId: string,
     authority: string,
     scopes: string,
+    environment: string,
+    application: string,
+    version: string,
+    bannerColour: string,
+    recaptchaSiteKey: string,
+    helpdeskContactEmail: string,
+    helpdeskContactNumber: string,
 }
 
 export type FrontendConfiguration = {
     clientId: string,
     authority: string,
     scopes: string[],
+    environment: string,
+    application: string,
+    version: string,
+    bannerColour: string,
+    recaptchaSiteKey: string,
+    helpdeskContactEmail: string
+    helpdeskContactNumber: string
 }
 
 class FrontendConfigurationBroker {
@@ -26,7 +40,7 @@ class FrontendConfigurationBroker {
                 scopes: response.scopes.split(',')
             }
 
-            if (!result.clientId ) {
+            if (!result.clientId) {
                 throw new Error("ClientId not provided");
             }
 
@@ -36,6 +50,18 @@ class FrontendConfigurationBroker {
 
             if (!result.scopes.length) {
                 throw new Error("Scopes not provided");
+            }
+
+            if (!result.recaptchaSiteKey.length) {
+                throw new Error("recaptchaSiteKey not provided");
+            }
+
+            if (!result.helpdeskContactEmail.length) {
+                throw new Error("helpdesk contact email not provided");
+            }
+
+            if (!result.helpdeskContactNumber.length) {
+                throw new Error("helpdesk contact number not provided");
             }
 
             return result;

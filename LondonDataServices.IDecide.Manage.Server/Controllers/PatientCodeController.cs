@@ -3,37 +3,38 @@
 // ---------------------------------------------------------
 
 using System.Threading.Tasks;
-using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
-using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
-using LondonDataServices.IDecide.Manage.Server.Models;
-using Microsoft.AspNetCore.Authorization;
+using LondonDataServices.IDecide.Portal.Server.Models;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
 
-namespace LondonDataServices.IDecide.Manage.Server.Controllers
+namespace LondonDataServices.IDecide.Portal.Server.Controllers
 {
-   
     [ApiController]
     [Route("api/[controller]")]
-    public class PatientSearchController : RESTFulController
+    public class PatientCodeController : RESTFulController
     {
         private readonly IPatientOrchestrationService patientOrchestrationService;
 
-        public PatientSearchController(IPatientOrchestrationService patientOrchestrationService)
+        public PatientCodeController(IPatientOrchestrationService patientOrchestrationService)
         {
             this.patientOrchestrationService = patientOrchestrationService;
         }
 
-        [HttpPost("PatientSearch")]
-        public async ValueTask<ActionResult<Patient>> PostPatientSearchAsync([FromBody] PatientLookup patientLookup)
+        [HttpPost("PatientGenerationRequest")]
+        public async ValueTask<ActionResult> PostPatientGenerationRequestAsync(
+            [FromBody] PatientCodeRequest patientCodeRequest)
         {
             try
             {
-                Patient patient = await this.patientOrchestrationService.PatientLookupAsync(patientLookup);
+                await this.patientOrchestrationService.RecordPatientInformationAsync(
+                    patientCodeRequest.NhsNumber,
+                    patientCodeRequest.NotificationPreference,
+                    patientCodeRequest.GenerateNewCode
+                );
 
-                return Ok(patient);
+                return Ok();
             }
             catch (PatientOrchestrationValidationException patientOrchestrationValidationException)
             {
@@ -54,16 +55,15 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
             }
         }
 
-        [HttpPost("RecordPatientInformation")]
-        public async ValueTask<ActionResult> RecordPatientInformationAsync(
-            [FromBody] RecordPatientInformationRequest recordPatientInformationRequest)
+        [HttpPost("VerifyPatientCode")]
+        public async ValueTask<ActionResult> VerifyPatientCodeAsync([FromBody] PatientCodeRequest patientCodeRequest)
         {
             try
             {
-                await this.patientOrchestrationService.RecordPatientInformationAsync(
-                    recordPatientInformationRequest.NhsNumber,
-                    recordPatientInformationRequest.NotificationPreference,
-                    recordPatientInformationRequest.GenerateNewCode);
+                await this.patientOrchestrationService.VerifyPatientCodeAsync(
+                    patientCodeRequest.NhsNumber,
+                    patientCodeRequest.VerificationCode
+                );
 
                 return Ok();
             }

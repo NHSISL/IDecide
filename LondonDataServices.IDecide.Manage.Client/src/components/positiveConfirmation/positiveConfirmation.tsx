@@ -1,82 +1,232 @@
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { Row, Col } from "react-bootstrap";
+import { Patient } from "../../models/patients/patient";
+import { PatientCodeRequest } from "../../models/patients/patientCodeRequest";
+import { isApiErrorResponse } from "../../helpers/isApiErrorResponse";
+import { patientViewService } from "../../services/views/patientViewService";
 
-const PositiveConfirmation = () => {
+interface ConfirmDetailsProps {
+    createdPatient: Patient;
+}
+
+const PositiveConfirmation = ({ createdPatient }: ConfirmDetailsProps) => {
+    const { t: translate } = useTranslation();
     const navigate = useNavigate();
+    const [error, setError] = useState<string | JSX.Element>("");
+    const updatePatient = patientViewService.useAddPatientAndGenerateCode();
 
-    const handleSubmit = (method: "Email" | "SMS" | "Letter" | "Agent") => {
-        console.log(method);
+    const patientToUpdate = new PatientCodeRequest({
+        nhsNumber: createdPatient.nhsNumber,
+        verificationCode: createdPatient.validationCode,
+        notificationPreference: "",
+        generateNewCode: false
+    });
+
+    const handleSubmit = (method: "Email" | "Sms" | "Letter" | "Agent") => {
+        setError("");
+        patientToUpdate.notificationPreference = method;
+
+        updatePatient.mutate(
+            patientToUpdate,
+            {
+                onSuccess: () => {
+                    setError("");
+                    navigate("/confirmCode", { state: { createdPatient } });
+                },
+                onError: (error: unknown) => {
+                    let apiTitle = "";
+                    if (isApiErrorResponse(error)) {
+                        const errResponse = error.response;
+                        apiTitle =
+                            errResponse.data?.title ||
+                            errResponse.data?.message ||
+                            errResponse.statusText ||
+                            "Unknown API error";
+                        if (
+                            apiTitle ===
+                            "A valid code already exists for this patient, please go to the enter code screen."
+                        ) {
+                            setError(
+                                <span>
+                                    {apiTitle}{" "}
+                                    <a
+                                        href="#"
+                                        onClick={e => {
+                                            e.preventDefault();
+                                            setError("");
+                                            navigate("/confirmCode", { state: { createdPatient } });
+                                        }}
+                                        style={{ textDecoration: "underline", color: "#005eb8" }}
+                                    >
+                                        {"Here"}
+                                    </a>
+                                </span>
+                            );
+                            return;
+                        }
+                        setError(apiTitle);
+                        console.error("API Error updating patient:", apiTitle, errResponse);
+                    } else if (
+                        error &&
+                        typeof error === "object" &&
+                        "message" in error &&
+                        typeof (error as { message?: unknown }).message === "string"
+                    ) {
+                        setError((error as { message: string }).message);
+                        console.error("Error updating patient:", (error as { message: string }).message, error);
+                    } else {
+                        setError("An unexpected error occurred.");
+                        console.error("Error updating patient:", error);
+                    }
+                }
+            }
+        );
+
         // Navigate to confirmCode route
-        navigate("/confirmCode");
+
     };
 
     return (
-        <div className="mt-2">
-            <p>Please confirm these details are correct before continuing:</p>
-            <dl className="nhsuk-summary-list" style={{ marginBottom: "2rem" }}>
-                <div className="nhsuk-summary-list__row">
-                    <dt className="nhsuk-summary-list__key">Name</dt>
-                    <dd className="nhsuk-summary-list__value">foo</dd>
-                </div>
-                <div className="nhsuk-summary-list__row">
-                    <dt className="nhsuk-summary-list__key">Email</dt>
-                    <dd className="nhsuk-summary-list__value">pow</dd>
-                </div>
-                <div className="nhsuk-summary-list__row">
-                    <dt className="nhsuk-summary-list__key">Mobile Number</dt>
-                    <dd className="nhsuk-summary-list__value">muuhahahaha</dd>
-                </div>
-                <div className="nhsuk-summary-list__row">
-                    <dt className="nhsuk-summary-list__key">Address</dt>
-                    <dd className="nhsuk-summary-list__value">junk</dd>
-                </div>
-            </dl>
+        <Row className="custom-col-spacing">
+            <Col xs={12} md={7} lg={7}>
+                <div className="mt-4">
 
-            <p style={{ fontWeight: 500, marginBottom: "1rem" }}>
-                We need to send a code to you, how would you like to receive it:
-            </p>
-            <div
-                style={{
-                    display: "flex",
-                    gap: "1rem",
-                    marginBottom: "2rem",
-                    flexWrap: "wrap",
-                }}
-            >
-                <button
-                    type="button"
-                    className="nhsuk-button"
-                    style={{ flex: 1, minWidth: 120 }}
-                    onClick={() => handleSubmit("Email")}
+                    {/*{powerOfAttourney && (*/}
+                    {/*    <Alert variant="info" className="d-flex align-items-center" style={{ marginBottom: "0.75rem", padding: "0.75rem" }}>*/}
+                    {/*        <div className="me-2" style={{ fontSize: "1.5rem", color: "#6c757d" }}>*/}
+                    {/*        </div>*/}
+                    {/*        <div>*/}
+                    {/*            <div style={{ fontSize: "1rem", marginBottom: "0.25rem", color: "#6c757d", fontWeight: 500 }}>*/}
+                    {/*                {translate("PositiveConfirmation.poaDetailsTitle")}*/}
+                    {/*            </div>*/}
+                    {/*            <dl className="mb-0" style={{ fontSize: "0.95rem", color: "#6c757d" }}>*/}
+                    {/*                <div>*/}
+                    {/*                    <dt style={{ display: "inline", fontWeight: 500 }}>{translate("PositiveConfirmation.poaNameLabel")}</dt>*/}
+                    {/*                    <dd style={{ display: "inline", marginLeft: "0.5rem" }}>*/}
+                    {/*                        <strong>{powerOfAttourney.firstName} {powerOfAttourney.surname}</strong>*/}
+                    {/*                    </dd>*/}
+                    {/*                </div>*/}
+                    {/*                <div>*/}
+                    {/*                    <dt style={{ display: "inline", fontWeight: 500 }}>{translate("PositiveConfirmation.poaRelationshipLabel")}</dt>*/}
+                    {/*                    <dd style={{ display: "inline", marginLeft: "0.5rem" }}>*/}
+                    {/*                        <strong>{powerOfAttourney.relationship}</strong>*/}
+                    {/*                    </dd>*/}
+                    {/*                </div>*/}
+                    {/*            </dl>*/}
+                    {/*        </div>*/}
+                    {/*    </Alert>*/}
+                    {/*)}*/}
+
+                    <h2>{translate("PositiveConfirmation.confirmationRequiredTitle")}</h2>
+                    <p>{translate("PositiveConfirmation.confirmationRequiredDescription")}</p>
+                    <dl className="nhsuk-summary-list" style={{ marginBottom: "2rem" }}>
+                        <div className="nhsuk-summary-list__row">
+                            <dt className="nhsuk-summary-list__key">{translate("PositiveConfirmation.summaryName")}</dt>
+                            <dd className="nhsuk-summary-list__value">{createdPatient.givenName + ',' + createdPatient.surname}</dd>
+                        </div>
+                        <div className="nhsuk-summary-list__row">
+                            <dt className="nhsuk-summary-list__key">{translate("PositiveConfirmation.summaryEmail")}</dt>
+                            <dd className="nhsuk-summary-list__value">{createdPatient.email}</dd>
+                        </div>
+                        <div className="nhsuk-summary-list__row">
+                            <dt className="nhsuk-summary-list__key">{translate("PositiveConfirmation.summaryMobile")}</dt>
+                            <dd className="nhsuk-summary-list__value">{createdPatient.phone}</dd>
+                        </div>
+                        <div className="nhsuk-summary-list__row">
+                            <dt className="nhsuk-summary-list__key">{translate("PositiveConfirmation.summaryAddress")}</dt>
+                            <dd className="nhsuk-summary-list__value">{createdPatient.address}</dd>
+                        </div>
+                    </dl>
+
+                    <p style={{ fontWeight: 500, marginBottom: "1rem" }}>
+                        {translate("PositiveConfirmation.chooseMethod")}
+                    </p>
+                    <div style={{
+                        display: "flex",
+                        gap: "1rem",
+                        marginBottom: "0.5rem",
+                        flexWrap: "wrap"
+                    }}>
+                        <button
+                            type="button"
+                            className="nhsuk-button"
+                            style={{ flex: 1, minWidth: 120 }}
+                            onClick={() => handleSubmit("Email")}
+                            disabled={!createdPatient.email}
+                        >
+                            {translate("PositiveConfirmation.methodEmail")}
+                        </button>
+                        <button
+                            type="button"
+                            className="nhsuk-button"
+                            style={{ flex: 1, minWidth: 120 }}
+                            onClick={() => handleSubmit("Sms")}
+                            disabled={!createdPatient.phone}
+                        >
+                            {translate("PositiveConfirmation.methodSMS")}
+                        </button>
+                        <button
+                            type="button"
+                            className="nhsuk-button"
+                            style={{ flex: 1, minWidth: 120 }}
+                            onClick={() => handleSubmit("Letter")}
+                            disabled={!createdPatient.address}
+                        >
+                            {translate("PositiveConfirmation.methodLetter")}
+                        </button>
+                        <button
+                            type="button"
+                            className="nhsuk-button"
+                            style={{ flex: 1, minWidth: 120 }}
+                            onClick={() => handleSubmit("Agent")}
+                            disabled={!createdPatient.address}
+                        >
+                            {translate("Agent")}
+                        </button>
+                    </div>
+                    {error && (
+                        <div
+                            id="code-error"
+                            className="nhsuk-error-message"
+                            style={{ marginTop: "0.5rem" }}
+                            role="alert"
+                        >
+                            {error}
+                        </div>
+                    )}
+                </div>
+            </Col>
+            <Col xs={12} md={5} lg={5} className="custom-col-spacing">
+                <div
+                    className="p-4 mb-4"
+                    style={{
+                        background: "#f4f8fb",
+                        border: "1px solid #d1e3f0",
+                        borderRadius: "8px",
+                        boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+                    }}
                 >
-                    Email
-                </button>
-                <button
-                    type="button"
-                    className="nhsuk-button"
-                    style={{ flex: 1, minWidth: 120 }}
-                    onClick={() => handleSubmit("SMS")}
-                >
-                    SMS
-                </button>
-                <button
-                
-                    type="button"
-                    className="nhsuk-button"
-                    style={{ flex: 1, minWidth: 120 }}
-                    onClick={() => handleSubmit("Letter")}
-                >
-                    Letter
-                </button>
-                <button
-                    type="button"
-                    className="nhsuk-button"
-                    style={{ flex: 1, minWidth: 120 }}
-                    onClick={() => handleSubmit("Agent")}
-                >
-                    Agent Accept
-                </button>
-            </div>
-        </div>
+                    <h2 className="mb-3" style={{ color: "#005eb8" }}>{translate("PositiveConfirmation.helpGuidanceTitle")}</h2>
+                    <h3 className="mb-3" style={{ color: "#005eb8" }}>
+                        {translate("PositiveConfirmation.helpReceivingCodeTitle")}
+                    </h3>
+                    <p>
+                        {translate("PositiveConfirmation.helpReceivingCodeDescription1")}
+                    </p>
+                    <p>
+                        {translate("PositiveConfirmation.helpReceivingCodeDescription2")}
+                    </p>
+                    <p>
+                        {translate("PositiveConfirmation.helpReceivingCodeDescription3")}
+                    </p>
+                    <p>
+                        {translate("PositiveConfirmation.helpReceivingCodeDescription4")}
+                    </p>
+                </div>
+            </Col>
+        </Row>
     );
 };
 

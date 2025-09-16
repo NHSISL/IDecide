@@ -7,6 +7,16 @@ import App from './App';
 import { EventType, PublicClientApplication, EventMessage, AuthenticationResult } from '@azure/msal-browser';
 import { MsalConfig } from './authConfig';
 
+// i18next setup
+import i18n from 'i18next';
+import { initReactI18next } from 'react-i18next';
+
+// Import translation JSON files using ES modules
+import enTranslation from '../public/locales/en/translation.json';
+import frTranslation from '../public/locales/fr/translation.json';
+import roTranslation from '../public/locales/ro/translation.json';
+import esTranslation from '../public/locales/es/translation.json';
+
 /**
  * MSAL should be instantiated outside of the component tree to prevent it from being re-instantiated on re-renders.
  * For more, visit: https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-react/docs/getting-started.md
@@ -32,6 +42,21 @@ MsalConfig.build().then(() => {
         const root = ReactDOM.createRoot(
             document.getElementById("root") as HTMLElement
         );
+
+        i18n
+            .use(initReactI18next)
+            .init({
+                resources: {
+                    en: { translation: enTranslation },
+                    fr: { translation: frTranslation },
+                    ro: { translation: roTranslation },
+                    es: { translation: esTranslation }
+                },
+                lng: 'en', // default language
+                fallbackLng: 'en',
+                interpolation: { escapeValue: false }
+            });
+
 
 
         root.render(
