@@ -132,7 +132,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                 .OnProperty(consumer => consumer.Name).Use(GetRandomStringWithLengthOf(36))
                 .OnProperty(consumer => consumer.CreatedBy).Use(userId)
                 .OnProperty(consumer => consumer.UpdatedBy).Use(userId)
-                .OnProperty(consumer => consumer.ConsumerStatuses).IgnoreIt();
+                .OnProperty(consumer => consumer.ConsumerAdoptions).IgnoreIt();
 
             return filler;
         }

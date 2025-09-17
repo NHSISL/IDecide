@@ -107,7 +107,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
 
                 if (maybeMatchingPatient is null)
                 {
-                    patientToRecord = await GenerateNewPatientWithCodeAsync(
+                    patientToRecord = await CreateNewPatientAsync(
                         nhsNumber, notificationPreferenceType, now);
 
                     await SendValidationCodeNotificationAsync(patientToRecord);
@@ -125,7 +125,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
 
                 if (isAuthenticatedUserWithRole)
                 {
-                    patientToRecord = await UpdatePatientWithNewCodeAsync(
+                    patientToRecord = await UpdatePatientAsync(
                         maybeMatchingPatient, notificationPreferenceType, now, true);
 
                     await SendValidationCodeNotificationAsync(patientToRecord);
@@ -135,7 +135,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
 
                 if (codeIsExpired)
                 {
-                    patientToRecord = await UpdatePatientWithNewCodeAsync(
+                    patientToRecord = await UpdatePatientAsync(
                         maybeMatchingPatient, notificationPreferenceType, now, true);
 
                     await SendValidationCodeNotificationAsync(patientToRecord);
@@ -149,7 +149,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                         "The maximum number of validation attempts has been exceeded, please contact support.");
                 }
 
-                patientToRecord = await UpdatePatientWithNewCodeAsync(
+                patientToRecord = await UpdatePatientAsync(
                     maybeMatchingPatient, notificationPreferenceType, now);
 
                 await SendValidationCodeNotificationAsync(patientToRecord);
@@ -176,18 +176,6 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                         message: $"User {currentUser.UserId} is validating a code for patient {nhsNumber}.",
                         fileName: null,
                         correlationId: correlationId.ToString());
-
-                    if (maybeMatchingPatient.ValidationCode != verificationCode)
-                    {
-                        await this.auditBroker.LogInformationAsync(
-                            auditType: "Patient Code",
-                            title: "Patient Code Validation Failed",
-                            message: "The validation code provided was incorrect.",
-                            fileName: null,
-                            correlationId: correlationId.ToString());
-
-                        throw new IncorrectValidationCodeException("The validation code provided is incorrect.");
-                    }
                 }
                 else
                 {
@@ -270,7 +258,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                     correlationId: correlationId.ToString());
             });
 
-        virtual internal async ValueTask<Patient> GenerateNewPatientWithCodeAsync(
+        virtual internal async ValueTask<Patient> CreateNewPatientAsync(
             string nhsNumber,
             NotificationPreference notificationPreference,
             DateTimeOffset now)
@@ -281,24 +269,25 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             DateTimeOffset expirationDate =
                 now.AddMinutes(decisionConfigurations.PatientValidationCodeExpireAfterMinutes);
 
-            pdsPatient.ValidationCode = validationCode;
-            pdsPatient.ValidationCodeExpiresOn = expirationDate;
-            pdsPatient.ValidationCodeMatchedOn = null;
-            pdsPatient.NotificationPreference = notificationPreference;
             Patient patientToRecord = pdsPatient;
+            patientToRecord.Id = await this.identifierBroker.GetIdentifierAsync();
+            patientToRecord.ValidationCode = validationCode;
+            patientToRecord.ValidationCodeExpiresOn = expirationDate;
+            patientToRecord.ValidationCodeMatchedOn = null;
+            patientToRecord.NotificationPreference = notificationPreference;
             Patient recordedPatient = await this.patientService.AddPatientAsync(patientToRecord);
 
             return recordedPatient;
         }
 
-        virtual internal async ValueTask<Patient> UpdatePatientWithNewCodeAsync(
+        virtual internal async ValueTask<Patient> UpdatePatientAsync(
             Patient currentPatient,
             NotificationPreference notificationPreference,
             DateTimeOffset now,
             bool resetRetryCount = false)
         {
+            Patient pdsPatient = await this.pdsService.PatientLookupByNhsNumberAsync(currentPatient.NhsNumber);
             Patient patientToUpdate = currentPatient;
-            Patient pdsPatient = await this.pdsService.PatientLookupByNhsNumberAsync(patientToUpdate.NhsNumber);
             patientToUpdate.Address = pdsPatient.Address;
             patientToUpdate.DateOfBirth = pdsPatient.DateOfBirth;
             patientToUpdate.Email = pdsPatient.Email;

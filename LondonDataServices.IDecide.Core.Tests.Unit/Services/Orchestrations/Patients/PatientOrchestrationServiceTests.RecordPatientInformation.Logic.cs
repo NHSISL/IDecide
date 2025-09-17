@@ -72,7 +72,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     .ReturnsAsync(outputDateTimeOffset);
 
             patientOrchestrationServiceMock.Setup(service =>
-                service.GenerateNewPatientWithCodeAsync(
+                service.CreateNewPatientAsync(
                     inputNhsNumber,
                     inputNotificationPreference,
                     outputDateTimeOffset))
@@ -98,7 +98,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     Times.Once);
 
             patientOrchestrationServiceMock.Verify(service =>
-                service.GenerateNewPatientWithCodeAsync(
+                service.CreateNewPatientAsync(
                     inputNhsNumber,
                     inputNotificationPreference,
                     outputDateTimeOffset),
@@ -172,7 +172,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     .ReturnsAsync(outputDateTimeOffset);
 
             patientOrchestrationServiceMock.Setup(service =>
-                service.GenerateNewPatientWithCodeAsync(
+                service.CreateNewPatientAsync(
                     inputNhsNumber,
                     inputNotificationPreference,
                     outputDateTimeOffset))
@@ -202,7 +202,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     Times.Once);
 
             patientOrchestrationServiceMock.Verify(service =>
-                service.GenerateNewPatientWithCodeAsync(
+                service.CreateNewPatientAsync(
                     inputNhsNumber,
                     inputNotificationPreference,
                     outputDateTimeOffset),
@@ -475,7 +475,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     .ReturnsAsync(outputDateTimeOffset);
 
             patientOrchestrationServiceMock.Setup(service =>
-                service.UpdatePatientWithNewCodeAsync(
+                service.UpdatePatientAsync(
                     It.Is(SamePatientAs(outputPatient)),
                     inputNotificationPreference,
                     outputDateTimeOffset,
@@ -502,7 +502,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     Times.Once);
 
             patientOrchestrationServiceMock.Verify(service =>
-                service.UpdatePatientWithNewCodeAsync(
+                service.UpdatePatientAsync(
                     It.Is(SamePatientAs(outputPatient)),
                     inputNotificationPreference,
                     outputDateTimeOffset,
@@ -580,7 +580,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     .ReturnsAsync(outputDateTimeOffset);
 
             patientOrchestrationServiceMock.Setup(service =>
-                service.UpdatePatientWithNewCodeAsync(
+                service.UpdatePatientAsync(
                     It.Is(SamePatientAs(outputPatient)),
                     inputNotificationPreference,
                     outputDateTimeOffset,
@@ -607,7 +607,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     Times.Once);
 
             patientOrchestrationServiceMock.Verify(service =>
-                service.UpdatePatientWithNewCodeAsync(
+                service.UpdatePatientAsync(
                     It.Is(SamePatientAs(outputPatient)),
                     inputNotificationPreference,
                     outputDateTimeOffset,
@@ -783,7 +783,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     .ReturnsAsync(outputDateTimeOffset);
 
             patientOrchestrationServiceMock.Setup(service =>
-                service.UpdatePatientWithNewCodeAsync(
+                service.UpdatePatientAsync(
                     It.Is(SamePatientAs(outputPatient)),
                     inputNotificationPreference,
                     outputDateTimeOffset,
@@ -810,7 +810,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     Times.Once);
 
             patientOrchestrationServiceMock.Verify(service =>
-                service.UpdatePatientWithNewCodeAsync(
+                service.UpdatePatientAsync(
                     It.Is(SamePatientAs(outputPatient)),
                     inputNotificationPreference,
                     outputDateTimeOffset,
