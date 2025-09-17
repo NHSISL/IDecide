@@ -16,7 +16,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Brokers
         private readonly HttpClient httpClient;
         private readonly IRESTFulApiFactoryClient apiFactoryClient;
         internal readonly InvisibleApiKey invisibleApiKey;
-        internal IConfiguration configuration;
+        internal readonly IConfiguration configuration;
 
         public ApiBroker()
         {
