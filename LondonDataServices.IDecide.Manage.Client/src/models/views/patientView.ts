@@ -1,14 +1,19 @@
 export class PatientView {
     public id: string;
     public nhsNumber?: string;
-    public firstName?: string;
+    public title?: string;
+    public givenName?: string;
     public surname?: string;
-    public emailAddress?: string;
-    public address?: string;
-    public postcode?: string;
-    public phoneNumber?: string;
     public dateOfBirth?: Date;
-    public verificationCode?: string;
+    public gender?: string;
+    public email?: string;
+    public phone?: string;
+    public address?: string;
+    public postCode?: string;
+    public validationCode?: string;
+    public validationCodeExpiresOn?: Date;
+    public validationCodeMatchedOn?: Date;
+    public retryCount?: number;
     public notificationPreference?: string;
     public createdBy?: string;
     public createdDate?: Date;
@@ -18,14 +23,19 @@ export class PatientView {
     constructor(
         id: string,
         nhsNumber?: string,
-        firstName?: string,
+        title?: string,
+        givenName?: string,
         surname?: string,
-        emailAddress?: string,
-        address?: string,
-        postcode?: string,
         dateOfBirth?: Date,
-        phoneNumber?: string,
-        verificationCode?: string,
+        gender?: string,
+        email?: string,
+        phone?: string,
+        address?: string,
+        postCode?: string,
+        validationCode?: string,
+        validationCodeExpiresOn?: Date,
+        validationCodeMatchedOn?: Date,
+        retryCount?: number,
         notificationPreference?: string,
         createdBy?: string,
         createdDate?: Date,
@@ -33,17 +43,22 @@ export class PatientView {
         updatedDate?: Date
     ) {
         this.id = id;
-        this.nhsNumber = nhsNumber || "";
-        this.firstName = firstName || "";
-        this.surname = surname || "";
-        this.emailAddress = emailAddress || "";
-        this.address = address || "";
-        this.postcode = postcode || "";
-        this.phoneNumber = phoneNumber || "";
+        this.nhsNumber = nhsNumber;
+        this.title = title;
+        this.givenName = givenName;
+        this.surname = surname;
         this.dateOfBirth = dateOfBirth;
-        this.verificationCode = verificationCode;
+        this.gender = gender;
+        this.email = email;
+        this.phone = phone;
+        this.address = address;
+        this.postCode = postCode;
+        this.validationCode = validationCode;
+        this.validationCodeExpiresOn = validationCodeExpiresOn;
+        this.validationCodeMatchedOn = validationCodeMatchedOn;
+        this.retryCount = retryCount;
         this.notificationPreference = notificationPreference;
-        this.createdBy = createdBy || "";
+        this.createdBy = createdBy;
         this.createdDate = createdDate;
         this.updatedBy = updatedBy;
         this.updatedDate = updatedDate;

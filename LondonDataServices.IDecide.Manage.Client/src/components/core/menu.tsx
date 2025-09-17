@@ -36,8 +36,8 @@ const MenuComponent: React.FC = () => {
             </ListGroup.Item>
 
             <ListGroup.Item
-                className={`bg-dark text-white ${location.pathname === '/patientSearch' ? 'active' : ''}`}
-                onClick={() => handleItemClick('/patientSearch')}>
+                className={`bg-dark text-white ${location.pathname === '/patientDetailsSearch' ? 'active' : ''}`}
+                onClick={() => handleItemClick('/patientDetailsSearch')}>
                 <FontAwesomeIcon icon={faUser} className="me-2 fa-icon" />
                 Search Patient Details
             </ListGroup.Item>

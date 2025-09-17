@@ -52,6 +52,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Identity.Web;
 using Microsoft.OData.Edm;
 using Microsoft.OData.ModelBuilder;
+using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 
 namespace LondonDataServices.IDecide.Manage.Server
 {
@@ -181,6 +182,7 @@ namespace LondonDataServices.IDecide.Manage.Server
                new ODataConventionModelBuilder();
 
             builder.EntitySet<Audit>("Audits");
+            builder.EntitySet<Patient>("Patients");
             builder.EnableLowerCamelCase();
 
             return builder.GetEdmModel();

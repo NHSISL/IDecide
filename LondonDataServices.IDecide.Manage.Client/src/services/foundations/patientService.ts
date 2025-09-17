@@ -1,3 +1,4 @@
+import { useInfiniteQuery} from '@tanstack/react-query';
 import PatientBroker from "../../brokers/apiBroker.patients";
 import PatientSearchBroker from "../../brokers/apiBroker.patientSearch";
 import PatientCodeBroker from "../../brokers/apiBroker.patientCode";
@@ -46,17 +47,6 @@ export const patientService = {
         });
     },
 
-    useRetrieveAllPatients: (query: string) => {
-        const broker = new PatientBroker();
-
-        return useQuery({
-            queryKey: ["PatientGetAll", { query: query }],
-            queryFn: () => broker.GetAllPatientsAsync(query),
-            staleTime: Infinity
-        });
-    },
-
-
     useRetrievePatientById: (nhsNumber: string) => {
         const broker = new PatientBroker();
 
@@ -67,5 +57,20 @@ export const patientService = {
         });
     },
 
-    
+    useRetrieveAllPatientPages: (query: string) => {
+        const patientBroker = new PatientBroker();
+
+        return useInfiniteQuery({
+            queryKey: ["PatientGetAll", { query: query }],
+            queryFn: ({ pageParam }: { pageParam?: string }) => {
+                if (!pageParam) {
+                    return patientBroker.GetPatientFirstPagesAsync(query)
+                }
+                return patientBroker.GetPatientSubsequentPagesAsync(pageParam)
+            },
+            staleTime: Infinity,
+            initialPageParam: "",
+            getNextPageParam: (lastPage: { nextPage?: string }) => lastPage.nextPage,
+        });
+    },
 };

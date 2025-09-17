@@ -1,15 +1,17 @@
-import { Container, Row, Col } from "react-bootstrap";
+import { Card, Container } from "nhsuk-react-components";
 import { PatientSearch } from "../components/patientSearch/patientSearch";
 
 export const PatientSearchPage = () => {
-
     return (
-        <Container fluid className="mt-4">
-            <Row className="mb-4 p-2">
-                <Col>
+        <Container fluid>
+            <Card cardType="feature">
+                <Card.Content>
+                    <Card.Heading>Patient Search</Card.Heading>
+                    <Card.Description>
+                    </Card.Description>
                     <PatientSearch />
-                </Col>
-            </Row>
+                </Card.Content>
+            </Card>
         </Container>
     );
-}
+};

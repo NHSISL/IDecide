@@ -20,15 +20,8 @@ export const ConfirmCode = ({ createdPatient }: ConfirmDetailsProps) => {
     const confirmCodeMutation = patientViewService.useConfirmCode();
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const rawValue = e.target.value.toUpperCase();
-        if (rawValue === "AGENT") {
-            setCode("AGENT");
-            if (error) setError("");
-            return;
-        }
-        const value = rawValue.replace(/\D/g, "").slice(0, 5);
+        const value = e.target.value.replace(/[^a-zA-Z0-9]/g, "").slice(0, 5);
         setCode(value);
-        if (error) setError("");
     };
 
     const handleSubmit = async (e: React.FormEvent) => {

@@ -4,17 +4,20 @@ import { PatientLookup } from "../models/patients/patientLookup";
 import ApiBroker from "./apiBroker";
 import { AxiosResponse } from "axios";
 
+type PatientODataResponse = {
+    data: Patient[],
+    nextPage: string
+}
+
 class PatientBroker {
-    relativePatientsUrl = '/api/Patient';
-    relativePatientsOdataUrl = '/odata/Patient'
+    relativePatientsUrl = '/api/Patients';
+    relativePatientsOdataUrl = '/odata/Patients'
 
     private apiBroker: ApiBroker = new ApiBroker();
 
-    private processOdataResult = (result: AxiosResponse) => {
-        const data = result.data.value.map((patient: Patient) => new Patient(patient));
-
+    private processOdataResult = (result: AxiosResponse): PatientODataResponse => {
         const nextPage = result.data['@odata.nextLink'];
-        return { data, nextPage }
+        return { data: result.data.value as Patient[], nextPage }
     }
 
     async PostPatientDetailsAsync(patientLookup: PatientLookup) {
@@ -34,10 +37,13 @@ class PatientBroker {
             .then(result => result.data.map((item: Patient) => new Patient(item)));
     }
 
-    async GetPatientsOdataAsync(query: string) {
-        const url = this.relativePatientsOdataUrl + (query || "");
-        const response = await this.apiBroker.GetAsync(url);
-        return this.processOdataResult(response);
+    async GetPatientFirstPagesAsync(query: string) {
+        const url = this.relativePatientsOdataUrl + query;
+        return this.processOdataResult(await this.apiBroker.GetAsync(url));
+    }
+
+    async GetPatientSubsequentPagesAsync(absoluteUri: string) {
+        return this.processOdataResult(await this.apiBroker.GetAsyncAbsolute(absoluteUri));
     }
 
     async GetPatientByIdAsync(nhsNumber: string) {

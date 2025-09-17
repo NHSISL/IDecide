@@ -18,6 +18,7 @@ import ConfirmCodePage from './pages/confirmCodePage';
 import { OptInOutPage } from './pages/optInOutPage';
 import { ThankyouPage } from './pages/thankyouPage';
 import { StepProvider } from './components/context/stepContext';
+import { PatientDetailsSearchPage } from './pages/patientDetailsSearchPage';
 
 function App({ instance }: any) {
 
@@ -44,8 +45,8 @@ function App({ instance }: any) {
                     element: <SearchByNhsNumberPage />
                 },
                 {
-                    path: "patientSearch",
-                    element: <PatientSearchPage />
+                    path: "patientDetailsSearch",
+                    element: <PatientDetailsSearchPage />
                 },
                 {
                     path: "confirmDetails",
