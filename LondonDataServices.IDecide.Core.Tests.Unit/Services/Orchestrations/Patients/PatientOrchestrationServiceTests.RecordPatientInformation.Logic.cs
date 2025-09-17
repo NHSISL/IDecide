@@ -22,6 +22,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         public async Task ShouldRecordPatientInformationAsyncWhenNoPatientFoundForAuthenticatedUser()
         {
             // given
+            Guid randomGuid = Guid.NewGuid();
             int expireAfterMinutes = this.decisionConfigurations.PatientValidationCodeExpireAfterMinutes;
             string randomNhsNumber = GenerateRandom10DigitNumber();
             string inputNhsNumber = randomNhsNumber.DeepClone();
@@ -71,6 +72,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 broker.GetCurrentDateTimeOffsetAsync())
                     .ReturnsAsync(outputDateTimeOffset);
 
+            this.identifierBrokerMock.Setup(broker =>
+                broker.GetIdentifierAsync())
+                    .ReturnsAsync(randomGuid);
+
             patientOrchestrationServiceMock.Setup(service =>
                 service.CreateNewPatientAsync(
                     inputNhsNumber,
@@ -97,6 +102,19 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
 
+            this.identifierBrokerMock.Verify(broker =>
+                broker.GetIdentifierAsync(),
+                    Times.Once);
+
+            this.auditBrokerMock.Verify(broker =>
+               broker.LogInformationAsync(
+                   "Patient",
+                   "Recording Patient Information",
+                   $"Recording a patient with NHS Number {randomNhsNumber}.",
+                   null,
+                   randomGuid.ToString()),
+                       Times.Once);
+
             patientOrchestrationServiceMock.Verify(service =>
                 service.CreateNewPatientAsync(
                     inputNhsNumber,
@@ -107,6 +125,15 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             this.notificationServiceMock.Verify(service =>
                 service.SendCodeNotificationAsync(It.Is(SameNotificationInfoAs(inputNotificationInfo))),
                         Times.Once);
+
+            this.auditBrokerMock.Verify(broker =>
+               broker.LogInformationAsync(
+                   "Patient",
+                   "Patient Recorded",
+                   $"A new patient was created with NHS Number {randomNhsNumber} and validation code was sent.",
+                   null,
+                   randomGuid.ToString()),
+                       Times.Once);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.securityBrokerMock.VerifyNoOtherCalls();
@@ -122,6 +149,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         public async Task ShouldRecordPatientInformationAsyncWhenNoPatientFoundForNonAuthenticatedUser()
         {
             // given
+            Guid randomGuid = Guid.NewGuid();
             int expireAfterMinutes = this.decisionConfigurations.PatientValidationCodeExpireAfterMinutes;
             string randomNhsNumber = GenerateRandom10DigitNumber();
             string inputNhsNumber = randomNhsNumber.DeepClone();
@@ -170,6 +198,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
                     .ReturnsAsync(outputDateTimeOffset);
+
+            this.identifierBrokerMock.Setup(broker =>
+                broker.GetIdentifierAsync())
+                    .ReturnsAsync(randomGuid);
 
             patientOrchestrationServiceMock.Setup(service =>
                 service.CreateNewPatientAsync(
@@ -201,6 +233,19 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
 
+            this.identifierBrokerMock.Verify(broker =>
+                broker.GetIdentifierAsync(),
+                    Times.Once);
+
+            this.auditBrokerMock.Verify(broker =>
+               broker.LogInformationAsync(
+                   "Patient",
+                   "Recording Patient Information",
+                   $"Recording a patient with NHS Number {randomNhsNumber}.",
+                   null,
+                   randomGuid.ToString()),
+                       Times.Once);
+
             patientOrchestrationServiceMock.Verify(service =>
                 service.CreateNewPatientAsync(
                     inputNhsNumber,
@@ -211,6 +256,15 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             this.notificationServiceMock.Verify(service =>
                 service.SendCodeNotificationAsync(It.Is(SameNotificationInfoAs(inputNotificationInfo))),
                         Times.Once);
+
+            this.auditBrokerMock.Verify(broker =>
+               broker.LogInformationAsync(
+                   "Patient",
+                   "Patient Recorded",
+                   $"A new patient was created with NHS Number {randomNhsNumber} and validation code was sent.",
+                   null,
+                   randomGuid.ToString()),
+                       Times.Once);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.securityBrokerMock.VerifyNoOtherCalls();
@@ -227,6 +281,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             ShouldErrorOnRecordPatientInformationAsyncWhenHasActiveCodeAndGenerateCodeIsFalseForAuthenticatedUser()
         {
             // given
+            Guid randomGuid = Guid.NewGuid();
             int expireAfterMinutes = this.decisionConfigurations.PatientValidationCodeExpireAfterMinutes;
             string randomNhsNumber = GenerateRandom10DigitNumber();
             string inputNhsNumber = randomNhsNumber.DeepClone();
@@ -278,6 +333,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 broker.GetCurrentDateTimeOffsetAsync())
                     .ReturnsAsync(outputDateTimeOffset);
 
+            this.identifierBrokerMock.Setup(broker =>
+                broker.GetIdentifierAsync())
+                    .ReturnsAsync(randomGuid);
+
             // when
             ValueTask recordPatientInformationTask = patientOrchestrationServiceMock.Object.RecordPatientInformationAsync(
                 inputNhsNumber,
@@ -305,6 +364,28 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
 
+            this.identifierBrokerMock.Verify(broker =>
+                broker.GetIdentifierAsync(),
+                    Times.Once);
+
+            this.auditBrokerMock.Verify(broker =>
+               broker.LogInformationAsync(
+                   "Patient",
+                   "Recording Patient Information",
+                   $"Recording a patient with NHS Number {randomNhsNumber}.",
+                   null,
+                   randomGuid.ToString()),
+                       Times.Once);
+
+            this.auditBrokerMock.Verify(broker =>
+               broker.LogInformationAsync(
+                   "Patient",
+                   "Patient Recording Failed",
+                   $"Failed to record patient for patient {randomNhsNumber} as a valid code exists.",
+                   null,
+                   randomGuid.ToString()),
+                       Times.Once);
+
             this.loggingBrokerMock.Verify(broker =>
                broker.LogErrorAsync(It.Is(SameExceptionAs(
                    expectedPatientOrchestrationValidationException))),
@@ -325,6 +406,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             ShouldErrorOnRecordPatientInformationAsyncWhenHasActiveCodeAndGenerateCodeIsFalseForNonAuthenticatedUser()
         {
             // given
+            Guid randomGuid = Guid.NewGuid();
             int expireAfterMinutes = this.decisionConfigurations.PatientValidationCodeExpireAfterMinutes;
             string randomNhsNumber = GenerateRandom10DigitNumber();
             string inputNhsNumber = randomNhsNumber.DeepClone();
@@ -376,6 +458,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 broker.GetCurrentDateTimeOffsetAsync())
                     .ReturnsAsync(outputDateTimeOffset);
 
+            this.identifierBrokerMock.Setup(broker =>
+                broker.GetIdentifierAsync())
+                    .ReturnsAsync(randomGuid);
+
             // when
             ValueTask recordPatientInformationTask = patientOrchestrationServiceMock.Object.RecordPatientInformationAsync(
                 inputNhsNumber,
@@ -403,6 +489,28 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
 
+            this.identifierBrokerMock.Verify(broker =>
+                broker.GetIdentifierAsync(),
+                    Times.Once);
+
+            this.auditBrokerMock.Verify(broker =>
+               broker.LogInformationAsync(
+                   "Patient",
+                   "Recording Patient Information",
+                   $"Recording a patient with NHS Number {randomNhsNumber}.",
+                   null,
+                   randomGuid.ToString()),
+                       Times.Once);
+
+            this.auditBrokerMock.Verify(broker =>
+               broker.LogInformationAsync(
+                   "Patient",
+                   "Patient Recording Failed",
+                   $"Failed to record patient for patient {randomNhsNumber} as a valid code exists.",
+                   null,
+                   randomGuid.ToString()),
+                       Times.Once);
+
             this.loggingBrokerMock.Verify(broker =>
                broker.LogErrorAsync(It.Is(SameExceptionAs(
                    expectedPatientOrchestrationValidationException))),
@@ -422,6 +530,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         public async Task ShouldRecordPatientInformationAsyncWhenGenerateNewCodeForAuthenticatedUser()
         {
             // given
+            Guid randomGuid = Guid.NewGuid();
             int expireAfterMinutes = this.decisionConfigurations.PatientValidationCodeExpireAfterMinutes;
             string randomNhsNumber = GenerateRandom10DigitNumber();
             string inputNhsNumber = randomNhsNumber.DeepClone();
@@ -474,6 +583,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 broker.GetCurrentDateTimeOffsetAsync())
                     .ReturnsAsync(outputDateTimeOffset);
 
+            this.identifierBrokerMock.Setup(broker =>
+                broker.GetIdentifierAsync())
+                    .ReturnsAsync(randomGuid);
+
             patientOrchestrationServiceMock.Setup(service =>
                 service.UpdatePatientAsync(
                     It.Is(SamePatientAs(outputPatient)),
@@ -501,6 +614,28 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
 
+            this.identifierBrokerMock.Verify(broker =>
+                broker.GetIdentifierAsync(),
+                    Times.Once);
+
+            this.auditBrokerMock.Verify(broker =>
+               broker.LogInformationAsync(
+                   "Patient",
+                   "Recording Patient Information",
+                   $"Recording a patient with NHS Number {randomNhsNumber}.",
+                   null,
+                   randomGuid.ToString()),
+                       Times.Once);
+
+            this.auditBrokerMock.Verify(broker =>
+               broker.LogInformationAsync(
+                   "Patient",
+                   "Patient Recorded",
+                   $"Patient with NHS Number {randomNhsNumber} was updated and new validation code was sent.",
+                   null,
+                   randomGuid.ToString()),
+                       Times.Once);
+
             patientOrchestrationServiceMock.Verify(service =>
                 service.UpdatePatientAsync(
                     It.Is(SamePatientAs(outputPatient)),
@@ -527,6 +662,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         public async Task ShouldRecordPatientInformationAsyncWhenCodeIsExpiredForNonAuthenticatedUser()
         {
             // given
+            Guid randomGuid = Guid.NewGuid();
             int expireAfterMinutes = this.decisionConfigurations.PatientValidationCodeExpireAfterMinutes;
             string randomNhsNumber = GenerateRandom10DigitNumber();
             string inputNhsNumber = randomNhsNumber.DeepClone();
@@ -579,6 +715,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 broker.GetCurrentDateTimeOffsetAsync())
                     .ReturnsAsync(outputDateTimeOffset);
 
+            this.identifierBrokerMock.Setup(broker =>
+                broker.GetIdentifierAsync())
+                    .ReturnsAsync(randomGuid);
+
             patientOrchestrationServiceMock.Setup(service =>
                 service.UpdatePatientAsync(
                     It.Is(SamePatientAs(outputPatient)),
@@ -606,6 +746,28 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
 
+            this.identifierBrokerMock.Verify(broker =>
+                broker.GetIdentifierAsync(),
+                    Times.Once);
+
+            this.auditBrokerMock.Verify(broker =>
+               broker.LogInformationAsync(
+                   "Patient",
+                   "Recording Patient Information",
+                   $"Recording a patient with NHS Number {randomNhsNumber}.",
+                   null,
+                   randomGuid.ToString()),
+                       Times.Once);
+
+            this.auditBrokerMock.Verify(broker =>
+               broker.LogInformationAsync(
+                   "Patient",
+                   "Patient Recorded",
+                   $"Patient with NHS Number {randomNhsNumber} was updated and new validation code was sent.",
+                   null,
+                   randomGuid.ToString()),
+                       Times.Once);
+
             patientOrchestrationServiceMock.Verify(service =>
                 service.UpdatePatientAsync(
                     It.Is(SamePatientAs(outputPatient)),
@@ -632,6 +794,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         public async Task ShouldErrorOnRecordPatientInformationAsyncWhenMaxRetryExceededForNonAuthenticatedUser()
         {
             // given
+            Guid randomGuid = Guid.NewGuid();
             int expireAfterMinutes = this.decisionConfigurations.PatientValidationCodeExpireAfterMinutes;
             string randomNhsNumber = GenerateRandom10DigitNumber();
             string inputNhsNumber = randomNhsNumber.DeepClone();
@@ -684,6 +847,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 broker.GetCurrentDateTimeOffsetAsync())
                     .ReturnsAsync(outputDateTimeOffset);
 
+            this.identifierBrokerMock.Setup(broker =>
+                broker.GetIdentifierAsync())
+                    .ReturnsAsync(randomGuid);
+
             // when
             ValueTask recordPatientInformationTask = patientOrchestrationServiceMock.Object.RecordPatientInformationAsync(
                 inputNhsNumber,
@@ -711,6 +878,28 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
 
+            this.identifierBrokerMock.Verify(broker =>
+                broker.GetIdentifierAsync(),
+                    Times.Once);
+
+            this.auditBrokerMock.Verify(broker =>
+               broker.LogInformationAsync(
+                   "Patient",
+                   "Recording Patient Information",
+                   $"Recording a patient with NHS Number {randomNhsNumber}.",
+                   null,
+                   randomGuid.ToString()),
+                       Times.Once);
+
+            this.auditBrokerMock.Verify(broker =>
+               broker.LogInformationAsync(
+                   "Patient",
+                   "Patient Recording Failed",
+                   $"Failed to record patient for patient {randomNhsNumber} as a max retry count exceeded.",
+                   null,
+                   randomGuid.ToString()),
+                       Times.Once);
+
             this.loggingBrokerMock.Verify(broker =>
                broker.LogErrorAsync(It.Is(SameExceptionAs(
                    expectedPatientOrchestrationValidationException))),
@@ -730,6 +919,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         public async Task ShouldRecordPatientInformationAsyncWhenMaxRetryNotExceededForNonAuthenticatedUser()
         {
             // given
+            Guid randomGuid = Guid.NewGuid();
             int expireAfterMinutes = this.decisionConfigurations.PatientValidationCodeExpireAfterMinutes;
             string randomNhsNumber = GenerateRandom10DigitNumber();
             string inputNhsNumber = randomNhsNumber.DeepClone();
@@ -782,6 +972,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 broker.GetCurrentDateTimeOffsetAsync())
                     .ReturnsAsync(outputDateTimeOffset);
 
+            this.identifierBrokerMock.Setup(broker =>
+                broker.GetIdentifierAsync())
+                    .ReturnsAsync(randomGuid);
+
             patientOrchestrationServiceMock.Setup(service =>
                 service.UpdatePatientAsync(
                     It.Is(SamePatientAs(outputPatient)),
@@ -808,6 +1002,28 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once);
+
+            this.identifierBrokerMock.Verify(broker =>
+                broker.GetIdentifierAsync(),
+                    Times.Once);
+
+            this.auditBrokerMock.Verify(broker =>
+               broker.LogInformationAsync(
+                   "Patient",
+                   "Recording Patient Information",
+                   $"Recording a patient with NHS Number {randomNhsNumber}.",
+                   null,
+                   randomGuid.ToString()),
+                       Times.Once);
+
+            this.auditBrokerMock.Verify(broker =>
+               broker.LogInformationAsync(
+                   "Patient",
+                   "Patient Recorded",
+                   $"Patient with NHS Number {randomNhsNumber} was updated and new validation code was sent.",
+                   null,
+                   randomGuid.ToString()),
+                       Times.Once);
 
             patientOrchestrationServiceMock.Verify(service =>
                 service.UpdatePatientAsync(

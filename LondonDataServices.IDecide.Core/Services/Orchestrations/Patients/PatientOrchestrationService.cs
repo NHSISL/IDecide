@@ -98,6 +98,14 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                 Patient maybeMatchingPatient = patients.FirstOrDefault(patient => patient.NhsNumber == nhsNumber);
                 Patient patientToRecord = null;
                 DateTimeOffset now = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
+                Guid correlationId = await this.identifierBroker.GetIdentifierAsync();
+
+                await this.auditBroker.LogInformationAsync(
+                        auditType: "Patient",
+                        title: "Recording Patient Information",
+                        message: $"Recording a patient with NHS Number {nhsNumber}.",
+                        fileName: null,
+                        correlationId: correlationId.ToString());
 
                 bool codeIsExpired =
                     maybeMatchingPatient is null ? true : maybeMatchingPatient.ValidationCodeExpiresOn <= now;
@@ -112,6 +120,13 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
 
                     await SendValidationCodeNotificationAsync(patientToRecord);
 
+                    await this.auditBroker.LogInformationAsync(
+                        auditType: "Patient",
+                        title: "Patient Recorded",
+                        message: $"A new patient was created with NHS Number {nhsNumber} and validation code was sent.",
+                        fileName: null,
+                        correlationId: correlationId.ToString());
+
                     return;
                 }
 
@@ -119,6 +134,13 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                     && maybeMatchingPatient.ValidationCodeMatchedOn is null
                     && generateNewCode is false)
                 {
+                    await this.auditBroker.LogInformationAsync(
+                        auditType: "Patient",
+                        title: "Patient Recording Failed",
+                        message: $"Failed to record patient for patient {nhsNumber} as a valid code exists.",
+                        fileName: null,
+                        correlationId: correlationId.ToString());
+
                     throw new ValidPatientCodeExistsException(message:
                         "A valid code already exists for this patient, please go to the enter code screen.");
                 }
@@ -130,6 +152,13 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
 
                     await SendValidationCodeNotificationAsync(patientToRecord);
 
+                    await this.auditBroker.LogInformationAsync(
+                        auditType: "Patient",
+                        title: "Patient Recorded",
+                        message: $"Patient with NHS Number {nhsNumber} was updated and new validation code was sent.",
+                        fileName: null,
+                        correlationId: correlationId.ToString());
+
                     return;
                 }
 
@@ -140,11 +169,25 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
 
                     await SendValidationCodeNotificationAsync(patientToRecord);
 
+                    await this.auditBroker.LogInformationAsync(
+                        auditType: "Patient",
+                        title: "Patient Recorded",
+                        message: $"Patient with NHS Number {nhsNumber} was updated and new validation code was sent.",
+                        fileName: null,
+                        correlationId: correlationId.ToString());
+
                     return;
                 }
 
                 if (maybeMatchingPatient.RetryCount >= this.decisionConfigurations.MaxRetryCount)
                 {
+                    await this.auditBroker.LogInformationAsync(
+                        auditType: "Patient",
+                        title: "Patient Recording Failed",
+                        message: $"Failed to record patient for patient {nhsNumber} as a max retry count exceeded.",
+                        fileName: null,
+                        correlationId: correlationId.ToString());
+
                     throw new MaxRetryAttemptsExceededException(message:
                         "The maximum number of validation attempts has been exceeded, please contact support.");
                 }
@@ -153,6 +196,13 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                     maybeMatchingPatient, notificationPreferenceType, now);
 
                 await SendValidationCodeNotificationAsync(patientToRecord);
+
+                await this.auditBroker.LogInformationAsync(
+                        auditType: "Patient",
+                        title: "Patient Recorded",
+                        message: $"Patient with NHS Number {nhsNumber} was updated and new validation code was sent.",
+                        fileName: null,
+                        correlationId: correlationId.ToString());
             });
 
         public ValueTask VerifyPatientCodeAsync(string nhsNumber, string verificationCode) =>
