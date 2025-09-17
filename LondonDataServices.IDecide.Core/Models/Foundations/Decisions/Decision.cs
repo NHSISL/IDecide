@@ -4,7 +4,7 @@
 
 using System;
 using System.Collections.Generic;
-using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerStatuses;
+using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerAdoptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -32,6 +32,6 @@ namespace LondonDataServices.IDecide.Core.Models.Foundations.Decisions
         public Patient Patient { get; set; } = null!;
 
         [BindNever]
-        public List<ConsumerStatus> ConsumerStatuses { get; set; } = new List<ConsumerStatus>();
+        public List<ConsumerAdoption> ConsumerAdoptions { get; set; } = new List<ConsumerAdoption>();
     }
 }

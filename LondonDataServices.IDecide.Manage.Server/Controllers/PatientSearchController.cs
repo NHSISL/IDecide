@@ -7,6 +7,7 @@ using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
+using LondonDataServices.IDecide.Manage.Server.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
@@ -33,6 +34,38 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
                 Patient patient = await this.patientOrchestrationService.PatientLookupAsync(patientLookup);
 
                 return Ok(patient);
+            }
+            catch (PatientOrchestrationValidationException patientOrchestrationValidationException)
+            {
+                return BadRequest(patientOrchestrationValidationException.InnerException);
+            }
+            catch (PatientOrchestrationDependencyValidationException
+                patientOrchestrationDependencyValidationException)
+            {
+                return BadRequest(patientOrchestrationDependencyValidationException.InnerException);
+            }
+            catch (PatientOrchestrationDependencyException patientOrchestrationDependencyException)
+            {
+                return InternalServerError(patientOrchestrationDependencyException);
+            }
+            catch (PatientOrchestrationServiceException patientOrchestrationServiceException)
+            {
+                return InternalServerError(patientOrchestrationServiceException);
+            }
+        }
+
+        [HttpPost("RecordPatientInformation")]
+        public async ValueTask<ActionResult> RecordPatientInformationAsync(
+            [FromBody] RecordPatientInformationRequest recordPatientInformationRequest)
+        {
+            try
+            {
+                await this.patientOrchestrationService.RecordPatientInformationAsync(
+                    recordPatientInformationRequest.NhsNumber,
+                    recordPatientInformationRequest.NotificationPreference,
+                    recordPatientInformationRequest.GenerateNewCode);
+
+                return Ok();
             }
             catch (PatientOrchestrationValidationException patientOrchestrationValidationException)
             {

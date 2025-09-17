@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 using LondonDataServices.IDecide.Core.Models.Bases;
-using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerStatuses;
+using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerAdoptions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace LondonDataServices.IDecide.Core.Models.Foundations.Consumers
@@ -21,6 +21,6 @@ namespace LondonDataServices.IDecide.Core.Models.Foundations.Consumers
         public DateTimeOffset UpdatedDate { get; set; }
 
         [BindNever]
-        public List<ConsumerStatus> ConsumerStatuses { get; set; } = new List<ConsumerStatus>();
+        public List<ConsumerAdoption> ConsumerAdoptions { get; set; } = new List<ConsumerAdoption>();
     }
 }

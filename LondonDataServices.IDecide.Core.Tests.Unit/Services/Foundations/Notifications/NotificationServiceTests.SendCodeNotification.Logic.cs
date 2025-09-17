@@ -21,7 +21,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
             NotificationInfo randomNotificationInfo = CreateRandomNotificationInfo();
             randomNotificationInfo.Patient.NotificationPreference = notificationPreference;
             NotificationInfo inputNotificationInfo = randomNotificationInfo;
-            Dictionary<string, dynamic> personalisation = GetPersonalisation(inputNotificationInfo);
+            Dictionary<string, dynamic> personalisation = GetCodePersonalisation(inputNotificationInfo);
 
             string result = GetRandomString();
 

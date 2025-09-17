@@ -1,9 +1,9 @@
 ﻿import { Container } from "react-bootstrap";
 import PositiveConfirmation from "../components/positiveConfirmation/positiveConfirmation";
-import { GenerateCodeRequest } from "../models/patients/generateCodeRequest";
+import { PatientCodeRequest } from "../models/patients/patientCodeRequest";
 
 export const SendCodePage = () => {
-    const goToConfirmCode = (createdPatient: GenerateCodeRequest) => {
+    const goToConfirmCode = (createdPatient: PatientCodeRequest) => {
         console.log("Code generated for patient:", createdPatient);
     };
 

@@ -1,0 +1,99 @@
+﻿// ---------------------------------------------------------
+// Copyright (c) North East London ICB. All rights reserved.
+// ---------------------------------------------------------
+
+using System.Threading.Tasks;
+using FluentAssertions;
+using LondonDataServices.IDecide.Manage.Server.Models;
+using Microsoft.AspNetCore.Mvc;
+using Moq;
+using RESTFulSense.Models;
+using Xeptions;
+
+namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.PatientSearches
+{
+    public partial class PatientSearchControllerTests
+    {
+        [Theory]
+        [MemberData(nameof(ValidationExceptions))]
+        public async Task ShouldReturnBadRequestOnRecordPatientInformationIfValidationErrorOccurredAsync(
+            Xeption validationException)
+        {
+            // given
+            RecordPatientInformationRequest randomRecordPatientInformationRequest =
+                GetRecordPatientInformationRequest();
+
+            RecordPatientInformationRequest inputRecordPatientInformationRequest =
+                randomRecordPatientInformationRequest;
+
+            BadRequestObjectResult expectedBadRequestObjectResult =
+                BadRequest(validationException.InnerException);
+
+            var expectedActionResult = expectedBadRequestObjectResult;
+
+            this.patientOrchestrationServiceMock.Setup(service =>
+                service.RecordPatientInformationAsync(
+                    inputRecordPatientInformationRequest.NhsNumber,
+                    inputRecordPatientInformationRequest.NotificationPreference,
+                    inputRecordPatientInformationRequest.GenerateNewCode))
+                        .ThrowsAsync(validationException);
+
+            // when
+            ActionResult actualActionResult =
+                await this.patientSearchController.RecordPatientInformationAsync(inputRecordPatientInformationRequest);
+
+            // then
+            actualActionResult.Should().BeEquivalentTo(expectedActionResult);
+
+            this.patientOrchestrationServiceMock.Verify(service =>
+                service.RecordPatientInformationAsync(
+                    inputRecordPatientInformationRequest.NhsNumber,
+                    inputRecordPatientInformationRequest.NotificationPreference,
+                    inputRecordPatientInformationRequest.GenerateNewCode),
+                        Times.Once);
+
+            this.patientOrchestrationServiceMock.VerifyNoOtherCalls();
+        }
+
+        [Theory]
+        [MemberData(nameof(ServerExceptions))]
+        public async Task ShouldReturnInternalServerErrorOnRecordPatientInformationIfServerErrorOccurredAsync(
+            Xeption serverException)
+        {
+            // given
+            RecordPatientInformationRequest randomRecordPatientInformationRequest =
+                GetRecordPatientInformationRequest();
+
+            RecordPatientInformationRequest inputRecordPatientInformationRequest =
+                randomRecordPatientInformationRequest;
+
+            InternalServerErrorObjectResult expectedInternalServerErrorObjectResult =
+                InternalServerError(serverException);
+
+            var expectedActionResult = expectedInternalServerErrorObjectResult;
+
+            this.patientOrchestrationServiceMock.Setup(service =>
+                service.RecordPatientInformationAsync(
+                    inputRecordPatientInformationRequest.NhsNumber,
+                    inputRecordPatientInformationRequest.NotificationPreference,
+                    inputRecordPatientInformationRequest.GenerateNewCode))
+                    .ThrowsAsync(serverException);
+
+            // when
+            ActionResult actualActionResult =
+                await this.patientSearchController.RecordPatientInformationAsync(inputRecordPatientInformationRequest);
+
+            // then
+            actualActionResult.Should().BeEquivalentTo(expectedActionResult);
+
+            this.patientOrchestrationServiceMock.Verify(service =>
+                service.RecordPatientInformationAsync(
+                    inputRecordPatientInformationRequest.NhsNumber,
+                    inputRecordPatientInformationRequest.NotificationPreference,
+                    inputRecordPatientInformationRequest.GenerateNewCode),
+                    Times.Once);
+
+            this.patientOrchestrationServiceMock.VerifyNoOtherCalls();
+        }
+    }
+}

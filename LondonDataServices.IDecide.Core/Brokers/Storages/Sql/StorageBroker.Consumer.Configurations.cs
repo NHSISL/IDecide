@@ -13,7 +13,7 @@ namespace LondonDataServices.IDecide.Core.Brokers.Storages.Sql
         private static void AddConsumerConfigurations(EntityTypeBuilder<Consumer> model)
         {
             model
-                .ToTable("Consumers", "Consumer");
+                .ToTable("Consumers");
 
             model
                 .Property(consumer => consumer.Id)

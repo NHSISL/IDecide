@@ -76,10 +76,10 @@ namespace LondonDataServices.IDecide.Core.Migrations
 
                     b.HasIndex("LogLevel");
 
-                    b.ToTable("Audits", "Audit");
+                    b.ToTable("Audits", (string)null);
                 });
 
-            modelBuilder.Entity("LondonDataServices.IDecide.Core.Models.Foundations.ConsumerStatuses.ConsumerStatus", b =>
+            modelBuilder.Entity("LondonDataServices.IDecide.Core.Models.Foundations.ConsumerAdoptions.ConsumerAdoption", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -117,7 +117,7 @@ namespace LondonDataServices.IDecide.Core.Migrations
                     b.HasIndex("ConsumerId", "DecisionId")
                         .IsUnique();
 
-                    b.ToTable("ConsumerStatuses", "Consumer");
+                    b.ToTable("ConsumerAdoptions", (string)null);
                 });
 
             modelBuilder.Entity("LondonDataServices.IDecide.Core.Models.Foundations.Consumers.Consumer", b =>
@@ -157,7 +157,7 @@ namespace LondonDataServices.IDecide.Core.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Consumers", "Consumer");
+                    b.ToTable("Consumers", (string)null);
                 });
 
             modelBuilder.Entity("LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes.DecisionType", b =>
@@ -189,7 +189,7 @@ namespace LondonDataServices.IDecide.Core.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("DecisionTypes", "Decision");
+                    b.ToTable("DecisionTypes", (string)null);
                 });
 
             modelBuilder.Entity("LondonDataServices.IDecide.Core.Models.Foundations.Decisions.Decision", b =>
@@ -243,7 +243,7 @@ namespace LondonDataServices.IDecide.Core.Migrations
 
                     b.HasIndex("PatientId");
 
-                    b.ToTable("Decisions", "Decision");
+                    b.ToTable("Decisions", (string)null);
                 });
 
             modelBuilder.Entity("LondonDataServices.IDecide.Core.Models.Foundations.Patients.Patient", b =>
@@ -331,19 +331,19 @@ namespace LondonDataServices.IDecide.Core.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Patients", "Decision");
+                    b.ToTable("Patients", (string)null);
                 });
 
-            modelBuilder.Entity("LondonDataServices.IDecide.Core.Models.Foundations.ConsumerStatuses.ConsumerStatus", b =>
+            modelBuilder.Entity("LondonDataServices.IDecide.Core.Models.Foundations.ConsumerAdoptions.ConsumerAdoption", b =>
                 {
                     b.HasOne("LondonDataServices.IDecide.Core.Models.Foundations.Consumers.Consumer", "Consumer")
-                        .WithMany("ConsumerStatuses")
+                        .WithMany("ConsumerAdoptions")
                         .HasForeignKey("ConsumerId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("LondonDataServices.IDecide.Core.Models.Foundations.Decisions.Decision", "Decision")
-                        .WithMany("ConsumerStatuses")
+                        .WithMany("ConsumerAdoptions")
                         .HasForeignKey("DecisionId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
@@ -374,7 +374,7 @@ namespace LondonDataServices.IDecide.Core.Migrations
 
             modelBuilder.Entity("LondonDataServices.IDecide.Core.Models.Foundations.Consumers.Consumer", b =>
                 {
-                    b.Navigation("ConsumerStatuses");
+                    b.Navigation("ConsumerAdoptions");
                 });
 
             modelBuilder.Entity("LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes.DecisionType", b =>
@@ -384,7 +384,7 @@ namespace LondonDataServices.IDecide.Core.Migrations
 
             modelBuilder.Entity("LondonDataServices.IDecide.Core.Models.Foundations.Decisions.Decision", b =>
                 {
-                    b.Navigation("ConsumerStatuses");
+                    b.Navigation("ConsumerAdoptions");
                 });
 
             modelBuilder.Entity("LondonDataServices.IDecide.Core.Models.Foundations.Patients.Patient", b =>

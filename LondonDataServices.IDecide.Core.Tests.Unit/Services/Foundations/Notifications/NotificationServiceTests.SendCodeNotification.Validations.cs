@@ -144,14 +144,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                 key: nameof(NotificationInfo.Patient.NotificationPreference),
                 values: "Value is required");
 
-            invalidArgumentsNotificationException.AddData(
-                key: nameof(NotificationInfo.Decision.DecisionChoice),
-                values: "Text is required");
-
-            invalidArgumentsNotificationException.AddData(
-                key: nameof(NotificationInfo.Decision.DecisionType.Name),
-                values: "Text is required");
-
             var expectedNotificationValidationException =
                 new NotificationValidationException(
                     message: "Notification validation errors occurred, please try again.",

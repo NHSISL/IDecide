@@ -3,9 +3,10 @@ import { useTranslation } from "react-i18next";
 import { Patient } from "../../models/patients/patient";
 import { patientViewService } from "../../services/views/patientViewService";
 import { Row, Col, Alert } from "react-bootstrap";
-import { ConfirmCodeRequest } from "../../models/patients/confirmCodeRequest";
+import { PatientCodeRequest } from "../../models/patients/patientCodeRequest";
 import { useStep } from "../../hooks/useStep";
-
+import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
+import { isApiErrorResponse } from "../../helpers/isApiErrorResponse";
 interface ConfirmCodeProps {
     createdPatient: Patient | null;
 }
@@ -16,41 +17,57 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
     const [error, setError] = useState("");
     const { nextStep, powerOfAttourney } = useStep();
     const confirmCodeMutation = patientViewService.useConfirmCode();
+    const { configuration } = useFrontendConfiguration();
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value.replace(/\D/g, "").slice(0, 5);
+        const value = e.target.value.replace(/[^a-zA-Z0-9]/g, "").slice(0, 5);
         setCode(value);
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
+
         if (code.length !== 5) {
             setError(translate("ConfirmCode.errorEnterCode"));
             return;
         }
+
         if (!createdPatient) {
             setError(translate("ConfirmCode.errorNoPatient"));
             return;
         }
 
-        confirmCodeMutation.mutate(
-            { nhsNumber: createdPatient.nhsNumber, code } as ConfirmCodeRequest,
-            {
-                onSuccess: () => {
-                    nextStep(undefined, undefined, createdPatient);
-                },
-                onError: (error: unknown) => {
-                    if (error instanceof Error) {
-                        setError(translate("ConfirmCode.errorInvalidCode"));
-                        window.console.error("Error confirming code:", error.message);
-                    } else {
-                        setError(translate("ConfirmCode.errorGeneric"));
-                        window.console.error("Error confirming code:", error);
-                    }
-                }
+        try {
+            const request = new PatientCodeRequest({
+                nhsNumber: createdPatient.nhsNumber,
+                verificationCode: code,
+                notificationPreference: "",
+                generateNewCode: false
+            });
+
+            await confirmCodeMutation.mutateAsync(request);
+            nextStep(undefined, undefined, createdPatient);
+        } catch (error: unknown) {
+            if (isApiErrorResponse(error)) {
+                const errResponse = error.response;
+                const apiTitle =
+                    errResponse.data?.title ||
+                    errResponse.data?.message ||
+                    errResponse.statusText ||
+                    "Unknown API error";
+                setError(apiTitle);
+            } else if (
+                error &&
+                typeof error === "object" &&
+                "message" in error &&
+                typeof (error as { message?: unknown }).message === "string"
+            ) {
+                setError(translate("ConfirmCode.errorInvalidCode"));
+            } else {
+                setError(translate("ConfirmCode.errorGeneric"));
             }
-        );
+        }
     };
 
     return (
@@ -58,24 +75,68 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
             <Row className="custom-col-spacing">
                 <Col xs={12} md={6} lg={6}>
                     {powerOfAttourney && (
-                        <Alert variant="info" className="d-flex align-items-center" style={{ marginBottom: "0.75rem", padding: "0.75rem" }}>
-                            <div className="me-2" style={{ fontSize: "1.5rem", color: "#6c757d" }}>
-                            </div>
+                        <Alert
+                            variant="info"
+                            className="d-flex align-items-center"
+                            style={{ marginBottom: "0.75rem", padding: "0.75rem" }}
+                        >
+                            <div
+                                className="me-2"
+                                style={{ fontSize: "1.5rem", color: "#6c757d" }}
+                            />
                             <div>
-                                <div style={{ fontSize: "1rem", marginBottom: "0.25rem", color: "#6c757d", fontWeight: 500 }}>
+                                <div
+                                    style={{
+                                        fontSize: "1rem",
+                                        marginBottom: "0.25rem",
+                                        color: "#6c757d",
+                                        fontWeight: 500
+                                    }}
+                                >
                                     {translate("ConfirmCode.powerOfAttorneyDetails")}
                                 </div>
-                                <dl className="mb-0" style={{ fontSize: "0.95rem", color: "#6c757d" }}>
+                                <dl
+                                    className="mb-0"
+                                    style={{ fontSize: "0.95rem", color: "#6c757d" }}
+                                >
                                     <div>
-                                        <dt style={{ display: "inline", fontWeight: 500 }}>{translate("ConfirmCode.powerOfAttorneyName")}</dt>
-                                        <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
-                                            <strong>{powerOfAttourney.firstName} {powerOfAttourney.surname}</strong>
+                                        <dt
+                                            style={{
+                                                display: "inline",
+                                                fontWeight: 500
+                                            }}
+                                        >
+                                            {translate("ConfirmCode.powerOfAttorneyName")}
+                                        </dt>
+                                        <dd
+                                            style={{
+                                                display: "inline",
+                                                marginLeft: "0.5rem"
+                                            }}
+                                        >
+                                            <strong>
+                                                {powerOfAttourney.firstName} {powerOfAttourney.surname}
+                                            </strong>
                                         </dd>
                                     </div>
                                     <div>
-                                        <dt style={{ display: "inline", fontWeight: 500 }}>{translate("ConfirmCode.powerOfAttorneyRelationship")}</dt>
-                                        <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
-                                            <strong>{powerOfAttourney.relationship}</strong>
+                                        <dt
+                                            style={{
+                                                display: "inline",
+                                                fontWeight: 500
+                                            }}
+                                        >
+                                            {translate("ConfirmCode.powerOfAttorneyRelationship")}
+                                        </dt>
+                                        <dd
+                                            style={{
+                                                display: "inline",
+                                                marginLeft: "0.5rem"
+                                            }}
+                                        >
+                                            <strong>
+                                                {powerOfAttourney.relationship}
+                                            </strong>
                                         </dd>
                                     </div>
                                 </dl>
@@ -83,7 +144,11 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
                         </Alert>
                     )}
 
-                    <form className="nhsuk-form-group" autoComplete="off" onSubmit={handleSubmit} >
+                    <form
+                        className="nhsuk-form-group"
+                        autoComplete="off"
+                        onSubmit={handleSubmit}
+                    >
                         <label className="nhsuk-label" htmlFor="code">
                             {translate("ConfirmCode.enterCodeLabel")}
                         </label>
@@ -92,7 +157,6 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
                             id="code"
                             name="code"
                             type="text"
-                            inputMode="numeric"
                             maxLength={5}
                             autoComplete="one-time-code"
                             value={code}
@@ -109,17 +173,38 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
                                 role="alert"
                             >
                                 {error}
+                                {error === "The maximum retry count of 3 exceeded." && (
+                                    <div style={{ marginTop: "0.5rem", fontWeight: "normal" }}>
+                                        You have entered the code wrong 3 times, please call our helpdesk
+                                        on{" "}
+                                        <a
+                                            href={`tel:${configuration.helpdeskContactNumber}`}
+                                            style={{ textDecoration: "underline" }}
+                                        >
+                                            {configuration.helpdeskContactNumber}
+                                        </a>{" "}
+                                        to complete your opt-in or opt-out request,
+                                        or alternatively email us at{" "}
+                                        <a
+                                            href={`mailto:${configuration.helpdeskContactEmail}`}
+                                            style={{ textDecoration: "underline" }}
+                                        >
+                                            {configuration.helpdeskContactEmail}
+                                        </a>
+                                    </div>
+                                )}
                             </div>
                         )}
                         <br />
-
                         <button
                             className="nhsuk-button"
                             type="submit"
-                            style={{ width: "70%", marginTop: "1.5rem" }}
+                            style={{ width: "70%", marginTop: "0.2rem" }}
                             disabled={confirmCodeMutation.isPending}
                         >
-                            {confirmCodeMutation.isPending ? translate("ConfirmCode.submittingButton") : translate("ConfirmCode.submitButton")}
+                            {confirmCodeMutation.isPending
+                                ? translate("ConfirmCode.submittingButton")
+                                : translate("ConfirmCode.submitButton")}
                         </button>
                     </form>
                 </Col>
@@ -130,18 +215,32 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
                             background: "#f4f8fb",
                             border: "1px solid #d1e3f0",
                             borderRadius: "8px",
-                            boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+                            boxShadow: "0 2px 8px rgba(0,0,0,0.04)"
                         }}
                     >
-                        <h2 className="mb-3" style={{ color: "#005eb8" }}>{translate("ConfirmCode.helpGuidanceTitle")}</h2>
+                        <h2 className="mb-3" style={{ color: "#005eb8" }}>
+                            {translate("ConfirmCode.helpGuidanceTitle")}
+                        </h2>
                         <h3>{translate("ConfirmCode.helpHowGetCodeTitle")}</h3>
                         <p>
                             {translate("ConfirmCode.helpHowGetCodeText1")}
                         </p>
                         <ul>
-                            <li><strong>{translate("ConfirmCode.helpHowGetCodeSMS")}</strong></li>
-                            <li><strong>{translate("ConfirmCode.helpHowGetCodeEmail")}</strong></li>
-                            <li><strong>{translate("ConfirmCode.helpHowGetCodeLetter")}</strong></li>
+                            <li>
+                                <strong>
+                                    {translate("ConfirmCode.helpHowGetCodeSMS")}
+                                </strong>
+                            </li>
+                            <li>
+                                <strong>
+                                    {translate("ConfirmCode.helpHowGetCodeEmail")}
+                                </strong>
+                            </li>
+                            <li>
+                                <strong>
+                                    {translate("ConfirmCode.helpHowGetCodeLetter")}
+                                </strong>
+                            </li>
                         </ul>
                         <p>
                             {translate("ConfirmCode.helpHowGetCodeText2")}

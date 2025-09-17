@@ -136,7 +136,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                 .OnProperty(decision => decision.CreatedBy).Use(userId)
                 .OnProperty(decision => decision.UpdatedBy).Use(userId)
                 .OnProperty(decision => decision.DecisionType).IgnoreIt()
-                .OnProperty(decision => decision.ConsumerStatuses).IgnoreIt();
+                .OnProperty(decision => decision.ConsumerAdoptions).IgnoreIt();
 
             return filler;
         }

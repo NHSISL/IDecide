@@ -1,46 +1,105 @@
-import React from "react";
+import React, { useState } from "react";
 import { useStep } from "../../hooks/useStep";
 import { patientViewService } from "../../services/views/patientViewService";
-import { GenerateCodeRequest } from "../../models/patients/generateCodeRequest";
+import { PatientCodeRequest } from "../../models/patients/patientCodeRequest";
 import { Row, Col, Alert } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
-
+import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
+import { loadRecaptchaScript } from "../../helpers/recaptureLoad";
+import { isApiErrorResponse } from "../../helpers/isApiErrorResponse";
 interface PositiveConfirmationProps {
-    goToConfirmCode: (createdPatient: GenerateCodeRequest) => void;
+    goToConfirmCode: (createdPatient: PatientCodeRequest) => void;
 }
 
 const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirmCode }) => {
     const { t: translate } = useTranslation();
     const { createdPatient, powerOfAttourney } = useStep();
-    const updatePatient = patientViewService.useUpdatePatient();
+    const { configuration } = useFrontendConfiguration();
+    const RECAPTCHA_SITE_KEY = configuration.recaptchaSiteKey;
+    const RECAPTCHA_ACTION_SUBMIT = "submit";
+    const updatePatient = patientViewService.useAddPatientAndGenerateCode();
+    const [error, setError] = useState<string | JSX.Element>("");
 
     if (!createdPatient) {
         return <div>{translate("PositiveConfirmation.noPatientDetails")}</div>;
     }
 
-    const patientToUpdate = new GenerateCodeRequest(createdPatient);
+    const patientToUpdate = new PatientCodeRequest({
+        nhsNumber: createdPatient.nhsNumber,
+        verificationCode: createdPatient.validationCode,
+        notificationPreference: "",
+        generateNewCode: false
+    });
 
-    const handleSubmit = (method: "Email" | "SMS" | "Letter") => {
+    const handleSubmit = async (method: "Email" | "Sms" | "Letter") => {
+        setError("");
         patientToUpdate.notificationPreference = method;
 
-        if (powerOfAttourney) {
-            patientToUpdate.poaFirstName = powerOfAttourney.firstName;
-            patientToUpdate.poaSurname = powerOfAttourney.surname;
-            patientToUpdate.poaRelationship = powerOfAttourney.relationship;
-        }
+        await loadRecaptchaScript(RECAPTCHA_SITE_KEY);
 
-        updatePatient.mutate(patientToUpdate, {
-            onSuccess: () => {
-                goToConfirmCode(patientToUpdate);
-            },
-            onError: (error: unknown) => {
-                if (error instanceof Error) {
-                    console.error("Error updating patient:", error.message);
-                } else {
-                    console.error("Error updating patient:", error);
+        try {
+            const token = await grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: RECAPTCHA_ACTION_SUBMIT });
+
+            updatePatient.mutate(
+                patientToUpdate,
+                {
+                    headers: { "X-Recaptcha-Token": token },
+                    onSuccess: () => {
+                        setError("");
+                        goToConfirmCode(patientToUpdate);
+                    },
+                    onError: (error: unknown) => {
+                        let apiTitle = "";
+                        if (isApiErrorResponse(error)) {
+                            const errResponse = error.response;
+                            apiTitle =
+                                errResponse.data?.title ||
+                                errResponse.data?.message ||
+                                errResponse.statusText ||
+                                "Unknown API error";
+                            if (
+                                apiTitle ===
+                                "A valid code already exists for this patient, please go to the enter code screen."
+                            ) {
+                                setError(
+                                    <span>
+                                        {apiTitle}{" "}
+                                        <a
+                                            href="#"
+                                            onClick={e => {
+                                                e.preventDefault();
+                                                setError("");
+                                                goToConfirmCode(patientToUpdate);
+                                            }}
+                                            style={{ textDecoration: "underline", color: "#005eb8" }}
+                                        >
+                                            {"Here"}
+                                        </a>
+                                    </span>
+                                );
+                                return;
+                            }
+                            setError(apiTitle);
+                            console.error("API Error updating patient:", apiTitle, errResponse);
+                        } else if (
+                            error &&
+                            typeof error === "object" &&
+                            "message" in error &&
+                            typeof (error as { message?: unknown }).message === "string"
+                        ) {
+                            setError((error as { message: string }).message);
+                            console.error("Error updating patient:", (error as { message: string }).message, error);
+                        } else {
+                            setError("An unexpected error occurred.");
+                            console.error("Error updating patient:", error);
+                        }
+                    }
                 }
-            }
-        });
+            );
+        } catch (err) {
+            setError("Error executing reCAPTCHA.");
+            console.error("Error executing reCAPTCHA:", err);
+        }
     };
 
     return (
@@ -101,7 +160,7 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                     <div style={{
                         display: "flex",
                         gap: "1rem",
-                        marginBottom: "2rem",
+                        marginBottom: "0.5rem",
                         flexWrap: "wrap"
                     }}>
                         <button
@@ -117,7 +176,7 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                             type="button"
                             className="nhsuk-button"
                             style={{ flex: 1, minWidth: 120 }}
-                            onClick={() => handleSubmit("SMS")}
+                            onClick={() => handleSubmit("Sms")}
                             disabled={!createdPatient.phone}
                         >
                             {translate("PositiveConfirmation.methodSMS")}
@@ -132,6 +191,16 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                             {translate("PositiveConfirmation.methodLetter")}
                         </button>
                     </div>
+                    {error && (
+                        <div
+                            id="code-error"
+                            className="nhsuk-error-message"
+                            style={{ marginTop: "0.5rem" }}
+                            role="alert"
+                        >
+                            {error}
+                        </div>
+                    )}
                 </div>
             </Col>
             <Col xs={12} md={5} lg={5} className="custom-col-spacing">
