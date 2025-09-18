@@ -98,14 +98,14 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
                     title: "Decision Submission Failed",
 
                     message: "There was no matched validation code found for this patient " +
-                        $"patient Nhs Number: {maybeMatchingPatient.NhsNumber}, " +
+                        $"Nhs Number: {maybeMatchingPatient.NhsNumber}, " +
                         $"with PatientId {maybeMatchingPatient.Id}",
 
                     fileName: null,
                     correlationId: correlationId.ToString());
 
                     throw new ValidationCodeNotMatchedException(
-                        "The validation code for this patient has not been succesfully matched");
+                        "The validation code for this patient has not been successfully matched");
                 }
 
                 DateTimeOffset now = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
@@ -131,9 +131,9 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
                         "Please complete validation process again.");
                 }
 
-                Patient udpatedPatient = maybeMatchingPatient;
-                udpatedPatient.NotificationPreference = decision.Patient.NotificationPreference;
-                Patient modifiedPatient = await this.patientService.ModifyPatientAsync(udpatedPatient);
+                Patient updatedPatient = maybeMatchingPatient;
+                updatedPatient.NotificationPreference = decision.Patient.NotificationPreference;
+                Patient modifiedPatient = await this.patientService.ModifyPatientAsync(updatedPatient);
                 Decision addedDecision = await this.decisionService.AddDecisionAsync(decision);
 
                 NotificationInfo notificationInfo = new NotificationInfo
@@ -148,7 +148,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
                     auditType: "Decision",
                     title: "Decision Submitted",
 
-                    message: $"The patients decision has been succesfully submitted for " +
+                    message: $"The patient's decision has been successfully submitted for " +
                         $"decisionId {addedDecision.Id.ToString()}, " +
                         $"patient Nhs Number: {maybeMatchingPatient.NhsNumber}, with PatientId {maybeMatchingPatient.Id}",
 

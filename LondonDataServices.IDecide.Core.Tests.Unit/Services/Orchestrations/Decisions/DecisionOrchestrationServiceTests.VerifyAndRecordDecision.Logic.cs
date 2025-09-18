@@ -138,7 +138,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                     "Decision",
                     "Decision Submitted",
 
-                    $"The patients decision has been succesfully submitted for " +
+                    $"The patient's decision has been successfully submitted for " +
                         $"decisionId {randomDecision.Id.ToString()}, " +
                         $"patient Nhs Number: {randomPatient.NhsNumber}, with PatientId {randomPatient.Id}",
 
@@ -274,7 +274,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                     "Decision",
                     "Decision Submitted",
 
-                    $"The patients decision has been succesfully submitted for " +
+                    $"The patient's decision has been successfully submitted for " +
                         $"decisionId {randomDecision.Id.ToString()}, " +
                         $"patient Nhs Number: {randomPatient.NhsNumber}, with PatientId {randomPatient.Id}",
 
@@ -346,7 +346,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
 
             var validationCodeNotMatchedException =
                new ValidationCodeNotMatchedException(
-                   "The validation code for this patient has not been succesfully matched");
+                   "The validation code for this patient has not been successfully matched");
 
             var expectedDecisionOrchestrationValidationException =
                 new DecisionOrchestrationValidationException(
@@ -400,7 +400,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                     "Decision Submission Failed",
 
                     "There was no matched validation code found for this patient " +
-                        $"patient Nhs Number: {randomPatient.NhsNumber}, with PatientId {randomPatient.Id}",
+                        $"Nhs Number: {randomPatient.NhsNumber}, with PatientId {randomPatient.Id}",
 
                     null,
                     randomGuid.ToString()),
@@ -617,7 +617,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
 
             var validationCodeNotMatchedException =
                new ValidationCodeNotMatchedException(
-                   "The validation code for this patient has not been succesfully matched");
+                   "The validation code for this patient has not been successfully matched");
 
             var expectedDecisionOrchestrationValidationException =
                 new DecisionOrchestrationValidationException(
@@ -671,7 +671,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                     "Decision Submission Failed",
 
                     "There was no matched validation code found for this patient " +
-                        $"patient Nhs Number: {randomPatient.NhsNumber}, with PatientId {randomPatient.Id}",
+                        $"Nhs Number: {randomPatient.NhsNumber}, with PatientId {randomPatient.Id}",
 
                     null,
                     randomGuid.ToString()),
