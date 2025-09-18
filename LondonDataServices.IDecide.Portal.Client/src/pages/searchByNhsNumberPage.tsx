@@ -4,12 +4,12 @@ import { Container } from "react-bootstrap";
 
 interface SearchByNhsNumberPageProps {
     onIDontKnow: () => void;
-    powerOfAttourney?: boolean;
+    powerOfAttorney?: boolean;
 }
 
-export const SearchByNhsNumberPage: React.FC<SearchByNhsNumberPageProps> = ({ onIDontKnow, powerOfAttourney }) => (
+export const SearchByNhsNumberPage: React.FC<SearchByNhsNumberPageProps> = ({ onIDontKnow, powerOfAttorney }) => (
     <Container>
-        <SearchByNhsNumber onIDontKnow={onIDontKnow} powerOfAttourney={powerOfAttourney} />
+        <SearchByNhsNumber onIDontKnow={onIDontKnow} powerOfAttorney={powerOfAttorney} />
     </Container>
 );
 
