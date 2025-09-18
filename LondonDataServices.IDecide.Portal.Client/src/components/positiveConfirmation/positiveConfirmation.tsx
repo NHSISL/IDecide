@@ -25,8 +25,8 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
     }
 
     const patientToUpdate = new PatientCodeRequest({
-        nhsNumber: createdPatient.nhsNumber,
-        verificationCode: createdPatient.validationCode,
+        nhsNumber: createdPatient.nhsNumber!,
+        verificationCode: createdPatient.validationCode!,
         notificationPreference: "",
         generateNewCode: false
     });
