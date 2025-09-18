@@ -3,6 +3,10 @@
 # C# or VB files
 [*.{cs,vb,ts,tsx}]
 guidelines = 120
+indent_style = space
+indent_size = 4
+trim_trailing_whitespace = true
+end_of_line = crlf
 
 #### Core EditorConfig Options ####
 
@@ -11,4 +15,3 @@ file_header_template = ---------------------------------------------------------
 
 #sort System.* using directives alphabetically, and place them before other usings
 dotnet_sort_system_directives_first = true
-
