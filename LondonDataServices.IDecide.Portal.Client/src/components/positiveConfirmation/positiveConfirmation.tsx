@@ -13,7 +13,7 @@ interface PositiveConfirmationProps {
 
 const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirmCode }) => {
     const { t: translate } = useTranslation();
-    const { createdPatient, powerOfAttourney } = useStep();
+    const { createdPatient, powerOfAttorney } = useStep();
     const { configuration } = useFrontendConfiguration();
     const RECAPTCHA_SITE_KEY = configuration.recaptchaSiteKey;
     const RECAPTCHA_ACTION_SUBMIT = "submit";
@@ -25,8 +25,8 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
     }
 
     const patientToUpdate = new PatientCodeRequest({
-        nhsNumber: createdPatient.nhsNumber,
-        verificationCode: createdPatient.validationCode,
+        nhsNumber: createdPatient.nhsNumber!,
+        verificationCode: createdPatient.validationCode!,
         notificationPreference: "",
         generateNewCode: false
     });
@@ -107,7 +107,7 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
             <Col xs={12} md={7} lg={7}>
                 <div className="mt-4">
 
-                    {powerOfAttourney && (
+                    {powerOfAttorney && (
                         <Alert variant="info" className="d-flex align-items-center" style={{ marginBottom: "0.75rem", padding: "0.75rem" }}>
                             <div className="me-2" style={{ fontSize: "1.5rem", color: "#6c757d" }}>
                             </div>
@@ -119,13 +119,13 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                                     <div>
                                         <dt style={{ display: "inline", fontWeight: 500 }}>{translate("PositiveConfirmation.poaNameLabel")}</dt>
                                         <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
-                                            <strong>{powerOfAttourney.firstName} {powerOfAttourney.surname}</strong>
+                                            <strong>{powerOfAttorney.firstName} {powerOfAttorney.surname}</strong>
                                         </dd>
                                     </div>
                                     <div>
                                         <dt style={{ display: "inline", fontWeight: 500 }}>{translate("PositiveConfirmation.poaRelationshipLabel")}</dt>
                                         <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
-                                            <strong>{powerOfAttourney.relationship}</strong>
+                                            <strong>{powerOfAttorney.relationship}</strong>
                                         </dd>
                                     </div>
                                 </dl>

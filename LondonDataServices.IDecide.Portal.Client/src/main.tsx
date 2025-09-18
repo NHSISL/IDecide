@@ -9,10 +9,10 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
 // Import translation JSON files using ES modules
-import enTranslation from '../public/locales/en/translation.json';
-import frTranslation from '../public/locales/fr/translation.json';
-import roTranslation from '../public/locales/ro/translation.json';
-import esTranslation from '../public/locales/es/translation.json';
+import enTranslation from '../src/locales/en/translation.json';
+import frTranslation from '../src/locales/fr/translation.json';
+import roTranslation from '../src/locales/ro/translation.json';
+import esTranslation from '../src/locales/es/translation.json';
 
 i18n
     .use(initReactI18next)

@@ -9,17 +9,17 @@ interface ConfirmDetailsProps {
 
 export const ConfirmDetails: React.FC<ConfirmDetailsProps> = ({ goToConfirmCode }) => {
     const { t: translate } = useTranslation();
-    const { setCurrentStepIndex, nextStep, createdPatient, powerOfAttourney } = useStep();
+    const { setCurrentStepIndex, nextStep, createdPatient, powerOfAttorney } = useStep();
 
     useEffect(() => {
-    }, [powerOfAttourney]);
+    }, [powerOfAttorney]);
 
     const handleNoClick = () => {
         setCurrentStepIndex(0);
     };
 
     const handleYesClick = () => {
-        nextStep(undefined, undefined, createdPatient!, powerOfAttourney!);
+        nextStep(undefined, undefined, createdPatient!, powerOfAttorney!);
     };
 
     if (!createdPatient) {
@@ -30,7 +30,7 @@ export const ConfirmDetails: React.FC<ConfirmDetailsProps> = ({ goToConfirmCode 
         <Row className="custom-col-spacing">
             <Col xs={12} md={6} lg={6}>
                 <div className="mt-4">
-                    {powerOfAttourney && (
+                    {powerOfAttorney && (
                         <Alert variant="info" className="d-flex align-items-center" style={{ marginBottom: "0.75rem", padding: "0.75rem" }}>
                             <div className="me-2" style={{ fontSize: "1.5rem", color: "#6c757d" }}>
                             </div>
@@ -42,13 +42,13 @@ export const ConfirmDetails: React.FC<ConfirmDetailsProps> = ({ goToConfirmCode 
                                     <div>
                                         <dt style={{ display: "inline", fontWeight: 500 }}>{translate("ConfirmDetails.powerOfAttorneyName")}:</dt>
                                         <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
-                                            <strong>{powerOfAttourney.firstName} {powerOfAttourney.surname}</strong>
+                                            <strong>{powerOfAttorney.firstName} {powerOfAttorney.surname}</strong>
                                         </dd>
                                     </div>
                                     <div>
                                         <dt style={{ display: "inline", fontWeight: 500 }}>{translate("ConfirmDetails.powerOfAttorneyRelationship")}:</dt>
                                         <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
-                                            <strong>{powerOfAttourney.relationship}</strong>
+                                            <strong>{powerOfAttorney.relationship}</strong>
                                         </dd>
                                     </div>
                                 </dl>

@@ -57,6 +57,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Identity.Web;
 using Microsoft.OData.Edm;
 using Microsoft.OData.ModelBuilder;
+using LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions;
 
 namespace LondonDataServices.IDecide.Portal.Server
 {
@@ -306,6 +307,7 @@ namespace LondonDataServices.IDecide.Portal.Server
 
             services.AddSingleton(decisionConfigurations);
             services.AddTransient<IPatientOrchestrationService, PatientOrchestrationService>();
+            services.AddTransient<IDecisionOrchestrationService, DecisionOrchestrationService>();
         }
 
         private static void AddCoordinationServices(IServiceCollection services, IConfiguration configuration)

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { useStep } from "../../hooks/useStep";
-import { PowerOfAttourney } from "../../models/powerOfAttourneys/powerOfAttourney";
+import { PowerOfAttorney } from "../../models/powerOfAttourneys/powerOfAttourney";
 import { patientViewService } from "../../services/views/patientViewService";
 import { TextInput, Button, Select, Card } from "nhsuk-react-components";
 import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
@@ -12,9 +12,9 @@ import { PatientLookup } from "../../models/patients/patientLookup";
 import { Patient } from "../../models/patients/patient";
 import { SearchCriteria } from "../../models/searchCriterias/searchCriteria";
 
-export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
-    onIDontKnow: (powerOfAttourney: boolean) => void;
-    powerOfAttourney?: boolean;
+export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
+    onIDontKnow: (powerOfAttorney: boolean) => void;
+    powerOfAttorney?: boolean;
 }) => {
     const { t: translate } = useTranslation();
     const stepContext = useContext(StepContext);
@@ -126,7 +126,7 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
         setPoaSurnameError("");
         setPoaRelationshipError("");
 
-        if (powerOfAttourney) {
+        if (powerOfAttorney) {
             if (!validatePoaFields()) return;
         } else {
             if (nhsNumberInput.length !== 10) {
@@ -142,13 +142,13 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
         setLoading(true);
         try {
             grecaptcha.execute(recaptchaSiteKey, { action: RECAPTCHA_ACTION_SUBMIT }).then((token: string) => {
-                const nhsNumberToUse = powerOfAttourney ? poaNhsNumberInput : nhsNumberInput;
+                const nhsNumberToUse = powerOfAttorney ? poaNhsNumberInput : nhsNumberInput;
                 const searchCriteria = new SearchCriteria({ nhsNumber: nhsNumberToUse });
                 const patientLookup = new PatientLookup(searchCriteria, []);
 
                 let poaModel = undefined;
-                if (powerOfAttourney) {
-                    poaModel = new PowerOfAttourney({
+                if (powerOfAttorney) {
+                    poaModel = new PowerOfAttorney({
                         firstName: poaFirstname,
                         surname: poaSurname,
                         relationship: poaRelationship
@@ -182,7 +182,7 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
             <Row className="custom-col-spacing">
                 <Col xs={12} md={6} lg={6}>
                     <form autoComplete="off" onSubmit={handleSubmit}>
-                        {!powerOfAttourney && (
+                        {!powerOfAttorney && (
                             <TextInput
                                 label={translate("SearchBySHSNumber.nhsNumberLabel")}
                                 hint={translate("SearchBySHSNumber.nhsNumberHint")}
@@ -199,7 +199,7 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
                             />
                         )}
 
-                        {powerOfAttourney && (
+                        {powerOfAttorney && (
                             <div style={{ marginBottom: "1.5rem" }}>
                                 <Card cardType="feature">
                                     <Card.Content>
@@ -280,7 +280,7 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
                                 disabled={
                                     loading ||
                                     !recaptchaReady ||
-                                    (powerOfAttourney
+                                    (powerOfAttorney
                                         ? !poaNhsNumberInput ||
                                         !poaFirstname.trim() ||
                                         !poaSurname.trim() ||
@@ -294,7 +294,7 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
                             <Button
                                 type="button"
                                 secondary
-                                onClick={() => onIDontKnow(powerOfAttourney)}
+                                onClick={() => onIDontKnow(powerOfAttorney)}
                                 disabled={loading}
                             >
                                 {translate("SearchBySHSNumber.idontknowButton")}
@@ -303,7 +303,7 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
                     </form>
                 </Col>
                 <Col xs={12} md={6} lg={6} className="custom-col-spacing">
-                    {!powerOfAttourney && (
+                    {!powerOfAttorney && (
                         <div
                             className="p-4 mb-4"
                             style={{
@@ -323,7 +323,7 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
                             <p>{translate("SearchBySHSNumber.helpGuidanceNhsNumberText4")}</p>
                         </div>
                     )}
-                    {powerOfAttourney && (
+                    {powerOfAttorney && (
                         <div
                             className="p-4 mb-4"
                             style={{

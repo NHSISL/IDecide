@@ -1,11 +1,11 @@
-export class PowerOfAttourney {
+export class PowerOfAttorney {
     public firstName?: string;
     public surname?: string;
     public relationship?: string;
 
-    constructor(powerOfAttourney: PowerOfAttourney) {
-        this.firstName = powerOfAttourney.firstName || "";
-        this.surname = powerOfAttourney.surname || "";
-        this.relationship = powerOfAttourney.relationship || "";
+    constructor(powerOfAttorney: PowerOfAttorney) {
+        this.firstName = powerOfAttorney.firstName || "";
+        this.surname = powerOfAttorney.surname || "";
+        this.relationship = powerOfAttorney.relationship || "";
     }
 }
