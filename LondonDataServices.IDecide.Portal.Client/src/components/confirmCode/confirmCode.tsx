@@ -40,7 +40,7 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
 
         try {
             const request = new PatientCodeRequest({
-                nhsNumber: createdPatient.nhsNumber,
+                nhsNumber: createdPatient.nhsNumber!,
                 verificationCode: code,
                 notificationPreference: "",
                 generateNewCode: false
