@@ -30,10 +30,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             Guid randomGuid = Guid.NewGuid();
             string randomIpAddress = GetRandomString();
             Patient randomPatient = GetRandomPatient(randomDateTime, randomNhsNumber, randomValidationCode);
+            Patient outputPatient = randomPatient.DeepClone();
             List<Patient> randomPatients = GetRandomPatients(randomDateTime);
             randomPatients.Add(randomPatient);
             List<Patient> outputPatients = randomPatients.DeepClone();
             Decision randomDecision = GetRandomDecision(randomPatient);
+            randomDecision.PatientId = randomPatient.Id;
             Decision inputDecision = randomDecision.DeepClone();
             Decision outputDecision = inputDecision.DeepClone();
 
@@ -75,6 +77,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 broker.GetCurrentDateTimeOffsetAsync())
                     .ReturnsAsync(randomDateTime);
 
+            this.patientServiceMock.Setup(service =>
+                service.ModifyPatientAsync(It.Is(SamePatientAs(randomPatient))))
+                    .ReturnsAsync(outputPatient);
+
             this.decisionServiceMock.Setup(service =>
                 service.AddDecisionAsync(It.Is(SameDecisionAs(inputDecision))))
                     .ReturnsAsync(outputDecision);
@@ -103,7 +109,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 broker.LogInformationAsync(
                     "Decision",
                     "Verifying Decision",
-                    $"Patient with IP address {randomIpAddress} is validating a code for patient {randomNhsNumber}.",
+
+                    $"Patient with IP address {randomIpAddress} is validating a code for " +
+                        $"patient Nhs Number: {randomPatient.NhsNumber}, with PatientId {randomPatient.Id}",
+
                     null,
                     randomGuid.ToString()),
                         Times.Once);
@@ -111,6 +120,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once());
+
+            this.patientServiceMock.Verify(service =>
+                service.ModifyPatientAsync(It.Is(SamePatientAs(randomPatient))),
+                    Times.Once);
 
             this.decisionServiceMock.Verify(service =>
                 service.AddDecisionAsync(It.Is(SameDecisionAs(inputDecision))),
@@ -124,7 +137,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 broker.LogInformationAsync(
                     "Decision",
                     "Decision Submitted",
-                    "The patients decision has been succesfully submitted",
+
+                    $"The patient's decision has been successfully submitted for decisionId {randomDecision.Id}, " +
+                        $"patient Nhs Number: {randomPatient.NhsNumber}, with PatientId {randomPatient.Id}",
+
                     null,
                     randomGuid.ToString()),
                         Times.Once);
@@ -149,10 +165,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             Guid randomGuid = Guid.NewGuid();
             User randomUser = CreateRandomUser();
             Patient randomPatient = GetRandomPatient(randomDateTime, randomNhsNumber, randomValidationCode);
+            Patient outputPatient = randomPatient.DeepClone();
             List<Patient> randomPatients = GetRandomPatients(randomDateTime);
             randomPatients.Add(randomPatient);
             List<Patient> outputPatients = randomPatients.DeepClone();
             Decision randomDecision = GetRandomDecision(randomPatient);
+            randomDecision.PatientId = randomPatient.Id;
             Decision inputDecision = randomDecision.DeepClone();
             Decision outputDecision = inputDecision.DeepClone();
 
@@ -194,6 +212,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 broker.GetCurrentDateTimeOffsetAsync())
                     .ReturnsAsync(randomDateTime);
 
+            this.patientServiceMock.Setup(service =>
+                service.ModifyPatientAsync(It.Is(SamePatientAs(randomPatient))))
+                    .ReturnsAsync(outputPatient);
+
             this.decisionServiceMock.Setup(service =>
                 service.AddDecisionAsync(It.Is(SameDecisionAs(inputDecision))))
                     .ReturnsAsync(outputDecision);
@@ -222,7 +244,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 broker.LogInformationAsync(
                     "Decision",
                     "Verifying Decision",
-                    $"User {randomUser.UserId} is verifying the decision for patient {randomNhsNumber}.",
+
+                    $"User {randomUser.UserId} is verifying the decision for " +
+                        $"patient Nhs Number: {randomPatient.NhsNumber}, with PatientId {randomPatient.Id}",
+
                     null,
                     randomGuid.ToString()),
                         Times.Once);
@@ -230,6 +255,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffsetAsync(),
                     Times.Once());
+
+            this.patientServiceMock.Verify(service =>
+                service.ModifyPatientAsync(It.Is(SamePatientAs(randomPatient))),
+                    Times.Once);
 
             this.decisionServiceMock.Verify(service =>
                 service.AddDecisionAsync(It.Is(SameDecisionAs(inputDecision))),
@@ -243,7 +272,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 broker.LogInformationAsync(
                     "Decision",
                     "Decision Submitted",
-                    "The patients decision has been succesfully submitted",
+
+                    $"The patient's decision has been successfully submitted for decisionId {randomDecision.Id}, " +
+                        $"patient Nhs Number: {randomPatient.NhsNumber}, with PatientId {randomPatient.Id}",
+
                     null,
                     randomGuid.ToString()),
                         Times.Once);
@@ -312,7 +344,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
 
             var validationCodeNotMatchedException =
                new ValidationCodeNotMatchedException(
-                   "The validation code for this patient has not been succesfully matched");
+                   "The validation code for this patient has not been successfully matched");
 
             var expectedDecisionOrchestrationValidationException =
                 new DecisionOrchestrationValidationException(
@@ -352,7 +384,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 broker.LogInformationAsync(
                     "Decision",
                     "Verifying Decision",
-                    $"User {randomUser.UserId} is verifying the decision for patient {randomNhsNumber}.",
+
+                    $"User {randomUser.UserId} is verifying the decision for " +
+                        $"patient Nhs Number: {randomPatient.NhsNumber}, with PatientId {randomPatient.Id}",
+
                     null,
                     randomGuid.ToString()),
                         Times.Once);
@@ -361,7 +396,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 broker.LogInformationAsync(
                     "Decision",
                     "Decision Submission Failed",
-                    "There was no matched validation code found for this patient.",
+
+                    "There was no matched validation code found for this patient " +
+                        $"Nhs Number: {randomPatient.NhsNumber}, with PatientId {randomPatient.Id}",
+
                     null,
                     randomGuid.ToString()),
                         Times.Once);
@@ -488,7 +526,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 broker.LogInformationAsync(
                     "Decision",
                     "Verifying Decision",
-                    $"User {randomUser.UserId} is verifying the decision for patient {randomNhsNumber}.",
+
+                    $"User {randomUser.UserId} is verifying the decision for " +
+                        $"patient Nhs Number: {randomPatient.NhsNumber}, with PatientId {randomPatient.Id}",
+
                     null,
                     randomGuid.ToString()),
                         Times.Once);
@@ -497,7 +538,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 broker.LogInformationAsync(
                     "Decision",
                     "Decision Submission Failed",
-                    "There was a matched validation code found but the matching period has now expired.",
+
+                    $"There was a matched validation code found but the matching " +
+                        $"period has now expired for patientId {randomPatient.Id}.",
+
                     null,
                     randomGuid.ToString()),
                         Times.Once);
@@ -571,7 +615,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
 
             var validationCodeNotMatchedException =
                new ValidationCodeNotMatchedException(
-                   "The validation code for this patient has not been succesfully matched");
+                   "The validation code for this patient has not been successfully matched");
 
             var expectedDecisionOrchestrationValidationException =
                 new DecisionOrchestrationValidationException(
@@ -611,7 +655,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 broker.LogInformationAsync(
                     "Decision",
                     "Verifying Decision",
-                    $"Patient with IP address {randomIpAddress} is validating a code for patient {randomNhsNumber}.",
+
+                    $"Patient with IP address {randomIpAddress} is validating a code for " +
+                        $"patient Nhs Number: {randomPatient.NhsNumber}, with PatientId {randomPatient.Id}",
+
                     null,
                     randomGuid.ToString()),
                         Times.Once);
@@ -620,7 +667,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 broker.LogInformationAsync(
                     "Decision",
                     "Decision Submission Failed",
-                    "There was no matched validation code found for this patient.",
+
+                    "There was no matched validation code found for this patient " +
+                        $"Nhs Number: {randomPatient.NhsNumber}, with PatientId {randomPatient.Id}",
+
                     null,
                     randomGuid.ToString()),
                         Times.Once);
@@ -748,7 +798,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 broker.LogInformationAsync(
                     "Decision",
                     "Verifying Decision",
-                    $"Patient with IP address {randomIpAddress} is validating a code for patient {randomNhsNumber}.",
+
+                    $"Patient with IP address {randomIpAddress} is validating a code for " +
+                        $"patient Nhs Number: {randomPatient.NhsNumber}, with PatientId {randomPatient.Id}",
+
                     null,
                     randomGuid.ToString()),
                         Times.Once);
@@ -757,7 +810,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 broker.LogInformationAsync(
                     "Decision",
                     "Decision Submission Failed",
-                    "There was a matched validation code found but the matching period has now expired.",
+
+                    $"There was a matched validation code found but the matching " +
+                        $"period has now expired for patientId {randomPatient.Id}.",
+
                     null,
                     randomGuid.ToString()),
                         Times.Once);
