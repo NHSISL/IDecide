@@ -84,10 +84,6 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             {
                 throw await CreateAndLogValidationExceptionAsync(unauthorizedPatientOrchestrationServiceException);
             }
-            catch (ValidPatientCodeExistsException validPatientCodeExistsException)
-            {
-                throw await CreateAndLogValidationExceptionAsync(validPatientCodeExistsException);
-            }
             catch (MaxRetryAttemptsExceededException maxRetryAttemptsExceededException)
             {
                 throw await CreateAndLogValidationExceptionAsync(maxRetryAttemptsExceededException);

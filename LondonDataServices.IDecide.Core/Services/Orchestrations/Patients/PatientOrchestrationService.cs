@@ -123,9 +123,9 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                         auditType: "Patient",
                         title: "Patient Recorded",
 
-                        message: 
+                        message:
                             $"A new patient was created with NHS Number {nhsNumber} and validation code was sent.",
-                        
+
                         fileName: null,
                         correlationId: correlationId.ToString());
 
@@ -138,13 +138,12 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                 {
                     await this.auditBroker.LogInformationAsync(
                         auditType: "Patient",
-                        title: "Patient Recording Failed",
-                        message: $"Failed to record patient with NHS Number {nhsNumber} as a valid code exists.",
+                        title: "Valid Patient Code Exists",
+                        message: $"Patient with NHS Number {nhsNumber} bypassed code generation as a valid code exists.",
                         fileName: null,
                         correlationId: correlationId.ToString());
 
-                    throw new ValidPatientCodeExistsException(message:
-                        "A valid code already exists for this patient, please go to the enter code screen.");
+                    return;
                 }
 
                 if (isAuthenticatedUserWithRole)
@@ -174,10 +173,10 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                     await this.auditBroker.LogInformationAsync(
                         auditType: "Patient",
                         title: "Patient Recorded",
-                        
-                        message: 
+
+                        message:
                             $"Patient with NHS Number {nhsNumber} was updated and new validation code was sent.",
-                        
+
                         fileName: null,
                         correlationId: correlationId.ToString());
 
@@ -190,7 +189,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                         auditType: "Patient",
                         title: "Patient Recording Failed",
 
-                        message: 
+                        message:
                             $"Failed to record patient with NHS Number {nhsNumber} as a max retry count exceeded.",
 
                         fileName: null,
@@ -208,10 +207,10 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                 await this.auditBroker.LogInformationAsync(
                         auditType: "Patient",
                         title: "Patient Recorded",
-                        
-                        message: 
+
+                        message:
                             $"Patient with NHS Number {nhsNumber} was updated and new validation code was sent.",
-                        
+
                         fileName: null,
                         correlationId: correlationId.ToString());
             });

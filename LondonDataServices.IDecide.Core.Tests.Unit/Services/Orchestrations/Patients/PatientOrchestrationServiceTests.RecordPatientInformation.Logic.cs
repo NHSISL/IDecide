@@ -254,7 +254,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 service.SendCodeNotificationAsync(It.Is(SameNotificationInfoAs(inputNotificationInfo))),
                         Times.Once);
 
-            this.auditBrokerMock.Verify(broker =>  broker.LogInformationAsync(
+            this.auditBrokerMock.Verify(broker => broker.LogInformationAsync(
                 "Patient",
                 "Patient Recorded",
                 $"A new patient was created with NHS Number {randomNhsNumber} and validation code was sent.",
@@ -274,7 +274,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
         [Fact]
         public async Task
-            ShouldErrorOnRecordPatientInformationAsyncWhenHasActiveCodeAndGenerateCodeIsFalseForAuthenticatedUser()
+            ShouldReturnOnRecordPatientInformationAsyncWhenHasActiveCodeAndGenerateCodeIsFalseForAuthenticatedUser()
         {
             // given
             Guid randomGuid = Guid.NewGuid();
@@ -295,15 +295,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             List<Patient> randomPatients = GetRandomPatients();
             randomPatients.Add(outputPatient);
             List<Patient> outputPatients = randomPatients.DeepClone();
-
-            var validPatientCodeExistsException =
-                new ValidPatientCodeExistsException(
-                    "A valid code already exists for this patient, please go to the enter code screen.");
-
-            var expectedPatientOrchestrationValidationException =
-                new PatientOrchestrationValidationException(
-                    message: "Patient orchestration validation error occurred, please fix the errors and try again.",
-                    innerException: validPatientCodeExistsException);
 
             var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
                 this.loggingBrokerMock.Object,
@@ -334,20 +325,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     .ReturnsAsync(randomGuid);
 
             // when
-            ValueTask recordPatientInformationTask = patientOrchestrationServiceMock.Object.RecordPatientInformationAsync(
+            await patientOrchestrationServiceMock.Object.RecordPatientInformationAsync(
                 inputNhsNumber,
                 notificationPreferenceString,
                 false);
 
-            PatientOrchestrationValidationException
-                actualPatientOrchestrationValidationException =
-                    await Assert.ThrowsAsync<PatientOrchestrationValidationException>(
-                        testCode: recordPatientInformationTask.AsTask);
-
             //then
-            actualPatientOrchestrationValidationException
-                .Should().BeEquivalentTo(expectedPatientOrchestrationValidationException);
-
             patientOrchestrationServiceMock.Verify(service =>
                 service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
                     Times.Once);
@@ -374,16 +357,11 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             this.auditBrokerMock.Verify(broker => broker.LogInformationAsync(
                 "Patient",
-                "Patient Recording Failed",
-                $"Failed to record patient with NHS Number {randomNhsNumber} as a valid code exists.",
+                "Valid Patient Code Exists",
+                $"Patient with NHS Number {randomNhsNumber} bypassed code generation as a valid code exists.",
                 null,
                 randomGuid.ToString()),
                     Times.Once);
-
-            this.loggingBrokerMock.Verify(broker =>
-               broker.LogErrorAsync(It.Is(SameExceptionAs(
-                   expectedPatientOrchestrationValidationException))),
-                       Times.Once);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.securityBrokerMock.VerifyNoOtherCalls();
@@ -397,7 +375,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
         [Fact]
         public async Task
-            ShouldErrorOnRecordPatientInformationAsyncWhenHasActiveCodeAndGenerateCodeIsFalseForNonAuthenticatedUser()
+            ShouldReturnOnRecordPatientInformationAsyncWhenHasActiveCodeAndGenerateCodeIsFalseForNonAuthenticatedUser()
         {
             // given
             Guid randomGuid = Guid.NewGuid();
@@ -418,15 +396,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             List<Patient> randomPatients = GetRandomPatients();
             randomPatients.Add(outputPatient);
             List<Patient> outputPatients = randomPatients.DeepClone();
-
-            var validPatientCodeExistsException =
-                new ValidPatientCodeExistsException(
-                    "A valid code already exists for this patient, please go to the enter code screen.");
-
-            var expectedPatientOrchestrationValidationException =
-                new PatientOrchestrationValidationException(
-                    message: "Patient orchestration validation error occurred, please fix the errors and try again.",
-                    innerException: validPatientCodeExistsException);
 
             var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
                 this.loggingBrokerMock.Object,
@@ -457,20 +426,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     .ReturnsAsync(randomGuid);
 
             // when
-            ValueTask recordPatientInformationTask = patientOrchestrationServiceMock.Object.RecordPatientInformationAsync(
+            await patientOrchestrationServiceMock.Object.RecordPatientInformationAsync(
                 inputNhsNumber,
                 notificationPreferenceString,
                 false);
 
-            PatientOrchestrationValidationException
-                actualPatientOrchestrationValidationException =
-                    await Assert.ThrowsAsync<PatientOrchestrationValidationException>(
-                        testCode: recordPatientInformationTask.AsTask);
-
             //then
-            actualPatientOrchestrationValidationException
-                .Should().BeEquivalentTo(expectedPatientOrchestrationValidationException);
-
             patientOrchestrationServiceMock.Verify(service =>
                 service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
                     Times.Once);
@@ -495,18 +456,13 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 randomGuid.ToString()),
                     Times.Once);
 
-            this.auditBrokerMock.Verify(broker =>  broker.LogInformationAsync(
+            this.auditBrokerMock.Verify(broker => broker.LogInformationAsync(
                 "Patient",
-                "Patient Recording Failed",
-                $"Failed to record patient with NHS Number {randomNhsNumber} as a valid code exists.",
+                "Valid Patient Code Exists",
+                $"Patient with NHS Number {randomNhsNumber} bypassed code generation as a valid code exists.",
                 null,
                 randomGuid.ToString()),
                     Times.Once);
-
-            this.loggingBrokerMock.Verify(broker =>
-               broker.LogErrorAsync(It.Is(SameExceptionAs(
-                   expectedPatientOrchestrationValidationException))),
-                       Times.Once);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.securityBrokerMock.VerifyNoOtherCalls();
