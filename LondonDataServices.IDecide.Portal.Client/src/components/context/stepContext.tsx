@@ -9,13 +9,13 @@ type StepContextType = {
         selectedOption?: "optout" | "optin",
         nhsNumber?: string,
         patient?: Patient,
-        powerOfAttourney?: PowerOfAttourney
+        powerOfAttorney?: PowerOfAttourney
     ) => void;
     createdPatient: Patient | null;
     setCreatedPatient: React.Dispatch<React.SetStateAction<Patient | null>>;
     selectedOption: "optout" | "optin" | null;
     nhsNumber: string | null;
-    powerOfAttourney: PowerOfAttourney | null;
+    powerOfAttorney: PowerOfAttourney | null;
     setPowerOfAttourney: React.Dispatch<React.SetStateAction<PowerOfAttourney | null>>;
     resetStepContext: () => void;
 };
@@ -31,7 +31,7 @@ export const StepProvider = ({ children }: StepProviderProps) => {
     const [createdPatient, setCreatedPatient] = useState<Patient | null>(null);
     const [selectedOption, setSelectedOption] = useState<"optout" | "optin" | null>(null);
     const [nhsNumber, setNhsNumber] = useState<string | null>(null);
-    const [powerOfAttourney, setPowerOfAttourney] = useState<PowerOfAttourney | null>(null);
+    const [powerOfAttorney, setPowerOfAttorney] = useState<PowerOfAttourney | null>(null);
 
     const nextStep = (
         option?: "optout" | "optin",
@@ -43,7 +43,7 @@ export const StepProvider = ({ children }: StepProviderProps) => {
         if (option) setSelectedOption(option);
         if (nhs) setNhsNumber(nhs);
         if (patient) setCreatedPatient(patient);
-        if (poa) setPowerOfAttourney(poa);
+        if (poa) setPowerOfAttorney(poa);
         setCurrentStepIndex((i) => i + 1);
     };
 
@@ -53,7 +53,7 @@ export const StepProvider = ({ children }: StepProviderProps) => {
         setCreatedPatient(null);
         setSelectedOption(null);
         setNhsNumber(null);
-        setPowerOfAttourney(null);
+        setPowerOfAttorney(null);
     };
 
     return (
@@ -66,8 +66,8 @@ export const StepProvider = ({ children }: StepProviderProps) => {
                 setCreatedPatient,
                 selectedOption,
                 nhsNumber,
-                powerOfAttourney,
-                setPowerOfAttourney,
+                powerOfAttorney,
+                setPowerOfAttorney,
                 resetStepContext
             }}
         >

@@ -13,14 +13,14 @@ interface ConfirmationProps {
     selectedOption: "optout" | "optin" | null;
     nhsNumber: string | null;
     createdPatient?: Patient | null;
-    powerOfAttourney?: PowerOfAttourney | null;
+    powerOfAttorney?: PowerOfAttourney | null;
 }
 
 export const Confirmation: React.FC<ConfirmationProps> = ({
     selectedOption,
     nhsNumber,
     createdPatient,
-    powerOfAttourney
+    powerOfAttorney
 }) => {
     const [prefs, setPrefs] = useState({
         SMS: false,
@@ -65,13 +65,12 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
             patient: {
                 nhsNumber: nhsNumber || "",
                 validationCode: createdPatient?.validationCode,
-
             },
             decisionChoice: selectedOption,
             decisionTypeId: configuration.decisionTypeId,
-            responsiblePersonGivenName: powerOfAttourney?.firstName,
-            responsiblePersonRelationship: powerOfAttourney?.relationship,
-            responsiblePersonSurname: powerOfAttourney?.surname
+            responsiblePersonGivenName: powerOfAttorney?.firstName,
+            responsiblePersonRelationship: powerOfAttorney?.relationship,
+            responsiblePersonSurname: powerOfAttorney?.surname
         });
 
         try {
@@ -163,7 +162,7 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
                                     </dd>
                                 </div>
                             </dl>
-                            {powerOfAttourney && (
+                            {powerOfAttorney && (
                                 <>
                                     <hr />
                                     <div style={{ fontSize: "1rem", marginBottom: "0.25rem", color: "#6c757d", fontWeight: 500 }}>
@@ -173,13 +172,13 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
                                         <div>
                                             <dt style={{ display: "inline", fontWeight: 500 }}>{translate("ConfirmAndSave.powerOfAttorneyName")}</dt>
                                             <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
-                                                <strong>{powerOfAttourney.firstName} {powerOfAttourney.surname}</strong>
+                                                <strong>{powerOfAttorney.firstName} {powerOfAttorney.surname}</strong>
                                             </dd>
                                         </div>
                                         <div>
                                             <dt style={{ display: "inline", fontWeight: 500 }}>{translate("ConfirmAndSave.powerOfAttorneyRelationship")}</dt>
                                             <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
-                                                <strong>{powerOfAttourney.relationship}</strong>
+                                                <strong>{powerOfAttorney.relationship}</strong>
                                             </dd>
                                         </div>
                                     </dl>

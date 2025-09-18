@@ -11,7 +11,7 @@ interface OptInOptOutProps {
 export const OptInOptOut: React.FC<OptInOptOutProps> = ({ createdPatient }) => {
     const [selectedOption, setSelectedOption] = useState<"optout" | "optin" | "">("");
     const [error, setError] = useState("");
-    const { nextStep, powerOfAttourney } = useStep();
+    const { nextStep, powerOfAttorney } = useStep();
     const { t: translate } = useTranslation();
 
     if (!createdPatient) {
@@ -35,14 +35,14 @@ export const OptInOptOut: React.FC<OptInOptOutProps> = ({ createdPatient }) => {
         }
         setError("");
         // Pass selectedOption, nhsNumber, createdPatient, and powerOfAttourney to nextStep
-        nextStep(selectedOption, createdPatient.nhsNumber, createdPatient, powerOfAttourney ?? undefined);
+        nextStep(selectedOption, createdPatient.nhsNumber, createdPatient, powerOfAttorney ?? undefined);
     };
 
     return (
         <>
             <Row className="custom-col-spacing">
                 <Col xs={12} md={12} lg={7}>
-                    {powerOfAttourney && (
+                    {powerOfAttorney && (
                         <Alert variant="info" className="d-flex align-items-center" style={{ marginBottom: "0.75rem", padding: "0.75rem" }}>
                             <div className="me-2" style={{ fontSize: "1.5rem", color: "#6c757d" }}>
                             </div>
@@ -54,13 +54,13 @@ export const OptInOptOut: React.FC<OptInOptOutProps> = ({ createdPatient }) => {
                                     <div>
                                         <dt style={{ display: "inline", fontWeight: 500 }}>{translate("OptOut.powerOfAttorneyName")}</dt>
                                         <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
-                                            <strong>{powerOfAttourney.firstName} {powerOfAttourney.surname}</strong>
+                                            <strong>{powerOfAttorney.firstName} {powerOfAttorney.surname}</strong>
                                         </dd>
                                     </div>
                                     <div>
                                         <dt style={{ display: "inline", fontWeight: 500 }}>{translate("OptOut.powerOfAttorneyRelationship")}</dt>
                                         <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
-                                            <strong>{powerOfAttourney.relationship}</strong>
+                                            <strong>{powerOfAttorney.relationship}</strong>
                                         </dd>
                                     </div>
                                 </dl>

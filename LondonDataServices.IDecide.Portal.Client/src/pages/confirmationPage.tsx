@@ -3,7 +3,7 @@ import Confirmation from "../components/confirmation/confirmation";
 import {useStep} from "../hooks/useStep";
 
 export const ConfirmationPage = () => {
-    const { selectedOption, nhsNumber, createdPatient, powerOfAttourney } = useStep();
+    const { selectedOption, nhsNumber, createdPatient, powerOfAttorney } = useStep();
 
 
     return (
@@ -12,7 +12,7 @@ export const ConfirmationPage = () => {
                 selectedOption={selectedOption}
                 nhsNumber={nhsNumber}
                 createdPatient={createdPatient}
-                powerOfAttourney={powerOfAttourney}
+                powerOfAttorney={powerOfAttorney}
             />
         </Container>
     );

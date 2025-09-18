@@ -17,11 +17,11 @@ export const decisionService = {
         const queryClient = useQueryClient();
 
         return useMutation({
-            mutationFn: (decision: Decision) => {
+            mutationFn: (decison: Decision) => {
                 const date = new Date();
-                decision.updatedDate = date;
+                decison.updatedDate = date;
 
-                return broker.PostDecisionAsync(decision);
+                return broker.PostDecisionAsync(decison);
             },
             onSuccess: () => {
                 queryClient.invalidateQueries({ queryKey: ["DecisionGetAll"] });
