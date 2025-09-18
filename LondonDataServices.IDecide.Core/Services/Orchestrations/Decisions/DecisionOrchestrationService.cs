@@ -63,6 +63,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
                 IQueryable<Patient> patients = await this.patientService.RetrieveAllPatientsAsync();
                 Patient maybeMatchingPatient = patients.FirstOrDefault(patient => patient.NhsNumber == maybeNhsNumber);
                 ValidatePatientExists(maybeMatchingPatient);
+                decision.PatientId = maybeMatchingPatient.Id;
                 Guid correlationId = await this.identifierBroker.GetIdentifierAsync();
                 bool isAuthenticatedUserWithRole = await CheckIfIsAuthenticatedUserWithRequiredRoleAsync();
                 string verifyingDecisionAuditMessage;
@@ -71,14 +72,16 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
                 {
                     var currentUser = await this.securityBroker.GetCurrentUserAsync();
                     verifyingDecisionAuditMessage = $"User {currentUser.UserId} is verifying the decision for " +
-                        $"patient {maybeMatchingPatient.NhsNumber}.";
+                        $"patient Nhs Number: {maybeMatchingPatient.NhsNumber}, " +
+                        $"with PatientId {maybeMatchingPatient.Id}";
                 }
                 else
                 {
                     string ipAddress = await this.securityBroker.GetIpAddressAsync();
 
                     verifyingDecisionAuditMessage = $"Patient with IP address {ipAddress} is validating a code for " +
-                        $"patient {maybeMatchingPatient.NhsNumber}.";
+                        $"patient Nhs Number: {maybeMatchingPatient.NhsNumber}, " +
+                        $"with PatientId {maybeMatchingPatient.Id}";
                 }
 
                 await this.auditBroker.LogInformationAsync(
@@ -93,7 +96,11 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
                     await this.auditBroker.LogInformationAsync(
                     auditType: "Decision",
                     title: "Decision Submission Failed",
-                    message: "There was no matched validation code found for this patient.",
+
+                    message: "There was no matched validation code found for this patient " +
+                        $"patient Nhs Number: {maybeMatchingPatient.NhsNumber}, " +
+                        $"with PatientId {maybeMatchingPatient.Id}",
+
                     fileName: null,
                     correlationId: correlationId.ToString());
 
@@ -112,7 +119,10 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
                     await this.auditBroker.LogInformationAsync(
                     auditType: "Decision",
                     title: "Decision Submission Failed",
-                    message: "There was a matched validation code found but the matching period has now expired.",
+
+                    message: $"There was a matched validation code found but the matching " +
+                        $"period has now expired for patientId {maybeMatchingPatient.Id.ToString()}.",
+
                     fileName: null,
                     correlationId: correlationId.ToString());
 
@@ -121,11 +131,14 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
                         "Please complete validation process again.");
                 }
 
+                Patient udpatedPatient = maybeMatchingPatient;
+                udpatedPatient.NotificationPreference = decision.Patient.NotificationPreference;
+                Patient modifiedPatient = await this.patientService.ModifyPatientAsync(udpatedPatient);
                 Decision addedDecision = await this.decisionService.AddDecisionAsync(decision);
 
                 NotificationInfo notificationInfo = new NotificationInfo
                 {
-                    Patient = maybeMatchingPatient,
+                    Patient = modifiedPatient,
                     Decision = addedDecision
                 };
 
@@ -134,7 +147,11 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
                 await this.auditBroker.LogInformationAsync(
                     auditType: "Decision",
                     title: "Decision Submitted",
-                    message: "The patients decision has been succesfully submitted",
+
+                    message: $"The patients decision has been succesfully submitted for " +
+                        $"decisionId {addedDecision.Id.ToString()}, " +
+                        $"patient Nhs Number: {maybeMatchingPatient.NhsNumber}, with PatientId {maybeMatchingPatient.Id}",
+
                     fileName: null,
                     correlationId: correlationId.ToString());
             });
