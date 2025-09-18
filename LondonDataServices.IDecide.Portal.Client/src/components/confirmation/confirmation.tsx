@@ -5,24 +5,35 @@ import { decisionViewService } from "../../services/views/decisionViewService";
 import { Decision } from "../../models/decisions/decision";
 import { isAxiosError } from "../../helpers/axiosErrorHelper";
 import { useTranslation } from "react-i18next";
+import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
+import { Patient } from "../../models/patients/patient";
+import { PowerOfAttourney } from "../../models/powerOfAttourneys/powerOfAttourney";
 
 interface ConfirmationProps {
     selectedOption: "optout" | "optin" | null;
     nhsNumber: string | null;
+    createdPatient?: Patient | null;
+    powerOfAttourney?: PowerOfAttourney | null;
 }
 
-export const Confirmation: React.FC<ConfirmationProps> = ({ selectedOption, nhsNumber }) => {
+export const Confirmation: React.FC<ConfirmationProps> = ({
+    selectedOption,
+    nhsNumber,
+    createdPatient,
+    powerOfAttourney
+}) => {
     const [prefs, setPrefs] = useState({
         SMS: false,
         Email: false,
         Post: false,
     });
 
-    const { nextStep, powerOfAttourney } = useStep();
+    const { nextStep } = useStep();
     const createDecisionMutation = decisionViewService.useCreateDecision();
     const [error, setError] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { t: translate } = useTranslation();
+    const { configuration } = useFrontendConfiguration();
 
     // Only one method can be selected at a time
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,8 +58,18 @@ export const Confirmation: React.FC<ConfirmationProps> = ({ selectedOption, nhsN
         setIsSubmitting(true);
 
         const decision = new Decision({
-            patientNhsNumber: nhsNumber,
+            id: crypto.randomUUID(),
+            patientId: createdPatient?.id,
+            patient: {
+                nhsNumber: nhsNumber || "",
+                validationCode: createdPatient?.validationCode,
+               
+            },
             decisionChoice: selectedOption,
+            decisionTypeId: configuration.decisionTypeId,
+            responsiblePersonGivenName: powerOfAttourney?.firstName,
+            responsiblePersonRelationship: powerOfAttourney?.relationship,
+            responsiblePersonSurname: powerOfAttourney?.surname
         });
 
         createDecisionMutation.mutate(decision, {

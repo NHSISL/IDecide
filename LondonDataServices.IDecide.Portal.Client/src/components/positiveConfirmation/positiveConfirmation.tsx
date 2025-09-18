@@ -46,6 +46,7 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                     headers: { "X-Recaptcha-Token": token },
                     onSuccess: () => {
                         setError("");
+                        
                         goToConfirmCode(patientToUpdate);
                     },
                     onError: (error: unknown) => {

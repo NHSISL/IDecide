@@ -110,7 +110,9 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                     { "patient.validationCode", notificationInfo.Patient.ValidationCode },
                     { "patient.validationCodeExpiresOn", notificationInfo.Patient.ValidationCodeExpiresOn },
                     { "decision.decisionChoice", notificationInfo.Decision?.DecisionChoice },
-                    { "decision.decisionType.name", notificationInfo.Decision?.DecisionType.Name },
+                    //TODO: Check Notification Provider, we don't need Message but it is expected.
+                    //USER STORY : 24612
+                    { "message", "TOBEREMOVED" },
                 };
 
                 AddIfNotNull(

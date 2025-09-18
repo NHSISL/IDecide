@@ -47,6 +47,7 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
             });
 
             await confirmCodeMutation.mutateAsync(request);
+            createdPatient.validationCode = code;
             nextStep(undefined, undefined, createdPatient);
         } catch (error: unknown) {
             if (isApiErrorResponse(error)) {
