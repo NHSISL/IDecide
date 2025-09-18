@@ -106,14 +106,13 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 broker.GetIdentifierAsync(),
                     Times.Once);
 
-            this.auditBrokerMock.Verify(broker =>
-               broker.LogInformationAsync(
-                   "Patient",
-                   "Recording Patient Information",
-                   $"Recording a patient with NHS Number {randomNhsNumber}.",
-                   null,
-                   randomGuid.ToString()),
-                       Times.Once);
+            this.auditBrokerMock.Verify(broker => broker.LogInformationAsync(
+                "Patient",
+                "Recording Patient Information",
+                $"Recording a patient with NHS Number {randomNhsNumber}.",
+                null,
+                randomGuid.ToString()),
+                    Times.Once);
 
             patientOrchestrationServiceMock.Verify(service =>
                 service.CreateNewPatientAsync(
@@ -126,14 +125,13 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 service.SendCodeNotificationAsync(It.Is(SameNotificationInfoAs(inputNotificationInfo))),
                         Times.Once);
 
-            this.auditBrokerMock.Verify(broker =>
-               broker.LogInformationAsync(
-                   "Patient",
-                   "Patient Recorded",
-                   $"A new patient was created with NHS Number {randomNhsNumber} and validation code was sent.",
-                   null,
-                   randomGuid.ToString()),
-                       Times.Once);
+            this.auditBrokerMock.Verify(broker => broker.LogInformationAsync(
+                "Patient",
+                "Patient Recorded",
+                $"A new patient was created with NHS Number {randomNhsNumber} and validation code was sent.",
+                null,
+                randomGuid.ToString()),
+                    Times.Once);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.securityBrokerMock.VerifyNoOtherCalls();
@@ -237,14 +235,13 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 broker.GetIdentifierAsync(),
                     Times.Once);
 
-            this.auditBrokerMock.Verify(broker =>
-               broker.LogInformationAsync(
-                   "Patient",
-                   "Recording Patient Information",
-                   $"Recording a patient with NHS Number {randomNhsNumber}.",
-                   null,
-                   randomGuid.ToString()),
-                       Times.Once);
+            this.auditBrokerMock.Verify(broker => broker.LogInformationAsync(
+                "Patient",
+                "Recording Patient Information",
+                $"Recording a patient with NHS Number {randomNhsNumber}.",
+                null,
+                randomGuid.ToString()),
+                    Times.Once);
 
             patientOrchestrationServiceMock.Verify(service =>
                 service.CreateNewPatientAsync(
@@ -257,14 +254,13 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 service.SendCodeNotificationAsync(It.Is(SameNotificationInfoAs(inputNotificationInfo))),
                         Times.Once);
 
-            this.auditBrokerMock.Verify(broker =>
-               broker.LogInformationAsync(
-                   "Patient",
-                   "Patient Recorded",
-                   $"A new patient was created with NHS Number {randomNhsNumber} and validation code was sent.",
-                   null,
-                   randomGuid.ToString()),
-                       Times.Once);
+            this.auditBrokerMock.Verify(broker =>  broker.LogInformationAsync(
+                "Patient",
+                "Patient Recorded",
+                $"A new patient was created with NHS Number {randomNhsNumber} and validation code was sent.",
+                null,
+                randomGuid.ToString()),
+                    Times.Once);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.securityBrokerMock.VerifyNoOtherCalls();
@@ -368,23 +364,21 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 broker.GetIdentifierAsync(),
                     Times.Once);
 
-            this.auditBrokerMock.Verify(broker =>
-               broker.LogInformationAsync(
-                   "Patient",
-                   "Recording Patient Information",
-                   $"Recording a patient with NHS Number {randomNhsNumber}.",
-                   null,
-                   randomGuid.ToString()),
-                       Times.Once);
+            this.auditBrokerMock.Verify(broker => broker.LogInformationAsync(
+                "Patient",
+                "Recording Patient Information",
+                $"Recording a patient with NHS Number {randomNhsNumber}.",
+                null,
+                randomGuid.ToString()),
+                    Times.Once);
 
-            this.auditBrokerMock.Verify(broker =>
-               broker.LogInformationAsync(
-                   "Patient",
-                   "Patient Recording Failed",
-                   $"Failed to record patient with NHS Number {randomNhsNumber} as a valid code exists.",
-                   null,
-                   randomGuid.ToString()),
-                       Times.Once);
+            this.auditBrokerMock.Verify(broker => broker.LogInformationAsync(
+                "Patient",
+                "Patient Recording Failed",
+                $"Failed to record patient with NHS Number {randomNhsNumber} as a valid code exists.",
+                null,
+                randomGuid.ToString()),
+                    Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                broker.LogErrorAsync(It.Is(SameExceptionAs(
@@ -493,23 +487,21 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 broker.GetIdentifierAsync(),
                     Times.Once);
 
-            this.auditBrokerMock.Verify(broker =>
-               broker.LogInformationAsync(
-                   "Patient",
-                   "Recording Patient Information",
-                   $"Recording a patient with NHS Number {randomNhsNumber}.",
-                   null,
-                   randomGuid.ToString()),
-                       Times.Once);
+            this.auditBrokerMock.Verify(broker => broker.LogInformationAsync(
+                "Patient",
+                "Recording Patient Information",
+                $"Recording a patient with NHS Number {randomNhsNumber}.",
+                null,
+                randomGuid.ToString()),
+                    Times.Once);
 
-            this.auditBrokerMock.Verify(broker =>
-               broker.LogInformationAsync(
-                   "Patient",
-                   "Patient Recording Failed",
-                   $"Failed to record patient with NHS Number {randomNhsNumber} as a valid code exists.",
-                   null,
-                   randomGuid.ToString()),
-                       Times.Once);
+            this.auditBrokerMock.Verify(broker =>  broker.LogInformationAsync(
+                "Patient",
+                "Patient Recording Failed",
+                $"Failed to record patient with NHS Number {randomNhsNumber} as a valid code exists.",
+                null,
+                randomGuid.ToString()),
+                    Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                broker.LogErrorAsync(It.Is(SameExceptionAs(
@@ -618,23 +610,21 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 broker.GetIdentifierAsync(),
                     Times.Once);
 
-            this.auditBrokerMock.Verify(broker =>
-               broker.LogInformationAsync(
-                   "Patient",
-                   "Recording Patient Information",
-                   $"Recording a patient with NHS Number {randomNhsNumber}.",
-                   null,
-                   randomGuid.ToString()),
-                       Times.Once);
+            this.auditBrokerMock.Verify(broker => broker.LogInformationAsync(
+                "Patient",
+                "Recording Patient Information",
+                $"Recording a patient with NHS Number {randomNhsNumber}.",
+                null,
+                randomGuid.ToString()),
+                    Times.Once);
 
-            this.auditBrokerMock.Verify(broker =>
-               broker.LogInformationAsync(
-                   "Patient",
-                   "Patient Recorded",
-                   $"Patient with NHS Number {randomNhsNumber} was updated and new validation code was sent.",
-                   null,
-                   randomGuid.ToString()),
-                       Times.Once);
+            this.auditBrokerMock.Verify(broker => broker.LogInformationAsync(
+                "Patient",
+                "Patient Recorded",
+                $"Patient with NHS Number {randomNhsNumber} was updated and new validation code was sent.",
+                null,
+                randomGuid.ToString()),
+                    Times.Once);
 
             patientOrchestrationServiceMock.Verify(service =>
                 service.UpdatePatientAsync(
@@ -750,23 +740,21 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 broker.GetIdentifierAsync(),
                     Times.Once);
 
-            this.auditBrokerMock.Verify(broker =>
-               broker.LogInformationAsync(
-                   "Patient",
-                   "Recording Patient Information",
-                   $"Recording a patient with NHS Number {randomNhsNumber}.",
-                   null,
-                   randomGuid.ToString()),
-                       Times.Once);
+            this.auditBrokerMock.Verify(broker => broker.LogInformationAsync(
+                "Patient",
+                "Recording Patient Information",
+                $"Recording a patient with NHS Number {randomNhsNumber}.",
+                null,
+                randomGuid.ToString()),
+                    Times.Once);
 
-            this.auditBrokerMock.Verify(broker =>
-               broker.LogInformationAsync(
-                   "Patient",
-                   "Patient Recorded",
-                   $"Patient with NHS Number {randomNhsNumber} was updated and new validation code was sent.",
-                   null,
-                   randomGuid.ToString()),
-                       Times.Once);
+            this.auditBrokerMock.Verify(broker => broker.LogInformationAsync(
+                "Patient",
+                "Patient Recorded",
+                $"Patient with NHS Number {randomNhsNumber} was updated and new validation code was sent.",
+                null,
+                randomGuid.ToString()),
+                    Times.Once);
 
             patientOrchestrationServiceMock.Verify(service =>
                 service.UpdatePatientAsync(
@@ -882,23 +870,21 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 broker.GetIdentifierAsync(),
                     Times.Once);
 
-            this.auditBrokerMock.Verify(broker =>
-               broker.LogInformationAsync(
-                   "Patient",
-                   "Recording Patient Information",
-                   $"Recording a patient with NHS Number {randomNhsNumber}.",
-                   null,
-                   randomGuid.ToString()),
-                       Times.Once);
+            this.auditBrokerMock.Verify(broker => broker.LogInformationAsync(
+                "Patient",
+                "Recording Patient Information",
+                $"Recording a patient with NHS Number {randomNhsNumber}.",
+                null,
+                randomGuid.ToString()),
+                    Times.Once);
 
-            this.auditBrokerMock.Verify(broker =>
-               broker.LogInformationAsync(
-                   "Patient",
-                   "Patient Recording Failed",
-                   $"Failed to record patient with NHS Number {randomNhsNumber} as a max retry count exceeded.",
-                   null,
-                   randomGuid.ToString()),
-                       Times.Once);
+            this.auditBrokerMock.Verify(broker => broker.LogInformationAsync(
+                "Patient",
+                "Patient Recording Failed",
+                $"Failed to record patient with NHS Number {randomNhsNumber} as a max retry count exceeded.",
+                null,
+                randomGuid.ToString()),
+                    Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                broker.LogErrorAsync(It.Is(SameExceptionAs(
@@ -1007,23 +993,21 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 broker.GetIdentifierAsync(),
                     Times.Once);
 
-            this.auditBrokerMock.Verify(broker =>
-               broker.LogInformationAsync(
-                   "Patient",
-                   "Recording Patient Information",
-                   $"Recording a patient with NHS Number {randomNhsNumber}.",
-                   null,
-                   randomGuid.ToString()),
-                       Times.Once);
+            this.auditBrokerMock.Verify(broker => broker.LogInformationAsync(
+                "Patient",
+                "Recording Patient Information",
+                $"Recording a patient with NHS Number {randomNhsNumber}.",
+                null,
+                randomGuid.ToString()),
+                    Times.Once);
 
-            this.auditBrokerMock.Verify(broker =>
-               broker.LogInformationAsync(
-                   "Patient",
-                   "Patient Recorded",
-                   $"Patient with NHS Number {randomNhsNumber} was updated and new validation code was sent.",
-                   null,
-                   randomGuid.ToString()),
-                       Times.Once);
+            this.auditBrokerMock.Verify(broker => broker.LogInformationAsync(
+                "Patient",
+                "Patient Recorded",
+                $"Patient with NHS Number {randomNhsNumber} was updated and new validation code was sent.",
+                null,
+                randomGuid.ToString()),
+                    Times.Once);
 
             patientOrchestrationServiceMock.Verify(service =>
                 service.UpdatePatientAsync(
