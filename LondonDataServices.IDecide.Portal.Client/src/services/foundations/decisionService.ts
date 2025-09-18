@@ -4,12 +4,12 @@ import { Decision } from "../../models/decisions/decision";
 
 export const decisionService = {
     useCreateDecision: async(
-        decison: Decision,
+        decision: Decision,
         headers?: Record<string, string>
     ) => {
         const broker = new DecisionBroker();
 
-        return await broker.PostDecisionAsync(decison, headers);
+        return await broker.PostDecisionAsync(decision, headers);
     },
 
     useModifyDecision: () => {
@@ -17,11 +17,11 @@ export const decisionService = {
         const queryClient = useQueryClient();
 
         return useMutation({
-            mutationFn: (decison: Decision) => {
+            mutationFn: (decision: Decision) => {
                 const date = new Date();
-                decison.updatedDate = date;
+                decision.updatedDate = date;
 
-                return broker.PostDecisionAsync(decison);
+                return broker.PostDecisionAsync(decision);
             },
             onSuccess: () => {
                 queryClient.invalidateQueries({ queryKey: ["DecisionGetAll"] });

@@ -15,7 +15,7 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
     const { t: translate } = useTranslation();
     const [code, setCode] = useState("");
     const [error, setError] = useState("");
-    const { nextStep, powerOfAttourney } = useStep();
+    const { nextStep, powerOfAttorney } = useStep();
     const confirmCodeMutation = patientViewService.useConfirmCode();
     const { configuration } = useFrontendConfiguration();
 
@@ -75,7 +75,7 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
         <>
             <Row className="custom-col-spacing">
                 <Col xs={12} md={6} lg={6}>
-                    {powerOfAttourney && (
+                    {powerOfAttorney && (
                         <Alert
                             variant="info"
                             className="d-flex align-items-center"
@@ -116,7 +116,7 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
                                             }}
                                         >
                                             <strong>
-                                                {powerOfAttourney.firstName} {powerOfAttourney.surname}
+                                                {powerOfAttorney.firstName} {powerOfAttorney.surname}
                                             </strong>
                                         </dd>
                                     </div>
@@ -136,7 +136,7 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
                                             }}
                                         >
                                             <strong>
-                                                {powerOfAttourney.relationship}
+                                                {powerOfAttorney.relationship}
                                             </strong>
                                         </dd>
                                     </div>

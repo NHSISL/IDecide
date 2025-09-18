@@ -7,13 +7,13 @@ import { isAxiosError } from "../../helpers/axiosErrorHelper";
 import { useTranslation } from "react-i18next";
 import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
 import { Patient } from "../../models/patients/patient";
-import { PowerOfAttourney } from "../../models/powerOfAttourneys/powerOfAttourney";
+import { PowerOfAttorney } from "../../models/powerOfAttourneys/powerOfAttourney";
 
 interface ConfirmationProps {
     selectedOption: "optout" | "optin" | null;
     nhsNumber: string | null;
     createdPatient?: Patient | null;
-    powerOfAttorney?: PowerOfAttourney | null;
+    powerOfAttorney?: PowerOfAttorney | null;
 }
 
 export const Confirmation: React.FC<ConfirmationProps> = ({
