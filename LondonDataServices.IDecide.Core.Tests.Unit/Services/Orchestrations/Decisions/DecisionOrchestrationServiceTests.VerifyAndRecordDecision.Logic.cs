@@ -138,8 +138,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                     "Decision",
                     "Decision Submitted",
 
-                    $"The patient's decision has been successfully submitted for " +
-                        $"decisionId {randomDecision.Id.ToString()}, " +
+                    $"The patient's decision has been successfully submitted for decisionId {randomDecision.Id}, " +
                         $"patient Nhs Number: {randomPatient.NhsNumber}, with PatientId {randomPatient.Id}",
 
                     null,
@@ -274,8 +273,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                     "Decision",
                     "Decision Submitted",
 
-                    $"The patient's decision has been successfully submitted for " +
-                        $"decisionId {randomDecision.Id.ToString()}, " +
+                    $"The patient's decision has been successfully submitted for decisionId {randomDecision.Id}, " +
                         $"patient Nhs Number: {randomPatient.NhsNumber}, with PatientId {randomPatient.Id}",
 
                     null,
@@ -542,7 +540,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                     "Decision Submission Failed",
 
                     $"There was a matched validation code found but the matching " +
-                        $"period has now expired for patientId {randomPatient.Id.ToString()}.",
+                        $"period has now expired for patientId {randomPatient.Id}.",
 
                     null,
                     randomGuid.ToString()),
@@ -814,7 +812,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                     "Decision Submission Failed",
 
                     $"There was a matched validation code found but the matching " +
-                        $"period has now expired for patientId {randomPatient.Id.ToString()}.",
+                        $"period has now expired for patientId {randomPatient.Id}.",
 
                     null,
                     randomGuid.ToString()),

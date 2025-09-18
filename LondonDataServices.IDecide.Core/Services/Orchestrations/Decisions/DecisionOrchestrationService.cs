@@ -149,7 +149,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
                     title: "Decision Submitted",
 
                     message: $"The patient's decision has been successfully submitted for " +
-                        $"decisionId {addedDecision.Id.ToString()}, " +
+                        $"decisionId {addedDecision.Id}, " +
                         $"patient Nhs Number: {maybeMatchingPatient.NhsNumber}, with PatientId {maybeMatchingPatient.Id}",
 
                     fileName: null,
