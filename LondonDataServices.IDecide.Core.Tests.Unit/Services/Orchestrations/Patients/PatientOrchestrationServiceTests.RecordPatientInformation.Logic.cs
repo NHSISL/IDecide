@@ -381,7 +381,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                broker.LogInformationAsync(
                    "Patient",
                    "Patient Recording Failed",
-                   $"Failed to record patient for patient {randomNhsNumber} as a valid code exists.",
+                   $"Failed to record patient with NHS Number {randomNhsNumber} as a valid code exists.",
                    null,
                    randomGuid.ToString()),
                        Times.Once);
@@ -506,7 +506,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                broker.LogInformationAsync(
                    "Patient",
                    "Patient Recording Failed",
-                   $"Failed to record patient for patient {randomNhsNumber} as a valid code exists.",
+                   $"Failed to record patient with NHS Number {randomNhsNumber} as a valid code exists.",
                    null,
                    randomGuid.ToString()),
                        Times.Once);
@@ -895,7 +895,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                broker.LogInformationAsync(
                    "Patient",
                    "Patient Recording Failed",
-                   $"Failed to record patient for patient {randomNhsNumber} as a max retry count exceeded.",
+                   $"Failed to record patient with NHS Number {randomNhsNumber} as a max retry count exceeded.",
                    null,
                    randomGuid.ToString()),
                        Times.Once);

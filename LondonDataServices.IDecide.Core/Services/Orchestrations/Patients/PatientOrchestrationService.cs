@@ -101,11 +101,11 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                 Guid correlationId = await this.identifierBroker.GetIdentifierAsync();
 
                 await this.auditBroker.LogInformationAsync(
-                        auditType: "Patient",
-                        title: "Recording Patient Information",
-                        message: $"Recording a patient with NHS Number {nhsNumber}.",
-                        fileName: null,
-                        correlationId: correlationId.ToString());
+                    auditType: "Patient",
+                    title: "Recording Patient Information",
+                    message: $"Recording a patient with NHS Number {nhsNumber}.",
+                    fileName: null,
+                    correlationId: correlationId.ToString());
 
                 bool codeIsExpired =
                     maybeMatchingPatient is null ? true : maybeMatchingPatient.ValidationCodeExpiresOn <= now;
@@ -137,7 +137,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                     await this.auditBroker.LogInformationAsync(
                         auditType: "Patient",
                         title: "Patient Recording Failed",
-                        message: $"Failed to record patient for patient {nhsNumber} as a valid code exists.",
+                        message: $"Failed to record patient with NHS Number {nhsNumber} as a valid code exists.",
                         fileName: null,
                         correlationId: correlationId.ToString());
 
@@ -184,7 +184,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                     await this.auditBroker.LogInformationAsync(
                         auditType: "Patient",
                         title: "Patient Recording Failed",
-                        message: $"Failed to record patient for patient {nhsNumber} as a max retry count exceeded.",
+                        message: $"Failed to record patient with NHS Number {nhsNumber} as a max retry count exceeded.",
                         fileName: null,
                         correlationId: correlationId.ToString());
 
@@ -244,8 +244,8 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                             auditType: "Patient Code",
                             title: "Patient Code Validation Failed",
 
-                            message: $"The maximum retry count of {this.decisionConfigurations.MaxRetryCount} exceeded " +
-                               $"for patient {nhsNumber}",
+                            message: $"The maximum retry count of {this.decisionConfigurations.MaxRetryCount} " +
+                               $"exceeded for patient {nhsNumber}",
 
                             fileName: null,
                             correlationId: correlationId.ToString());
