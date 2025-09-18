@@ -139,7 +139,10 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                     await this.auditBroker.LogInformationAsync(
                         auditType: "Patient",
                         title: "Valid Patient Code Exists",
-                        message: $"Patient with NHS Number {nhsNumber} bypassed code generation as a valid code exists.",
+
+                        message: 
+                            $"Patient with NHS Number {nhsNumber} bypassed code generation as a valid code exists.",
+                        
                         fileName: null,
                         correlationId: correlationId.ToString());
 
