@@ -10,10 +10,10 @@ import { ThankyouPage } from "../pages/thankyouPage";
 import { useStep } from "../hooks/useStep";
 
 interface AppFlowProps {
-    powerOfAttourney?: boolean;
+    powerOfAttorney?: boolean;
 }
 
-export const AppFlow: React.FC<AppFlowProps> = ({ powerOfAttourney }) => {
+export const AppFlow: React.FC<AppFlowProps> = ({ powerOfAttorney }) => {
     const { currentStepIndex, setCurrentStepIndex } = useStep();
     const [nhsNumberSubStep, setNhsNumberSubStep] = useState(0); // 0: NHS Number, 1: Search by Details
     const [confirmationSubStep, setConfirmationSubStep] = useState(0); // 0: Positive Confirmation, 1: Confirm Code
@@ -34,7 +34,7 @@ export const AppFlow: React.FC<AppFlowProps> = ({ powerOfAttourney }) => {
                     render: (goToSearchByDetails: () => void) => (
                         <SearchByNhsNumberPage
                             onIDontKnow={goToSearchByDetails}
-                            powerOfAttourney={powerOfAttourney}
+                            powerOfAttorney={powerOfAttorney}
                         />
                     ),
                 },
@@ -42,7 +42,7 @@ export const AppFlow: React.FC<AppFlowProps> = ({ powerOfAttourney }) => {
                     key: "searchByDetails",
                     label: "Search By Details",
                     render: (goBack: () => void) => (
-                        <SearchByDetailsPage onBack={goBack} powerOfAttourney={powerOfAttourney} />
+                        <SearchByDetailsPage onBack={goBack} powerOfAttorney={powerOfAttorney} />
                     ),
                 },
             ],

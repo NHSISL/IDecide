@@ -70,7 +70,7 @@ function App() {
                 },
                 {
                     path: "test-poa",
-                    element: <SearchByNhsNumber onIDontKnow={() => { }} powerOfAttourney={true} />
+                    element: <SearchByNhsNumber onIDontKnow={() => { }} powerOfAttorney={true} />
                 },
 
             ]

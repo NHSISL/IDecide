@@ -5,24 +5,37 @@ import { decisionViewService } from "../../services/views/decisionViewService";
 import { Decision } from "../../models/decisions/decision";
 import { isAxiosError } from "../../helpers/axiosErrorHelper";
 import { useTranslation } from "react-i18next";
+import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
+import { Patient } from "../../models/patients/patient";
+import { PowerOfAttorney } from "../../models/powerOfAttourneys/powerOfAttourney";
 
 interface ConfirmationProps {
     selectedOption: "optout" | "optin" | null;
     nhsNumber: string | null;
+    createdPatient?: Patient | null;
+    powerOfAttorney?: PowerOfAttorney | null;
 }
 
-export const Confirmation: React.FC<ConfirmationProps> = ({ selectedOption, nhsNumber }) => {
+export const Confirmation: React.FC<ConfirmationProps> = ({
+    selectedOption,
+    nhsNumber,
+    createdPatient,
+    powerOfAttorney
+}) => {
     const [prefs, setPrefs] = useState({
         SMS: false,
         Email: false,
         Post: false,
     });
 
-    const { nextStep, powerOfAttourney } = useStep();
+    const { nextStep } = useStep();
     const createDecisionMutation = decisionViewService.useCreateDecision();
     const [error, setError] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { t: translate } = useTranslation();
+    const { configuration } = useFrontendConfiguration();
+    const RECAPTCHA_SITE_KEY = configuration.recaptchaSiteKey;
+    const RECAPTCHA_ACTION_SUBMIT = "submit";
 
     // Only one method can be selected at a time
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -35,7 +48,7 @@ export const Confirmation: React.FC<ConfirmationProps> = ({ selectedOption, nhsN
         });
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         if (!nhsNumber || !selectedOption) {
@@ -47,36 +60,55 @@ export const Confirmation: React.FC<ConfirmationProps> = ({ selectedOption, nhsN
         setIsSubmitting(true);
 
         const decision = new Decision({
-            patientNhsNumber: nhsNumber,
+            id: crypto.randomUUID(),
+            patientId: createdPatient?.id,
+            patient: {
+                nhsNumber: nhsNumber || "",
+                validationCode: createdPatient?.validationCode,
+            },
             decisionChoice: selectedOption,
+            decisionTypeId: configuration.decisionTypeId,
+            responsiblePersonGivenName: powerOfAttorney?.firstName,
+            responsiblePersonRelationship: powerOfAttorney?.relationship,
+            responsiblePersonSurname: powerOfAttorney?.surname
         });
 
-        createDecisionMutation.mutate(decision, {
-            onSuccess: () => {
-                setIsSubmitting(false);
-                nextStep();
-            },
-            onError: (error: unknown) => {
-                setIsSubmitting(false);
-                let message = translate("ConfirmAndSave.errorSaveFailed");
-                if (error instanceof Error && error.message) {
-                    if (error.message === "Network Error") {
-                        message = translate("ConfirmAndSave.errorSaveFailed");
-                    } else {
-                        message = error.message;
+        try {
+            const token = await grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: RECAPTCHA_ACTION_SUBMIT });
+
+            createDecisionMutation.mutate(
+                decision,
+                {
+                    headers: { "X-Recaptcha-Token": token },
+                    onSuccess: () => {
+                        setIsSubmitting(false);
+                        nextStep();
+                    },
+                    onError: (error: unknown) => {
+                        setIsSubmitting(false);
+                        let message = translate("ConfirmAndSave.errorSaveFailed");
+                        if (error instanceof Error && error.message) {
+                            if (error.message === "Network Error") {
+                                message = translate("ConfirmAndSave.errorSaveFailed");
+                            } else {
+                                message = error.message;
+                            }
+                        } else if (typeof error === "string") {
+                            message = error;
+                        } else if (isAxiosError(error)) {
+                            const data = error.response?.data;
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                            if (data && typeof data === "object" && "message" in data && typeof (data as any).message === "string") {
+                                message = (data as { message: string }).message;
+                            }
+                        }
+                        setError(message);
                     }
-                } else if (typeof error === "string") {
-                    message = error;
-                } else if (isAxiosError(error)) {
-                    const data = error.response?.data;
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    if (data && typeof data === "object" && "message" in data && typeof (data as any).message === "string") {
-                        message = (data as { message: string }).message;
-                    }
-                }
-                setError(message);
-            }
-        });
+                });
+        } catch (err) {
+            setError("Error executing reCAPTCHA.");
+            console.error("Error executing reCAPTCHA:", err);
+        }
     };
 
     const selectedMethods = Object.entries(prefs)
@@ -130,7 +162,7 @@ export const Confirmation: React.FC<ConfirmationProps> = ({ selectedOption, nhsN
                                     </dd>
                                 </div>
                             </dl>
-                            {powerOfAttourney && (
+                            {powerOfAttorney && (
                                 <>
                                     <hr />
                                     <div style={{ fontSize: "1rem", marginBottom: "0.25rem", color: "#6c757d", fontWeight: 500 }}>
@@ -140,13 +172,13 @@ export const Confirmation: React.FC<ConfirmationProps> = ({ selectedOption, nhsN
                                         <div>
                                             <dt style={{ display: "inline", fontWeight: 500 }}>{translate("ConfirmAndSave.powerOfAttorneyName")}</dt>
                                             <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
-                                                <strong>{powerOfAttourney.firstName} {powerOfAttourney.surname}</strong>
+                                                <strong>{powerOfAttorney.firstName} {powerOfAttorney.surname}</strong>
                                             </dd>
                                         </div>
                                         <div>
                                             <dt style={{ display: "inline", fontWeight: 500 }}>{translate("ConfirmAndSave.powerOfAttorneyRelationship")}</dt>
                                             <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
-                                                <strong>{powerOfAttourney.relationship}</strong>
+                                                <strong>{powerOfAttorney.relationship}</strong>
                                             </dd>
                                         </div>
                                     </dl>

@@ -11,6 +11,7 @@ export type FrontendConfigurationResponse = {
     recaptchaSiteKey: string,
     helpdeskContactEmail: string,
     helpdeskContactNumber: string,
+    decisionTypeId: string
 }
 
 export type FrontendConfiguration = {
@@ -23,7 +24,8 @@ export type FrontendConfiguration = {
     bannerColour: string,
     recaptchaSiteKey: string,
     helpdeskContactEmail: string
-    helpdeskContactNumber: string
+    helpdeskContactNumber: string,
+    decisionTypeId: string
 }
 
 class FrontendConfigurationBroker {
@@ -62,6 +64,10 @@ class FrontendConfigurationBroker {
 
             if (!result.helpdeskContactNumber.length) {
                 throw new Error("helpdesk contact number not provided");
+            }
+
+            if (!result.decisionTypeId.length) {
+                throw new Error("decisionTypeId not provided");
             }
 
             return result;

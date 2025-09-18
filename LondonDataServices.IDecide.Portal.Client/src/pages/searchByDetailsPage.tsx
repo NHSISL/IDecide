@@ -2,14 +2,14 @@
 
 export const SearchByDetailsPage = ({
     onBack,
-    powerOfAttourney = false,
+    powerOfAttorney = false,
 }: {
     onBack: () => void;
-    powerOfAttourney?: boolean;
+        powerOfAttorney?: boolean;
 }) => (
     <SearchByDetails
         onBack={onBack}
-        powerOfAttourney={powerOfAttourney}
+        powerOfAttorney={powerOfAttorney}
     />
 );
 
