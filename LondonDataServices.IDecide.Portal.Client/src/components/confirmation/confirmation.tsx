@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
 import { Patient } from "../../models/patients/patient";
 import { PowerOfAttorney } from "../../models/powerOfAttourneys/powerOfAttourney";
+import { mapValidationCodeToNumber } from "../../helpers/mapValidationCodeToNumber";
 
 interface ConfirmationProps {
     selectedOption: "optout" | "optin" | null;
@@ -48,6 +49,20 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
         });
     };
 
+    const selectedMethods = Object.entries(prefs)
+        .filter(([, value]) => value)
+        .map(([key]) => key);
+
+    // Get the selected method as a string ("SMS", "Email", or "Post")
+    const selectedMethod = selectedMethods[0];
+
+    // Map to the value expected by the helper
+    const methodForHelper =
+        selectedMethod === "SMS" ? "Sms" :
+            selectedMethod === "Email" ? "Email" :
+                selectedMethod === "Post" ? "letter" :
+                    undefined;
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -65,6 +80,7 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
             patient: {
                 nhsNumber: nhsNumber || "",
                 validationCode: createdPatient?.validationCode,
+                notificationPreference: mapValidationCodeToNumber(methodForHelper) ?? undefined
             },
             decisionChoice: selectedOption,
             decisionTypeId: configuration.decisionTypeId,
@@ -111,10 +127,6 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
         }
     };
 
-    const selectedMethods = Object.entries(prefs)
-        .filter(([, value]) => value)
-        .map(([key]) => key);
-
     return (
         <>
             <Row className="custom-col-spacing">
@@ -155,8 +167,8 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
                                     <dt style={{ display: "inline", fontWeight: 500 }}>{translate("ConfirmAndSave.notificationMethodLabel")}</dt>
                                     <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
                                         <strong data-testid="notification-method-value">
-                                            {selectedMethods.length > 0
-                                                ? selectedMethods.join(", ")
+                                            {selectedMethod
+                                                ? selectedMethod
                                                 : translate("ConfirmAndSave.notificationNoneSelected")}
                                         </strong>
                                     </dd>
