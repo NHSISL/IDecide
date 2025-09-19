@@ -34,7 +34,6 @@ export const OptInOptOut: React.FC<OptInOptOutProps> = ({ createdPatient }) => {
             return;
         }
         setError("");
-        // Pass selectedOption, nhsNumber, createdPatient, and powerOfAttourney to nextStep
         nextStep(selectedOption, createdPatient.nhsNumber, createdPatient, powerOfAttorney ?? undefined);
     };
 

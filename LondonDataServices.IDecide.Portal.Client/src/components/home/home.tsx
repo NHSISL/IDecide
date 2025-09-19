@@ -118,7 +118,7 @@ export const Home = () => {
                 </Button>
 
                 <Button
-                    onClick={() => navigate("/optOut", { state: { powerOfAttourney: true } })}
+                    onClick={() => navigate("/optOut", { state: { powerOfAttorney: true } })}
                     style={{ margin: "0 0 1rem 1rem", width: 260, fontWeight: 600, minHeight: 75 }}>
                     {translate("homepage.startButtonOther")}
                 </Button>
