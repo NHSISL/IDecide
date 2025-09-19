@@ -104,7 +104,6 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
         setError("");
         setInfo("");
 
-        // Validate patient data before proceeding
         const patientToUpdate = getPatientToUpdate();
         if (!patientToUpdate) {
             setError("Patient information is missing.");
