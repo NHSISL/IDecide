@@ -2,7 +2,7 @@ import { Patient } from "../patients/patient";
 import { DecisionType } from "../decisionTypes/decisionType";
 import { ConsumerAdoption } from "../consumerAdoptions/consumerAdoption";
 
-export class Decision {
+export class PatientDecision {
     public id?: string;
     public patientId?: string;
     public decisionTypeId?: string;
@@ -18,7 +18,7 @@ export class Decision {
     public patient?: Patient;
     public consumerAdoptions?: ConsumerAdoption[];
 
-    constructor(decision?: Partial<Decision>) {
+    constructor(decision?: Partial<PatientDecision>) {
         this.id = decision?.id || '';
         this.patientId = decision?.patientId || '';
         this.decisionTypeId = decision?.decisionTypeId || '';

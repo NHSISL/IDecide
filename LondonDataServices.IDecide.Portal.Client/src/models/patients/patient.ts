@@ -12,6 +12,7 @@ export class Patient {
     public postCode?: string;
     public validationCode?: string;
     public validationCodeExpiresOn?: Date;
+    public notificationPreference?: number;
     public retryCount?: number;
     public createdBy?: string;
     public createdDate?: Date;
@@ -33,6 +34,7 @@ export class Patient {
             this.postCode = patient.postCode;
             this.validationCode = patient.validationCode;
             this.validationCodeExpiresOn = patient.validationCodeExpiresOn ? new Date(patient.validationCodeExpiresOn) : undefined;
+            this.notificationPreference = patient.notificationPreference;
             this.retryCount = patient.retryCount;
             this.createdBy = patient.createdBy;
             this.createdDate = patient.createdDate ? new Date(patient.createdDate) : undefined;

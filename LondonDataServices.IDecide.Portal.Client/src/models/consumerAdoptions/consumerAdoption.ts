@@ -1,4 +1,4 @@
-import { Decision } from '../decisions/decision';
+import { PatientDecision } from '../patientDecisions/patientDecision';
 import { Consumer } from '../consumers/consumer';
 
 export class ConsumerAdoption {
@@ -11,7 +11,7 @@ export class ConsumerAdoption {
     public updatedBy?: string;
     public updatedDate?: Date;
     public consumer?: Consumer;
-    public decision?: Decision;
+    public decision?: PatientDecision;
 
     constructor(adoption?: Partial<ConsumerAdoption>) {
         this.id = adoption?.id || '';
