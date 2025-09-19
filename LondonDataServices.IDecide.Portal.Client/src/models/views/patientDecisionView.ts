@@ -1,4 +1,4 @@
-export class DecisionView {
+export class PatientDecisionView {
     public patientNhsNumber?: string;
     public decisionTypeId?: number;
     public decisionChoice?: string;

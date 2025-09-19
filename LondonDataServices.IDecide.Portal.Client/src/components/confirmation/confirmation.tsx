@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Alert, Col, Row } from "react-bootstrap";
 import { useStep } from "../../hooks/useStep";
 import { decisionViewService } from "../../services/views/decisionViewService";
-import { Decision } from "../../models/decisions/decision";
+import { PatientDecision } from "../../models/patientDecisions/patientDecision";
 import { isAxiosError } from "../../helpers/axiosErrorHelper";
 import { useTranslation } from "react-i18next";
 import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
@@ -30,7 +30,7 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
     });
 
     const { nextStep } = useStep();
-    const createDecisionMutation = decisionViewService.useCreateDecision();
+    const createDecisionMutation = decisionViewService.useCreatePatientDecision();
     const [error, setError] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { t: translate } = useTranslation();
@@ -74,7 +74,7 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
         setError(null);
         setIsSubmitting(true);
 
-        const decision = new Decision({
+        const decision = new PatientDecision({
             id: crypto.randomUUID(),
             patientId: createdPatient?.id,
             patient: {
