@@ -15,8 +15,8 @@ interface PositiveConfirmationProps {
 
 const notificationPreferenceMap: Record<"Email" | "Letter" | "Sms", number> = {
     Email: NotificationPreference?.Email ?? 0,
-    Letter: NotificationPreference?.Letter ?? 2,
-    Sms: NotificationPreference?.Sms ?? 1
+    Letter: NotificationPreference?.Letter ?? 1,
+    Sms: NotificationPreference?.Sms ?? 2
 };
 
 const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirmCode }) => {
