@@ -1,3 +1,4 @@
+// LondonDataServices.IDecide.Portal.Client/src/components/positiveConfirmation/positiveConfirmation.tsx
 import React, { useState } from "react";
 import { useStep } from "../../hooks/useStep";
 import { patientViewService } from "../../services/views/patientViewService";
@@ -7,10 +8,19 @@ import { useTranslation } from "react-i18next";
 import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
 import { loadRecaptchaScript } from "../../helpers/recaptureLoad";
 import { isApiErrorResponse } from "../../helpers/isApiErrorResponse";
+// Import the NotificationPreference enum if available
+import { NotificationPreference } from "../../helpers/notificationPreference";
 
 interface PositiveConfirmationProps {
     goToConfirmCode: (createdPatient: PatientCodeRequest) => void;
 }
+
+// Map string method to enum value
+const notificationPreferenceMap: Record<"Email" | "Sms" | "Letter", number> = {
+    Email: NotificationPreference?.Email ?? 0,
+    Sms: NotificationPreference?.Sms ?? 1,
+    Letter: NotificationPreference?.Letter ?? 2
+};
 
 const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirmCode }) => {
     const { t: translate } = useTranslation();
@@ -36,7 +46,10 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
 
         // Update the context so ConfirmCodePage sees the correct value
         if (setCreatedPatient) {
-            setCreatedPatient(patientToUpdate);
+            setCreatedPatient({
+                ...createdPatient,
+                notificationPreference: notificationPreferenceMap[method]
+            });
         }
 
         await loadRecaptchaScript(RECAPTCHA_SITE_KEY);
