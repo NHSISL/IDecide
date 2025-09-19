@@ -7,13 +7,21 @@ import { useTranslation } from "react-i18next";
 import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
 import { loadRecaptchaScript } from "../../helpers/recaptureLoad";
 import { isApiErrorResponse } from "../../helpers/isApiErrorResponse";
+import { NotificationPreference } from "../../helpers/notificationPreference";
+
 interface PositiveConfirmationProps {
     goToConfirmCode: (createdPatient: PatientCodeRequest) => void;
 }
 
+const notificationPreferenceMap: Record<"Email" | "Letter" | "Sms", number> = {
+    Email: NotificationPreference.Email,
+    Letter: NotificationPreference.Letter,
+    Sms: NotificationPreference.Sms
+};
+
 const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirmCode }) => {
     const { t: translate } = useTranslation();
-    const { createdPatient, powerOfAttourney } = useStep();
+    const { createdPatient, powerOfAttorney, setCreatedPatient } = useStep();
     const { configuration } = useFrontendConfiguration();
     const RECAPTCHA_SITE_KEY = configuration.recaptchaSiteKey;
     const RECAPTCHA_ACTION_SUBMIT = "submit";
@@ -24,16 +32,22 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
         return <div>{translate("PositiveConfirmation.noPatientDetails")}</div>;
     }
 
-    const patientToUpdate = new PatientCodeRequest({
-        nhsNumber: createdPatient.nhsNumber,
-        verificationCode: createdPatient.validationCode,
-        notificationPreference: "",
-        generateNewCode: false
-    });
-
-    const handleSubmit = async (method: "Email" | "Sms" | "Letter") => {
+    const handleSubmit = async (method: "Email" | "Letter" | "Sms") => {
         setError("");
-        patientToUpdate.notificationPreference = method;
+        const patientToUpdate = new PatientCodeRequest({
+            nhsNumber: createdPatient.nhsNumber!,
+            verificationCode: createdPatient.validationCode!,
+            notificationPreference: method,
+            generateNewCode: false
+        });
+
+        // Update the context so ConfirmCodePage sees the correct value
+        if (setCreatedPatient) {
+            setCreatedPatient({
+                ...createdPatient,
+                notificationPreference: notificationPreferenceMap[method]
+            });
+        }
 
         await loadRecaptchaScript(RECAPTCHA_SITE_KEY);
 
@@ -107,7 +121,7 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
             <Col xs={12} md={7} lg={7}>
                 <div className="mt-4">
 
-                    {powerOfAttourney && (
+                    {powerOfAttorney && (
                         <Alert variant="info" className="d-flex align-items-center" style={{ marginBottom: "0.75rem", padding: "0.75rem" }}>
                             <div className="me-2" style={{ fontSize: "1.5rem", color: "#6c757d" }}>
                             </div>
@@ -119,13 +133,13 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                                     <div>
                                         <dt style={{ display: "inline", fontWeight: 500 }}>{translate("PositiveConfirmation.poaNameLabel")}</dt>
                                         <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
-                                            <strong>{powerOfAttourney.firstName} {powerOfAttourney.surname}</strong>
+                                            <strong>{powerOfAttorney.firstName} {powerOfAttorney.surname}</strong>
                                         </dd>
                                     </div>
                                     <div>
                                         <dt style={{ display: "inline", fontWeight: 500 }}>{translate("PositiveConfirmation.poaRelationshipLabel")}</dt>
                                         <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
-                                            <strong>{powerOfAttourney.relationship}</strong>
+                                            <strong>{powerOfAttorney.relationship}</strong>
                                         </dd>
                                     </div>
                                 </dl>

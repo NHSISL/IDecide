@@ -10,20 +10,6 @@ namespace LondonDataServices.IDecide.Core.Brokers.Notifications
     public interface INotificationBroker
     {
         /// <summary>
-        /// Sends an email to the specified email address with the specified
-        /// subject, body and personalisation items.
-        /// </summary>
-        /// <returns>A string representing the unique identifier of the sent email.</returns>
-        /// <exception cref="NotificationValidationProviderException" />
-        /// <exception cref="NotificationDependencyProviderException" />
-        /// <exception cref="NotificationServiceProviderException" />
-        ValueTask<string> SendEmailAsync(
-            string toEmail,
-            string subject,
-            string body,
-            Dictionary<string, dynamic> personalisation);
-
-        /// <summary>
         /// Sends an email using the specified template ID and personalisation items.
         /// </summary>
         /// <returns>A string representing the unique identifier of the sent email.</returns>

@@ -4,10 +4,6 @@ import { PatientLookup } from "../../models/patients/patientLookup";
 import { Patient } from "../../models/patients/patient";
 
 export const patientViewService = {
-    //usePostPatientSearch: (headers?: Record<string, string>) => {
-    //    return patientService.useCreatePatient(headers);
-    //},
-
     usePostPatientSearch: () => {
         return {
             mutate: async (
