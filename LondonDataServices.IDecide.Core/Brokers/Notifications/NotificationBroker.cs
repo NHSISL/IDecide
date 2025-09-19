@@ -18,28 +18,12 @@ namespace LondonDataServices.IDecide.Core.Brokers.Notifications
             this.notificationAbstractionProvider = notificationAbstractionProvider;
         }
 
-        /// <summary>
-        /// Sends an email to the specified email address with the specified
-        /// subject, body and personalisation items.
-        /// </summary>
-        /// <returns>A string representing the unique identifier of the sent email.</returns>
-        /// <exception cref="NotificationValidationProviderException" />
-        /// <exception cref="NotificationDependencyProviderException" />
-        /// <exception cref="NotificationServiceProviderException" />
         public async ValueTask<string> SendEmailAsync(
             string toEmail,
-            string subject,
-            string body,
-            Dictionary<string, dynamic> personalisation) =>
-            await notificationAbstractionProvider.SendEmailAsync(toEmail, subject, body, personalisation);
-
-        public ValueTask<string> SendEmailAsync(
-            string toEmail,
             string templateId,
-            Dictionary<string, dynamic> personalisation)
-        {
-            throw new System.NotImplementedException();
-        }
+            Dictionary<string, dynamic> personalisation) =>
+            await notificationAbstractionProvider
+                .SendEmailAsync(toEmail, templateId, personalisation, null);
 
         /// <summary>
         /// Sends a SMS using the specified template ID and personalisation items.
