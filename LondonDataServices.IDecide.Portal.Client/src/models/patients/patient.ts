@@ -35,7 +35,6 @@ export class Patient {
             this.validationCode = patient.validationCode;
             this.validationCodeExpiresOn = patient.validationCodeExpiresOn ? new Date(patient.validationCodeExpiresOn) : undefined;
             this.notificationPreference = patient.notificationPreference;
-            this.notificationPreference = patient.notificationPreference;
             this.retryCount = patient.retryCount;
             this.createdBy = patient.createdBy;
             this.createdDate = patient.createdDate ? new Date(patient.createdDate) : undefined;
