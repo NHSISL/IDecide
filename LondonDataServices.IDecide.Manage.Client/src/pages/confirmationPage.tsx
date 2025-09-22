@@ -11,7 +11,6 @@ export const ConfirmationPage = () => {
         <Container style={{ padding: 20 }}>
             <Confirmation
                 selectedOption={selectedOption}
-                nhsNumber={createdPatient.nhsNumber}
                 createdPatient={createdPatient as Patient}
                 powerOfAttorney={powerOfAttorney}
             />

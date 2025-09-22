@@ -1,25 +1,27 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Row, Col } from "react-bootstrap";
+import { Row, Col, Alert } from "react-bootstrap";
 import { Patient } from "../../models/patients/patient";
 import { PatientCodeRequest } from "../../models/patients/patientCodeRequest";
 import { isApiErrorResponse } from "../../helpers/isApiErrorResponse";
 import { patientViewService } from "../../services/views/patientViewService";
+import { PowerOfAttourney } from "../../models/powerOfAttourneys/powerOfAttourney";
 
 interface ConfirmDetailsProps {
     createdPatient: Patient;
+    powerOfAttorney?: PowerOfAttourney;
 }
 
-const PositiveConfirmation = ({ createdPatient }: ConfirmDetailsProps) => {
+const PositiveConfirmation = ({ createdPatient, powerOfAttorney }: ConfirmDetailsProps) => {
     const { t: translate } = useTranslation();
     const navigate = useNavigate();
     const [error, setError] = useState<string | JSX.Element>("");
     const updatePatient = patientViewService.useAddPatientAndGenerateCode();
 
     const patientToUpdate = new PatientCodeRequest({
-        nhsNumber: createdPatient.nhsNumber,
-        verificationCode: createdPatient.validationCode,
+        nhsNumber: createdPatient.nhsNumber!,
+        verificationCode: createdPatient.validationCode!,
         notificationPreference: "",
         generateNewCode: false
     });
@@ -33,7 +35,7 @@ const PositiveConfirmation = ({ createdPatient }: ConfirmDetailsProps) => {
             {
                 onSuccess: () => {
                     setError("");
-                    navigate("/confirmCode", { state: { createdPatient } });
+                    navigate("/confirmCode", { state: { createdPatient, powerOfAttorney } });
                 },
                 onError: (error: unknown) => {
                     let apiTitle = "";
@@ -83,9 +85,6 @@ const PositiveConfirmation = ({ createdPatient }: ConfirmDetailsProps) => {
                 }
             }
         );
-
-        // Navigate to confirmCode route
-
     };
 
     return (
@@ -93,31 +92,31 @@ const PositiveConfirmation = ({ createdPatient }: ConfirmDetailsProps) => {
             <Col xs={12} md={7} lg={7}>
                 <div className="mt-4">
 
-                    {/*{powerOfAttourney && (*/}
-                    {/*    <Alert variant="info" className="d-flex align-items-center" style={{ marginBottom: "0.75rem", padding: "0.75rem" }}>*/}
-                    {/*        <div className="me-2" style={{ fontSize: "1.5rem", color: "#6c757d" }}>*/}
-                    {/*        </div>*/}
-                    {/*        <div>*/}
-                    {/*            <div style={{ fontSize: "1rem", marginBottom: "0.25rem", color: "#6c757d", fontWeight: 500 }}>*/}
-                    {/*                {translate("PositiveConfirmation.poaDetailsTitle")}*/}
-                    {/*            </div>*/}
-                    {/*            <dl className="mb-0" style={{ fontSize: "0.95rem", color: "#6c757d" }}>*/}
-                    {/*                <div>*/}
-                    {/*                    <dt style={{ display: "inline", fontWeight: 500 }}>{translate("PositiveConfirmation.poaNameLabel")}</dt>*/}
-                    {/*                    <dd style={{ display: "inline", marginLeft: "0.5rem" }}>*/}
-                    {/*                        <strong>{powerOfAttourney.firstName} {powerOfAttourney.surname}</strong>*/}
-                    {/*                    </dd>*/}
-                    {/*                </div>*/}
-                    {/*                <div>*/}
-                    {/*                    <dt style={{ display: "inline", fontWeight: 500 }}>{translate("PositiveConfirmation.poaRelationshipLabel")}</dt>*/}
-                    {/*                    <dd style={{ display: "inline", marginLeft: "0.5rem" }}>*/}
-                    {/*                        <strong>{powerOfAttourney.relationship}</strong>*/}
-                    {/*                    </dd>*/}
-                    {/*                </div>*/}
-                    {/*            </dl>*/}
-                    {/*        </div>*/}
-                    {/*    </Alert>*/}
-                    {/*)}*/}
+                    {powerOfAttorney && (
+                        <Alert variant="info" className="d-flex align-items-center" style={{ marginBottom: "0.75rem", padding: "0.75rem" }}>
+                            <div className="me-2" style={{ fontSize: "1.5rem", color: "#6c757d" }}>
+                            </div>
+                            <div>
+                                <div style={{ fontSize: "1rem", marginBottom: "0.25rem", color: "#6c757d", fontWeight: 500 }}>
+                                    {translate("PositiveConfirmation.poaDetailsTitle")}
+                                </div>
+                                <dl className="mb-0" style={{ fontSize: "0.95rem", color: "#6c757d" }}>
+                                    <div>
+                                        <dt style={{ display: "inline", fontWeight: 500 }}>{translate("PositiveConfirmation.poaNameLabel")}</dt>
+                                        <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
+                                            <strong>{powerOfAttorney.firstName} {powerOfAttorney.surname}</strong>
+                                        </dd>
+                                    </div>
+                                    <div>
+                                        <dt style={{ display: "inline", fontWeight: 500 }}>{translate("PositiveConfirmation.poaRelationshipLabel")}</dt>
+                                        <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
+                                            <strong>{powerOfAttorney.relationship}</strong>
+                                        </dd>
+                                    </div>
+                                </dl>
+                            </div>
+                        </Alert>
+                    )}
 
                     <h2>{translate("PositiveConfirmation.confirmationRequiredTitle")}</h2>
                     <p>{translate("PositiveConfirmation.confirmationRequiredDescription")}</p>

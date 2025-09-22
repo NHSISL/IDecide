@@ -1,13 +1,14 @@
 import { useNavigate } from "react-router-dom";
 import { Patient } from "../../models/patients/patient";
 import { useTranslation } from "react-i18next";
-import { Row, Col } from "react-bootstrap";
-
+import { Row, Col, Alert } from "react-bootstrap";
+import { PowerOfAttourney } from "../../models/powerOfAttourneys/powerOfAttourney";
 interface ConfirmDetailsProps {
     createdPatient: Patient;
+    powerOfAttorney?: PowerOfAttourney;
 }
 
-export const ConfirmDetails = ({ createdPatient }: ConfirmDetailsProps) => {
+export const ConfirmDetails = ({ createdPatient, powerOfAttorney }: ConfirmDetailsProps) => {
     const { t: translate } = useTranslation();
     const navigate = useNavigate();
 
@@ -15,7 +16,7 @@ export const ConfirmDetails = ({ createdPatient }: ConfirmDetailsProps) => {
         const choice = event.currentTarget.value;
         switch (choice) {
             case "yes":
-                navigate("/sendCode", { state: { createdPatient } });
+                navigate("/sendCode", { state: { createdPatient, powerOfAttorney } });
                 break;
             case "no":
                 navigate("/nhsNumberSearch", { state: { createdPatient } });
@@ -32,7 +33,31 @@ export const ConfirmDetails = ({ createdPatient }: ConfirmDetailsProps) => {
         <Row className="custom-col-spacing">
             <Col xs={12} md={6} lg={6}>
                 <div className="mt-4">
-                    {/* Power of Attorney section can be added here if needed */}
+                    {powerOfAttorney && (
+                        <Alert variant="info" className="d-flex align-items-center" style={{ marginBottom: "0.75rem", padding: "0.75rem" }}>
+                            <div className="me-2" style={{ fontSize: "1.5rem", color: "#6c757d" }}>
+                            </div>
+                            <div>
+                                <div style={{ fontSize: "1rem", marginBottom: "0.25rem", color: "#6c757d", fontWeight: 500 }}>
+                                    {translate("ConfirmDetails.powerOfAttorneyDetails")}
+                                </div>
+                                <dl className="mb-0" style={{ fontSize: "0.95rem", color: "#6c757d" }}>
+                                    <div>
+                                        <dt style={{ display: "inline", fontWeight: 500 }}>{translate("ConfirmDetails.powerOfAttorneyName")}:</dt>
+                                        <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
+                                            <strong>{powerOfAttorney.firstName} {powerOfAttorney.surname}</strong>
+                                        </dd>
+                                    </div>
+                                    <div>
+                                        <dt style={{ display: "inline", fontWeight: 500 }}>{translate("ConfirmDetails.powerOfAttorneyRelationship")}:</dt>
+                                        <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
+                                            <strong>{powerOfAttorney.relationship}</strong>
+                                        </dd>
+                                    </div>
+                                </dl>
+                            </div>
+                        </Alert>
+                    )}
                     <h4
                         style={{
                             fontWeight: 700,

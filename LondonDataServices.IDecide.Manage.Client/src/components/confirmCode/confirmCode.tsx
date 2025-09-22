@@ -3,15 +3,18 @@ import { useNavigate } from "react-router-dom";
 import { Patient } from "../../models/patients/patient";
 import { useTranslation } from "react-i18next";
 import { patientViewService } from "../../services/views/patientViewService";
-import { Row, Col } from "react-bootstrap";
+import { Row, Col, Alert } from "react-bootstrap";
 import { PatientCodeRequest } from "../../models/patients/patientCodeRequest";
 import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
 import { isApiErrorResponse } from "../../helpers/isApiErrorResponse";
+import { PowerOfAttourney } from "../../models/powerOfAttourneys/powerOfAttourney";
+
 interface ConfirmDetailsProps {
     createdPatient: Patient;
+    powerOfAttorney?: PowerOfAttourney;
 }
 
-export const ConfirmCode = ({ createdPatient }: ConfirmDetailsProps) => {
+export const ConfirmCode = ({ createdPatient, powerOfAttorney }: ConfirmDetailsProps) => {
     const { t: translate } = useTranslation();
     const navigate = useNavigate();
     const [code, setCode] = useState("");
@@ -49,7 +52,7 @@ export const ConfirmCode = ({ createdPatient }: ConfirmDetailsProps) => {
             await confirmCodeMutation.mutateAsync(request);
 
             createdPatient.validationCode = code;
-            navigate("/optInOut", { state: { createdPatient } });
+            navigate("/optInOut", { state: { createdPatient, powerOfAttorney } });
         } catch (error: unknown) {
             if (isApiErrorResponse(error)) {
                 const errResponse = error.response;
@@ -70,81 +73,81 @@ export const ConfirmCode = ({ createdPatient }: ConfirmDetailsProps) => {
                 setError(translate("ConfirmCode.errorGeneric"));
             }
         }
-        
     };
+
     return (
         <>
             <Row className="custom-col-spacing">
                 <Col xs={12} md={6} lg={6}>
-                    {/*{powerOfAttourney && (*/}
-                    {/*    <Alert*/}
-                    {/*        variant="info"*/}
-                    {/*        className="d-flex align-items-center"*/}
-                    {/*        style={{ marginBottom: "0.75rem", padding: "0.75rem" }}*/}
-                    {/*    >*/}
-                    {/*        <div*/}
-                    {/*            className="me-2"*/}
-                    {/*            style={{ fontSize: "1.5rem", color: "#6c757d" }}*/}
-                    {/*        />*/}
-                    {/*        <div>*/}
-                    {/*            <div*/}
-                    {/*                style={{*/}
-                    {/*                    fontSize: "1rem",*/}
-                    {/*                    marginBottom: "0.25rem",*/}
-                    {/*                    color: "#6c757d",*/}
-                    {/*                    fontWeight: 500*/}
-                    {/*                }}*/}
-                    {/*            >*/}
-                    {/*                {translate("ConfirmCode.powerOfAttorneyDetails")}*/}
-                    {/*            </div>*/}
-                    {/*            <dl*/}
-                    {/*                className="mb-0"*/}
-                    {/*                style={{ fontSize: "0.95rem", color: "#6c757d" }}*/}
-                    {/*            >*/}
-                    {/*                <div>*/}
-                    {/*                    <dt*/}
-                    {/*                        style={{*/}
-                    {/*                            display: "inline",*/}
-                    {/*                            fontWeight: 500*/}
-                    {/*                        }}*/}
-                    {/*                    >*/}
-                    {/*                        {translate("ConfirmCode.powerOfAttorneyName")}*/}
-                    {/*                    </dt>*/}
-                    {/*                    <dd*/}
-                    {/*                        style={{*/}
-                    {/*                            display: "inline",*/}
-                    {/*                            marginLeft: "0.5rem"*/}
-                    {/*                        }}*/}
-                    {/*                    >*/}
-                    {/*                        <strong>*/}
-                    {/*                            {powerOfAttourney.firstName} {powerOfAttourney.surname}*/}
-                    {/*                        </strong>*/}
-                    {/*                    </dd>*/}
-                    {/*                </div>*/}
-                    {/*                <div>*/}
-                    {/*                    <dt*/}
-                    {/*                        style={{*/}
-                    {/*                            display: "inline",*/}
-                    {/*                            fontWeight: 500*/}
-                    {/*                        }}*/}
-                    {/*                    >*/}
-                    {/*                        {translate("ConfirmCode.powerOfAttorneyRelationship")}*/}
-                    {/*                    </dt>*/}
-                    {/*                    <dd*/}
-                    {/*                        style={{*/}
-                    {/*                            display: "inline",*/}
-                    {/*                            marginLeft: "0.5rem"*/}
-                    {/*                        }}*/}
-                    {/*                    >*/}
-                    {/*                        <strong>*/}
-                    {/*                            {powerOfAttourney.relationship}*/}
-                    {/*                        </strong>*/}
-                    {/*                    </dd>*/}
-                    {/*                </div>*/}
-                    {/*            </dl>*/}
-                    {/*        </div>*/}
-                    {/*    </Alert>*/}
-                    {/*)}*/}
+                    {powerOfAttorney && (
+                        <Alert
+                            variant="info"
+                            className="d-flex align-items-center"
+                            style={{ marginBottom: "0.75rem", padding: "0.75rem" }}
+                        >
+                            <div
+                                className="me-2"
+                                style={{ fontSize: "1.5rem", color: "#6c757d" }}
+                            />
+                            <div>
+                                <div
+                                    style={{
+                                        fontSize: "1rem",
+                                        marginBottom: "0.25rem",
+                                        color: "#6c757d",
+                                        fontWeight: 500
+                                    }}
+                                >
+                                    {translate("ConfirmCode.powerOfAttorneyDetails")}
+                                </div>
+                                <dl
+                                    className="mb-0"
+                                    style={{ fontSize: "0.95rem", color: "#6c757d" }}
+                                >
+                                    <div>
+                                        <dt
+                                            style={{
+                                                display: "inline",
+                                                fontWeight: 500
+                                            }}
+                                        >
+                                            {translate("ConfirmCode.powerOfAttorneyName")}
+                                        </dt>
+                                        <dd
+                                            style={{
+                                                display: "inline",
+                                                marginLeft: "0.5rem"
+                                            }}
+                                        >
+                                            <strong>
+                                                {powerOfAttorney.firstName} {powerOfAttorney.surname}
+                                            </strong>
+                                        </dd>
+                                    </div>
+                                    <div>
+                                        <dt
+                                            style={{
+                                                display: "inline",
+                                                fontWeight: 500
+                                            }}
+                                        >
+                                            {translate("ConfirmCode.powerOfAttorneyRelationship")}
+                                        </dt>
+                                        <dd
+                                            style={{
+                                                display: "inline",
+                                                marginLeft: "0.5rem"
+                                            }}
+                                        >
+                                            <strong>
+                                                {powerOfAttorney.relationship}
+                                            </strong>
+                                        </dd>
+                                    </div>
+                                </dl>
+                            </div>
+                        </Alert>
+                    )}
 
                     <form
                         className="nhsuk-form-group"

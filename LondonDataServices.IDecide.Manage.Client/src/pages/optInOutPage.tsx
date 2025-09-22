@@ -2,11 +2,12 @@
 import OptInOptOut from "../components/optInOptOut/optInOptOut";
 import { useLocation } from "react-router-dom";
 import { Patient } from "../models/patients/patient";
+import { PowerOfAttourney } from "../models/powerOfAttourneys/powerOfAttourney";
 
 export const OptInOutPage = () => {
     const location = useLocation();
     const createdPatient = location.state?.createdPatient as Patient;
-
+    const powerOfAttorney = location.state?.powerOfAttorney as PowerOfAttourney | undefined;
 
     return (
         <Container fluid>
@@ -14,7 +15,10 @@ export const OptInOutPage = () => {
                 <Card.Content>
                     <Card.Heading>Decision</Card.Heading>
                     <Card.Description>
-                       <OptInOptOut createdPatient={createdPatient} />
+                        <OptInOptOut
+                            createdPatient={createdPatient}
+                            powerOfAttorney={powerOfAttorney}
+                        />
                     </Card.Description>
                 </Card.Content>
             </Card>

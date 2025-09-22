@@ -3,12 +3,14 @@ import { Patient } from "../../models/patients/patient";
 import { Row, Col, Alert } from "react-bootstrap";
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from "react-router-dom";
+import { PowerOfAttourney } from "../../models/powerOfAttourneys/powerOfAttourney";
 
 interface OptInOptOutProps {
     createdPatient: Patient | null;
+    powerOfAttorney?: PowerOfAttourney;
 }
 
-export const OptInOptOut: React.FC<OptInOptOutProps> = ({ createdPatient }) => {
+export const OptInOptOut: React.FC<OptInOptOutProps> = ({ createdPatient, powerOfAttorney }) => {
     const [selectedOption, setSelectedOption] = useState<"optout" | "optin" | "">("");
     const [error, setError] = useState("");
     
@@ -39,7 +41,7 @@ export const OptInOptOut: React.FC<OptInOptOutProps> = ({ createdPatient }) => {
             state: {
                 selectedOption,
                 createdPatient,
-               
+                powerOfAttorney
             }
         });
     };
@@ -48,31 +50,31 @@ export const OptInOptOut: React.FC<OptInOptOutProps> = ({ createdPatient }) => {
         <>
             <Row className="custom-col-spacing">
                 <Col xs={12} md={12} lg={7}>
-                    {/*{powerOfAttorney && (*/}
-                    {/*    <Alert variant="info" className="d-flex align-items-center" style={{ marginBottom: "0.75rem", padding: "0.75rem" }}>*/}
-                    {/*        <div className="me-2" style={{ fontSize: "1.5rem", color: "#6c757d" }}>*/}
-                    {/*        </div>*/}
-                    {/*        <div>*/}
-                    {/*            <div style={{ fontSize: "1rem", marginBottom: "0.25rem", color: "#6c757d", fontWeight: 500 }}>*/}
-                    {/*                {translate("OptOut.powerOfAttorneyDetails")}*/}
-                    {/*            </div>*/}
-                    {/*            <dl className="mb-0" style={{ fontSize: "0.95rem", color: "#6c757d" }}>*/}
-                    {/*                <div>*/}
-                    {/*                    <dt style={{ display: "inline", fontWeight: 500 }}>{translate("OptOut.powerOfAttorneyName")}</dt>*/}
-                    {/*                    <dd style={{ display: "inline", marginLeft: "0.5rem" }}>*/}
-                    {/*                        <strong>{powerOfAttorney.firstName} {powerOfAttorney.surname}</strong>*/}
-                    {/*                    </dd>*/}
-                    {/*                </div>*/}
-                    {/*                <div>*/}
-                    {/*                    <dt style={{ display: "inline", fontWeight: 500 }}>{translate("OptOut.powerOfAttorneyRelationship")}</dt>*/}
-                    {/*                    <dd style={{ display: "inline", marginLeft: "0.5rem" }}>*/}
-                    {/*                        <strong>{powerOfAttorney.relationship}</strong>*/}
-                    {/*                    </dd>*/}
-                    {/*                </div>*/}
-                    {/*            </dl>*/}
-                    {/*        </div>*/}
-                    {/*    </Alert>*/}
-                    {/*)}*/}
+                    {powerOfAttorney && (
+                        <Alert variant="info" className="d-flex align-items-center" style={{ marginBottom: "0.75rem", padding: "0.75rem" }}>
+                            <div className="me-2" style={{ fontSize: "1.5rem", color: "#6c757d" }}>
+                            </div>
+                            <div>
+                                <div style={{ fontSize: "1rem", marginBottom: "0.25rem", color: "#6c757d", fontWeight: 500 }}>
+                                    {translate("OptOut.powerOfAttorneyDetails")}
+                                </div>
+                                <dl className="mb-0" style={{ fontSize: "0.95rem", color: "#6c757d" }}>
+                                    <div>
+                                        <dt style={{ display: "inline", fontWeight: 500 }}>{translate("OptOut.powerOfAttorneyName")}</dt>
+                                        <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
+                                            <strong>{powerOfAttorney.firstName} {powerOfAttorney.surname}</strong>
+                                        </dd>
+                                    </div>
+                                    <div>
+                                        <dt style={{ display: "inline", fontWeight: 500 }}>{translate("OptOut.powerOfAttorneyRelationship")}</dt>
+                                        <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
+                                            <strong>{powerOfAttorney.relationship}</strong>
+                                        </dd>
+                                    </div>
+                                </dl>
+                            </div>
+                        </Alert>
+                    )}
 
                     <form onSubmit={handleSubmit}>
                         {/* Opt-Out Card */}

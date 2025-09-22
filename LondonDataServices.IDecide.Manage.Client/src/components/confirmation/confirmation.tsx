@@ -7,14 +7,14 @@ import { isAxiosError } from "../../helpers/axiosErrorHelper";
 import { useTranslation } from "react-i18next";
 import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
 import { Patient } from "../../models/patients/patient";
-import { PowerOfAttorney } from "../../models/powerOfAttourneys/powerOfAttourney";
+import { PowerOfAttourney } from "../../models/powerOfAttourneys/powerOfAttourney";
 import { mapValidationCodeToNumber } from "../../helpers/mapValidationCodeToNumber";
 import { useNavigate } from "react-router-dom";
 
 interface ConfirmationProps {
     selectedOption: "optout" | "optin" | null;
     createdPatient?: Patient | null;
-    powerOfAttorney?: PowerOfAttorney | null;
+    powerOfAttorney?: PowerOfAttourney | null;
 }
 
 export const Confirmation: React.FC<ConfirmationProps> = ({
@@ -161,31 +161,38 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
                                     </dd>
                                 </div>
                             </dl>
-                            {powerOfAttorney && (
-                                <>
-                                    <hr />
-                                    <div style={{ fontSize: "1rem", marginBottom: "0.25rem", color: "#6c757d", fontWeight: 500 }}>
-                                        {translate("ConfirmAndSave.powerOfAttorneyDetails")}
-                                    </div>
-                                    <dl className="mb-0" style={{ fontSize: "0.95rem", color: "#6c757d" }}>
-                                        <div>
-                                            <dt style={{ display: "inline", fontWeight: 500 }}>{translate("ConfirmAndSave.powerOfAttorneyName")}</dt>
-                                            <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
-                                                <strong>{powerOfAttorney.firstName} {powerOfAttorney.surname}</strong>
-                                            </dd>
-                                        </div>
-                                        <div>
-                                            <dt style={{ display: "inline", fontWeight: 500 }}>{translate("ConfirmAndSave.powerOfAttorneyRelationship")}</dt>
-                                            <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
-                                                <strong>{powerOfAttorney.relationship}</strong>
-                                            </dd>
-                                        </div>
-                                    </dl>
-                                </>
-                            )}
+                            
                         </div>
 
                     </Alert>
+
+                    {powerOfAttorney && (
+                        <Alert variant="info" className="d-flex align-items-center" style={{ marginBottom: "0.75rem", padding: "0.75rem" }}>
+                            <div className="me-2" style={{ fontSize: "1.5rem", color: "#6c757d" }}>
+                            </div>
+                            <div>
+                                <div style={{ fontSize: "1rem", marginBottom: "0.25rem", color: "#6c757d", fontWeight: 500 }}>
+                                    {translate("OptOut.powerOfAttorneyDetails")}
+                                </div>
+                                <dl className="mb-0" style={{ fontSize: "0.95rem", color: "#6c757d" }}>
+                                    <div>
+                                        <dt style={{ display: "inline", fontWeight: 500 }}>{translate("OptOut.powerOfAttorneyName")}</dt>
+                                        <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
+                                            <strong>{powerOfAttorney.firstName} {powerOfAttorney.surname}</strong>
+                                        </dd>
+                                    </div>
+                                    <div>
+                                        <dt style={{ display: "inline", fontWeight: 500 }}>{translate("OptOut.powerOfAttorneyRelationship")}</dt>
+                                        <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
+                                            <strong>{powerOfAttorney.relationship}</strong>
+                                        </dd>
+                                    </div>
+                                </dl>
+                            </div>
+                        </Alert>
+                    )}
+
+
 
                     {error && (
                         <Alert variant="danger" onClose={() => setError(null)} dismissible data-testid="error-alert">

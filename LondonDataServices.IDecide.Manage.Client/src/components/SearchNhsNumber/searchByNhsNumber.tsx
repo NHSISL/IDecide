@@ -33,7 +33,8 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
     const [poaSurnameError, setPoaSurnameError] = useState("");
     const [poaRelationshipError, setPoaRelationshipError] = useState("");
     const [loading, setLoading] = useState(false);
-    const { nextStep, setCreatedPatient } = useStep();
+    const [isPowerOfAttorney, setIsPowerOfAttorney] = useState(false);
+    const [createdPatient, setCreatedPatient] = useState<Patient | null>(null);
     const navigate = useNavigate();
     const addPatient = patientViewService.usePostPatientSearch();
 
@@ -41,6 +42,10 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
         const value = e.target.value.replace(/\D/g, "").slice(0, 10);
         setNhsNumberInput(value);
         if (error) setError("");
+    };
+
+    const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setIsPowerOfAttorney(e.target.checked);
     };
 
     // PoA field handlers
@@ -108,7 +113,7 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
         const patientLookup = new PatientLookup(searchCriteria, []);
 
         let poaModel = undefined;
-        if (powerOfAttourney) {
+        if (isPowerOfAttorney) {
             poaModel = new PowerOfAttourney({
                 firstName: poaFirstname,
                 surname: poaSurname,
@@ -121,7 +126,7 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
             {
                 onSuccess: (createdPatient: Patient) => {
                     setCreatedPatient(createdPatient);
-                    navigate("/confirmDetails", { state: { createdPatient } });
+                    navigate("/confirmDetails", { state: { createdPatient, poaModel } });
                     setLoading(false);
                 },
                 onError: () => {
@@ -138,7 +143,21 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
             <Row className="custom-col-spacing">
                 <Col xs={12} md={6} lg={6}>
                     <form autoComplete="off" onSubmit={handleSubmit}>
-                        {!powerOfAttourney && (
+
+                        <div style={{ margin: "1rem 0" }}>
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    checked={isPowerOfAttorney}
+                                    onChange={handleCheckboxChange}
+                                    style={{ marginRight: "0.5rem" }}
+                                />
+                                I am acting under a Power of Attorney
+                            </label>
+                        </div>
+
+
+                        {!isPowerOfAttorney && (
                             <TextInput
                                 label={translate("SearchBySHSNumber.nhsNumberLabel")}
                                 hint={translate("SearchBySHSNumber.nhsNumberHint")}
@@ -155,11 +174,11 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
                             />
                         )}
 
-                        {powerOfAttourney && (
+                        {isPowerOfAttorney && (
                             <div style={{ marginBottom: "1.5rem" }}>
                                 <Card cardType="feature">
                                     <Card.Content>
-                                        <Card.Heading>{translate("SearchBySHSNumber.poaNhsNumberLabel")}</Card.Heading>
+                                        <Card.Heading style={{ fontSize: "16px" }}>{translate("SearchBySHSNumber.poaNhsNumberLabel")}</Card.Heading>
                                         <TextInput
                                             label={translate("SearchBySHSNumber.nhsNumberLabel")}
                                             id="poa-nhs-number"
@@ -178,7 +197,7 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
 
                                 <Card cardType="feature">
                                     <Card.Content>
-                                        <Card.Heading>{translate("SearchBySHSNumber.poaMyDetailsHeading")}</Card.Heading>
+                                        <Card.Heading style={{ fontSize: "16px" }}>{translate("SearchBySHSNumber.poaMyDetailsHeading")}</Card.Heading>
                                         <TextInput
                                             label={translate("SearchBySHSNumber.poaFirstnameLabel")}
                                             id="poa-firstname"
