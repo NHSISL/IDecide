@@ -12,7 +12,6 @@ import { isApiErrorResponse } from "../../helpers/isApiErrorResponse";
 import { useNavigate } from "react-router-dom";
 
 export const SearchByDetails = () => {
-
     const { t: translate } = useTranslation();
     const [surname, setSurname] = useState("");
     const [postcode, setPostcode] = useState("");
@@ -25,24 +24,21 @@ export const SearchByDetails = () => {
     const [poaFirstname, setPoaFirstname] = useState("");
     const [poaSurname, setPoaSurname] = useState("");
     const [poaRelationship, setPoaRelationship] = useState("");
-    const [poaFirstnameError, setPoaFirstnameError] = useState("");
-    const [poaSurnameError, setPoaSurnameError] = useState("");
-    const [poaRelationshipError, setPoaRelationshipError] = useState("");
     const addPatient = patientViewService.usePostPatientDetails();
-    const { nextStep, setCreatedPatient } = useStep();
     const navigate = useNavigate();
+
     // PoA handlers
     const handlePoaFirstnameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPoaFirstname(e.target.value);
-        setPoaFirstnameError("");
+        handleFieldChange("poaFirstname");
     };
     const handlePoaSurnameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPoaSurname(e.target.value);
-        setPoaSurnameError("");
+        handleFieldChange("poaSurname");
     };
     const handlePoaRelationshipChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setPoaRelationship(e.target.value);
-        setPoaRelationshipError("");
+        handleFieldChange("poaRelationship");
     };
 
     // Standard field error clearing
@@ -62,19 +58,28 @@ export const SearchByDetails = () => {
         setIsPowerOfAttorney(e.target.checked);
     };
 
+    // Normalize and validate UK date
     const isValidUKDate = (day: string, month: string, year: string): string | null => {
-        if (!/^\d{2}$/.test(month) || parseInt(month, 10) < 1 || parseInt(month, 10) > 12) {
+        // Normalize to two digits for day and month
+        const dayNorm = day.padStart(2, "0");
+        const monthNorm = month.padStart(2, "0");
+
+        if (!/^(0[1-9]|[12][0-9]|3[01])$/.test(dayNorm)) {
+            return translate("SearchByDetails.dobDayInvalid");
+        }
+        if (!/^(0[1-9]|1[0-2])$/.test(monthNorm)) {
             return translate("SearchByDetails.dobMonthInvalid");
         }
-        if (!/^\d{1,2}$/.test(day) || !/^\d{4}$/.test(year)) {
-            return translate("SearchByDetails.dobInvalid");
+        if (!/^\d{4}$/.test(year)) {
+            return translate("SearchByDetails.dobYearInvalid");
         }
-        const dayNum = parseInt(day, 10);
-        const monthNum = parseInt(month, 10);
+        const dayNum = parseInt(dayNorm, 10);
+        const monthNum = parseInt(monthNorm, 10);
         const yearNum = parseInt(year, 10);
 
-        if (dayNum < 1 || dayNum > 31) return translate("SearchByDetails.dobDayInvalid");
-        if (yearNum < 1900 || yearNum > new Date().getFullYear()) return translate("SearchByDetails.dobYearInvalid");
+        if (yearNum < 1900 || yearNum > new Date().getFullYear()) {
+            return translate("SearchByDetails.dobYearInvalid");
+        }
 
         // Check for valid date
         const date = new Date(yearNum, monthNum - 1, dayNum);
@@ -89,9 +94,23 @@ export const SearchByDetails = () => {
     };
 
     const handleMonthChange = (value: string) => {
-        const filtered = value.replace(/\D/g, "").slice(0, 2);
+        // Only allow 1-12, two digits max
+        let filtered = value.replace(/\D/g, "").slice(0, 2);
+        if (filtered.length === 2 && (parseInt(filtered, 10) < 1 || parseInt(filtered, 10) > 12)) {
+            filtered = filtered[0];
+        }
         setDobMonth(filtered);
         handleFieldChange("dobMonth");
+    };
+
+    const handleDayChange = (value: string) => {
+        // Only allow 1-31, two digits max
+        let filtered = value.replace(/\D/g, "").slice(0, 2);
+        if (filtered.length === 2 && (parseInt(filtered, 10) < 1 || parseInt(filtered, 10) > 31)) {
+            filtered = filtered[0];
+        }
+        setDobDay(filtered);
+        handleFieldChange("dobDay");
     };
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -119,7 +138,7 @@ export const SearchByDetails = () => {
 
         if (Object.keys(newErrors).length === 0) {
             setLoading(true);
-            const dateOfBirth = `${dobYear}/${dobMonth}/${dobDay}`;
+            const dateOfBirth = `${dobYear}/${dobMonth.padStart(2, "0")}/${dobDay.padStart(2, "0")}`;
             const searchCriteria = new SearchCriteria({
                 surname: surname,
                 postcode: postcode,
@@ -140,7 +159,6 @@ export const SearchByDetails = () => {
                 patientLookup,
                 {
                     onSuccess: (createdPatient: Patient) => {
-                        setCreatedPatient(createdPatient);
                         navigate("/confirmDetails", { state: { createdPatient, poaModel } });
                         setLoading(false);
                     },
@@ -175,11 +193,10 @@ export const SearchByDetails = () => {
     };
 
     return (
-        <Container>
+        <Container fluid>
             <Row className="custom-col-spacing">
                 <Col xs={12} md={7} lg={7}>
                     <form className="nhsuk-form-group" autoComplete="off" onSubmit={handleSubmit} >
-
                         <div style={{ margin: "1rem 0" }}>
                             <label>
                                 <input
@@ -193,7 +210,7 @@ export const SearchByDetails = () => {
                         </div>
                         <Card cardType="feature">
                             <Card.Content>
-                                <Card.Heading>{translate("SearchByDetails.myDetails")}</Card.Heading>
+                                <Card.Heading style={{ fontSize: "16px" }}>{translate("SearchByDetails.myDetails")}</Card.Heading>
 
                                 <div className={`nhsuk-form-group${errors.surname ? " nhsuk-form-group--error" : ""}`}>
                                     <label className="nhsuk-label" htmlFor="surname">
@@ -273,13 +290,10 @@ export const SearchByDetails = () => {
                                                 name="dob-day"
                                                 type="text"
                                                 inputMode="numeric"
-                                                pattern="[0-9]*"
+                                                pattern="^(0[1-9]|[12][0-9]|3[01])$"
                                                 maxLength={2}
                                                 value={dobDay}
-                                                onChange={e => {
-                                                    setDobDay(e.target.value.replace(/\D/g, ""));
-                                                    handleFieldChange("dobDay");
-                                                }}
+                                                onChange={e => handleDayChange(e.target.value)}
                                                 style={{ width: "3em" }}
                                                 autoComplete="bday-day"
                                             />
@@ -312,11 +326,11 @@ export const SearchByDetails = () => {
                                                 name="dob-year"
                                                 type="text"
                                                 inputMode="numeric"
-                                                pattern="[0-9]*"
+                                                pattern="^\d{4}$"
                                                 maxLength={4}
                                                 value={dobYear}
                                                 onChange={e => {
-                                                    setDobYear(e.target.value.replace(/\D/g, ""));
+                                                    setDobYear(e.target.value.replace(/\D/g, "").slice(0, 4));
                                                     handleFieldChange("dobYear");
                                                 }}
                                                 style={{ width: "4em" }}
@@ -331,7 +345,7 @@ export const SearchByDetails = () => {
                         {isPowerOfAttorney && (
                             <Card cardType="feature">
                                 <Card.Content>
-                                    <Card.Heading>{translate("SearchByDetails.myDetailsRequester")}</Card.Heading>
+                                    <Card.Heading style={{ fontSize: "16px" }}>{translate("SearchByDetails.myDetailsRequester")}</Card.Heading>
                                     <Card.Description>
                                         <div style={{ marginBottom: "1.5rem" }}>
                                             <TextInput
@@ -341,7 +355,7 @@ export const SearchByDetails = () => {
                                                 autoComplete="off"
                                                 value={poaFirstname}
                                                 onChange={handlePoaFirstnameChange}
-                                                error={poaFirstnameError || undefined}
+                                                error={errors.poaFirstname || undefined}
                                                 style={{ maxWidth: "400px", marginBottom: "1rem" }}
                                             />
                                             <TextInput
@@ -351,7 +365,7 @@ export const SearchByDetails = () => {
                                                 autoComplete="off"
                                                 value={poaSurname}
                                                 onChange={handlePoaSurnameChange}
-                                                error={poaSurnameError || undefined}
+                                                error={errors.poaSurname || undefined}
                                                 style={{ maxWidth: "400px", marginBottom: "1rem" }}
                                             />
                                             <div style={{ marginBottom: "1rem" }}>
@@ -364,7 +378,7 @@ export const SearchByDetails = () => {
                                                     required
                                                     value={poaRelationship}
                                                     onChange={handlePoaRelationshipChange}
-                                                    error={poaRelationshipError || undefined}
+                                                    error={errors.poaRelationship || undefined}
                                                     style={{ maxWidth: "400px", marginBottom: "1rem" }}
                                                 >
                                                     <option value="" disabled>

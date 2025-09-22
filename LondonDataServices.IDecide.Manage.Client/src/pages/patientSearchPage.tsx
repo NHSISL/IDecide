@@ -7,8 +7,7 @@ export const PatientSearchPage = () => {
             <Card cardType="feature">
                 <Card.Content>
                     <Card.Heading>Patient Search</Card.Heading>
-                    <Card.Description>
-                    </Card.Description>
+                    <Card.Description></Card.Description>
                     <PatientSearch />
                 </Card.Content>
             </Card>

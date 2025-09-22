@@ -138,7 +138,7 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
     };
 
     return (
-        <Container>
+        <Container fluid>
             <Row className="custom-col-spacing">
                 <Col xs={12} md={6} lg={6}>
                     <form autoComplete="off" onSubmit={handleSubmit}>
