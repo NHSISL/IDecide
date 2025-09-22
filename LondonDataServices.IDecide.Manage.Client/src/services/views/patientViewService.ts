@@ -24,6 +24,9 @@ export const patientViewService = {
     usePostPatientSearch: () => {
         return patientService.useCreatePatient();
     },
+    usePostPatientDetails: () => {
+        return patientService.useCreatePatient();
+    },
     useAddPatientAndGenerateCode: () => {
         return patientService.usePostPatientWithNotificationPreference();
     },

@@ -1,61 +1,185 @@
 import React, { useState } from "react";
-import { Container, Row, Col } from "react-bootstrap";
+import { useStep } from "../../hooks/useStep";
+import { Patient } from "../../models/patients/patient";
+import { PowerOfAttourney } from "../../models/powerOfAttourneys/powerOfAttourney";
+import { patientViewService } from "../../services/views/patientViewService";
+import { TextInput, Select, Card } from "nhsuk-react-components";
+import { Col, Container, Row } from "react-bootstrap";
+import { useTranslation } from "react-i18next";
+import { PatientLookup } from "../../models/patients/patientLookup";
+import { SearchCriteria } from "../../models/searchCriterias/searchCriteria";
+import { isApiErrorResponse } from "../../helpers/isApiErrorResponse";
+import { useNavigate } from "react-router-dom";
 
-interface SearchByDetailsProps {
-    nextStep: () => void;
-}
+export const SearchByDetails = () => {
 
-const SearchByDetails: React.FC<SearchByDetailsProps> = ({ nextStep }) => {
-    // Main form state
+    const { t: translate } = useTranslation();
     const [surname, setSurname] = useState("");
     const [postcode, setPostcode] = useState("");
     const [dobDay, setDobDay] = useState("");
     const [dobMonth, setDobMonth] = useState("");
     const [dobYear, setDobYear] = useState("");
-
-    // Power of Attorney form state
-    const [poaSurname, setPoaSurname] = useState("");
-    const [poaPostcode, setPoaPostcode] = useState("");
-    const [poaDobDay, setPoaDobDay] = useState("");
-    const [poaDobMonth, setPoaDobMonth] = useState("");
-    const [poaDobYear, setPoaDobYear] = useState("");
-
-    const [error, setError] = useState("");
+    const [errors, setErrors] = useState<{ [key: string]: string }>({});
+    const [loading, setLoading] = useState(false);
     const [isPowerOfAttorney, setIsPowerOfAttorney] = useState(false);
+    const [poaFirstname, setPoaFirstname] = useState("");
+    const [poaSurname, setPoaSurname] = useState("");
+    const [poaRelationship, setPoaRelationship] = useState("");
+    const [poaFirstnameError, setPoaFirstnameError] = useState("");
+    const [poaSurnameError, setPoaSurnameError] = useState("");
+    const [poaRelationshipError, setPoaRelationshipError] = useState("");
+    const addPatient = patientViewService.usePostPatientDetails();
+    const { nextStep, setCreatedPatient } = useStep();
+    const navigate = useNavigate();
+    // PoA handlers
+    const handlePoaFirstnameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setPoaFirstname(e.target.value);
+        setPoaFirstnameError("");
+    };
+    const handlePoaSurnameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setPoaSurname(e.target.value);
+        setPoaSurnameError("");
+    };
+    const handlePoaRelationshipChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setPoaRelationship(e.target.value);
+        setPoaRelationshipError("");
+    };
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!surname || !postcode || !dobDay || !dobMonth || !dobYear) {
-            setError("All fields are required.");
-            return;
-        }
-        if (isPowerOfAttorney) {
-            if (!poaSurname || !poaPostcode || !poaDobDay || !poaDobMonth || !poaDobYear) {
-                setError("All Power of Attorney fields are required.");
-                return;
+    // Standard field error clearing
+    const handleFieldChange = (field: string) => {
+        setErrors(prev => {
+            const newErrors = { ...prev };
+            if (field === "dobDay" || field === "dobMonth" || field === "dobYear") {
+                delete newErrors.dob;
+            } else {
+                delete newErrors[field];
             }
-        }
-        setError("");
-        nextStep();
+            return newErrors;
+        });
     };
 
     const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setIsPowerOfAttorney(e.target.checked);
-        setError("");
-        if (!e.target.checked) {
-            setPoaSurname("");
-            setPoaPostcode("");
-            setPoaDobDay("");
-            setPoaDobMonth("");
-            setPoaDobYear("");
+    };
+
+    const isValidUKDate = (day: string, month: string, year: string): string | null => {
+        if (!/^\d{2}$/.test(month) || parseInt(month, 10) < 1 || parseInt(month, 10) > 12) {
+            return translate("SearchByDetails.dobMonthInvalid");
+        }
+        if (!/^\d{1,2}$/.test(day) || !/^\d{4}$/.test(year)) {
+            return translate("SearchByDetails.dobInvalid");
+        }
+        const dayNum = parseInt(day, 10);
+        const monthNum = parseInt(month, 10);
+        const yearNum = parseInt(year, 10);
+
+        if (dayNum < 1 || dayNum > 31) return translate("SearchByDetails.dobDayInvalid");
+        if (yearNum < 1900 || yearNum > new Date().getFullYear()) return translate("SearchByDetails.dobYearInvalid");
+
+        // Check for valid date
+        const date = new Date(yearNum, monthNum - 1, dayNum);
+        if (
+            date.getFullYear() !== yearNum ||
+            date.getMonth() !== monthNum - 1 ||
+            date.getDate() !== dayNum
+        ) {
+            return translate("SearchByDetails.dobRealInvalid");
+        }
+        return null;
+    };
+
+    const handleMonthChange = (value: string) => {
+        const filtered = value.replace(/\D/g, "").slice(0, 2);
+        setDobMonth(filtered);
+        handleFieldChange("dobMonth");
+    };
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        const newErrors: { [key: string]: string } = {};
+
+        // Standard validation
+        if (!surname) newErrors.surname = translate("SearchByDetails.surnameError");
+        if (!postcode) newErrors.postcode = translate("SearchByDetails.postcodeError");
+        if (!dobDay || !dobMonth || !dobYear) {
+            newErrors.dob = translate("SearchByDetails.dobError");
+        } else {
+            const dobError = isValidUKDate(dobDay, dobMonth, dobYear);
+            if (dobError) newErrors.dob = dobError;
+        }
+
+        // PoA validation
+        if (isPowerOfAttorney) {
+            if (!poaFirstname.trim()) newErrors.poaFirstname = translate("SearchByDetails.poaFirstnameError");
+            if (!poaSurname.trim()) newErrors.poaSurname = translate("SearchByDetails.poaSurnameError");
+            if (!poaRelationship) newErrors.poaRelationship = translate("SearchByDetails.poaRelationshipError");
+        }
+
+        setErrors(newErrors);
+
+        if (Object.keys(newErrors).length === 0) {
+            setLoading(true);
+            const dateOfBirth = `${dobYear}/${dobMonth}/${dobDay}`;
+            const searchCriteria = new SearchCriteria({
+                surname: surname,
+                postcode: postcode,
+                dateOfBirth: dateOfBirth.toString()
+            });
+            const patientLookup = new PatientLookup(searchCriteria, []);
+
+            let poaModel = undefined;
+            if (isPowerOfAttorney) {
+                poaModel = new PowerOfAttourney({
+                    firstName: poaFirstname,
+                    surname: poaSurname,
+                    relationship: poaRelationship
+                });
+            }
+
+            addPatient.mutate(
+                patientLookup,
+                {
+                    onSuccess: (createdPatient: Patient) => {
+                        setCreatedPatient(createdPatient);
+                        navigate("/confirmDetails", { state: { createdPatient, poaModel } });
+                        setLoading(false);
+                    },
+                    onError: (error: unknown) => {
+                        let apiTitle = "";
+                        if (isApiErrorResponse(error)) {
+                            const errResponse = error.response;
+                            apiTitle =
+                                errResponse.data?.title ||
+                                errResponse.data?.message ||
+                                errResponse.statusText ||
+                                translate("SearchByDetails.unknownApiError");
+                            setErrors({ submit: apiTitle });
+                            console.error("API Error submitting patient:", apiTitle, errResponse);
+                        } else if (
+                            error &&
+                            typeof error === "object" &&
+                            "message" in error &&
+                            typeof (error as { message?: unknown }).message === "string"
+                        ) {
+                            setErrors({ submit: (error as { message: string }).message });
+                            console.error("Error submitting patient:", (error as { message: string }).message, error);
+                        } else {
+                            setErrors({ submit: translate("SearchByDetails.unexpectedError") });
+                            console.error("Unexpected error submitting patient:", error);
+                        }
+                        setLoading(false);
+                    }
+                }
+            );
         }
     };
 
     return (
-        <Container fluid>
-            <Row className="justify-content-center">
-                <Col md={5} lg={6} xl={6}>
+        <Container>
+            <Row className="custom-col-spacing">
+                <Col xs={12} md={7} lg={7}>
                     <form className="nhsuk-form-group" autoComplete="off" onSubmit={handleSubmit} >
+
                         <div style={{ margin: "1rem 0" }}>
                             <label>
                                 <input
@@ -67,261 +191,247 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ nextStep }) => {
                                 Requesting an Opt-out on someone else's behalf.
                             </label>
                         </div>
+                        <Card cardType="feature">
+                            <Card.Content>
+                                <Card.Heading>{translate("SearchByDetails.myDetails")}</Card.Heading>
 
-                        <div
-                            style={{
-                                padding: "1rem",
-                                marginBottom: "1rem",
-                            }}
-                            data-testid="power-of-attorney-section">
-
-                            {isPowerOfAttorney && (
-                                <>
-                                <h5 style={{ marginBottom: "0.5rem" }}>Provide Details of the person they are representing</h5>
-                                   
-                                </>
-                            )}
-                            {!isPowerOfAttorney && (
-                                <>
-                                    <h5 style={{ marginBottom: "0.5rem" }}>Provide Patients Details</h5>
-                                    
-                                </>
-                            )}
-
-                            <label className="nhsuk-label mt-2" htmlFor="surname">
-                                Surname
-                            </label>
-                            <input
-                                className="nhsuk-input"
-                                id="surname"
-                                name="surname"
-                                type="text"
-                                autoComplete="family-name"
-                                value={surname}
-                                onChange={e => setSurname(e.target.value)}
-                                style={{ marginBottom: "1rem" }}
-                            />
-
-                            <label className="nhsuk-label" htmlFor="postcode">
-                                Postcode
-                            </label>
-                            <input
-                                className="nhsuk-input"
-                                id="postcode"
-                                name="postcode"
-                                type="text"
-                                autoComplete="postal-code"
-                                value={postcode}
-                                onChange={e => setPostcode(e.target.value)}
-                                style={{ marginBottom: "1rem" }}
-                            />
-
-                            <fieldset className="nhsuk-fieldset" style={{ marginBottom: "1rem" }}>
-                                <legend className="nhsuk-fieldset__legend nhsuk-label">
-                                    Date of birth
-                                </legend>
-                                <div className="nhsuk-date-input" id="dob">
-                                    <div className="nhsuk-date-input__item" style={{ display: "inline-block", marginRight: "0.5rem" }}>
-                                        <label className="nhsuk-label nhsuk-date-input__label" htmlFor="dob-day">
-                                            Day
-                                        </label>
-                                        <input
-                                            className="nhsuk-input nhsuk-date-input__input"
-                                            id="dob-day"
-                                            name="dob-day"
-                                            type="text"
-                                            inputMode="numeric"
-                                            pattern="[0-9]*"
-                                            maxLength={2}
-                                            value={dobDay}
-                                            onChange={e => setDobDay(e.target.value.replace(/\D/g, ""))}
-                                            style={{ width: "3em" }}
-                                            autoComplete="bday-day"
-                                        />
-                                    </div>
-                                    <div className="nhsuk-date-input__item" style={{ display: "inline-block", marginRight: "0.5rem" }}>
-                                        <label className="nhsuk-label nhsuk-date-input__label" htmlFor="dob-month">
-                                            Month
-                                        </label>
-                                        <input
-                                            className="nhsuk-input nhsuk-date-input__input"
-                                            id="dob-month"
-                                            name="dob-month"
-                                            type="text"
-                                            inputMode="numeric"
-                                            pattern="[0-9]*"
-                                            maxLength={2}
-                                            value={dobMonth}
-                                            onChange={e => setDobMonth(e.target.value.replace(/\D/g, ""))}
-                                            style={{ width: "3em" }}
-                                            autoComplete="bday-month"
-                                        />
-                                    </div>
-                                    <div className="nhsuk-date-input__item" style={{ display: "inline-block" }}>
-                                        <label className="nhsuk-label nhsuk-date-input__label" htmlFor="dob-year">
-                                            Year
-                                        </label>
-                                        <input
-                                            className="nhsuk-input nhsuk-date-input__input"
-                                            id="dob-year"
-                                            name="dob-year"
-                                            type="text"
-                                            inputMode="numeric"
-                                            pattern="[0-9]*"
-                                            maxLength={4}
-                                            value={dobYear}
-                                            onChange={e => setDobYear(e.target.value.replace(/\D/g, ""))}
-                                            style={{ width: "4em" }}
-                                            autoComplete="bday-year"
-                                        />
-                                    </div>
+                                <div className={`nhsuk-form-group${errors.surname ? " nhsuk-form-group--error" : ""}`}>
+                                    <label className="nhsuk-label" htmlFor="surname">
+                                        {translate("SearchByDetails.surnameLabel")}
+                                    </label>
+                                    <span className="nhsuk-hint" id="surname-hint">
+                                        {translate("SearchByDetails.surnameHint")}
+                                    </span>
+                                    {errors.surname && (
+                                        <span className="nhsuk-error-message" id="surname-error">
+                                            <strong>{translate("SearchByDetails.errorPrefix")}</strong> {errors.surname}
+                                        </span>
+                                    )}
+                                    <input
+                                        className={`nhsuk-input${errors.surname ? " nhsuk-input--error" : ""}`}
+                                        id="surname"
+                                        name="surname"
+                                        type="text"
+                                        autoComplete="family-name"
+                                        aria-describedby="surname-hint"
+                                        value={surname}
+                                        onChange={e => {
+                                            setSurname(e.target.value);
+                                            handleFieldChange("surname");
+                                        }}
+                                        style={{ marginBottom: "1rem", maxWidth: "400px" }}
+                                    />
                                 </div>
-                            </fieldset>
-                        </div>
 
-
-                        {isPowerOfAttorney && (
-                            <div
-                                style={{
-                                    border: "1px solid #005eb8",
-                                    borderRadius: "4px",
-                                    padding: "1rem",
-                                    marginBottom: "1rem",
-                                    background: "#f0f4f5"
-                                }}
-                                data-testid="power-of-attorney-section"
-                            >
-                                <h5>Provide Details of the person that is representing</h5>
-                                <label className="nhsuk-label" htmlFor="poa-surname">
-                                    Surname
-                                </label>
-                                <input
-                                    className="nhsuk-input"
-                                    id="poa-surname"
-                                    name="poa-surname"
-                                    type="text"
-                                    autoComplete="family-name"
-                                    value={poaSurname}
-                                    onChange={e => setPoaSurname(e.target.value)}
-                                    style={{ marginBottom: "1rem" }}
-                                />
-
-                                <label className="nhsuk-label" htmlFor="poa-postcode">
-                                    Postcode
-                                </label>
-                                <input
-                                    className="nhsuk-input"
-                                    id="poa-postcode"
-                                    name="poa-postcode"
-                                    type="text"
-                                    autoComplete="postal-code"
-                                    value={poaPostcode}
-                                    onChange={e => setPoaPostcode(e.target.value)}
-                                    style={{ marginBottom: "1rem" }}
-                                />
-
-                                <fieldset className="nhsuk-fieldset" style={{ marginBottom: "1rem" }}>
+                                <div className={`nhsuk-form-group${errors.postcode ? " nhsuk-form-group--error" : ""}`}>
+                                    <label className="nhsuk-label" htmlFor="postcode">
+                                        {translate("SearchByDetails.postcodeLabel")}
+                                    </label>
+                                    <span className="nhsuk-hint" id="postcode-hint">
+                                        {translate("SearchByDetails.postcodeHint")}
+                                    </span>
+                                    {errors.postcode && (
+                                        <span className="nhsuk-error-message" id="postcode-error">
+                                            <strong>{translate("SearchByDetails.errorPrefix")}</strong> {errors.postcode}
+                                        </span>
+                                    )}
+                                    <input
+                                        className={`nhsuk-input${errors.postcode ? " nhsuk-input--error" : ""}`}
+                                        id="postcode"
+                                        name="postcode"
+                                        type="text"
+                                        autoComplete="postal-code"
+                                        aria-describedby="postcode-hint"
+                                        value={postcode}
+                                        onChange={e => {
+                                            setPostcode(e.target.value);
+                                            handleFieldChange("postcode");
+                                        }}
+                                        style={{ marginBottom: "1rem", maxWidth: "400px" }}
+                                    />
+                                </div>
+                                <fieldset className={`nhsuk-fieldset${errors.dob ? " nhsuk-form-group--error" : ""}`} style={{ marginBottom: "1rem" }}>
                                     <legend className="nhsuk-fieldset__legend nhsuk-label">
-                                        Date of birth
+                                        {translate("SearchByDetails.dobLegend")}
                                     </legend>
-                                    <div className="nhsuk-date-input" id="poa-dob">
+                                    <span className="nhsuk-hint" id="dob-hint">
+                                        {translate("SearchByDetails.dobHint")}
+                                    </span>
+                                    {errors.dob && (
+                                        <span className="nhsuk-error-message" id="dob-error">
+                                            <strong>{translate("SearchByDetails.errorPrefix")}</strong> {errors.dob}
+                                        </span>
+                                    )}
+                                    <div className="nhsuk-date-input" id="dob" aria-describedby="dob-hint">
                                         <div className="nhsuk-date-input__item" style={{ display: "inline-block", marginRight: "0.5rem" }}>
-                                            <label className="nhsuk-label nhsuk-date-input__label" htmlFor="poa-dob-day">
-                                                Day
+                                            <label className="nhsuk-label nhsuk-date-input__label" htmlFor="dob-day">
+                                                {translate("SearchByDetails.dobDayLabel")}
                                             </label>
                                             <input
-                                                className="nhsuk-input nhsuk-date-input__input"
-                                                id="poa-dob-day"
-                                                name="poa-dob-day"
+                                                className={`nhsuk-input nhsuk-date-input__input${errors.dob ? " nhsuk-input--error" : ""}`}
+                                                id="dob-day"
+                                                name="dob-day"
                                                 type="text"
                                                 inputMode="numeric"
                                                 pattern="[0-9]*"
                                                 maxLength={2}
-                                                value={poaDobDay}
-                                                onChange={e => setPoaDobDay(e.target.value.replace(/\D/g, ""))}
+                                                value={dobDay}
+                                                onChange={e => {
+                                                    setDobDay(e.target.value.replace(/\D/g, ""));
+                                                    handleFieldChange("dobDay");
+                                                }}
                                                 style={{ width: "3em" }}
                                                 autoComplete="bday-day"
                                             />
                                         </div>
                                         <div className="nhsuk-date-input__item" style={{ display: "inline-block", marginRight: "0.5rem" }}>
-                                            <label className="nhsuk-label nhsuk-date-input__label" htmlFor="poa-dob-month">
-                                                Month
+                                            <label className="nhsuk-label nhsuk-date-input__label" htmlFor="dob-month">
+                                                {translate("SearchByDetails.dobMonthLabel")}
                                             </label>
                                             <input
-                                                className="nhsuk-input nhsuk-date-input__input"
-                                                id="poa-dob-month"
-                                                name="poa-dob-month"
+                                                className={`nhsuk-input nhsuk-date-input__input${errors.dob ? " nhsuk-input--error" : ""}`}
+                                                id="dob-month"
+                                                name="dob-month"
                                                 type="text"
                                                 inputMode="numeric"
-                                                pattern="[0-9]*"
+                                                pattern="^(0[1-9]|1[0-2])$"
                                                 maxLength={2}
-                                                value={poaDobMonth}
-                                                onChange={e => setPoaDobMonth(e.target.value.replace(/\D/g, ""))}
+                                                value={dobMonth}
+                                                onChange={e => handleMonthChange(e.target.value)}
                                                 style={{ width: "3em" }}
                                                 autoComplete="bday-month"
                                             />
                                         </div>
                                         <div className="nhsuk-date-input__item" style={{ display: "inline-block" }}>
-                                            <label className="nhsuk-label nhsuk-date-input__label" htmlFor="poa-dob-year">
-                                                Year
+                                            <label className="nhsuk-label nhsuk-date-input__label" htmlFor="dob-year">
+                                                {translate("SearchByDetails.dobYearLabel")}
                                             </label>
                                             <input
-                                                className="nhsuk-input nhsuk-date-input__input"
-                                                id="poa-dob-year"
-                                                name="poa-dob-year"
+                                                className={`nhsuk-input nhsuk-date-input__input${errors.dob ? " nhsuk-input--error" : ""}`}
+                                                id="dob-year"
+                                                name="dob-year"
                                                 type="text"
                                                 inputMode="numeric"
                                                 pattern="[0-9]*"
                                                 maxLength={4}
-                                                value={poaDobYear}
-                                                onChange={e => setPoaDobYear(e.target.value.replace(/\D/g, ""))}
+                                                value={dobYear}
+                                                onChange={e => {
+                                                    setDobYear(e.target.value.replace(/\D/g, ""));
+                                                    handleFieldChange("dobYear");
+                                                }}
                                                 style={{ width: "4em" }}
                                                 autoComplete="bday-year"
                                             />
                                         </div>
                                     </div>
                                 </fieldset>
-                            </div>
+                            </Card.Content>
+                        </Card>
+
+                        {isPowerOfAttorney && (
+                            <Card cardType="feature">
+                                <Card.Content>
+                                    <Card.Heading>{translate("SearchByDetails.myDetailsRequester")}</Card.Heading>
+                                    <Card.Description>
+                                        <div style={{ marginBottom: "1.5rem" }}>
+                                            <TextInput
+                                                label={translate("SearchByDetails.poaFirstnameLabel")}
+                                                id="poa-firstname"
+                                                name="poa-firstname"
+                                                autoComplete="off"
+                                                value={poaFirstname}
+                                                onChange={handlePoaFirstnameChange}
+                                                error={poaFirstnameError || undefined}
+                                                style={{ maxWidth: "400px", marginBottom: "1rem" }}
+                                            />
+                                            <TextInput
+                                                label={translate("SearchByDetails.poaSurnameLabel")}
+                                                id="poa-surname"
+                                                name="poa-surname"
+                                                autoComplete="off"
+                                                value={poaSurname}
+                                                onChange={handlePoaSurnameChange}
+                                                error={poaSurnameError || undefined}
+                                                style={{ maxWidth: "400px", marginBottom: "1rem" }}
+                                            />
+                                            <div style={{ marginBottom: "1rem" }}>
+                                                <Select
+                                                    label={translate("SearchByDetails.poaRelationshipLabel")}
+                                                    id="poa-relationship"
+                                                    name="poa-relationship"
+                                                    aria-label={translate("SearchByDetails.poaRelationshipLabel")}
+                                                    aria-required="true"
+                                                    required
+                                                    value={poaRelationship}
+                                                    onChange={handlePoaRelationshipChange}
+                                                    error={poaRelationshipError || undefined}
+                                                    style={{ maxWidth: "400px", marginBottom: "1rem" }}
+                                                >
+                                                    <option value="" disabled>
+                                                        {translate("SearchByDetails.poaRelationshipSelect")}
+                                                    </option>
+                                                    <option value={translate("SearchByDetails.poaRelationshipParent")}>
+                                                        {translate("SearchByDetails.poaRelationshipParent")}
+                                                    </option>
+                                                    <option value={translate("SearchByDetails.poaRelationshipGuardian")}>
+                                                        {translate("SearchByDetails.poaRelationshipGuardian")}
+                                                    </option>
+                                                    <option value={translate("SearchByDetails.poaRelationshipAttorney")}>
+                                                        {translate("SearchByDetails.poaRelationshipAttorney")}
+                                                    </option>
+                                                </Select>
+                                            </div>
+                                        </div>
+                                    </Card.Description>
+                                </Card.Content>
+                            </Card>
                         )}
 
-                        {error && (
+                        {errors.submit && (
                             <div className="nhsuk-error-message" style={{ marginBottom: "1rem" }} role="alert">
-                                <strong>Error:</strong> {error}
+                                <strong>{translate("SearchByDetails.errorPrefix")}</strong> {errors.submit}
                             </div>
                         )}
 
-                        <button className="nhsuk-button" type="submit" style={{ width: "100%" }}>
-                            Search
+                        <button className="nhsuk-button" type="submit" style={{ width: "100%" }} disabled={loading}>
+                            {loading ? translate("SearchByDetails.submitting") : translate("SearchByDetails.searchButton")}
                         </button>
                     </form>
                 </Col>
-                <Col md={7} lg={6} xl={6}>
+                <Col xs={12} md={5} lg={5} className="custom-col-spacing">
                     {isPowerOfAttorney && (
-                        <aside
+                        <div
+                            className="p-4 mb-4"
                             style={{
-                                background: "#f8f8f8",
-                                border: "1px solid #e5e5e5",
-                                borderRadius: "4px",
-                                padding: "1.5rem",
-                                minWidth: "250px",
-                                marginTop: "3.5rem"
+                                background: "#f4f8fb",
+                                border: "1px solid #d1e3f0",
+                                borderRadius: "8px",
+                                boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
                             }}
                         >
-                            <h3>Help and Guidance</h3>
+                            <h2 className="mb-3" style={{ color: "#005eb8" }}>{translate("SearchByDetails.helpGuidanceTitle")}</h2>
+                            <h3 className="mb-3" style={{ color: "#005eb8" }}>
+                                {translate("SearchByDetails.helpGuidanceSubtitle")}
+                            </h3>
                             <p>
-                                Please enter your surname, postcode, and date of birth as they appear on your NHS records. If you are unsure of your details, check any official NHS correspondence or contact your GP practice for assistance.
+                                {translate("SearchByDetails.helpGuidanceText1")}
                             </p>
                             <ul>
-                                <li>Ensure your surname matches your NHS record.</li>
-                                <li>Enter your full postcode, including any spaces.</li>
-                                <li>Provide your date of birth in the correct format (day, month, year).</li>
-                                <li>If you are acting under a Power of Attorney, tick the box and provide the details for the person you represent.</li>
+                                <li>{translate("SearchByDetails.poaRelationshipParent")}</li>
+                                <li>{translate("SearchByDetails.poaRelationshipGuardian")}</li>
+                                <li>{translate("SearchByDetails.poaRelationshipAttorney")}</li>
                             </ul>
-                        </aside>
+                            <p>
+                                {translate("SearchByDetails.helpGuidanceText2")}
+                            </p>
+                            <p>
+                                {translate("SearchByDetails.helpGuidanceText3")}
+                            </p>
+                        </div>
                     )}
                 </Col>
             </Row>
-        </Container>
+        </Container >
     );
 };
 

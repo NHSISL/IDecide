@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useTranslation } from "react-i18next";
-import { useStep } from "../../hooks/useStep";
 import { PowerOfAttourney } from "../../models/powerOfAttourneys/powerOfAttourney";
 import { patientViewService } from "../../services/views/patientViewService";
 import { TextInput, Button, Select, Card } from "nhsuk-react-components";
