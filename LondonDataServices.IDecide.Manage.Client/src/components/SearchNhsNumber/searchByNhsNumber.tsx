@@ -249,6 +249,7 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
                                 </Card>
                             </div>
                         )}
+
                         <div style={{ display: "flex", gap: "1rem", marginBottom: "0.2rem", marginTop: "1rem" }}>
                             <Button
                                 type="submit"
@@ -268,7 +269,7 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
                             <Button
                                 type="button"
                                 secondary
-                                onClick={() => onIDontKnow(powerOfAttourney)}
+                                onClick={() => navigate("/patientDetailsSearch")}
                                 disabled={loading}
                             >
                                 {translate("SearchBySHSNumber.idontknowButton")}
