@@ -210,7 +210,7 @@ export const SearchByDetails = () => {
                         </div>
                         <Card cardType="feature">
                             <Card.Content>
-                                <Card.Heading style={{ fontSize: "16px" }}>{translate("SearchByDetails.myDetails")}</Card.Heading>
+                                <Card.Heading>{translate("SearchByDetails.myDetails")}</Card.Heading>
 
                                 <div className={`nhsuk-form-group${errors.surname ? " nhsuk-form-group--error" : ""}`}>
                                     <label className="nhsuk-label" htmlFor="surname">
@@ -345,7 +345,7 @@ export const SearchByDetails = () => {
                         {isPowerOfAttorney && (
                             <Card cardType="feature">
                                 <Card.Content>
-                                    <Card.Heading style={{ fontSize: "16px" }}>{translate("SearchByDetails.myDetailsRequester")}</Card.Heading>
+                                    <Card.Heading>{translate("SearchByDetails.myDetailsRequester")}</Card.Heading>
                                     <Card.Description>
                                         <div style={{ marginBottom: "1.5rem" }}>
                                             <TextInput
