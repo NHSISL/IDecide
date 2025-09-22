@@ -22,7 +22,7 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
         stepContext?.resetStepContext?.();
     }, [stepContext]);
 
-    const [nhsNumberInput, setNhsNumberInput] = useState("1234567890");
+    const [nhsNumberInput, setNhsNumberInput] = useState("9876543210");
     const [poaNhsNumberInput, setPoaNhsNumberInput] = useState("");
     const [poaFirstname, setPoaFirstname] = useState("");
     const [poaSurname, setPoaSurname] = useState("");

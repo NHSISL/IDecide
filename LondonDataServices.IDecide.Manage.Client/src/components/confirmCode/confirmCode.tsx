@@ -14,7 +14,7 @@ interface ConfirmDetailsProps {
 export const ConfirmCode = ({ createdPatient }: ConfirmDetailsProps) => {
     const { t: translate } = useTranslation();
     const navigate = useNavigate();
-    const [code, setCode] = useState("AGENT");
+    const [code, setCode] = useState("");
     const [error, setError] = useState("");
     const { configuration } = useFrontendConfiguration();
     const confirmCodeMutation = patientViewService.useConfirmCode();
@@ -40,14 +40,16 @@ export const ConfirmCode = ({ createdPatient }: ConfirmDetailsProps) => {
 
         try {
             const request = new PatientCodeRequest({
-                nhsNumber: createdPatient.nhsNumber,
+                nhsNumber: createdPatient.nhsNumber!,
                 verificationCode: code,
                 notificationPreference: "",
                 generateNewCode: false
             });
 
             await confirmCodeMutation.mutateAsync(request);
-            navigate("/optInOut");
+
+            createdPatient.validationCode = code;
+            navigate("/optInOut", { state: { createdPatient } });
         } catch (error: unknown) {
             if (isApiErrorResponse(error)) {
                 const errResponse = error.response;

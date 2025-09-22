@@ -1,102 +1,185 @@
 import React, { useState } from "react";
+import { Patient } from "../../models/patients/patient";
+import { Row, Col, Alert } from "react-bootstrap";
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from "react-router-dom";
 
-export const OptInOptOut = () => {
-    const [selected, setSelected] = useState<"optout" | "optin" | "">("");
+interface OptInOptOutProps {
+    createdPatient: Patient | null;
+}
+
+export const OptInOptOut: React.FC<OptInOptOutProps> = ({ createdPatient }) => {
+    const [selectedOption, setSelectedOption] = useState<"optout" | "optin" | "">("");
     const [error, setError] = useState("");
+    
+    const { t: translate } = useTranslation();
     const navigate = useNavigate();
+
+    if (!createdPatient) {
+        return (
+            <div className="nhsuk-error-message" role="alert">
+                <strong>Error:</strong> {translate("OptOut.errorNoPatient")}
+            </div>
+        );
+    }
+
+    const handleOptionChange = (option: "optout" | "optin") => {
+        setSelectedOption(option);
+        if (error) setError("");
+    };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!selected) {
-            setError("Please select an option to continue.");
+        if (!selectedOption) {
+            setError(translate("OptOut.errorSelectOption"));
             return;
         }
         setError("");
-        // Navigate to thankyou route
-        navigate("/thankyou");
+        navigate("/confirmation", {
+            state: {
+                selectedOption,
+                createdPatient,
+               
+            }
+        });
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            {/* Opt-Out Card */}
-            <div
-                className="nhsuk-card"
-                style={{
-                    border: selected === "optout" ? "2px solid #005eb8" : "1px solid #d8dde0",
-                    marginBottom: "2rem",
-                    padding: "1.5rem",
-                    borderRadius: "6px",
-                    background: "#fff"
-                }}
-            >
-                <label style={{ display: "flex", alignItems: "flex-start", cursor: "pointer" }}>
-                    <input
-                        type="radio"
-                        name="opt"
-                        value="optout"
-                        checked={selected === "optout"}
-                        onChange={() => setSelected("optout")}
-                        style={{ marginRight: "1rem", marginTop: "0.2rem" }}
-                        aria-describedby="optout-desc"
-                    />
-                    <div>
-                        <strong>Opt-Out</strong>
-                        <div id="optout-desc" style={{ marginTop: "0.5rem" }}>
-                            <div>
-                                I do not want my personal data to be used in the London Data Service for Research and Commissioning purposes.
-                            </div>
-                            <div style={{ marginTop: "0.5rem", color: "#505a5f" }}>
-                                I acknowledge that my data will still reside in the London Data Service for direct care purposes.
-                            </div>
+        <>
+            <Row className="custom-col-spacing">
+                <Col xs={12} md={12} lg={7}>
+                    {/*{powerOfAttorney && (*/}
+                    {/*    <Alert variant="info" className="d-flex align-items-center" style={{ marginBottom: "0.75rem", padding: "0.75rem" }}>*/}
+                    {/*        <div className="me-2" style={{ fontSize: "1.5rem", color: "#6c757d" }}>*/}
+                    {/*        </div>*/}
+                    {/*        <div>*/}
+                    {/*            <div style={{ fontSize: "1rem", marginBottom: "0.25rem", color: "#6c757d", fontWeight: 500 }}>*/}
+                    {/*                {translate("OptOut.powerOfAttorneyDetails")}*/}
+                    {/*            </div>*/}
+                    {/*            <dl className="mb-0" style={{ fontSize: "0.95rem", color: "#6c757d" }}>*/}
+                    {/*                <div>*/}
+                    {/*                    <dt style={{ display: "inline", fontWeight: 500 }}>{translate("OptOut.powerOfAttorneyName")}</dt>*/}
+                    {/*                    <dd style={{ display: "inline", marginLeft: "0.5rem" }}>*/}
+                    {/*                        <strong>{powerOfAttorney.firstName} {powerOfAttorney.surname}</strong>*/}
+                    {/*                    </dd>*/}
+                    {/*                </div>*/}
+                    {/*                <div>*/}
+                    {/*                    <dt style={{ display: "inline", fontWeight: 500 }}>{translate("OptOut.powerOfAttorneyRelationship")}</dt>*/}
+                    {/*                    <dd style={{ display: "inline", marginLeft: "0.5rem" }}>*/}
+                    {/*                        <strong>{powerOfAttorney.relationship}</strong>*/}
+                    {/*                    </dd>*/}
+                    {/*                </div>*/}
+                    {/*            </dl>*/}
+                    {/*        </div>*/}
+                    {/*    </Alert>*/}
+                    {/*)}*/}
+
+                    <form onSubmit={handleSubmit}>
+                        {/* Opt-Out Card */}
+                        <div
+                            className="nhsuk-card"
+                            style={{
+                                border: selectedOption === "optout" ? "2px solid #005eb8" : "1px solid #d8dde0",
+                                marginBottom: "2rem",
+                                padding: "1.5rem",
+                                borderRadius: "6px",
+                                background: "#fff"
+                            }}
+                        >
+                            <label style={{ display: "flex", alignItems: "flex-start", cursor: "pointer" }}>
+                                <input
+                                    type="radio"
+                                    name="opt"
+                                    value="optout"
+                                    checked={selectedOption === "optout"}
+                                    onChange={() => handleOptionChange("optout")}
+                                    style={{ marginRight: "1rem", marginTop: "0.2rem" }}
+                                    aria-describedby="optout-desc"
+                                />
+                                <div>
+                                    <strong>{translate("OptOut.optOutLabel")}</strong>
+                                    <div id="optout-desc" style={{ marginTop: "0.5rem" }}>
+                                        <div>
+                                            {translate("OptOut.optOutDesc1")}
+                                        </div>
+                                        <div style={{ marginTop: "0.5rem", color: "#505a5f" }}>
+                                            {translate("OptOut.optOutDesc2")}
+                                        </div>
+                                    </div>
+                                </div>
+                            </label>
                         </div>
-                    </div>
-                </label>
-            </div>
 
-            {/* Opt-In Card */}
-            <div
-                className="nhsuk-card"
-                style={{
-                    border: selected === "optin" ? "2px solid #005eb8" : "1px solid #d8dde0",
-                    padding: "1.5rem",
-                    borderRadius: "6px",
-                    background: "#fff"
-                }}
-            >
-                <label style={{ display: "flex", alignItems: "flex-start", cursor: "pointer" }}>
-                    <input
-                        type="radio"
-                        name="opt"
-                        value="optin"
-                        checked={selected === "optin"}
-                        onChange={() => setSelected("optin")}
-                        style={{ marginRight: "1rem", marginTop: "0.2rem" }}
-                        aria-describedby="optin-desc"
-                    />
-                    <div>
-                        <strong>Opt-In</strong>
-                        <div id="optin-desc" style={{ marginTop: "0.5rem" }}>
-                            I do want my personal data to be used in the London Data Service for Direct Care, Research and Commissioning purposes.
+                        {/* Opt-In Card */}
+                        <div
+                            className="nhsuk-card"
+                            style={{
+                                border: selectedOption === "optin" ? "2px solid #005eb8" : "1px solid #d8dde0",
+                                padding: "1.5rem",
+                                borderRadius: "6px",
+                                background: "#fff"
+                            }}
+                        >
+                            <label style={{ display: "flex", alignItems: "flex-start", cursor: "pointer" }}>
+                                <input
+                                    type="radio"
+                                    name="opt"
+                                    value="optin"
+                                    checked={selectedOption === "optin"}
+                                    onChange={() => handleOptionChange("optin")}
+                                    style={{ marginRight: "1rem", marginTop: "0.2rem" }}
+                                    aria-describedby="optin-desc"
+                                />
+                                <div>
+                                    <strong>{translate("OptOut.optInLabel")}</strong>
+                                    <div id="optin-desc" style={{ marginTop: "0.5rem" }}>
+                                        {translate("OptOut.optInDesc")}
+                                    </div>
+                                </div>
+                            </label>
                         </div>
+
+                        {error && (
+                            <div className="nhsuk-error-message" style={{ marginBottom: "1rem" }} role="alert">
+                                <strong>Error:</strong> {error}
+                            </div>
+                        )}
+
+                        <button
+                            type="submit"
+                            className="nhsuk-button"
+                            style={{ width: "100%", marginTop: "0.2rem" }}
+                        >
+                            {translate("OptOut.nextButton")}
+                        </button>
+                    </form>
+                </Col>
+                <Col xs={12} md={12} lg={5} className="custom-col-spacing">
+                    <div
+                        className="p-4 mb-4"
+                        style={{
+                            background: "#f4f8fb",
+                            border: "1px solid #d1e3f0",
+                            borderRadius: "8px",
+                            boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+                        }}
+                    >
+                        <h2 className="mb-3" style={{ color: "#005eb8" }}>{translate("OptOut.helpGuidanceTitle")}</h2>
+                        <h3>{translate("OptOut.helpOptOutTitle")}</h3>
+                        <p>{translate("OptOut.helpOptOutDesc1")}</p>
+                        <ul>
+                            <li>{translate("OptOut.helpOptOutList1")}</li>
+                            <li>{translate("OptOut.helpOptOutList2")}</li>
+                            <li>{translate("OptOut.helpOptOutList3")}</li>
+                            <li>{translate("OptOut.helpOptOutList4")}</li>
+                        </ul>
+                        <p>
+                            {translate("OptOut.helpOptOutDesc2")}
+                        </p>
                     </div>
-                </label>
-            </div>
-
-            {error && (
-                <div className="nhsuk-error-message" style={{ marginBottom: "1rem" }} role="alert">
-                    <strong>Error:</strong> {error}
-                </div>
-            )}
-
-            <button
-                type="submit"
-                className="nhsuk-button"
-                style={{ width: "100%", marginTop: "1.5rem" }}
-            >
-                Submit
-            </button>
-        </form>
+                </Col>
+            </Row>
+        </>
     );
 };
 

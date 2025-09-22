@@ -16,9 +16,10 @@ import ConfirmDetailsPage from './pages/confirmDetailsPage';
 import { SendCodePage } from './pages/sendCodePage';
 import ConfirmCodePage from './pages/confirmCodePage';
 import { OptInOutPage } from './pages/optInOutPage';
-import { ThankyouPage } from './pages/thankyouPage';
+import { ConfirmationPage } from './pages/confirmationPage';
 import { StepProvider } from './components/context/stepContext';
 import { PatientDetailsSearchPage } from './pages/patientDetailsSearchPage';
+import { ThankyouPage } from './pages/thankyouPage';
 
 function App({ instance }: any) {
 
@@ -63,6 +64,10 @@ function App({ instance }: any) {
                 {
                     path: "optInOut",
                     element: <OptInOutPage />
+                },
+                {
+                    path: "confirmation",
+                    element: <ConfirmationPage />
                 },
                 {
                     path: "thankyou",
