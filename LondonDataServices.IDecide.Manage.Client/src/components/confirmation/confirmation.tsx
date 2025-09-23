@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Alert, Col, Row } from "react-bootstrap";
-import { useStep } from "../../hooks/useStep";
 import { decisionViewService } from "../../services/views/decisionViewService";
 import { PatientDecision } from "../../models/patientDecisions/patientDecision";
 import { isAxiosError } from "../../helpers/axiosErrorHelper";
@@ -74,7 +73,7 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
             patient: {
                 nhsNumber: createdPatient?.nhsNumber || "",
                 validationCode: createdPatient?.validationCode,
-                notificationPreference: mapValidationCodeToNumber(methodForHelper) ?? undefined
+                notificationPreference: mapValidationCodeToNumber(methodForHelper)?.toString() ?? undefined
             },
             decisionChoice: selectedOption,
             decisionTypeId: configuration.decisionTypeId,

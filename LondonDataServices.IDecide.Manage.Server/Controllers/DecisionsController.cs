@@ -25,7 +25,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
             this.decisionService = decisionService;
 
         [HttpPost]
-        //[Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,Decisions.Create,iDecide.Manage")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,Decisions.Create,iDecide.Manage")]
         public async ValueTask<ActionResult<Decision>> PostDecisionAsync([FromBody] Decision decision)
         {
             try

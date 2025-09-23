@@ -8,7 +8,7 @@ export const ConfirmationPage = () => {
     const { selectedOption, createdPatient, powerOfAttorney } = location.state || {};
 
     return (
-        <Container style={{ padding: 20 }}>
+        <Container fluid style={{ padding: 20 }}>
             <Confirmation
                 selectedOption={selectedOption}
                 createdPatient={createdPatient as Patient}
