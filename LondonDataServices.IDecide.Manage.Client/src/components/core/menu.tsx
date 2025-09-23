@@ -24,7 +24,7 @@ const MenuComponent: React.FC = () => {
                 className={`bg-dark text-white ${location.pathname === '/patientSearch' ? 'active' : ''}`}
                 onClick={() => handleItemClick('/patientSearch')}>
                 <FontAwesomeIcon icon={faUser} className="me-2 fa-icon" />
-                Patient Audit Seach
+                Patient Audit Search
             </ListGroup.Item>
             <ListGroup.Item
                 className={`bg-dark text-white ${location.pathname === '/nhsNumberSearch' ? 'active' : ''}`}

@@ -26,7 +26,7 @@ const PositiveConfirmation = ({ createdPatient, powerOfAttorney }: ConfirmDetail
         generateNewCode: false
     });
 
-    const handleSubmit = (method: "Email" | "Sms" | "Letter" | "Agent") => {
+    const handleSubmit = (method: "Email" | "Sms" | "Letter") => {
         setError("");
         patientToUpdate.notificationPreference = method;
 
@@ -35,6 +35,7 @@ const PositiveConfirmation = ({ createdPatient, powerOfAttorney }: ConfirmDetail
             {
                 onSuccess: () => {
                     setError("");
+                    createdPatient.validationCode = patientToUpdate.verificationCode;
                     navigate("/confirmCode", { state: { createdPatient, powerOfAttorney } });
                 },
                 onError: (error: unknown) => {
@@ -50,6 +51,7 @@ const PositiveConfirmation = ({ createdPatient, powerOfAttorney }: ConfirmDetail
                             apiTitle ===
                             "A valid code already exists for this patient, please go to the enter code screen."
                         ) {
+                            createdPatient.validationCode = patientToUpdate.verificationCode;
                             setError(
                                 <span>
                                     {apiTitle}{" "}
@@ -174,15 +176,6 @@ const PositiveConfirmation = ({ createdPatient, powerOfAttorney }: ConfirmDetail
                             disabled={!createdPatient.address}
                         >
                             {translate("PositiveConfirmation.methodLetter")}
-                        </button>
-                        <button
-                            type="button"
-                            className="nhsuk-button"
-                            style={{ flex: 1, minWidth: 120 }}
-                            onClick={() => handleSubmit("Agent")}
-                            disabled={!createdPatient.address}
-                        >
-                            {translate("Agent")}
                         </button>
                     </div>
                     {error && (

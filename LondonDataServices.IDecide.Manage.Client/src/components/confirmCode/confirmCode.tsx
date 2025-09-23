@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Patient } from "../../models/patients/patient";
 import { useTranslation } from "react-i18next";
 import { patientViewService } from "../../services/views/patientViewService";
-import { Row, Col, Alert } from "react-bootstrap";
+import { Row, Col, Alert, Button } from "react-bootstrap";
 import { PatientCodeRequest } from "../../models/patients/patientCodeRequest";
 import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
 import { isApiErrorResponse } from "../../helpers/isApiErrorResponse";
@@ -21,6 +21,13 @@ export const ConfirmCode = ({ createdPatient, powerOfAttorney }: ConfirmDetailsP
     const [error, setError] = useState("");
     const { configuration } = useFrontendConfiguration();
     const confirmCodeMutation = patientViewService.useConfirmCode();
+
+    const {
+        mappedPatients: patientsByNhs,
+        isLoading: isLoadingPatient
+    } = patientViewService.useGetAllPatients(
+        createdPatient?.nhsNumber ? { nhsNumber: createdPatient.nhsNumber } : undefined
+    );
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value.replace(/[^a-zA-Z0-9]/g, "").slice(0, 5);
@@ -211,6 +218,33 @@ export const ConfirmCode = ({ createdPatient, powerOfAttorney }: ConfirmDetailsP
                                 ? translate("ConfirmCode.submittingButton")
                                 : translate("ConfirmCode.submitButton")}
                         </button>
+
+                        {patientsByNhs && patientsByNhs.length === 1 && (
+                            <>
+                                <Alert variant="info">
+                                    <p>
+                                        The current Verification Code for this patient is: <strong>{patientsByNhs[0].validationCode}</strong>
+                                    </p>
+                                    <p>
+                                        Please ask the patient to read out their verification code over the phone. Confirm that the code they provide matches the code shown above before proceeding.
+                                    </p>
+                                    <p>
+                                        As the agent, once you have confirmed the patient's identity and the code matches, you may use this code for verification by clicking the button below.
+                                    </p>
+                                    <Button
+                                        onClick={() => {
+                                            if (patientsByNhs && patientsByNhs.length === 1) {
+                                                setCode(patientsByNhs[0].validationCode || "");
+                                            }
+                                        }}
+                                        className="ms-2"
+                                    >
+                                        Use Verification Code
+                                    </Button>
+                                </Alert>
+                            </>
+                        )}
+
                     </form>
                 </Col>
                 <Col xs={12} md={6} lg={6} className="custom-col-spacing">
