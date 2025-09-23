@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Row, Col, Alert } from "react-bootstrap";
@@ -60,7 +60,7 @@ const PositiveConfirmation = ({ createdPatient, powerOfAttorney }: ConfirmDetail
                                         onClick={e => {
                                             e.preventDefault();
                                             setError("");
-                                            navigate("/confirmCode", { state: { createdPatient } });
+                                            navigate("/confirmCode", { state: { createdPatient, powerOfAttorney } });
                                         }}
                                         style={{ textDecoration: "underline", color: "#005eb8" }}
                                     >

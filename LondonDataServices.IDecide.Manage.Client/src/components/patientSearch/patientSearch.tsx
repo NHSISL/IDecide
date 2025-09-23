@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Container, Row, Col, Form, Button, Alert, Table, Spinner } from "react-bootstrap";
+import { Container, Row, Col, Form, Button, Alert, Table, Spinner, Card } from "react-bootstrap";
 import { patientViewService } from "../../services/views/patientViewService";
 import { decisionViewService } from "../../services/views/decisionViewService";
 import { useNavigate } from "react-router-dom";
@@ -10,14 +10,7 @@ export const PatientSearch = () => {
     const [searchMode, setSearchMode] = useState<"nhs" | "details">("nhs");
     const [nhsNumber, setNhsNumber] = useState("1234567890");
     const [submittedNhsNumber, setSubmittedNhsNumber] = useState<string | undefined>(undefined);
-
-    const [details, setDetails] = useState({
-        surname: "Smith",
-        postcode: "LS18 9ZZ",
-        dobDay: "03",
-        dobMonth: "01",
-        dobYear: "2010"
-    });
+    const [details, setDetails] = useState({ surname: "", postcode: "", dobDay: "", dobMonth: "", dobYear: "" });
 
     const [submittedDetails, setSubmittedDetails] = useState<{
         surname: string;
@@ -45,8 +38,8 @@ export const PatientSearch = () => {
                 : undefined
     );
 
-    // Only fetch decisions when patientsRetrieved is available and has at least one patient
     const firstPatientId = patientsRetrieved && patientsRetrieved.length > 0 ? patientsRetrieved[0].id : undefined;
+
     const {
         mappedDecisions: decisionsByPatientId,
         isLoading: isLoadingDecision
@@ -109,7 +102,7 @@ export const PatientSearch = () => {
     return (
         <Container fluid>
             <Row>
-                <Col xs={12} md={8} lg={6}>
+                <Col xs={12} md={12} lg={12}>
                     <Form onSubmit={handleSubmit}>
                         <Form.Group>
                             <Form.Check
@@ -215,34 +208,39 @@ export const PatientSearch = () => {
                             <Spinner animation="border" />
                         ) : (
                             patientsRetrieved && patientsRetrieved.length > 0 ? (
-                                <Table striped bordered hover className="mb-4 w-100">
-                                    <tbody>
-                                        <tr><th>NHS Number</th><td>{patientsRetrieved[0].nhsNumber}</td></tr>
-                                        <tr><th>Title</th><td>{patientsRetrieved[0].title}</td></tr>
-                                        <tr><th>Given Name</th><td>{patientsRetrieved[0].givenName}</td></tr>
-                                        <tr><th>Surname</th><td>{patientsRetrieved[0].surname}</td></tr>
-                                        <tr>
-                                            <th>Date of Birth</th>
-                                            <td>
-                                                {moment(patientsRetrieved[0].dateOfBirth?.toString()).format("Do-MMM-yyyy")}
-                                            </td>
-                                        </tr>
-                                        <tr><th>Gender</th><td>{patientsRetrieved[0].gender}</td></tr>
-                                        <tr><th>Email</th><td>{patientsRetrieved[0].email}</td></tr>
-                                        <tr><th>Phone</th><td>{patientsRetrieved[0].phone}</td></tr>
-                                        <tr><th>Address</th><td>{patientsRetrieved[0].address}</td></tr>
-                                        <tr><th>Post Code</th><td>{patientsRetrieved[0].postCode}</td></tr>
-                                        <tr><th>Validation Code</th><td>{patientsRetrieved[0].validationCode}</td></tr>
-                                        <tr><th>Validation Code Expires On</th>
-                                            <td>{moment(patientsRetrieved[0].validationCodeExpiresOn?.toString()).format("Do-MMM-yyyy")}</td>
-                                        </tr>
-                                        <tr><th>Validation Code Matched On</th>
-                                            <td>{moment(patientsRetrieved[0].validationCodeMatchedOn?.toString()).format("Do-MMM-yyyy")}</td>
-                                        </tr>
-                                        <tr><th>Retry Count</th><td>{patientsRetrieved[0].retryCount}</td></tr>
-                                        <tr><th>Notification Preference</th><td>{patientsRetrieved[0].notificationPreference}</td></tr>
-                                    </tbody>
-                                </Table>
+                                <Card>
+                                    <Card.Header>Patient Details</Card.Header>
+                                    <Card.Body>
+                                        <Table striped bordered hover className="mb-4 w-100">
+                                            <tbody>
+                                                <tr><th>NHS Number</th><td>{patientsRetrieved[0].nhsNumber}</td></tr>
+                                                <tr><th>Title</th><td>{patientsRetrieved[0].title}</td></tr>
+                                                <tr><th>Given Name</th><td>{patientsRetrieved[0].givenName}</td></tr>
+                                                <tr><th>Surname</th><td>{patientsRetrieved[0].surname}</td></tr>
+                                                <tr>
+                                                    <th>Date of Birth</th>
+                                                    <td>
+                                                        {moment(patientsRetrieved[0].dateOfBirth?.toString()).format("Do-MMM-yyyy")}
+                                                    </td>
+                                                </tr>
+                                                <tr><th>Gender</th><td>{patientsRetrieved[0].gender}</td></tr>
+                                                <tr><th>Email</th><td>{patientsRetrieved[0].email}</td></tr>
+                                                <tr><th>Phone</th><td>{patientsRetrieved[0].phone}</td></tr>
+                                                <tr><th>Address</th><td>{patientsRetrieved[0].address}</td></tr>
+                                                <tr><th>Post Code</th><td>{patientsRetrieved[0].postCode}</td></tr>
+                                                <tr><th>Validation Code</th><td>{patientsRetrieved[0].validationCode}</td></tr>
+                                                <tr><th>Validation Code Expires On</th>
+                                                    <td>{moment(patientsRetrieved[0].validationCodeExpiresOn?.toString()).format("Do-MMM-yyyy")}</td>
+                                                </tr>
+                                                <tr><th>Validation Code Matched On</th>
+                                                    <td>{moment(patientsRetrieved[0].validationCodeMatchedOn?.toString()).format("Do-MMM-yyyy")}</td>
+                                                </tr>
+                                                <tr><th>Retry Count</th><td>{patientsRetrieved[0].retryCount}</td></tr>
+                                                <tr><th>Notification Preference</th><td>{patientsRetrieved[0].notificationPreference}</td></tr>
+                                            </tbody>
+                                        </Table>
+                                    </Card.Body>
+                                </Card>
                             ) : (
                                 <>
                                     {patientsRetrieved && patientsRetrieved.length === 0 && lastSubmittedMode === "nhs" && (
@@ -276,39 +274,47 @@ export const PatientSearch = () => {
                                 </>
                             )
                         )}
-                  
+
                         {isLoadingDecision ? (
                             <Spinner animation="border" />
                         ) : (
                             decisionsByPatientId && decisionsByPatientId.length > 0 ? (
-                                <Table striped bordered hover className="mb-4 w-100">
-                                    <thead>
-                                        <tr>
-                                            <th>Decision Type</th>
-                                            <th>Choice</th>
-                                            <th>Responsible Person GivenName</th>
-                                                <th>Responsible Person Surname</th>
-                                                <th>Responsible Person Relationship</th>
-                                            <th>Updated By</th>
-                                            <th>Updated Date</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {decisionsByPatientId.map((decision, dIdx) => (
-                                            <tr key={dIdx}>
-                                                <td>{decision.decisionType?.name}</td>
-                                                <td>{decision.decisionChoice}</td>
-                                                <td>{decision.responsiblePersonGivenName}</td>
-                                                <td>{decision.responsiblePersonSurname}</td>
-                                                <td>{decision.responsiblePersonRelationship}</td>
-                                                <td>{decision.createdDate ? moment(decision.createdDate.toString()).format("Do-MMM-yyyy") : ""}</td>
-                                                <td>{decision.updatedDate ? moment(decision.updatedDate.toString()).format("Do-MMM-yyyy") : ""}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </Table>
+                                <Card className="mt-4">
+                                    <Card.Header>Decision Details</Card.Header>
+                                    <Card.Body>
+                                        <Table striped bordered hover className="mb-4 w-100">
+                                            <thead>
+                                                <tr>
+                                                    <th>Decision Type</th>
+                                                    <th>Choice</th>
+                                                    <th>Created</th>
+                                                    <th>Updated</th>
+                                                    <th>Responsible Person Name</th>
+                                                    <th>Responsible Person Relationship</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {decisionsByPatientId.map((decision, dIdx) => (
+                                                    <tr key={dIdx}>
+                                                        <td>{decision.decisionType?.name}</td>
+                                                        <td>{decision.decisionChoice}</td>
+                                                        <td>{decision.createdDate ? moment(decision.createdDate.toString()).format("Do-MMM-yyyy HH:mm") : ""}</td>
+                                                        <td>{decision.updatedDate ? moment(decision.updatedDate.toString()).format("Do-MMM-yyyy HH:mm") : ""}</td>
+                                                        <td>{decision.responsiblePersonGivenName} {decision.responsiblePersonSurname}</td>
+                                                        <td>{decision.responsiblePersonRelationship}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </Table>
+                                    </Card.Body>
+                                </Card>
                             ) : (
-                                <div>No decisions found for this patient.</div>
+                                <>
+                                    <br />
+                                    <Alert>
+                                        <div>No decisions recorded for this patient.</div>
+                                    </Alert>
+                                </>
                             )
                         )}
                     </Col>

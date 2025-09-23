@@ -20,7 +20,6 @@ type PatientSearchParams = {
     dateOfBirth?: string;
 };
 
-
 export const patientViewService = {
     usePostPatientSearch: () => {
         return patientService.useCreatePatient();

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Patient } from "../../models/patients/patient";
 import { useTranslation } from "react-i18next";
 import { patientViewService } from "../../services/views/patientViewService";
-import { Row, Col, Alert, Button } from "react-bootstrap";
+import { Row, Col, Alert, Button, Spinner } from "react-bootstrap";
 import { PatientCodeRequest } from "../../models/patients/patientCodeRequest";
 import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
 import { isApiErrorResponse } from "../../helpers/isApiErrorResponse";
@@ -221,9 +221,20 @@ export const ConfirmCode = ({ createdPatient, powerOfAttorney }: ConfirmDetailsP
 
                         {patientsByNhs && patientsByNhs.length === 1 && (
                             <>
-                                <Alert variant="info">
+                                <Alert variant="danger">
                                     <p>
-                                        The current Verification Code for this patient is: <strong>{patientsByNhs[0].validationCode}</strong>
+                                        The current Verification Code for this patient is:{" "}
+                                        {isLoadingPatient ? (
+                                            <Spinner
+                                                animation="border"
+                                                size="sm"
+                                                role="status"
+                                                aria-hidden="true"
+                                                style={{ marginLeft: "0.5rem", verticalAlign: "middle" }}
+                                            />
+                                        ) : (
+                                            <strong>{patientsByNhs[0].validationCode}</strong>
+                                        )}
                                     </p>
                                     <p>
                                         Please ask the patient to read out their verification code over the phone. Confirm that the code they provide matches the code shown above before proceeding.

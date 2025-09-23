@@ -10,8 +10,7 @@ import { Patient } from "../../models/patients/patient";
 import { SearchCriteria } from "../../models/searchCriterias/searchCriteria";
 import { useNavigate } from "react-router-dom";
 
-export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
-    onIDontKnow: (powerOfAttourney: boolean) => void;
+export const SearchByNhsNumber = ({ powerOfAttourney = false }: {
     powerOfAttourney?: boolean;
 }) => {
     const { t: translate } = useTranslation();
@@ -33,7 +32,7 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
     const [poaRelationshipError, setPoaRelationshipError] = useState("");
     const [loading, setLoading] = useState(false);
     const [isPowerOfAttorney, setIsPowerOfAttorney] = useState(false);
-    const [createdPatient, setCreatedPatient] = useState<Patient | null>(null);
+    //const [createdPatient, setCreatedPatient] = useState<Patient | null>(null);
     const navigate = useNavigate();
     const addPatient = patientViewService.usePostPatientSearch();
 
@@ -103,15 +102,12 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
                 return;
             }
         }
-
-
         setLoading(true);
-
         const nhsNumberToUse = powerOfAttourney ? poaNhsNumberInput : nhsNumberInput;
         const searchCriteria = new SearchCriteria({ nhsNumber: nhsNumberToUse });
         const patientLookup = new PatientLookup(searchCriteria, []);
-
         let poaModel = undefined;
+
         if (isPowerOfAttorney) {
             poaModel = new PowerOfAttourney({
                 firstName: poaFirstname,
@@ -124,7 +120,6 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttourney = false }: {
             patientLookup,
             {
                 onSuccess: (createdPatient: Patient) => {
-                    setCreatedPatient(createdPatient);
                     navigate("/confirmDetails", { state: { createdPatient, poaModel } });
                     setLoading(false);
                 },
