@@ -32,7 +32,6 @@ export const SearchByNhsNumber = ({ powerOfAttourney = false }: {
     const [poaRelationshipError, setPoaRelationshipError] = useState("");
     const [loading, setLoading] = useState(false);
     const [isPowerOfAttorney, setIsPowerOfAttorney] = useState(false);
-    //const [createdPatient, setCreatedPatient] = useState<Patient | null>(null);
     const navigate = useNavigate();
     const addPatient = patientViewService.usePostPatientSearch();
 

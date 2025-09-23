@@ -237,10 +237,12 @@ export const ConfirmCode = ({ createdPatient, powerOfAttorney }: ConfirmDetailsP
                                         )}
                                     </p>
                                     <p>
-                                        Please ask the patient to read out their verification code over the phone. Confirm that the code they provide matches the code shown above before proceeding.
+                                        Please ask the patient to read out their verification code over the phone. Confirm that the code
+                                        they provide matches the code shown above before proceeding.
                                     </p>
                                     <p>
-                                        As the agent, once you have confirmed the patient's identity and the code matches, you may use this code for verification by clicking the button below.
+                                        As the agent, once you have confirmed the patient's identity and the code matches, you may use
+                                        this code for verification by clicking the button below.
                                     </p>
                                     <Button
                                         onClick={() => {
