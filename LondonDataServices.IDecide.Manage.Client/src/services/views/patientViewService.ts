@@ -1,6 +1,7 @@
 import { patientService } from "../foundations/patientService";
 import { PatientView } from "../../models/views/patientView";
 import { useState, useEffect } from "react";
+import { Patient } from "../../models/patients/patient";
 
 type PatientViewServiceResponse = {
     mappedPatients: PatientView[] | undefined;
@@ -66,7 +67,7 @@ export const patientViewService = {
             if (response.data) {
                 const patients = response.data.pages[0].data.map((patient: Patient) =>
                     new PatientView(
-                        patient.id,
+                        patient.id!,
                         patient.nhsNumber,
                         patient.title,
                         patient.givenName,
@@ -93,31 +94,13 @@ export const patientViewService = {
         }, [response.data]);
 
         return {
-            mappedPatients, ...response
-        }
-    },
-
-    useGetPatientById: (id: string) => {
-        const query = `?$filter=id eq ${id}`;
-        const response = patientService.useRetrieveAllPatientPages(query);
-        const [mappedPatient, setMappedPatient] = useState<PatientView>();
-
-        useEffect(() => {
-            if (response.data && response.data.pages && response.data.pages[0].data[0]) {
-                const patient = response.data.pages[0].data[0];
-                const patientView = new PatientView(
-                    patient.id,
-                    patient.name,
-                );
-
-                setMappedPatient(patientView);
-            }
-        }, [response.data]);
-
-        return {
-            mappedPatient,
-            ...response
+            mappedPatients,
+            isLoading: response.isLoading,
+            fetchNextPage: response.fetchNextPage,
+            isFetchingNextPage: response.isFetchingNextPage,
+            hasNextPage: response.hasNextPage,
+            data: response.data,
+            refetch: response.refetch
         };
-    },
-
+    }
 };

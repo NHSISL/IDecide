@@ -25,7 +25,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
             this.decisionService = decisionService;
 
         [HttpPost]
-        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,Decisions.Create")]
+        //[Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,Decisions.Create,iDecide.Manage")]
         public async ValueTask<ActionResult<Decision>> PostDecisionAsync([FromBody] Decision decision)
         {
             try
@@ -65,7 +65,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
 #if DEBUG
         [EnableQuery(PageSize = 5000)]
 #endif
-        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,Decisions.Read")]
+        //[Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,Decisions.Read")]
         public async ValueTask<ActionResult<IQueryable<Decision>>> Get()
         {
             try
