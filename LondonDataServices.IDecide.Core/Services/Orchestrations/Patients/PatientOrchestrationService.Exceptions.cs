@@ -10,7 +10,7 @@ using LondonDataServices.IDecide.Core.Models.Foundations.Patients.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
 using Xeptions;
-using NullPatientException = LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions.NullPatientException;
+using NullPatientOrchestrationException = LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions.NullPatientOrchestrationException;
 
 namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
 {
@@ -38,9 +38,9 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             {
                 throw await CreateAndLogValidationExceptionAsync(invalidPatientOrchestrationArgumentException);
             }
-            catch (NullPatientException nullPatientException)
+            catch (NullPatientOrchestrationException nullPatientOrchestrationException)
             {
-                throw await CreateAndLogValidationExceptionAsync(nullPatientException);
+                throw await CreateAndLogValidationExceptionAsync(nullPatientOrchestrationException);
             }
             catch (PdsValidationException pdsValidationException)
             {
