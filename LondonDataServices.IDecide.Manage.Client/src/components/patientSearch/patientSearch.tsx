@@ -8,7 +8,7 @@ import moment from "moment";
 export const PatientSearch = () => {
     const navigate = useNavigate();
     const [searchMode, setSearchMode] = useState<"nhs" | "details">("nhs");
-    const [nhsNumber, setNhsNumber] = useState("1234567890");
+    const [nhsNumber, setNhsNumber] = useState("");
     const [submittedNhsNumber, setSubmittedNhsNumber] = useState<string | undefined>(undefined);
     const [details, setDetails] = useState({ surname: "", postcode: "", dobDay: "", dobMonth: "", dobYear: "" });
 

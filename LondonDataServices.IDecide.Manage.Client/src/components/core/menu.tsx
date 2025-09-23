@@ -21,16 +21,19 @@ const MenuComponent: React.FC = () => {
                 Home
             </ListGroup.Item>
             <ListGroup.Item
-                className={`bg-dark text-white ${location.pathname === '/patientSearch' ? 'active' : ''}`}
-                onClick={() => handleItemClick('/patientSearch')}>
-                <FontAwesomeIcon icon={faUser} className="me-2 fa-icon" />
-                Patient Audit Search
-            </ListGroup.Item>
-            <ListGroup.Item
                 className={`bg-dark text-white ${location.pathname === '/nhsNumberSearch' ? 'active' : ''}`}
                 onClick={() => handleItemClick('/nhsNumberSearch')}>
                 <FontAwesomeIcon icon={faUser} className="me-2 fa-icon" />
-                Search PDS
+                Search Patient PDS
+            </ListGroup.Item>
+            <ListGroup.Item className="bg-dark text-white fw-bold mt-4" disabled>
+                Audit
+            </ListGroup.Item>
+            <ListGroup.Item
+                className={`bg-dark text-white ${location.pathname === '/patientSearch' ? 'active' : ''}`}
+                onClick={() => handleItemClick('/patientSearch')}>
+                <FontAwesomeIcon icon={faUser} className="me-2 fa-icon" />
+                Audit Search
             </ListGroup.Item>
         </ListGroup>
     );

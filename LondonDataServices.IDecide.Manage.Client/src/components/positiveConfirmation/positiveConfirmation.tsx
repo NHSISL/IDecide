@@ -8,6 +8,9 @@ import { isApiErrorResponse } from "../../helpers/isApiErrorResponse";
 import { patientViewService } from "../../services/views/patientViewService";
 import { PowerOfAttourney } from "../../models/powerOfAttourneys/powerOfAttourney";
 
+const VALID_CODE_MESSAGE =
+    "A valid code already exists for this patient, please go to the enter code screen.";
+
 interface ConfirmDetailsProps {
     createdPatient: Patient;
     powerOfAttorney?: PowerOfAttourney;
@@ -17,24 +20,30 @@ const PositiveConfirmation = ({ createdPatient, powerOfAttorney }: ConfirmDetail
     const { t: translate } = useTranslation();
     const navigate = useNavigate();
     const [error, setError] = useState<string | JSX.Element>("");
+    const [info, setInfo] = useState<string | JSX.Element>("");
+    const [hideButtons, setHideButtons] = useState(false);
+    const [resend, setResend] = useState(false);
+    const [showResendMessage, setShowResendMessage] = useState(false);
+
     const updatePatient = patientViewService.useAddPatientAndGenerateCode();
 
-    const patientToUpdate = new PatientCodeRequest({
-        nhsNumber: createdPatient.nhsNumber!,
-        verificationCode: createdPatient.validationCode!,
-        notificationPreference: "",
-        generateNewCode: false
-    });
-
-    const handleSubmit = (method: "Email" | "Sms" | "Letter") => {
+    const handleSubmit = (method: "Email" | "Sms" | "Letter", resendFlag = false) => {
         setError("");
-        patientToUpdate.notificationPreference = method;
+        setInfo("");
+
+        const patientToUpdate = new PatientCodeRequest({
+            nhsNumber: createdPatient.nhsNumber!,
+            verificationCode: createdPatient.validationCode!,
+            notificationPreference: method,
+            generateNewCode: resendFlag ? true : false
+        });
 
         updatePatient.mutate(
             patientToUpdate,
             {
                 onSuccess: () => {
                     setError("");
+                    setInfo("");
                     createdPatient.validationCode = patientToUpdate.verificationCode;
                     navigate("/confirmCode", { state: { createdPatient, powerOfAttorney } });
                 },
@@ -47,19 +56,17 @@ const PositiveConfirmation = ({ createdPatient, powerOfAttorney }: ConfirmDetail
                             errResponse.data?.message ||
                             errResponse.statusText ||
                             "Unknown API error";
-                        if (
-                            apiTitle ===
-                            "A valid code already exists for this patient, please go to the enter code screen."
-                        ) {
+                        if (apiTitle === VALID_CODE_MESSAGE) {
                             createdPatient.validationCode = patientToUpdate.verificationCode;
-                            setError(
+                            setInfo(
                                 <span>
-                                    {apiTitle}{" "}
+                                    {apiTitle}{" Click "}
                                     <a
                                         href="#"
                                         onClick={e => {
                                             e.preventDefault();
                                             setError("");
+                                            setInfo("");
                                             navigate("/confirmCode", { state: { createdPatient, powerOfAttorney } });
                                         }}
                                         style={{ textDecoration: "underline", color: "#005eb8" }}
@@ -68,9 +75,12 @@ const PositiveConfirmation = ({ createdPatient, powerOfAttorney }: ConfirmDetail
                                     </a>
                                 </span>
                             );
+                            setHideButtons(true);
+                            setShowResendMessage(true);
                             return;
                         }
                         setError(apiTitle);
+                        setShowResendMessage(false);
                         console.error("API Error updating patient:", apiTitle, errResponse);
                     } else if (
                         error &&
@@ -79,9 +89,11 @@ const PositiveConfirmation = ({ createdPatient, powerOfAttorney }: ConfirmDetail
                         typeof (error as { message?: unknown }).message === "string"
                     ) {
                         setError((error as { message: string }).message);
+                        setShowResendMessage(false);
                         console.error("Error updating patient:", (error as { message: string }).message, error);
                     } else {
                         setError("An unexpected error occurred.");
+                        setShowResendMessage(false);
                         console.error("Error updating patient:", error);
                     }
                 }
@@ -144,48 +156,73 @@ const PositiveConfirmation = ({ createdPatient, powerOfAttorney }: ConfirmDetail
                     <p style={{ fontWeight: 500, marginBottom: "1rem" }}>
                         {translate("PositiveConfirmation.chooseMethod")}
                     </p>
-                    <div style={{
-                        display: "flex",
-                        gap: "1rem",
-                        marginBottom: "0.5rem",
-                        flexWrap: "wrap"
-                    }}>
-                        <button
-                            type="button"
-                            className="nhsuk-button"
-                            style={{ flex: 1, minWidth: 120 }}
-                            onClick={() => handleSubmit("Email")}
-                            disabled={!createdPatient.email}
-                        >
-                            {translate("PositiveConfirmation.methodEmail")}
-                        </button>
-                        <button
-                            type="button"
-                            className="nhsuk-button"
-                            style={{ flex: 1, minWidth: 120 }}
-                            onClick={() => handleSubmit("Sms")}
-                            disabled={!createdPatient.phone}
-                        >
-                            {translate("PositiveConfirmation.methodSMS")}
-                        </button>
-                        <button
-                            type="button"
-                            className="nhsuk-button"
-                            style={{ flex: 1, minWidth: 120 }}
-                            onClick={() => handleSubmit("Letter")}
-                            disabled={!createdPatient.address}
-                        >
-                            {translate("PositiveConfirmation.methodLetter")}
-                        </button>
-                    </div>
+
                     {error && (
-                        <div
-                            id="code-error"
-                            className="nhsuk-error-message"
-                            style={{ marginTop: "0.5rem" }}
-                            role="alert"
-                        >
-                            {error}
+                        <Alert variant="danger">
+                            <div id="code-error">{error}</div>
+                        </Alert>
+                    )}
+
+                    {info && (
+                        <Alert variant="info">
+                            <div id="code-info">{info}</div>
+                        </Alert>
+                    )}
+
+                    {showResendMessage && (
+                        <Alert variant="danger">
+                            <div id="code-error">
+                                {translate("PositiveConfirmation.noCodeRecieved")}{" "}
+                                <a
+                                    href="#"
+                                    onClick={e => {
+                                        e.preventDefault();
+                                        setHideButtons(false);
+                                        setResend(true);
+                                        setShowResendMessage(false);
+                                        setInfo("");
+                                    }}
+                                    style={{ textDecoration: "underline", color: "#005eb8" }}>
+                                    Here
+                                </a>
+                            </div>
+                        </Alert>
+                    )}
+
+                    {!hideButtons && (
+                        <div style={{
+                            display: "flex",
+                            gap: "1rem",
+                            marginBottom: "0.5rem",
+                            flexWrap: "wrap"
+                        }}>
+                            <button
+                                type="button"
+                                className="nhsuk-button"
+                                style={{ flex: 1, minWidth: 120 }}
+                                onClick={() => handleSubmit("Email", resend)}
+                                disabled={!createdPatient.email}
+                            >
+                                {translate("PositiveConfirmation.methodEmail")}
+                            </button>
+                            <button
+                                type="button"
+                                className="nhsuk-button"
+                                style={{ flex: 1, minWidth: 120 }}
+                                onClick={() => handleSubmit("Sms", resend)}
+                                disabled={!createdPatient.phone}
+                            >
+                                {translate("PositiveConfirmation.methodSMS")}
+                            </button>
+                            <button
+                                type="button"
+                                className="nhsuk-button"
+                                style={{ flex: 1, minWidth: 120 }}
+                                onClick={() => handleSubmit("Letter", resend)}
+                                disabled={!createdPatient.address}
+                            >
+                                {translate("PositiveConfirmation.methodLetter")}
+                            </button>
                         </div>
                     )}
                 </div>
