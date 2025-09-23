@@ -183,6 +183,12 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                         {translate("PositiveConfirmation.chooseMethod")}
                     </p>
 
+                    {error && (
+                        <Alert variant="danger">
+                            <div id="code-error">{error}</div>
+                        </Alert>
+                    )}
+
                     {info && (
                         <>
                             <Alert variant="info">
