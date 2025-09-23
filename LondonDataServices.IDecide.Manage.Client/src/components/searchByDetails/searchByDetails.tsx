@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useStep } from "../../hooks/useStep";
 import { Patient } from "../../models/patients/patient";
 import { PowerOfAttourney } from "../../models/powerOfAttourneys/powerOfAttourney";
 import { patientViewService } from "../../services/views/patientViewService";
