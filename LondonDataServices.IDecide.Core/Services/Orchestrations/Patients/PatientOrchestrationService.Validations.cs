@@ -62,7 +62,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
         {
             if (patient is null)
             {
-                throw new NullPatientException("Patient is null.");
+                throw new NullPatientOrchestrationException("Patient is null.");
             }
         }
 

@@ -6,9 +6,9 @@ using Xeptions;
 
 namespace LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions
 {
-    public class NullPatientException : Xeption
+    public class NullPatientOrchestrationException : Xeption
     {
-        public NullPatientException(string message)
+        public NullPatientOrchestrationException(string message)
             : base(message)
         { }
     }
