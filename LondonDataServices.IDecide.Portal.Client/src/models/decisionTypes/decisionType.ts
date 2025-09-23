@@ -1,4 +1,4 @@
-import { Decision } from '../decisions/decision';
+import { PatientDecision } from '../patientDecisions/patientDecision';
 
 export class DecisionType {
     public id?: string;
@@ -7,7 +7,7 @@ export class DecisionType {
     public createdDate?: Date;
     public updatedBy?: string;
     public updatedDate?: Date;
-    public decisions?: Decision[];
+    public decisions?: PatientDecision[];
 
     constructor(type?: Partial<DecisionType>) {
         this.id = type?.id || '';

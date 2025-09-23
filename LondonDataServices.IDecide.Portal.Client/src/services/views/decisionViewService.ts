@@ -1,11 +1,11 @@
-import { Decision } from "../../models/decisions/decision";
-import { decisionService } from "../foundations/decisionService";
+import { PatientDecision } from "../../models/patientDecisions/patientDecision";
+import { patientDecisionService } from "../foundations/patientDecisionService";
 
 export const decisionViewService = {
-    useCreateDecision: () => {
+    useCreatePatientDecision: () => {
         return {
             mutate: async (
-                decision: Decision,
+                decision: PatientDecision,
                 options?: {
                     headers?: Record<string, string>,
                     onSuccess?: () => void,
@@ -13,8 +13,8 @@ export const decisionViewService = {
                 }
             ) => {
                 try {
-                    await decisionService
-                        .useCreateDecision(decision, options?.headers);
+                    await patientDecisionService
+                        .useCreatePatientDecision(decision, options?.headers);
                     options?.onSuccess?.();
                 } catch (error) {
                     options?.onError?.(error);
@@ -23,7 +23,7 @@ export const decisionViewService = {
         };
     },
 
-    useUpdateDecision: () => {
-        return decisionService.useModifyDecision();
+    useUpdatePatientDecision: () => {
+        return patientDecisionService.useModifyPatientDecision();
     },
 };
