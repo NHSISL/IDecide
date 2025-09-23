@@ -9,7 +9,7 @@ type PatientViewServiceResponse = {
     fetchNextPage: () => void;
     isFetchingNextPage: boolean;
     hasNextPage: boolean;
-    data: { pages: Array<{ data: PatientView[] }> } | undefined;
+    data: { pages: Array<{ data: Patient[] }> } | undefined;
     refetch: () => void;
 };
 

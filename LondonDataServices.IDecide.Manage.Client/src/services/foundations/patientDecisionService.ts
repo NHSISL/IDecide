@@ -5,11 +5,10 @@ import { PatientDecision } from "../../models/patientDecisions/patientDecision";
 export const patientDecisionService = {
     useCreatePatientDecision: async(
         decision: PatientDecision,
-        headers?: Record<string, string>
     ) => {
         const broker = new PatientDecisionBroker();
 
-        return await broker.PostPatientDecisionAsync(decision, headers);
+        return await broker.PostPatientDecisionAsync(decision);
     },
 
     useModifyPatientDecision: () => {
