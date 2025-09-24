@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Patient } from "../../models/patients/patient";
@@ -7,6 +8,8 @@ import { PatientCodeRequest } from "../../models/patients/patientCodeRequest";
 import { useStep } from "../../hooks/useStep";
 import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
 import { isApiErrorResponse } from "../../helpers/isApiErrorResponse";
+import { loadRecaptchaScript } from "../../helpers/recaptureLoad";
+
 interface ConfirmCodeProps {
     createdPatient: Patient | null;
 }
@@ -15,9 +18,14 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
     const { t: translate } = useTranslation();
     const [code, setCode] = useState("");
     const [error, setError] = useState("");
-    const { nextStep, powerOfAttourney } = useStep();
-    const confirmCodeMutation = patientViewService.useConfirmCode();
+    const [info, setInfo] = useState("");
+    const [resendPending, setResendPending] = useState(false);
     const { configuration } = useFrontendConfiguration();
+    const RECAPTCHA_SITE_KEY = configuration.recaptchaSiteKey;
+    const RECAPTCHA_ACTION_SUBMIT = "submit";
+    const { nextStep, powerOfAttorney } = useStep();
+    const confirmCodeMutation = patientViewService.useConfirmCode();
+    const resendCodeMutation = patientViewService.useAddPatientAndGenerateCode();
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value.replace(/[^a-zA-Z0-9]/g, "").slice(0, 5);
@@ -27,6 +35,7 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
+        setInfo("");
 
         if (code.length !== 5) {
             setError(translate("ConfirmCode.errorEnterCode"));
@@ -40,13 +49,14 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
 
         try {
             const request = new PatientCodeRequest({
-                nhsNumber: createdPatient.nhsNumber,
+                nhsNumber: createdPatient.nhsNumber!,
                 verificationCode: code,
                 notificationPreference: "",
                 generateNewCode: false
             });
 
             await confirmCodeMutation.mutateAsync(request);
+            createdPatient.validationCode = code;
             nextStep(undefined, undefined, createdPatient);
         } catch (error: unknown) {
             if (isApiErrorResponse(error)) {
@@ -70,11 +80,107 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
         }
     };
 
+    // patientToUpdate must be created inside the function to avoid referencing null properties
+    const getPatientToUpdate = () => {
+        if (
+            !createdPatient ||
+            !createdPatient.nhsNumber
+        ) {
+            return null;
+        }
+        return new PatientCodeRequest({
+            nhsNumber: createdPatient.nhsNumber,
+            notificationPreference:
+                createdPatient.notificationPreference != null
+                    ? String(createdPatient.notificationPreference)
+                    : "",
+            verificationCode: "",
+            generateNewCode: true
+        });
+    };
+
+    const handleResendCode = async () => {
+        setResendPending(true);
+        setError("");
+        setInfo("");
+
+        const patientToUpdate = getPatientToUpdate();
+        if (!patientToUpdate) {
+            setError("Patient information is missing.");
+            setResendPending(false);
+            return;
+        }
+
+        try {
+            await loadRecaptchaScript(RECAPTCHA_SITE_KEY);
+
+            if (!(window as any).grecaptcha) {
+                setError("reCAPTCHA is not loaded. Please try again later.");
+                setResendPending(false);
+                return;
+            }
+
+            const token = await (window as any).grecaptcha.execute(
+                RECAPTCHA_SITE_KEY,
+                { action: RECAPTCHA_ACTION_SUBMIT }
+            );
+
+            resendCodeMutation.mutate(
+                patientToUpdate,
+                {
+                    headers: { "X-Recaptcha-Token": token },
+                    onSuccess: () => {
+                        setError("");
+                        setInfo("A new code has been sent.");
+                        setResendPending(false);
+                    },
+                    onError: (error: unknown) => {
+                        let apiTitle = "";
+                        setError("Failed to resend code. Please try again or call the helpdesk.");
+                        if (isApiErrorResponse(error)) {
+                            const errResponse = error.response;
+                            apiTitle =
+                                errResponse.data?.title ||
+                                errResponse.data?.message ||
+                                errResponse.statusText ||
+                                "Unknown API error";
+                            if (
+                                apiTitle ===
+                                "A valid code already exists for this patient, please go to the enter code screen."
+                            ) {
+                                setResendPending(false);
+                                return;
+                            }
+                            setError(apiTitle);
+                            console.error("API Error updating patient:", apiTitle, errResponse);
+                        } else if (
+                            error &&
+                            typeof error === "object" &&
+                            "message" in error &&
+                            typeof (error as { message?: unknown }).message === "string"
+                        ) {
+                            setError((error as { message: string }).message);
+                            console.error("Error updating patient:", (error as { message: string }).message, error);
+                        } else {
+                            setError("An unexpected error occurred.");
+                            console.error("Error updating patient:", error);
+                        }
+                        setResendPending(false);
+                    }
+                }
+            );
+        } catch (err) {
+            setError("Error executing reCAPTCHA.");
+            setResendPending(false);
+            console.error("Error executing reCAPTCHA:", err);
+        }
+    };
+
     return (
         <>
             <Row className="custom-col-spacing">
                 <Col xs={12} md={6} lg={6}>
-                    {powerOfAttourney && (
+                    {powerOfAttorney && (
                         <Alert
                             variant="info"
                             className="d-flex align-items-center"
@@ -115,7 +221,7 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
                                             }}
                                         >
                                             <strong>
-                                                {powerOfAttourney.firstName} {powerOfAttourney.surname}
+                                                {powerOfAttorney.firstName} {powerOfAttorney.surname}
                                             </strong>
                                         </dd>
                                     </div>
@@ -135,7 +241,7 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
                                             }}
                                         >
                                             <strong>
-                                                {powerOfAttourney.relationship}
+                                                {powerOfAttorney.relationship}
                                             </strong>
                                         </dd>
                                     </div>
@@ -165,6 +271,23 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
                             aria-describedby={error ? "code-error" : undefined}
                             aria-invalid={!!error}
                         />
+                        {/* Info message section */}
+                        {info && (
+                            <div
+                                className="nhsuk-info-message"
+                                style={{
+                                    marginTop: "0.5rem",
+                                    color: "#005eb8",
+                                    background: "#e6f4fa",
+                                    padding: "0.75rem",
+                                    borderRadius: "4px"
+                                }}
+                                role="status"
+                            >
+                                {info}
+                            </div>
+                        )}
+                        {/* Error message section */}
                         {error && (
                             <div
                                 id="code-error"
@@ -206,6 +329,42 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
                                 ? translate("ConfirmCode.submittingButton")
                                 : translate("ConfirmCode.submitButton")}
                         </button>
+                        <div style={{ marginTop: "1rem", fontSize: "0.95rem", color: "#333", display: "none" }} >
+                            I have not received a code;{" "}
+                            <span
+                                onClick={resendPending ? undefined : handleResendCode}
+                                style={{
+                                    color: resendPending ? "#999" : "#005eb8",
+                                    textDecoration: "underline",
+                                    cursor: resendPending ? "not-allowed" : "pointer"
+                                }}
+                                aria-disabled={resendPending}
+                                tabIndex={resendPending ? -1 : 0}
+                                role="button"
+                                onKeyPress={e => {
+                                    if (!resendPending && (e.key === "Enter" || e.key === " ")) {
+                                        handleResendCode();
+                                    }
+                                }}
+                            >
+                                click here to resend
+                            </span>
+                            ; alternatively, please call the helpdesk on&nbsp;
+                            <a
+                                href="tel:0300303677"
+                                style={{ textDecoration: "underline" }}
+                            >
+                                0300 303 677
+                            </a>
+                            &nbsp;or email&nbsp;
+                            <a
+                                href="mailto:itservicedesk.nelicb@nhs.net"
+                                style={{ textDecoration: "underline" }}
+                            >
+                                itservicedesk.nelicb@nhs.net
+                            </a>
+                            .
+                        </div>
                     </form>
                 </Col>
                 <Col xs={12} md={6} lg={6} className="custom-col-spacing">

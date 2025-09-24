@@ -4,11 +4,11 @@ import { useLocation } from "react-router-dom";
 
 export const AppFlowPage = () => {
     const location = useLocation();
-    const powerOfAttourney = location.state?.powerOfAttourney === true;
+    const powerOfAttorney = location.state?.powerOfAttorney === true;
 
     return (
         <Container style={{ padding: 20 }}>
-            <AppFlow powerOfAttourney={powerOfAttourney} />
+            <AppFlow powerOfAttorney={powerOfAttorney} />
         </Container>
     );
 };

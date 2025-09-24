@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useStep } from "../../hooks/useStep";
 import { Patient } from "../../models/patients/patient";
-import { PowerOfAttourney } from "../../models/powerOfAttourneys/powerOfAttourney";
+import { PowerOfAttorney } from "../../models/powerOfAttourneys/powerOfAttourney";
 import { patientViewService } from "../../services/views/patientViewService";
 import { TextInput, Select, Card } from "nhsuk-react-components";
 import { Col, Container, Row } from "react-bootstrap";
@@ -14,10 +14,10 @@ import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
 import { loadRecaptchaScript } from "../../helpers/recaptureLoad";
 interface SearchByDetailsProps {
     onBack: () => void;
-    powerOfAttourney?: boolean;
+    powerOfAttorney?: boolean;
 }
 
-const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttourney }) => {
+const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttorney }) => {
     const { t: translate } = useTranslation();
     const stepContext = useContext(StepContext);
     const [recaptchaReady, setRecaptchaReady] = useState(false);
@@ -154,7 +154,7 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
         }
 
         // PoA validation
-        if (powerOfAttourney) {
+        if (powerOfAttorney) {
             if (!poaFirstname.trim()) newErrors.poaFirstname = translate("SearchByDetails.poaFirstnameError");
             if (!poaSurname.trim()) newErrors.poaSurname = translate("SearchByDetails.poaSurnameError");
             if (!poaRelationship) newErrors.poaRelationship = translate("SearchByDetails.poaRelationshipError");
@@ -173,8 +173,8 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
             const patientLookup = new PatientLookup(searchCriteria, []);
 
             let poaModel = undefined;
-            if (powerOfAttourney) {
-                poaModel = new PowerOfAttourney({
+            if (powerOfAttorney) {
+                poaModel = new PowerOfAttorney({
                     firstName: poaFirstname,
                     surname: poaSurname,
                     relationship: poaRelationship
@@ -405,7 +405,7 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
                             </Card.Content>
                         </Card>
 
-                        {powerOfAttourney && (
+                        {powerOfAttorney && (
                             <Card cardType="feature">
                                 <Card.Content>
                                     <Card.Heading>{translate("SearchByDetails.myDetailsRequester")}</Card.Heading>
@@ -476,7 +476,7 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttour
                     </form>
                 </Col>
                 <Col xs={12} md={5} lg={5} className="custom-col-spacing">
-                    {powerOfAttourney && (
+                    {powerOfAttorney && (
                         <div
                             className="p-4 mb-4"
                             style={{

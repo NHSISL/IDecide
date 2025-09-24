@@ -1,6 +1,6 @@
 import React, { createContext, useState, ReactNode } from "react";
 import { Patient } from "../../models/patients/patient";
-import { PowerOfAttourney } from "../../models/powerOfAttourneys/powerOfAttourney";
+import { PowerOfAttorney } from "../../models/powerOfAttourneys/powerOfAttourney";
 
 type StepContextType = {
     currentStepIndex: number;
@@ -9,14 +9,14 @@ type StepContextType = {
         selectedOption?: "optout" | "optin",
         nhsNumber?: string,
         patient?: Patient,
-        powerOfAttourney?: PowerOfAttourney
+        powerOfAttorney?: PowerOfAttorney
     ) => void;
     createdPatient: Patient | null;
     setCreatedPatient: React.Dispatch<React.SetStateAction<Patient | null>>;
     selectedOption: "optout" | "optin" | null;
     nhsNumber: string | null;
-    powerOfAttourney: PowerOfAttourney | null;
-    setPowerOfAttourney: React.Dispatch<React.SetStateAction<PowerOfAttourney | null>>;
+    powerOfAttorney: PowerOfAttorney | null;
+    setPowerOfAttorney: React.Dispatch<React.SetStateAction<PowerOfAttorney | null>>;
     resetStepContext: () => void;
 };
 
@@ -31,19 +31,19 @@ export const StepProvider = ({ children }: StepProviderProps) => {
     const [createdPatient, setCreatedPatient] = useState<Patient | null>(null);
     const [selectedOption, setSelectedOption] = useState<"optout" | "optin" | null>(null);
     const [nhsNumber, setNhsNumber] = useState<string | null>(null);
-    const [powerOfAttourney, setPowerOfAttourney] = useState<PowerOfAttourney | null>(null);
+    const [powerOfAttorney, setPowerOfAttorney] = useState<PowerOfAttorney | null>(null);
 
     const nextStep = (
         option?: "optout" | "optin",
         nhs?: string,
         patient?: Patient,
-        poa?: PowerOfAttourney
+        poa?: PowerOfAttorney
     ) => {
         console.log("nextStep called with:", { option, nhs, patient, poa });
         if (option) setSelectedOption(option);
         if (nhs) setNhsNumber(nhs);
         if (patient) setCreatedPatient(patient);
-        if (poa) setPowerOfAttourney(poa);
+        if (poa) setPowerOfAttorney(poa);
         setCurrentStepIndex((i) => i + 1);
     };
 
@@ -53,7 +53,7 @@ export const StepProvider = ({ children }: StepProviderProps) => {
         setCreatedPatient(null);
         setSelectedOption(null);
         setNhsNumber(null);
-        setPowerOfAttourney(null);
+        setPowerOfAttorney(null);
     };
 
     return (
@@ -66,8 +66,8 @@ export const StepProvider = ({ children }: StepProviderProps) => {
                 setCreatedPatient,
                 selectedOption,
                 nhsNumber,
-                powerOfAttourney,
-                setPowerOfAttourney,
+                powerOfAttorney,
+                setPowerOfAttorney,
                 resetStepContext
             }}
         >

@@ -7,33 +7,55 @@ import { useTranslation } from "react-i18next";
 import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
 import { loadRecaptchaScript } from "../../helpers/recaptureLoad";
 import { isApiErrorResponse } from "../../helpers/isApiErrorResponse";
+import { NotificationPreference } from "../../helpers/notificationPreference";
+
 interface PositiveConfirmationProps {
     goToConfirmCode: (createdPatient: PatientCodeRequest) => void;
 }
 
+const notificationPreferenceMap: Record<"Email" | "Letter" | "Sms", number> = {
+    Email: NotificationPreference.Email,
+    Letter: NotificationPreference.Letter,
+    Sms: NotificationPreference.Sms
+};
+
+const VALID_CODE_MESSAGE =
+    "A valid code already exists for this patient, please go to the enter code screen.";
+
 const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirmCode }) => {
     const { t: translate } = useTranslation();
-    const { createdPatient, powerOfAttourney } = useStep();
+    const { createdPatient, powerOfAttorney, setCreatedPatient } = useStep();
     const { configuration } = useFrontendConfiguration();
     const RECAPTCHA_SITE_KEY = configuration.recaptchaSiteKey;
     const RECAPTCHA_ACTION_SUBMIT = "submit";
     const updatePatient = patientViewService.useAddPatientAndGenerateCode();
     const [error, setError] = useState<string | JSX.Element>("");
+    const [info, setInfo] = useState<string | JSX.Element>("");
+    const [hideButtons, setHideButtons] = useState(false);
+    const [resend, setResend] = useState(false);
+    const [showResendMessage, setShowResendMessage] = useState(false);
 
     if (!createdPatient) {
         return <div>{translate("PositiveConfirmation.noPatientDetails")}</div>;
     }
 
-    const patientToUpdate = new PatientCodeRequest({
-        nhsNumber: createdPatient.nhsNumber,
-        verificationCode: createdPatient.validationCode,
-        notificationPreference: "",
-        generateNewCode: false
-    });
-
-    const handleSubmit = async (method: "Email" | "Sms" | "Letter") => {
+    const handleSubmit = async (method: "Email" | "Letter" | "Sms", resendFlag = false) => {
         setError("");
-        patientToUpdate.notificationPreference = method;
+
+        const patientToUpdate = new PatientCodeRequest({
+            nhsNumber: createdPatient.nhsNumber!,
+            verificationCode: createdPatient.validationCode!,
+            notificationPreference: method,
+            generateNewCode: resendFlag ? true : false
+        });
+
+        // Update the context so ConfirmCodePage sees the correct value
+        if (setCreatedPatient) {
+            setCreatedPatient({
+                ...createdPatient,
+                notificationPreference: notificationPreferenceMap[method]
+            });
+        }
 
         await loadRecaptchaScript(RECAPTCHA_SITE_KEY);
 
@@ -57,13 +79,10 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                                 errResponse.data?.message ||
                                 errResponse.statusText ||
                                 "Unknown API error";
-                            if (
-                                apiTitle ===
-                                "A valid code already exists for this patient, please go to the enter code screen."
-                            ) {
-                                setError(
+                            if (apiTitle === VALID_CODE_MESSAGE) {
+                                setInfo(
                                     <span>
-                                        {apiTitle}{" "}
+                                        {apiTitle}{" Click "}
                                         <a
                                             href="#"
                                             onClick={e => {
@@ -77,9 +96,12 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                                         </a>
                                     </span>
                                 );
+                                setHideButtons(true);
+                                setShowResendMessage(true);
                                 return;
                             }
                             setError(apiTitle);
+                            setShowResendMessage(false);
                             console.error("API Error updating patient:", apiTitle, errResponse);
                         } else if (
                             error &&
@@ -88,9 +110,11 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                             typeof (error as { message?: unknown }).message === "string"
                         ) {
                             setError((error as { message: string }).message);
+                            setShowResendMessage(false);
                             console.error("Error updating patient:", (error as { message: string }).message, error);
                         } else {
                             setError("An unexpected error occurred.");
+                            setShowResendMessage(false);
                             console.error("Error updating patient:", error);
                         }
                     }
@@ -98,6 +122,7 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
             );
         } catch (err) {
             setError("Error executing reCAPTCHA.");
+            setShowResendMessage(false);
             console.error("Error executing reCAPTCHA:", err);
         }
     };
@@ -107,7 +132,7 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
             <Col xs={12} md={7} lg={7}>
                 <div className="mt-4">
 
-                    {powerOfAttourney && (
+                    {powerOfAttorney && (
                         <Alert variant="info" className="d-flex align-items-center" style={{ marginBottom: "0.75rem", padding: "0.75rem" }}>
                             <div className="me-2" style={{ fontSize: "1.5rem", color: "#6c757d" }}>
                             </div>
@@ -119,13 +144,13 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                                     <div>
                                         <dt style={{ display: "inline", fontWeight: 500 }}>{translate("PositiveConfirmation.poaNameLabel")}</dt>
                                         <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
-                                            <strong>{powerOfAttourney.firstName} {powerOfAttourney.surname}</strong>
+                                            <strong>{powerOfAttorney.firstName} {powerOfAttorney.surname}</strong>
                                         </dd>
                                     </div>
                                     <div>
                                         <dt style={{ display: "inline", fontWeight: 500 }}>{translate("PositiveConfirmation.poaRelationshipLabel")}</dt>
                                         <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
-                                            <strong>{powerOfAttourney.relationship}</strong>
+                                            <strong>{powerOfAttorney.relationship}</strong>
                                         </dd>
                                     </div>
                                 </dl>
@@ -157,52 +182,79 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                     <p style={{ fontWeight: 500, marginBottom: "1rem" }}>
                         {translate("PositiveConfirmation.chooseMethod")}
                     </p>
-                    <div style={{
-                        display: "flex",
-                        gap: "1rem",
-                        marginBottom: "0.5rem",
-                        flexWrap: "wrap"
-                    }}>
-                        <button
-                            type="button"
-                            className="nhsuk-button"
-                            style={{ flex: 1, minWidth: 120 }}
-                            onClick={() => handleSubmit("Email")}
-                            disabled={!createdPatient.email}
-                        >
-                            {translate("PositiveConfirmation.methodEmail")}
-                        </button>
-                        <button
-                            type="button"
-                            className="nhsuk-button"
-                            style={{ flex: 1, minWidth: 120 }}
-                            onClick={() => handleSubmit("Sms")}
-                            disabled={!createdPatient.phone}
-                        >
-                            {translate("PositiveConfirmation.methodSMS")}
-                        </button>
-                        <button
-                            type="button"
-                            className="nhsuk-button"
-                            style={{ flex: 1, minWidth: 120 }}
-                            onClick={() => handleSubmit("Letter")}
-                            disabled={!createdPatient.address}
-                        >
-                            {translate("PositiveConfirmation.methodLetter")}
-                        </button>
-                    </div>
+
                     {error && (
-                        <div
-                            id="code-error"
-                            className="nhsuk-error-message"
-                            style={{ marginTop: "0.5rem" }}
-                            role="alert"
-                        >
-                            {error}
+                        <Alert variant="danger">
+                            <div id="code-error">{error}</div>
+                        </Alert>
+                    )}
+
+                    {info && (
+                        <>
+                            <Alert variant="info">
+                                <div id="code-error" > {info} </div>
+                            </Alert>
+                        </>
+                    )}
+
+                    {showResendMessage && (
+                        <Alert variant="danger">
+                            <div id="code-error">
+                                {translate("PositiveConfirmation.noCodeRecieved")}{" "}
+                                <a
+                                    href="#"
+                                    onClick={e => {
+                                        e.preventDefault();
+                                        setHideButtons(false);
+                                        setResend(true);
+                                        setShowResendMessage(false);
+                                        setInfo("");
+                                    }}
+                                    style={{ textDecoration: "underline", color: "#005eb8" }}>
+                                    Here
+                                </a>
+                            </div>
+                        </Alert>
+                    )}
+
+                    {!hideButtons && (
+                        <div style={{
+                            display: "flex",
+                            gap: "1rem",
+                            flexWrap: "wrap"
+                        }}>
+                            <button
+                                type="button"
+                                className="nhsuk-button"
+                                style={{ flex: 1, minWidth: 120 }}
+                                onClick={() => handleSubmit("Email", resend)}
+                                disabled={!createdPatient.email}
+                            >
+                                {translate("PositiveConfirmation.methodEmail")}
+                            </button>
+                            <button
+                                type="button"
+                                className="nhsuk-button"
+                                style={{ flex: 1, minWidth: 120 }}
+                                onClick={() => handleSubmit("Sms", resend)}
+                                disabled={!createdPatient.phone}
+                            >
+                                {translate("PositiveConfirmation.methodSMS")}
+                            </button>
+                            <button
+                                type="button"
+                                className="nhsuk-button"
+                                style={{ flex: 1, minWidth: 120 }}
+                                onClick={() => handleSubmit("Letter", resend)}
+                                disabled={!createdPatient.address}
+                            >
+                                {translate("PositiveConfirmation.methodLetter")}
+                            </button>
                         </div>
                     )}
                 </div>
             </Col>
+
             <Col xs={12} md={5} lg={5} className="custom-col-spacing">
                 <div
                     className="p-4 mb-4"
