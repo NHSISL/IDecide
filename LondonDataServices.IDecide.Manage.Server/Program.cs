@@ -32,7 +32,9 @@ using LondonDataServices.IDecide.Core.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Brokers.Storages.Sql;
 using LondonDataServices.IDecide.Core.Clients.Audits;
 using LondonDataServices.IDecide.Core.Models.Foundations.Audits;
+using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
+using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions;
 using LondonDataServices.IDecide.Core.Services.Foundations.Audits;
 using LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions;
@@ -42,6 +44,7 @@ using LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes;
 using LondonDataServices.IDecide.Core.Services.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Services.Foundations.Pds;
+using LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -182,6 +185,8 @@ namespace LondonDataServices.IDecide.Manage.Server
                new ODataConventionModelBuilder();
 
             builder.EntitySet<Audit>("Audits");
+            builder.EntitySet<Patient>("Patients");
+            builder.EntitySet<Decision>("Decisions");
             builder.EnableLowerCamelCase();
 
             return builder.GetEdmModel();
@@ -299,6 +304,7 @@ namespace LondonDataServices.IDecide.Manage.Server
 
             services.AddSingleton(decisionConfigurations);
             services.AddTransient<IPatientOrchestrationService, PatientOrchestrationService>();
+            services.AddTransient<IDecisionOrchestrationService, DecisionOrchestrationService>();
         }
 
         private static void AddCoordinationServices(IServiceCollection services, IConfiguration configuration)
