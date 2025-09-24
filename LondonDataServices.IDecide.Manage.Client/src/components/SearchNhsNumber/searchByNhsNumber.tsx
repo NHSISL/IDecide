@@ -122,8 +122,39 @@ export const SearchByNhsNumber = ({ powerOfAttourney = false }: {
                     navigate("/confirmDetails", { state: { createdPatient, poaModel } });
                     setLoading(false);
                 },
-                onError: () => {
-                    setError(translate("SearchBySHSNumber.errorCreatePatient"));
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                onError: (error: unknown) => {
+                    if (
+                        typeof error === "object" &&
+                        error !== null &&
+                        "response" in error &&
+                        typeof (error as any).response === "object"
+                    ) {
+                        const response = (error as any).response;
+                        if (response?.status === 403) {
+                            setError(translate("SearchBySHSNumber.errorNoAccess"));
+                        } else {
+                            const apiTitle =
+                                response?.data?.title ||
+                                response?.data?.message ||
+                                response?.statusText ||
+                                translate("SearchBySHSNumber.unknownApiError");
+                            setError(apiTitle);
+                        }
+                        setLoading(false);
+                        return;
+                    }
+                    if (
+                        error &&
+                        typeof error === "object" &&
+                        "message" in error &&
+                        typeof (error as { message?: unknown }).message === "string"
+                    ) {
+                        setError((error as { message: string }).message);
+                        setLoading(false);
+                        return;
+                    }
+                    setError(translate("SearchBySHSNumber.unexpectedError"));
                     setLoading(false);
                 }
             }

@@ -97,7 +97,8 @@
     "helpGuidancePoaNhsNumberHeading": "Entering NHS Number",
     "helpGuidancePoaNhsNumberText1": "The NHS Number is a unique 10-digit number used to identify patients. You can find it on medical cards, prescriptions, GP letters, hospital correspondence, or the NHS app.",
     "helpGuidancePoaNhsNumberText2": "Enter the NHS Number of the person you are representing. If you do not know it, click \"I Don't know my NHS Number\" below to continue.",
-    "helpGuidancePoaNhsNumberText3": "NHS Numbers are only used to look up details and will not be shared outside the NHS."
+    "helpGuidancePoaNhsNumberText3": "NHS Numbers are only used to look up details and will not be shared outside the NHS.",
+    "errorNoAccess": "Current user doesn't have access to perform this function. Please contact helpdesk to request Agent access."
   },
   "SearchByDetails": {
     "back": "Back",

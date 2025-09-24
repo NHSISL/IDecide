@@ -165,12 +165,19 @@ export const SearchByDetails = () => {
                         let apiTitle = "";
                         if (isApiErrorResponse(error)) {
                             const errResponse = error.response;
-                            apiTitle =
-                                errResponse.data?.title ||
-                                errResponse.data?.message ||
-                                errResponse.statusText ||
-                                translate("SearchByDetails.unknownApiError");
-                            setErrors({ submit: apiTitle });
+                            const status = (errResponse && typeof errResponse === "object" && "status" in errResponse)
+                                ? (errResponse as { status?: number }).status
+                                : undefined;
+                            if (status === 403) {
+                                setErrors({ submit: translate("SearchByDetails.errorNoAccess") });
+                            } else {
+                                apiTitle =
+                                    errResponse?.data?.title ||
+                                    errResponse?.data?.message ||
+                                    errResponse?.statusText ||
+                                    translate("SearchByDetails.unknownApiError");
+                                setErrors({ submit: apiTitle });
+                            }
                             console.error("API Error submitting patient:", apiTitle, errResponse);
                         } else if (
                             error &&

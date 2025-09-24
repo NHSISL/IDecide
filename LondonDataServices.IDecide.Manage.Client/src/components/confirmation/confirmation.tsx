@@ -73,7 +73,7 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
             patient: {
                 nhsNumber: createdPatient?.nhsNumber || "",
                 validationCode: createdPatient?.validationCode,
-                notificationPreference: mapValidationCodeToNumber(methodForHelper)?.toString() ?? undefined
+                notificationPreference: mapValidationCodeToNumber(methodForHelper) ?? undefined
             },
             decisionChoice: selectedOption,
             decisionTypeId: configuration.decisionTypeId,
