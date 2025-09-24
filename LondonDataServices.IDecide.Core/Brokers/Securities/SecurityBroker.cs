@@ -160,8 +160,8 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
         public async ValueTask<string> GetHeaderAsync(string key)
         {
             return this.headers.TryGetValue(key, out var value) 
-                ? ValueTask.FromResult((string)value) 
-                : ValueTask.FromResult(string.Empty);
+                ? (string)value 
+                : string.Empty;
         }
     }
 }
