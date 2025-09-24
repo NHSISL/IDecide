@@ -10,6 +10,18 @@ import { Patient } from "../../models/patients/patient";
 import { SearchCriteria } from "../../models/searchCriterias/searchCriteria";
 import { useNavigate } from "react-router-dom";
 
+interface ErrorWithResponse {
+    response?: {
+        status?: number;
+        statusText?: string;
+        data?: {
+            title?: string;
+            message?: string;
+        };
+    };
+    message?: string;
+}
+
 export const SearchByNhsNumber = ({ powerOfAttourney = false }: {
     powerOfAttourney?: boolean;
 }) => {
@@ -122,15 +134,14 @@ export const SearchByNhsNumber = ({ powerOfAttourney = false }: {
                     navigate("/confirmDetails", { state: { createdPatient, poaModel } });
                     setLoading(false);
                 },
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 onError: (error: unknown) => {
                     if (
                         typeof error === "object" &&
                         error !== null &&
                         "response" in error &&
-                        typeof (error as any).response === "object"
+                        typeof (error as ErrorWithResponse).response === "object"
                     ) {
-                        const response = (error as any).response;
+                        const response = (error as ErrorWithResponse).response;
                         if (response?.status === 403) {
                             setError(translate("SearchBySHSNumber.errorNoAccess"));
                         } else {

@@ -138,14 +138,17 @@ export const SearchByDetails = () => {
         if (Object.keys(newErrors).length === 0) {
             setLoading(true);
             const dateOfBirth = `${dobYear}/${dobMonth.padStart(2, "0")}/${dobDay.padStart(2, "0")}`;
+
             const searchCriteria = new SearchCriteria({
                 surname: surname,
                 postcode: postcode,
                 dateOfBirth: dateOfBirth.toString()
             });
+
             const patientLookup = new PatientLookup(searchCriteria, []);
 
             let poaModel = undefined;
+
             if (isPowerOfAttorney) {
                 poaModel = new PowerOfAttourney({
                     firstName: poaFirstname,
