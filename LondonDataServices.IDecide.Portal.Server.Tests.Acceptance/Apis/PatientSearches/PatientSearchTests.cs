@@ -2,14 +2,17 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using LondonDataServices.IDecide.Core.Extensions.Patients;
+using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
+using LondonDataServices.IDecide.Portal.Server.Models;
 using LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Brokers;
+using LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Extensions.Patients;
 using LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Models.Patients;
 using Microsoft.Extensions.Configuration;
-using Patient = LondonDataServices.IDecide.Core.Models.Foundations.Patients.Patient;
+using Tynamix.ObjectFiller;
 
 namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Apis.PatientSearches
 {
@@ -20,6 +23,14 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Apis.Patient
 
         public PatientSearchTests(ApiBroker apiBroker) =>
             this.apiBroker = apiBroker;
+
+        private static string GenerateRandom10DigitNumber()
+        {
+            Random random = new Random();
+            var randomNumber = random.Next(1000000000, 2000000000).ToString();
+
+            return randomNumber;
+        }
 
         private PatientLookup GetRandomSearchPatientLookup(string surname)
         {
@@ -66,6 +77,24 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Apis.Patient
                 Phone = fakePatient.PhoneNumber,
                 PostCode = addressPostcode
             };
+        }
+
+        private static RecordPatientInformationRequest GetRecordPatientInformationRequest(string nhsNumber) =>
+            CreateRandomRecordPatientInformationFiller(nhsNumber).Create();
+
+        private static Filler<RecordPatientInformationRequest> CreateRandomRecordPatientInformationFiller(
+            string? nhsNumber = null)
+        {
+            var filler = new Filler<RecordPatientInformationRequest>();
+
+            filler.Setup()
+                .OnProperty(patientInformation => patientInformation.NhsNumber)
+                .Use(nhsNumber ?? GenerateRandom10DigitNumber())
+
+                .OnProperty(patientInformation => patientInformation.NotificationPreference)
+                .Use(NotificationPreference.Email.ToString());
+
+            return filler;
         }
     }
 }
