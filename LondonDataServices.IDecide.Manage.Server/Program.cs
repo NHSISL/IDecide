@@ -34,8 +34,8 @@ using LondonDataServices.IDecide.Core.Models.Foundations.Audits;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions;
 using LondonDataServices.IDecide.Core.Services.Foundations.Audits;
-using LondonDataServices.IDecide.Core.Services.Foundations.Consumers;
 using LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions;
+using LondonDataServices.IDecide.Core.Services.Foundations.Consumers;
 using LondonDataServices.IDecide.Core.Services.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes;
 using LondonDataServices.IDecide.Core.Services.Foundations.Notifications;
@@ -204,7 +204,7 @@ namespace LondonDataServices.IDecide.Manage.Server
             services.AddSingleton(notifyConfigurations);
             services.AddSingleton(notificationConfig);
             services.AddTransient<INotificationAbstractionProvider, NotificationAbstractionProvider>();
-            services.AddTransient<INotificationProvider, GovukNotifyProvider>();
+            services.AddTransient<INotificationProvider, GovUkNotifyProvider>();
             services.AddTransient<IPdsAbstractionProvider, PdsAbstractionProvider>();
             services.AddTransient<ICaptchaAbstractionProvider, CaptchaAbstractionProvider>();
 
