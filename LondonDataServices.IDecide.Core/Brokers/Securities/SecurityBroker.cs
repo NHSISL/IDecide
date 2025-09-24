@@ -3,6 +3,7 @@
 // ---------------------------------------------------------
 
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using ISL.Providers.Captcha.Abstractions;
@@ -39,7 +40,7 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
             claimsPrincipal = httpContextAccessor.HttpContext?.User ?? new ClaimsPrincipal();
             remoteIpAddress = httpContextAccessor.HttpContext.Connection.RemoteIpAddress?.ToString();
             httpContextAccessor.HttpContext.Request.Headers.TryGetValue("X-Recaptcha-Token", out captchaToken);
-            this.headers = httpContextAccessor.HttpContext?.Request?.Headers;
+            this.headers = httpContextAccessor.HttpContext?.Request?.Headers ?? new HeaderDictionary();
             this.securityClient = new SecurityClient();
             this.captchaAbstractionProvider = captchaAbstractionProvider;
         }
@@ -158,6 +159,8 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
         /// <param name="key">The header key.</param>
         /// <returns>The value of the specified header, or an empty string if not found.</returns>
         public async ValueTask<string> GetHeaderAsync(string key) =>
-            this.headers.TryGetValue(key, out var value) ? value : string.Empty;
+            this.headers.TryGetValue(key, out var value)
+                ? value.FirstOrDefault() ?? string.Empty
+                : string.Empty;
     }
 }
