@@ -163,9 +163,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                 { "patient.postCode", notificationInfo.Patient.PostCode },
                 { "patient.validationCode", notificationInfo.Patient.ValidationCode },
                 { "patient.validationCodeExpiresOn", notificationInfo.Patient.ValidationCodeExpiresOn },
-                //TODO: Check Notification Provider, we don't need Message but it is expected.
-                //USER STORY : 24612
-                { "message", string.Empty },
             };
 
             return personalisation;
