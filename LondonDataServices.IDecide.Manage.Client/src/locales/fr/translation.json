@@ -56,7 +56,7 @@
       "thanks": "Processus terminé"
     }
   },
-  "SearchByHHSNumber": {
+  "SearchByNHSNumber": {
     "nhsNumberLabel": "Numéro NHS",
     "nhsNumberHint": "Vous pouvez trouver votre numéro NHS sur les courriers de votre médecin généraliste ou de l'hôpital, les ordonnances, ou dans l'application NHS.",
     "poaNhsNumberLabel": "Numéro NHS de la personne que vous représentez",
