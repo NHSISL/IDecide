@@ -16,5 +16,6 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
         ValueTask<bool> HasClaimAsync(string claimType);
         ValueTask<bool> ValidateCaptchaAsync();
         ValueTask<string> GetIpAddressAsync();
+        ValueTask<string> GetHeaderAsync(string key);
     }
 }

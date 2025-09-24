@@ -3,7 +3,6 @@
 // ---------------------------------------------------------
 
 using System.Collections.Generic;
-using System.Globalization;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Brokers.Notifications;
@@ -46,9 +45,6 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                     { "patient.postCode", notificationInfo.Patient.PostCode },
                     { "patient.validationCode", notificationInfo.Patient.ValidationCode },
                     { "patient.validationCodeExpiresOn", notificationInfo.Patient.ValidationCodeExpiresOn },
-                    //TODO: Check Notification Provider, we don't need Message but it is expected.
-                    //USER STORY : 24612
-                    { "message", "TOBEREMOVED" },
                 };
 
                 switch (notificationInfo.Patient.NotificationPreference)
@@ -110,9 +106,6 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                     { "patient.validationCode", notificationInfo.Patient.ValidationCode },
                     { "patient.validationCodeExpiresOn", notificationInfo.Patient.ValidationCodeExpiresOn },
                     { "decision.decisionChoice", notificationInfo.Decision?.DecisionChoice },
-                    //TODO: Check Notification Provider, we don't need Message but it is expected.
-                    //USER STORY : 24612
-                    { "message", "TOBEREMOVED" },
                 };
 
                 AddIfNotNull(

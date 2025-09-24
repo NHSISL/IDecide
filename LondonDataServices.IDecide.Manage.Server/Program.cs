@@ -209,7 +209,7 @@ namespace LondonDataServices.IDecide.Manage.Server
             services.AddSingleton(notifyConfigurations);
             services.AddSingleton(notificationConfig);
             services.AddTransient<INotificationAbstractionProvider, NotificationAbstractionProvider>();
-            services.AddTransient<INotificationProvider, GovukNotifyProvider>();
+            services.AddTransient<INotificationProvider, GovUkNotifyProvider>();
             services.AddTransient<IPdsAbstractionProvider, PdsAbstractionProvider>();
             services.AddTransient<ICaptchaAbstractionProvider, CaptchaAbstractionProvider>();
 
