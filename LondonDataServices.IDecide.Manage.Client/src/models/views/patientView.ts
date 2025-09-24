@@ -14,7 +14,7 @@ export class PatientView {
     public validationCodeExpiresOn?: Date;
     public validationCodeMatchedOn?: Date;
     public retryCount?: number;
-    public notificationPreference?: string;
+    public notificationPreference?: number;
     public createdBy?: string;
     public createdDate?: Date;
     public updatedBy?: string;
@@ -36,7 +36,7 @@ export class PatientView {
         validationCodeExpiresOn?: Date,
         validationCodeMatchedOn?: Date,
         retryCount?: number,
-        notificationPreference?: string,
+        notificationPreference?: number,
         createdBy?: string,
         createdDate?: Date,
         updatedBy?: string,

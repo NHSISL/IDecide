@@ -10,13 +10,14 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="src\components\bases - Copy\**" />
+    <None Remove="src\components\configurations\**" />
     <None Remove="src\pages\configuration\**" />
     <TypeScriptConfiguration Remove="src\components\bases - Copy\**" />
+    <TypeScriptConfiguration Remove="src\components\configurations\**" />
     <TypeScriptConfiguration Remove="src\pages\configuration\**" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="dependencies\guid-typescript\node_modules\%40types\" />
-    <Folder Include="src\components\configurations\" />
     <Folder Include="src\models\views\components\" />
   </ItemGroup>
 </Project>
