@@ -3,6 +3,7 @@
 // ---------------------------------------------------------
 
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using ISL.Providers.Captcha.Abstractions;
@@ -22,11 +23,12 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
         private readonly ClaimsPrincipal claimsPrincipal;
         private string remoteIpAddress;
         private StringValues captchaToken;
+        private readonly IHeaderDictionary headers = new HeaderDictionary(); 
         private readonly ISecurityClient securityClient;
         private readonly ICaptchaAbstractionProvider captchaAbstractionProvider;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SecurityBroker"/> class 
+        /// Initializes a new instance of the <see cref="SecurityBroker"/> class
         /// using <see cref="IHttpContextAccessor"/>.
         /// This constructor is intended for REST API usage.
         /// </summary>
@@ -38,6 +40,7 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
             claimsPrincipal = httpContextAccessor.HttpContext?.User ?? new ClaimsPrincipal();
             remoteIpAddress = httpContextAccessor.HttpContext.Connection.RemoteIpAddress?.ToString();
             httpContextAccessor.HttpContext.Request.Headers.TryGetValue("X-Recaptcha-Token", out captchaToken);
+            this.headers = httpContextAccessor.HttpContext?.Request?.Headers ?? new HeaderDictionary();
             this.securityClient = new SecurityClient();
             this.captchaAbstractionProvider = captchaAbstractionProvider;
         }
@@ -149,5 +152,16 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
         /// <returns>An <see cref="string"/> object containing user details.</returns>
         public async ValueTask<string> GetIpAddressAsync() =>
             await Task.FromResult(this.remoteIpAddress);
+
+        /// <summary>
+        /// Retrieves the value of a specified header from the current request.
+        /// </summary>
+        /// <param name="key">The header key.</param>
+        public async ValueTask<string> GetHeaderAsync(string key)
+        {
+            return this.headers.TryGetValue(key, out var value) 
+                ? (string)value 
+                : string.Empty;
+        }
     }
 }
