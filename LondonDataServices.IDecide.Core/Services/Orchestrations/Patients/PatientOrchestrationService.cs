@@ -64,7 +64,8 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                 if (string.IsNullOrWhiteSpace(patientLookup.SearchCriteria.NhsNumber))
                 {
                     PatientLookup responsePatientLookup =
-                    await this.pdsService.PatientLookupByDetailsAsync(patientLookup);
+                        await this.pdsService.PatientLookupByDetailsAsync(patientLookup);
+
                     ValidatePatientLookupPatientIsExactMatch(responsePatientLookup);
                     Patient redactedPatient = responsePatientLookup.Patients.First().Redact();
 
