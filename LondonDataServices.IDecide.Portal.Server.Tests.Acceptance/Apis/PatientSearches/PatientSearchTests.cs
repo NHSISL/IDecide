@@ -10,6 +10,8 @@ using LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Brokers;
 using LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Models.Patients;
 using Microsoft.Extensions.Configuration;
 using Patient = LondonDataServices.IDecide.Core.Models.Foundations.Patients.Patient;
+using LondonDataServices.IDecide.Portal.Server.Models;
+using Tynamix.ObjectFiller;
 
 namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Apis.PatientSearches
 {
@@ -67,5 +69,16 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Apis.Patient
                 PostCode = addressPostcode
             };
         }
+        private static RecordPatientInformationRequest GetRecordPatientInformationRequest() =>
+            CreateRecordPatientInformationRequestFiller().Create();
+
+        private static Filler<RecordPatientInformationRequest> CreateRecordPatientInformationRequestFiller()
+        {
+            var filler = new Filler<RecordPatientInformationRequest>();
+            filler.Setup();
+
+            return filler;
+        }
+
     }
 }
