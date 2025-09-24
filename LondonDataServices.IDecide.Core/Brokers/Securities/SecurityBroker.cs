@@ -157,8 +157,15 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
         /// Retrieves the value of a specified header from the current request.
         /// </summary>
         /// <param name="key">The header key.</param>
-        /// <returns>The value of the specified header, or an empty string if not found.</returns>
-        public async ValueTask<string> GetHeaderAsync(string key) =>
+    public ValueTask<string> GetHeaderAsync(string key)
+    {
+        if (string.IsNullOrWhiteSpace(key) || this.headers is null)
+            return string.Empty;
+
+        return ValueTask.FromResult(this.headers.TryGetValue(key, out var value)
+            ? (string)value
+            : string.Empty);
+    }
             this.headers.TryGetValue(key, out var value)
                 ? value.FirstOrDefault() ?? string.Empty
                 : string.Empty;
