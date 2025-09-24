@@ -25,8 +25,8 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Decisi
 
             List<string> expectedAttributeValues = new List<string>
             {
-                "LondonDataServices.IDecide.Manage.Server.Administrators",
-                "DecisionTypes.Read"
+               "LondonDataServices.IDecide.Manage.Server.Administrators",
+                "LondonDataServices.IDecide.Manage.Server.Agents"
             };
 
             // When

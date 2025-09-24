@@ -238,7 +238,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             Patient nullPatient = null;
 
             var nullPatientException =
-                new NullPatientException(message: "Patient is null.");
+                new NullPatientOrchestrationException(message: "Patient is null.");
 
             var expectedPatientOrchestrationValidationException =
                 new PatientOrchestrationValidationException(

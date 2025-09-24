@@ -14,6 +14,7 @@ using ISL.Providers.Captcha.GoogleReCaptcha.Providers;
 using ISL.Providers.Notifications.Abstractions;
 using ISL.Providers.Notifications.GovukNotify.Models;
 using ISL.Providers.Notifications.GovukNotify.Providers.Notifications;
+using ISL.Providers.Notifications.GovUkNotifyIntercept.Providers.Notifications;
 using ISL.Providers.PDS.Abstractions;
 using ISL.Providers.PDS.FakeFHIR.Models;
 using ISL.Providers.PDS.FakeFHIR.Providers.FakeFHIR;
@@ -31,16 +32,19 @@ using LondonDataServices.IDecide.Core.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Brokers.Storages.Sql;
 using LondonDataServices.IDecide.Core.Clients.Audits;
 using LondonDataServices.IDecide.Core.Models.Foundations.Audits;
+using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
+using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions;
 using LondonDataServices.IDecide.Core.Services.Foundations.Audits;
-using LondonDataServices.IDecide.Core.Services.Foundations.Consumers;
 using LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions;
+using LondonDataServices.IDecide.Core.Services.Foundations.Consumers;
 using LondonDataServices.IDecide.Core.Services.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes;
 using LondonDataServices.IDecide.Core.Services.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Services.Foundations.Pds;
+using LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -181,6 +185,8 @@ namespace LondonDataServices.IDecide.Manage.Server
                new ODataConventionModelBuilder();
 
             builder.EntitySet<Audit>("Audits");
+            builder.EntitySet<Patient>("Patients");
+            builder.EntitySet<Decision>("Decisions");
             builder.EnableLowerCamelCase();
 
             return builder.GetEdmModel();
@@ -204,7 +210,6 @@ namespace LondonDataServices.IDecide.Manage.Server
             services.AddSingleton(notifyConfigurations);
             services.AddSingleton(notificationConfig);
             services.AddTransient<INotificationAbstractionProvider, NotificationAbstractionProvider>();
-            services.AddTransient<INotificationProvider, GovukNotifyProvider>();
             services.AddTransient<IPdsAbstractionProvider, PdsAbstractionProvider>();
             services.AddTransient<ICaptchaAbstractionProvider, CaptchaAbstractionProvider>();
 
@@ -213,6 +218,9 @@ namespace LondonDataServices.IDecide.Manage.Server
 
             bool fakeCaptchaProviderMode = configuration
                 .GetSection("FakeCaptchaProviderMode").Get<bool>();
+
+            bool interceptNotificationProviderMode = configuration
+                .GetSection("InterceptNotificationProviderMode").Get<bool>();
 
             if (fakeFHIRProviderMode == true)
             {
@@ -245,6 +253,15 @@ namespace LondonDataServices.IDecide.Manage.Server
 
                 services.AddSingleton(reCaptchaConfigurations);
                 services.AddTransient<ICaptchaProvider, GoogleReCaptchaProvider>();
+            }
+
+            if (interceptNotificationProviderMode == true)
+            {
+                services.AddTransient<INotificationProvider, GovUkNotifyInterceptProvider>();
+            }
+            else
+            {
+                services.AddTransient<INotificationProvider, GovUkNotifyProvider>();
             }
         }
 
@@ -287,6 +304,7 @@ namespace LondonDataServices.IDecide.Manage.Server
 
             services.AddSingleton(decisionConfigurations);
             services.AddTransient<IPatientOrchestrationService, PatientOrchestrationService>();
+            services.AddTransient<IDecisionOrchestrationService, DecisionOrchestrationService>();
         }
 
         private static void AddCoordinationServices(IServiceCollection services, IConfiguration configuration)

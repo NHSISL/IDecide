@@ -16,6 +16,9 @@ import ConfirmDetailsPage from './pages/confirmDetailsPage';
 import { SendCodePage } from './pages/sendCodePage';
 import ConfirmCodePage from './pages/confirmCodePage';
 import { OptInOutPage } from './pages/optInOutPage';
+import { ConfirmationPage } from './pages/confirmationPage';
+import { StepProvider } from './components/context/stepContext';
+import { PatientDetailsSearchPage } from './pages/patientDetailsSearchPage';
 import { ThankyouPage } from './pages/thankyouPage';
 
 function App({ instance }: any) {
@@ -23,7 +26,11 @@ function App({ instance }: any) {
     const router = createBrowserRouter([
         {
             path: "/",
-            element: <Root />,
+            element: (
+                <StepProvider>
+                    <Root />
+                </StepProvider>
+            ),
             errorElement: <ErrorPage />,
             children: [
                 {
@@ -31,12 +38,16 @@ function App({ instance }: any) {
                     element: <Home />
                 },
                 {
+                    path: "patientSearch",
+                    element: <PatientSearchPage />
+                },
+                {
                     path: "nhsNumberSearch",
                     element: <SearchByNhsNumberPage />
                 },
                 {
-                    path: "patientSearch",
-                    element: <PatientSearchPage />
+                    path: "patientDetailsSearch",
+                    element: <PatientDetailsSearchPage />
                 },
                 {
                     path: "confirmDetails",
@@ -53,6 +64,10 @@ function App({ instance }: any) {
                 {
                     path: "optInOut",
                     element: <OptInOutPage />
+                },
+                {
+                    path: "confirmation",
+                    element: <ConfirmationPage />
                 },
                 {
                     path: "thankyou",

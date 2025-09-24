@@ -1,17 +1,16 @@
-import { Container, Row, Col } from "react-bootstrap";
-import SearchByDetails from "../components/searchByDetails/searchByDetails";
+import { Card, Container } from "nhsuk-react-components";
+import { PatientSearch } from "../components/patientSearch/patientSearch";
 
 export const PatientSearchPage = () => {
-    const handleNextStep = () => {
-    };
-
     return (
-        <Container fluid className="mt-4">
-            <Row className="mb-4 p-2">
-                <Col>
-                    <SearchByDetails nextStep={handleNextStep} />
-                </Col>
-            </Row>
+        <Container fluid>
+            <Card cardType="feature">
+                <Card.Content>
+                    <Card.Heading>Patient Search</Card.Heading>
+                    <Card.Description></Card.Description>
+                    <PatientSearch />
+                </Card.Content>
+            </Card>
         </Container>
     );
-}
+};

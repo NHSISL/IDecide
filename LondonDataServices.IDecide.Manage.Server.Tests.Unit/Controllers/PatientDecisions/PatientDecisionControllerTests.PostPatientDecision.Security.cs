@@ -25,8 +25,8 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Patien
 
             List<string> expectedAttributeValues = new List<string>
             {
-                "LondonDataServices.IDecide.Portal.Server.Administrators",
-                "LondonDataServices.IDecide.Portal.Server.Users"
+                "LondonDataServices.IDecide.Manage.Server.Administrators",
+                "LondonDataServices.IDecide.Manage.Server.Agents"
             };
 
             // When
