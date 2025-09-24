@@ -33,7 +33,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
 
             this.notificationConfig = new NotificationConfig
             {
-                InterceptNotificationProviderMode = true,
                 EmailCodeTemplateId = GetRandomString(),
                 SmsCodeTemplateId = GetRandomString(),
                 LetterCodeTemplateId = GetRandomString(),
