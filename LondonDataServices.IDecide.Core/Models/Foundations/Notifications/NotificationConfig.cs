@@ -6,6 +6,7 @@ namespace LondonDataServices.IDecide.Core.Models.Foundations.Notifications
 {
     public class NotificationConfig
     {
+        public bool InterceptNotificationProviderMode { get; set; }
         public string SmsCodeTemplateId { get; set; }
         public string EmailCodeTemplateId { get; set; }
         public string LetterCodeTemplateId { get; set; }
