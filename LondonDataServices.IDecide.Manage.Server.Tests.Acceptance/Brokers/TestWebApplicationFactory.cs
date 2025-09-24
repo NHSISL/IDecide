@@ -4,6 +4,8 @@
 
 using System.Linq;
 using Attrify.InvisibleApi.Models;
+using ISL.Providers.Notifications.Abstractions;
+using ISL.Providers.Notifications.GovukNotify.Providers.Notifications;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -27,6 +29,10 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Brokers
             builder.ConfigureServices((context, services) =>
             {
                 OverrideSecurityForTesting(services);
+
+                OverrideNotificationProviderForTesting(
+                    services,
+                    context.Configuration);
             });
         }
 
@@ -69,6 +75,21 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Brokers
             {
                 options.AddPolicy("TestPolicy", policy => policy.RequireAssertion(_ => true));
             });
+        }
+
+        private static void OverrideNotificationProviderForTesting(
+            IServiceCollection services,
+            IConfiguration configuration)
+        {
+            var notificationDescriptor = services
+                .FirstOrDefault(service => service.ServiceType == typeof(INotificationProvider));
+
+            if (notificationDescriptor is not null)
+            {
+                services.Remove(notificationDescriptor);
+            }
+
+            services.AddTransient<INotificationProvider, GovukNotifyProvider>();
         }
     }
 }
