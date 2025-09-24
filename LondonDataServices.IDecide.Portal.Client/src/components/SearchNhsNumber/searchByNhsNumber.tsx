@@ -23,7 +23,7 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
         stepContext?.resetStepContext?.();
     }, [stepContext]);
 
-    const [nhsNumberInput, setNhsNumberInput] = useState("1234567890");
+    const [nhsNumberInput, setNhsNumberInput] = useState("");
     const [poaNhsNumberInput, setPoaNhsNumberInput] = useState("");
     const [poaFirstname, setPoaFirstname] = useState("");
     const [poaSurname, setPoaSurname] = useState("");
@@ -35,7 +35,6 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
     const [poaRelationshipError, setPoaRelationshipError] = useState("");
     const [loading, setLoading] = useState(false);
     const [recaptchaReady, setRecaptchaReady] = useState(false);
-
     const [recaptchaSiteKey, setRecaptchaSiteKey] = useState<string | undefined>(undefined);
     const { configuration } = useFrontendConfiguration();
     const RECAPTCHA_ACTION_SUBMIT = "submit";

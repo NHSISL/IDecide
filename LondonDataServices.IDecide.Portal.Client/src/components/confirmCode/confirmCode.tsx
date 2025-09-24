@@ -80,7 +80,6 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
         }
     };
 
-    // patientToUpdate must be created inside the function to avoid referencing null properties
     const getPatientToUpdate = () => {
         if (
             !createdPatient ||
@@ -329,7 +328,7 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
                                 ? translate("ConfirmCode.submittingButton")
                                 : translate("ConfirmCode.submitButton")}
                         </button>
-                        <div style={{ marginTop: "1rem", fontSize: "0.95rem", color: "#333", display: "none" }} >
+                        <div style={{ marginTop: "1rem", fontSize: "0.95rem", color: "#333" }}>
                             I have not received a code;{" "}
                             <span
                                 onClick={resendPending ? undefined : handleResendCode}

@@ -20,19 +20,20 @@ const MenuComponent: React.FC = () => {
                 <FontAwesomeIcon icon={faHome} className="me-2 fa-icon" />
                 Home
             </ListGroup.Item>
-
             <ListGroup.Item
                 className={`bg-dark text-white ${location.pathname === '/nhsNumberSearch' ? 'active' : ''}`}
                 onClick={() => handleItemClick('/nhsNumberSearch')}>
                 <FontAwesomeIcon icon={faUser} className="me-2 fa-icon" />
-                Search NHS Number
+                Search Patient PDS
             </ListGroup.Item>
-
+            <ListGroup.Item className="bg-dark text-white fw-bold mt-4" disabled>
+                Audit
+            </ListGroup.Item>
             <ListGroup.Item
                 className={`bg-dark text-white ${location.pathname === '/patientSearch' ? 'active' : ''}`}
                 onClick={() => handleItemClick('/patientSearch')}>
                 <FontAwesomeIcon icon={faUser} className="me-2 fa-icon" />
-                Search Patient Details
+                Audit Search
             </ListGroup.Item>
         </ListGroup>
     );
