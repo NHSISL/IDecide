@@ -55,11 +55,10 @@ class PatientBroker {
 
     async PutGenerateCodeRequestAsync(patient: GenerateCodeRequest) {
         const url = this.relativePatientsUrl; // No nhsNumber in the URL
+
         return await this.apiBroker.PutAsync(url, patient)
             .then(() => undefined); // No response body expected
     }
-
-   
 }
 
 export default PatientBroker;

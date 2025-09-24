@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
 
-namespace LondonDataServices.IDecide.Portal.Server.Controllers
+namespace LondonDataServices.IDecide.Manage.Server.Controllers
 {
     [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,LondonDataServices.IDecide.Manage.Server.Agents")]
     [ApiController]

@@ -80,7 +80,6 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
         }
     };
 
-    // patientToUpdate must be created inside the function to avoid referencing null properties
     const getPatientToUpdate = () => {
         if (
             !createdPatient ||

@@ -56,7 +56,7 @@ export class MsalConfig {
             auth: {
                 clientId: remoteConfiguration.clientId, // This is the ONLY mandatory field that you need to supply.
                 authority: remoteConfiguration.authority, // Replace the placeholder with your tenant subdomain 
-                redirectUri: 'https://localhost:6073/', // Points to window.location.origin. You must register this URI on Azure Portal/App Registration.
+                redirectUri: '/', // Points to window.location.origin. You must register this URI on Azure Portal/App Registration.
                 postLogoutRedirectUri: '/', // Indicates the page to navigate after logout.
                 navigateToLoginRequestUrl: false, // If "true", will navigate back to the original request location before processing the auth code response.
             },
