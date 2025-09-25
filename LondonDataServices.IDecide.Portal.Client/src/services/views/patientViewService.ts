@@ -79,11 +79,11 @@ export const patientViewService = {
                 }
             ) => {
                 try {
-                    await patientService
-                        .useConfirmCode(request, options?.headers);
+                    await patientService.useConfirmCode(request, options?.headers);
                     options?.onSuccess?.();
                 } catch (error) {
                     options?.onError?.(error);
+                    throw error;
                 }
             }
         };
