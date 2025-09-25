@@ -35,6 +35,18 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Apis.Patient
             return randomNumber;
         }
 
+        private static string GetRandomEmailAddress() =>
+            new EmailAddresses().GetValue();
+
+        private static string GetRandomLocalMobileNumber()
+        {
+            Random random = new Random();
+            var randomNumberEnd = random.Next(100000000, 200000000).ToString();
+            string randomNumber = $"07{randomNumberEnd}";
+
+            return randomNumber;
+        }
+
         private static Decision CreateRandomDecision(Patient patient, Guid decisionTypeId) =>
             CreateRandomDecisionFiller(patient, decisionTypeId).Create();
 
@@ -83,9 +95,9 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Apis.Patient
                 .OnProperty(patient => patient.GivenName).Use(GetRandomStringWithLengthOf(255))
                 .OnProperty(patient => patient.Surname).Use(GetRandomStringWithLengthOf(255))
                 .OnProperty(patient => patient.Gender).Use(GetRandomStringWithLengthOf(50))
-                .OnProperty(patient => patient.Email).Use(GetRandomStringWithLengthOf(255))
-                .OnProperty(patient => patient.Phone).Use(GetRandomStringWithLengthOf(15))
-                .OnProperty(patient => patient.PostCode).Use(GetRandomStringWithLengthOf(8))
+                .OnProperty(patient => patient.Email).Use(GetRandomEmailAddress())
+                .OnProperty(patient => patient.Phone).Use(GetRandomLocalMobileNumber())
+                .OnProperty(patient => patient.PostCode).Use("E15 1DA")
                 .OnProperty(patient => patient.ValidationCode).Use(GetRandomStringWithLengthOf(5))
                 .OnProperty(patient => patient.CreatedDate).Use(now)
                 .OnProperty(patient => patient.CreatedBy).Use(user)
