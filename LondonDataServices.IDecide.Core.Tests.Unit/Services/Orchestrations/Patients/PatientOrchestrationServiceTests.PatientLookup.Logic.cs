@@ -79,6 +79,67 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         }
 
         [Fact]
+        public async Task
+            ShouldPatientLookupUsingByDetailsWhenNoNhsNumberProvidedAndReturnPartialModelWhenAgentAndSensitiveAsync()
+        {
+            // given
+            string randomString = GetRandomString();
+            string inputSurname = randomString.DeepClone();
+            PatientLookup randomPatientLookup = GetRandomSearchPatientLookupWithNoNhsNumber(inputSurname);
+            PatientLookup inputPatientLookup = randomPatientLookup.DeepClone();
+            PatientLookup updatedPatientLookup = randomPatientLookup.DeepClone();
+            updatedPatientLookup.Patients = new List<Patient> { CreateRandomSensitivePatient(inputSurname) };
+            PatientLookup outputPatientLookup = updatedPatientLookup.DeepClone();
+            Patient patient = outputPatientLookup.Patients.FirstOrDefault();
+            Patient expectedPatient = patient.DeepClone();
+
+            var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
+                this.loggingBrokerMock.Object,
+                this.securityBrokerMock.Object,
+                this.dateTimeBrokerMock.Object,
+                this.auditBrokerMock.Object,
+                this.identifierBrokerMock.Object,
+                this.pdsServiceMock.Object,
+                this.patientServiceMock.Object,
+                this.notificationServiceMock.Object,
+                this.decisionConfigurations)
+            { CallBase = true };
+
+            patientOrchestrationServiceMock.Setup(service =>
+                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
+                    .ReturnsAsync(true);
+
+            this.pdsServiceMock.Setup(service =>
+                service.PatientLookupByDetailsAsync(inputPatientLookup))
+                    .ReturnsAsync(outputPatientLookup);
+
+            // when
+            Patient actualPatient =
+                await patientOrchestrationServiceMock.Object.PatientLookupAsync(inputPatientLookup);
+
+            //then
+            actualPatient.Should().BeEquivalentTo(expectedPatient);
+
+            patientOrchestrationServiceMock.Verify(service =>
+                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
+                    Times.Once);
+
+            this.pdsServiceMock.Verify(service =>
+                service.PatientLookupByDetailsAsync(inputPatientLookup),
+                    Times.Once);
+
+            patientOrchestrationServiceMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.securityBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.auditBrokerMock.VerifyNoOtherCalls();
+            this.identifierBrokerMock.VerifyNoOtherCalls();
+            this.pdsServiceMock.VerifyNoOtherCalls();
+            this.patientServiceMock.VerifyNoOtherCalls();
+            this.notificationServiceMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
         public async Task ShouldPatientLookupUsingByNhsNumberWhenNhsNumberProvidedAsync()
         {
             // given
@@ -137,18 +198,16 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         }
 
         [Fact]
-        public async Task ShouldPatientLookupAndReturnPartialModelWhenAuthenticatedUserWithRoleMakesRequest()
+        public async Task
+            ShouldPatientLookupAndReturnPartialModelWhenAuthenticatedUserWithRoleMakesRequestAndNhsNumberProvided()
         {
             // given
-            string randomString = GetRandomString();
-            string inputSurname = randomString.DeepClone();
-            PatientLookup randomPatientLookup = GetRandomSearchPatientLookupWithNoNhsNumber(inputSurname);
+            string randomNhsNumber = GenerateRandom10DigitNumber();
+            string inputNhsNumber = randomNhsNumber.DeepClone();
+            PatientLookup randomPatientLookup = GetRandomSearchPatientLookupWithNhsNumber(inputNhsNumber);
             PatientLookup inputPatientLookup = randomPatientLookup.DeepClone();
-            PatientLookup updatedPatientLookup = randomPatientLookup.DeepClone();
-            updatedPatientLookup.Patients = new List<Patient> { CreateRandomSensitivePatient(inputSurname) };
-            PatientLookup outputPatientLookup = updatedPatientLookup.DeepClone();
-            Patient patient = outputPatientLookup.Patients.FirstOrDefault();
-            Patient expectedPatient = patient.DeepClone();
+            Patient outputPatient = GetRandomSensitivePatient();
+            Patient expectedPatient = outputPatient.DeepClone();
 
             var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
                 this.loggingBrokerMock.Object,
@@ -167,8 +226,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     .ReturnsAsync(true);
 
             this.pdsServiceMock.Setup(service =>
-                service.PatientLookupByDetailsAsync(inputPatientLookup))
-                    .ReturnsAsync(outputPatientLookup);
+                    service.PatientLookupByNhsNumberAsync(inputNhsNumber))
+                .ReturnsAsync(outputPatient);
 
             // when
             Patient actualPatient =
@@ -182,7 +241,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     Times.Once);
 
             this.pdsServiceMock.Verify(service =>
-                service.PatientLookupByDetailsAsync(inputPatientLookup),
+                service.PatientLookupByNhsNumberAsync(inputNhsNumber),
                     Times.Once);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
