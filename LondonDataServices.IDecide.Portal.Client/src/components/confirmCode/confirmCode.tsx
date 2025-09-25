@@ -48,6 +48,18 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
         }
 
         try {
+            await loadRecaptchaScript(RECAPTCHA_SITE_KEY);
+
+            if (!(window as any).grecaptcha) {
+                setError("reCAPTCHA is not loaded. Please try again later.");
+                return;
+            }
+
+            const token = await (window as any).grecaptcha.execute(
+                RECAPTCHA_SITE_KEY,
+                { action: RECAPTCHA_ACTION_SUBMIT }
+            );
+
             const request = new PatientCodeRequest({
                 nhsNumber: createdPatient.nhsNumber!,
                 verificationCode: code,
@@ -55,7 +67,9 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
                 generateNewCode: false
             });
 
-            await confirmCodeMutation.mutateAsync(request);
+            await confirmCodeMutation.mutate(request, {
+                headers: { "X-Recaptcha-Token": token }
+            });
             createdPatient.validationCode = code;
             nextStep(undefined, undefined, createdPatient);
         } catch (error: unknown) {
