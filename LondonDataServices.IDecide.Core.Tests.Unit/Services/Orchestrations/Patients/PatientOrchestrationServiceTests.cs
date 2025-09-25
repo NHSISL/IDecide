@@ -142,6 +142,21 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         private static List<Patient> GetRandomPatients() =>
             CreatePatientFiller().Create(GetRandomNumber()).ToList();
 
+        private static Patient CreateRandomSensitivePatient(string inputSurname)
+        {
+            DateTimeOffset dateTimeOffset = DateTimeOffset.UtcNow;
+            var filler = new Filler<Patient>();
+
+            filler.Setup()
+                .OnType<DateTimeOffset>().Use(dateTimeOffset)
+                .OnType<DateTimeOffset?>().Use(dateTimeOffset)
+                .OnProperty(p => p.GivenName).Use(GetRandomString())
+                .OnProperty(p => p.Surname).Use(inputSurname)
+                .OnProperty(p => p.IsSensitive).Use(true);
+
+            return filler.Create();
+        }
+
         private static Filler<Patient> CreatePatientFiller(string inputSurname = "Test")
         {
             DateTimeOffset dateTimeOffset = DateTimeOffset.UtcNow;

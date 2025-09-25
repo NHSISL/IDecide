@@ -66,7 +66,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
             return patient;
         }
 
-        private static Hl7.Fhir.Model.Patient CreateRandomPatientWithNhsNumber(string nhsNumber, bool withWhiteSpace = false)
+        private static Hl7.Fhir.Model.Patient CreateRandomPatientWithNhsNumber(
+            string nhsNumber,
+            bool withWhiteSpace = false)
         {
             var patient = new Hl7.Fhir.Model.Patient();
 
@@ -79,6 +81,33 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
             patient.Telecom = new List<ContactPoint> {
                 CreateContactPointFiller(ContactPoint.ContactPointSystem.Phone, withWhiteSpace).Create(),
                 CreateContactPointFiller(ContactPoint.ContactPointSystem.Email, withWhiteSpace).Create()
+            };
+
+            return patient;
+        }
+
+        private static Hl7.Fhir.Model.Patient CreateRandomSensitivePatient(bool withWhiteSpace = false)
+        {
+            var patient = new Hl7.Fhir.Model.Patient();
+            patient.Name = new List<HumanName> { CreateHumanNameFiller(withWhiteSpace).Create() };
+            patient.Gender = AdministrativeGender.Male;
+            patient.BirthDate = GetRandomDateTimeOffset().ToString("yyyy-MM-dd");
+            patient.Address = new List<Address> { CreateAddressFiller(withWhiteSpace).Create() };
+
+            patient.Telecom = new List<ContactPoint> {
+                CreateContactPointFiller(ContactPoint.ContactPointSystem.Phone, withWhiteSpace).Create(),
+                CreateContactPointFiller(ContactPoint.ContactPointSystem.Email, withWhiteSpace).Create()
+            };
+
+            patient.Meta = new Meta
+            {
+                Security = new List<Coding>
+                {
+                    new()
+                    {
+                        Code = "R"
+                    }
+                }
             };
 
             return patient;
@@ -191,8 +220,22 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
             return contactPointFiller;
         }
 
-        private static Patient GeneratePatientFromFhirPatient(Hl7.Fhir.Model.Patient fhirPatient) =>
-            CreatePatientFillerFromFhirPatient(fhirPatient).Create();
+        private static Patient GeneratePatientFromFhirPatient(Hl7.Fhir.Model.Patient fhirPatient)
+        {
+            bool isSensitive = fhirPatient.Meta?.Security?.FirstOrDefault()?.Code == "R";
+
+            if (isSensitive)
+            {
+                return new Patient
+                {
+                    GivenName = fhirPatient.Name.Select(n => string.Join(' ', n.Given)).FirstOrDefault(),
+                    Surname = fhirPatient.Name.Select(n => n.Family).FirstOrDefault(),
+                    IsSensitive = true
+                };
+            }
+
+            return CreatePatientFillerFromFhirPatient(fhirPatient).Create();
+        }
 
         private static Filler<Patient> CreatePatientFillerFromFhirPatient(Hl7.Fhir.Model.Patient fhirPatient)
         {

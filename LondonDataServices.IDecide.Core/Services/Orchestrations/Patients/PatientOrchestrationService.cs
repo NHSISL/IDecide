@@ -60,6 +60,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             TryCatch(async () =>
             {
                 ValidatePatientLookupIsNotNull(patientLookup);
+                bool isAuthenticatedUserWithRole = await CheckIfIsAuthenticatedUserWithRequiredRoleAsync();
 
                 if (string.IsNullOrWhiteSpace(patientLookup.SearchCriteria.NhsNumber))
                 {
@@ -67,7 +68,21 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                         await this.pdsService.PatientLookupByDetailsAsync(patientLookup);
 
                     ValidatePatientLookupPatientIsExactMatch(responsePatientLookup);
-                    Patient redactedPatient = responsePatientLookup.Patients.First().Redact();
+
+                    Patient patient = responsePatientLookup.Patients.First();
+
+                    if (patient.IsSensitive)
+                    {
+                        if (isAuthenticatedUserWithRole)
+                        {
+                            return patient;
+                        }
+
+                        throw new ExternalOptOutPatientOrchestrationException(
+                            message: "The patient is marked as sensitive.");
+                    }
+
+                    Patient redactedPatient = patient.Redact();
 
                     return redactedPatient;
                 }
@@ -77,6 +92,18 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                     ValidatePatientLookupByNhsNumberArguments(nhsNumber);
                     Patient maybePatient = await this.pdsService.PatientLookupByNhsNumberAsync(nhsNumber);
                     ValidatePatientIsNotNull(maybePatient);
+
+                    if (maybePatient.IsSensitive)
+                    {
+                        if (isAuthenticatedUserWithRole)
+                        {
+                            return maybePatient;
+                        }
+
+                        throw new ExternalOptOutPatientOrchestrationException(
+                            message: "The patient is marked as sensitive.");
+                    }
+
                     Patient redactedPatient = maybePatient.Redact();
 
                     return redactedPatient;

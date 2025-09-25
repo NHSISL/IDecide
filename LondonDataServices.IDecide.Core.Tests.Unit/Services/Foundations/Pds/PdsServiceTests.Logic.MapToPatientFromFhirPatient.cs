@@ -47,5 +47,24 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
             this.pdsBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public void ShouldMapToPatientFromFhirPatientToPartialModelWhenIsSensitivePatient()
+        {
+            // given
+            Hl7.Fhir.Model.Patient fhirSensitivePatient = CreateRandomSensitivePatient();
+            Hl7.Fhir.Model.Patient inputSensitiveFhirPatient = fhirSensitivePatient.DeepClone();
+            Patient mappedPatient = GeneratePatientFromFhirPatient(inputSensitiveFhirPatient);
+            Patient expectedPatient = mappedPatient.DeepClone();
+
+            // when
+            Patient actualPatient = this.pdsService.MapToPatientFromFhirPatient(inputSensitiveFhirPatient);
+
+            //then
+            actualPatient.Should().BeEquivalentTo(expectedPatient);
+
+            this.pdsBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
