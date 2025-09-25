@@ -5,7 +5,6 @@
 using System.Linq;
 using Attrify.InvisibleApi.Models;
 using ISL.Providers.Notifications.Abstractions;
-using ISL.Providers.Notifications.GovukNotify.Providers.Notifications;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -23,6 +22,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Brokers
                 config
                     .AddJsonFile("appsettings.json", optional: true)
                     .AddJsonFile("appsettings.Development.json", optional: true)
+                    .AddJsonFile("appsettings.Acceptance.json", optional: true)
                     .AddEnvironmentVariables();
             });
 
