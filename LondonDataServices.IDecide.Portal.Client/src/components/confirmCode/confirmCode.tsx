@@ -354,10 +354,10 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
                                     tabIndex={resendPending ? -1 : 0}
                                     role="button"
                                     onKeyDown={e => {
-                                        if (
-                                            !resendPending &&
-                                            (e.key === "Enter" || e.key === " ")
-                                        ) {
+                                        if (!resendPending && (e.key === "Enter" || e.key === " ")) {
+                                            if (e.key === " ") {
+                                                e.preventDefault();
+                                            }
                                             handleResendCode();
                                         }
                                     }}
