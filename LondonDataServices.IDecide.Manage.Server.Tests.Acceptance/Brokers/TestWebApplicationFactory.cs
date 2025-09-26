@@ -27,7 +27,6 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Brokers
                     .AddJsonFile("appsettings.json", optional: true)
                     .AddJsonFile("appsettings.Development.json", optional: true)
                     .AddJsonFile(Path.Combine(testProjectPath, "appsettings.json"), optional: true)
-                    .AddJsonFile(Path.Combine(testProjectPath, "appsetting.Acceptance.json"), optional: true)
                     .AddEnvironmentVariables();
             });
 
