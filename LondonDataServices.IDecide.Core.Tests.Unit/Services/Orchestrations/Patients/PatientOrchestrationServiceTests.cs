@@ -142,6 +142,21 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         private static List<Patient> GetRandomPatients() =>
             CreatePatientFiller().Create(GetRandomNumber()).ToList();
 
+        private static Patient CreateRandomSensitivePatient(string inputSurname)
+        {
+            DateTimeOffset dateTimeOffset = DateTimeOffset.UtcNow;
+            var filler = new Filler<Patient>();
+
+            filler.Setup()
+                .OnType<DateTimeOffset>().Use(dateTimeOffset)
+                .OnType<DateTimeOffset?>().Use(dateTimeOffset)
+                .OnProperty(p => p.GivenName).Use(GetRandomString())
+                .OnProperty(p => p.Surname).Use(inputSurname)
+                .OnProperty(p => p.IsSensitive).Use(true);
+
+            return filler.Create();
+        }
+
         private static Filler<Patient> CreatePatientFiller(string inputSurname = "Test")
         {
             DateTimeOffset dateTimeOffset = DateTimeOffset.UtcNow;
@@ -150,13 +165,24 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
                 .OnType<DateTimeOffset?>().Use(dateTimeOffset)
-                .OnProperty(n => n.Surname).Use(inputSurname);
+                .OnProperty(n => n.Surname).Use(inputSurname)
+                .OnProperty(n => n.IsSensitive).Use(false);
 
             return filler;
         }
 
         private static Patient GetRandomPatientWithNhsNumber(string nhsNumber) =>
             CreatePatientFillerWithNhsNumber(nhsNumber).Create();
+
+        private static Patient GetRandomSensitivePatient()
+        {
+            return new Patient
+            {
+                GivenName = GetRandomString(),
+                Surname = GetRandomString(),
+                IsSensitive = true
+            };
+        }
 
         private static Filler<Patient> CreatePatientFillerWithNhsNumber(string nhsNumber = "1234567890")
         {
@@ -167,7 +193,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
                 .OnType<DateTimeOffset?>().Use(dateTimeOffset)
                 .OnProperty(n => n.NhsNumber).Use(nhsNumber)
-                .OnProperty(n => n.RetryCount).Use(0);
+                .OnProperty(n => n.RetryCount).Use(0)
+                .OnProperty(n => n.IsSensitive).Use(false);
 
             return filler;
         }

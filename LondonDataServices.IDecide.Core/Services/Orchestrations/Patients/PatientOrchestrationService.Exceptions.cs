@@ -58,6 +58,15 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             {
                 throw await CreateAndLogDependencyExceptionAsync(pdsDependencyException);
             }
+            catch (ExternalOptOutPatientOrchestrationException externalOptOutPatientOrchestrationException)
+            {
+                var failedPatientOrchestrationServiceException =
+                    new FailedPatientOrchestrationServiceException(
+                        message: "Failed patient orchestration service error occurred, contact support.",
+                        innerException: externalOptOutPatientOrchestrationException);
+
+                throw await CreateAndLogServiceExceptionAsync(failedPatientOrchestrationServiceException);
+            }
             catch (Exception exception)
             {
                 var failedPatientOrchestrationServiceException =

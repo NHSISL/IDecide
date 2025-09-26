@@ -61,13 +61,30 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             {
                 ValidatePatientLookupIsNotNull(patientLookup);
 
+                bool isAuthenticatedUserWithRole =
+                    await CheckIfIsAuthenticatedUserWithRequiredRoleAsync();
+
                 if (string.IsNullOrWhiteSpace(patientLookup.SearchCriteria.NhsNumber))
                 {
                     PatientLookup responsePatientLookup =
                         await this.pdsService.PatientLookupByDetailsAsync(patientLookup);
 
                     ValidatePatientLookupPatientIsExactMatch(responsePatientLookup);
-                    Patient redactedPatient = responsePatientLookup.Patients.First().Redact();
+
+                    Patient patient = responsePatientLookup.Patients.First();
+
+                    if (patient.IsSensitive)
+                    {
+                        if (isAuthenticatedUserWithRole)
+                        {
+                            return patient;
+                        }
+
+                        throw new ExternalOptOutPatientOrchestrationException(
+                            message: "The patient is marked as sensitive.");
+                    }
+
+                    Patient redactedPatient = patient.Redact();
 
                     return redactedPatient;
                 }
@@ -77,6 +94,18 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                     ValidatePatientLookupByNhsNumberArguments(nhsNumber);
                     Patient maybePatient = await this.pdsService.PatientLookupByNhsNumberAsync(nhsNumber);
                     ValidatePatientIsNotNull(maybePatient);
+
+                    if (maybePatient.IsSensitive)
+                    {
+                        if (isAuthenticatedUserWithRole)
+                        {
+                            return maybePatient;
+                        }
+
+                        throw new ExternalOptOutPatientOrchestrationException(
+                            message: "The patient is marked as sensitive.");
+                    }
+
                     Patient redactedPatient = maybePatient.Redact();
 
                     return redactedPatient;
@@ -137,7 +166,10 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                     await this.auditBroker.LogInformationAsync(
                         auditType: "Patient",
                         title: "Valid Patient Code Exists",
-                        message: $"Patient with NHS Number {nhsNumber} bypassed code generation as a valid code exists.",
+
+                        message:
+                            $"Patient with NHS Number {nhsNumber} bypassed code generation as a valid code exists.",
+
                         fileName: null,
                         correlationId: correlationId.ToString());
 
