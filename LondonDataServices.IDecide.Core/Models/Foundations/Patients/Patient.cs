@@ -4,6 +4,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -32,6 +34,10 @@ namespace LondonDataServices.IDecide.Core.Models.Foundations.Patients
         public DateTimeOffset CreatedDate { get; set; }
         public string UpdatedBy { get; set; }
         public DateTimeOffset UpdatedDate { get; set; }
+
+        [NotMapped]
+        [JsonIgnore]
+        public bool IsSensitive { get; set; }
 
         [BindNever]
         public List<Decision> Decisions { get; set; } = new List<Decision>();

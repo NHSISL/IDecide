@@ -9,6 +9,7 @@ using Force.DeepCloner;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
+using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
 using Moq;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Patients
@@ -75,6 +76,22 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             updatedPatientLookup.Patients = new List<Patient>();
             PatientLookup outputPatientLookup = updatedPatientLookup.DeepClone();
 
+            var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
+                this.loggingBrokerMock.Object,
+                this.securityBrokerMock.Object,
+                this.dateTimeBrokerMock.Object,
+                this.auditBrokerMock.Object,
+                this.identifierBrokerMock.Object,
+                this.pdsServiceMock.Object,
+                this.patientServiceMock.Object,
+                this.notificationServiceMock.Object,
+                this.decisionConfigurations)
+            { CallBase = true };
+
+            patientOrchestrationServiceMock.Setup(service =>
+                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
+                    .ReturnsAsync(false);
+
             var nullPatientLookupException =
                 new NoExactPatientFoundException(message: "No matching patient found.");
 
@@ -90,7 +107,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             // when
             ValueTask<Patient> patientLookupTask =
-                this.patientOrchestrationService
+                patientOrchestrationServiceMock.Object
                     .PatientLookupAsync(inputPatientLookup);
 
             PatientOrchestrationValidationException
@@ -102,6 +119,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             actualPatientOrchestrationValidationException
                 .Should().BeEquivalentTo(expectedPatientOrchestrationValidationException);
 
+            patientOrchestrationServiceMock.Verify(service =>
+                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
+                    Times.Once);
+
             this.pdsServiceMock.Verify(service =>
                 service.PatientLookupByDetailsAsync(inputPatientLookup),
                     Times.Once);
@@ -111,6 +132,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                    expectedPatientOrchestrationValidationException))),
                        Times.Once);
 
+            patientOrchestrationServiceMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.securityBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
@@ -133,6 +155,22 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             updatedPatientLookup.Patients = GetRandomPatients();
             PatientLookup outputPatientLookup = updatedPatientLookup.DeepClone();
 
+            var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
+                this.loggingBrokerMock.Object,
+                this.securityBrokerMock.Object,
+                this.dateTimeBrokerMock.Object,
+                this.auditBrokerMock.Object,
+                this.identifierBrokerMock.Object,
+                this.pdsServiceMock.Object,
+                this.patientServiceMock.Object,
+                this.notificationServiceMock.Object,
+                this.decisionConfigurations)
+            { CallBase = true };
+
+            patientOrchestrationServiceMock.Setup(service =>
+                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
+                    .ReturnsAsync(false);
+
             var nullPatientLookupException =
                 new NoExactPatientFoundException(message: "Multiple matching patients found.");
 
@@ -148,7 +186,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             // when
             ValueTask<Patient> patientLookupTask =
-                this.patientOrchestrationService
+                patientOrchestrationServiceMock.Object
                     .PatientLookupAsync(inputPatientLookup);
 
             PatientOrchestrationValidationException
@@ -160,6 +198,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             actualPatientOrchestrationValidationException
                 .Should().BeEquivalentTo(expectedPatientOrchestrationValidationException);
 
+            patientOrchestrationServiceMock.Verify(service =>
+                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
+                    Times.Once);
+
             this.pdsServiceMock.Verify(service =>
                 service.PatientLookupByDetailsAsync(inputPatientLookup),
                     Times.Once);
@@ -169,6 +211,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                    expectedPatientOrchestrationValidationException))),
                        Times.Once);
 
+            patientOrchestrationServiceMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.securityBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
@@ -188,6 +231,22 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             PatientLookup randomPatientLookup = GetRandomSearchPatientLookupWithNhsNumber(invalidNhsNumber);
             PatientLookup inputPatientLookup = randomPatientLookup.DeepClone();
 
+            var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
+                this.loggingBrokerMock.Object,
+                this.securityBrokerMock.Object,
+                this.dateTimeBrokerMock.Object,
+                this.auditBrokerMock.Object,
+                this.identifierBrokerMock.Object,
+                this.pdsServiceMock.Object,
+                this.patientServiceMock.Object,
+                this.notificationServiceMock.Object,
+                this.decisionConfigurations)
+            { CallBase = true };
+
+            patientOrchestrationServiceMock.Setup(service =>
+                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
+                    .ReturnsAsync(false);
+
             var invalidPatientOrchestrationArgumentException =
                 new InvalidPatientOrchestrationArgumentException(
                     "Invalid patient orchestration argument. Please correct the errors and try again.");
@@ -203,7 +262,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             // when
             ValueTask<Patient> patientLookupByNhsNumberAction =
-                patientOrchestrationService.PatientLookupAsync(inputPatientLookup);
+                patientOrchestrationServiceMock.Object.PatientLookupAsync(inputPatientLookup);
 
             PatientOrchestrationValidationException actualException =
                 await Assert.ThrowsAsync<PatientOrchestrationValidationException>(
@@ -212,11 +271,16 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             // then
             actualException.Should().BeEquivalentTo(expectedPatientOrchestrationValidationException);
 
+            patientOrchestrationServiceMock.Verify(service =>
+                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
+                    Times.Once);
+
             this.loggingBrokerMock.Verify(broker =>
                broker.LogErrorAsync(It.Is(SameExceptionAs(
                    expectedPatientOrchestrationValidationException))),
                        Times.Once);
 
+            patientOrchestrationServiceMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.securityBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
@@ -237,6 +301,22 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             PatientLookup inputPatientLookup = randomPatientLookup.DeepClone();
             Patient nullPatient = null;
 
+            var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
+                this.loggingBrokerMock.Object,
+                this.securityBrokerMock.Object,
+                this.dateTimeBrokerMock.Object,
+                this.auditBrokerMock.Object,
+                this.identifierBrokerMock.Object,
+                this.pdsServiceMock.Object,
+                this.patientServiceMock.Object,
+                this.notificationServiceMock.Object,
+                this.decisionConfigurations)
+            { CallBase = true };
+
+            patientOrchestrationServiceMock.Setup(service =>
+                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
+                    .ReturnsAsync(false);
+
             var nullPatientException =
                 new NullPatientOrchestrationException(message: "Patient is null.");
 
@@ -252,7 +332,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             // when
             ValueTask<Patient> patientLookupTask =
-                this.patientOrchestrationService
+                patientOrchestrationServiceMock.Object
                     .PatientLookupAsync(inputPatientLookup);
 
             PatientOrchestrationValidationException
@@ -264,6 +344,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             actualPatientOrchestrationValidationException
                 .Should().BeEquivalentTo(expectedPatientOrchestrationValidationException);
 
+            patientOrchestrationServiceMock.Verify(service =>
+                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
+                    Times.Once);
+
             this.pdsServiceMock.Verify(service =>
                 service.PatientLookupByNhsNumberAsync(inputNhsNumber),
                     Times.Once);
@@ -273,6 +357,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                    expectedPatientOrchestrationValidationException))),
                        Times.Once);
 
+            patientOrchestrationServiceMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.securityBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
