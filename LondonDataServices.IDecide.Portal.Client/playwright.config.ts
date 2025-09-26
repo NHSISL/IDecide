@@ -10,7 +10,7 @@ const authFile = path.join(__dirname, './playwright/.auth/user.json');
 
 const webServerCommand =
     'dotnet run --project ../LondonDataServices.IDecide.Portal.Server/LondonDataServices.IDecide.Portal.Server.csproj' +
-    (process.env.CI ? ' --environment ASPNETCORE_ENVIRONMENT=ContinuousIntegration' : '');
+    (process.env.CI ? ' --environment ContinuousIntegration' : '');
 
 export default defineConfig({
     testDir: './tests',
