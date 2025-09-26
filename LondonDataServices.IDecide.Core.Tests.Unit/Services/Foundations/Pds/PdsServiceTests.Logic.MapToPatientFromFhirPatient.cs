@@ -62,7 +62,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
 
             //then
             actualPatient.Should().BeEquivalentTo(expectedPatient);
-
             this.pdsBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
