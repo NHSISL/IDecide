@@ -19,9 +19,6 @@ const notificationPreferenceMap: Record<"Email" | "Letter" | "Sms", number> = {
     Sms: NotificationPreference.Sms
 };
 
-const VALID_CODE_MESSAGE =
-    "A valid code already exists for this patient, please go to the enter code screen.";
-
 const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirmCode }) => {
     const { t: translate } = useTranslation();
     const { createdPatient, powerOfAttorney, setCreatedPatient } = useStep();
@@ -33,7 +30,6 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
     const [info, setInfo] = useState<string | JSX.Element>("");
     const [hideButtons, setHideButtons] = useState(false);
     const [resend, setResend] = useState(false);
-    const [showResendMessage, setShowResendMessage] = useState(false);
     const [showAreYouSure, setShowAreYouSure] = useState(false);
 
     if (!createdPatient) {
@@ -83,7 +79,6 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                                 errResponse.statusText ||
                                 "Unknown API error";
                             setError(apiTitle);
-                            setShowResendMessage(false);
                             console.error("API Error updating patient:", apiTitle, errResponse);
                         } else if (
                             error &&
@@ -92,18 +87,15 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                             typeof (error as { message?: unknown }).message === "string"
                         ) {
                             setError((error as { message: string }).message);
-                            setShowResendMessage(false);
                             console.error("Error updating patient:", (error as { message: string }).message, error);
                         } else {
                             setError("An unexpected error occurred.");
-                            setShowResendMessage(false);
                         }
                     }
                 }
             );
         } catch (err) {
             setError("Error executing reCAPTCHA.");
-            setShowResendMessage(false);
             console.error("Error executing reCAPTCHA:", err);
         }
     };
