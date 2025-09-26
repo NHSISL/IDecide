@@ -201,7 +201,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
             return addressFiller;
         }
 
-        private static Filler<ContactPoint> CreateContactPointFiller(ContactPoint.ContactPointSystem contactPointSystem, bool withWhiteSpace = false)
+        private static Filler<ContactPoint> CreateContactPointFiller(
+            ContactPoint.ContactPointSystem contactPointSystem,
+            bool withWhiteSpace = false)
         {
             var contactPointFiller = new Filler<ContactPoint>();
 

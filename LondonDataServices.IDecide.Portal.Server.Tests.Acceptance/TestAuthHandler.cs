@@ -31,6 +31,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance
             new Claim(ClaimTypes.Email, email),
             new Claim("jobTitle", jobTitle),
             new Claim(ClaimTypes.Name, "TestUser"),
+            new Claim(ClaimTypes.Role, "Administrator"),
             new Claim(ClaimTypes.Role, "LondonDataServices.IDecide.Portal.Server.Administrators"),
             new Claim(ClaimTypes.Role, "LondonDataServices.IDecide.Portal.Server.Users")
         };
@@ -44,7 +45,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
             var invisibleApiKey = Options.InvisibleApiKey;
-            
+
             if (invisibleApiKey != null && !string.IsNullOrWhiteSpace(invisibleApiKey.Key))
             {
                 claims.Add(new Claim(ClaimTypes.Role, invisibleApiKey.Key));
