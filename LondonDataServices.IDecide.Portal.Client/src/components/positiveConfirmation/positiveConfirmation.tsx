@@ -220,7 +220,7 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                                 </button>
                             </div>
                             <Alert variant="warning">
-                            <p>If you have already requested a code but havent recieved it please click here to resend yourself a code</p>
+                                <p>If you have already requested a code but haven't received it please click here to resend yourself a code</p>
                                 <button
                                     type="button"
                                     className="nhsuk-button nhsuk-button--reverse"
