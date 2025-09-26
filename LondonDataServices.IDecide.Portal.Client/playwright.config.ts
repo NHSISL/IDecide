@@ -7,7 +7,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const authFile = path.join(__dirname, './playwright/.auth/user.json');
-const webServerCommand = 'dotnet run --project ../LondonDataServices.IDecide.Portal.Server/LondonDataServices.IDecide.Portal.Server.csproj' + (!process.env.CI ? ' --environment ASPNETCORE_ENVIRONMENT=ContinuousIntegration' : '');
+
+const webServerCommand =
+    'dotnet run --project ../LondonDataServices.IDecide.Portal.Server/LondonDataServices.IDecide.Portal.Server.csproj' +
+    (process.env.CI ? ' --environment ASPNETCORE_ENVIRONMENT=ContinuousIntegration' : '');
 
 export default defineConfig({
     testDir: './tests',
