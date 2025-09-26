@@ -21,7 +21,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Brokers
             builder.ConfigureAppConfiguration((context, config) =>
             {
                 var testProjectPath = Path.GetFullPath(
-                   Path.Combine(AppContext.BaseDirectory, "..", "..", ".."));
+                    Path.Combine(AppContext.BaseDirectory, "..", "..", ".."));
 
                 config
                     .AddJsonFile("appsettings.json", optional: true)

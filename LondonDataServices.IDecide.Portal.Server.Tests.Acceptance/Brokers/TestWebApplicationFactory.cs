@@ -24,12 +24,11 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Brokers
             builder.ConfigureAppConfiguration((context, config) =>
             {
                 var testProjectPath = Path.GetFullPath(
-                   Path.Combine(AppContext.BaseDirectory, "..", "..", ".."));
+                    Path.Combine(AppContext.BaseDirectory, "..", "..", ".."));
 
                 config
                     .AddJsonFile("appsettings.json", optional: true)
-                    .AddJsonFile("appsettings.Development.json", optional: true)
-                    .AddJsonFile("appsettings.Acceptance.json", optional: true)
+                    //.AddJsonFile("appsettings.Development.json", optional: true)
                     .AddJsonFile(Path.Combine(testProjectPath, "appsettings.json"), optional: true)
                     .AddEnvironmentVariables();
             });
