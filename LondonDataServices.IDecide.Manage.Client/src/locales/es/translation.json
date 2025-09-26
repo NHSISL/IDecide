@@ -56,7 +56,7 @@
       "thanks": "Proceso completo"
     }
   },
-  "SearchBySHSNumber": {
+  "SearchByNHSNumber": {
     "nhsNumberLabel": "Número NHS",
     "nhsNumberHint": "Puede encontrar su número NHS en cartas de su médico o hospital, recetas o en la aplicación NHS.",
     "poaNhsNumberLabel": "Número NHS de la persona que representa",
