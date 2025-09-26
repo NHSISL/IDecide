@@ -20,7 +20,6 @@ using ISL.Providers.PDS.FakeFHIR.Models;
 using ISL.Providers.PDS.FakeFHIR.Providers.FakeFHIR;
 using ISL.Providers.PDS.FHIR.Models.Brokers.PdsFHIR;
 using ISL.Providers.PDS.FHIR.Providers;
-using ISL.Providers.ReIdentification.Necs.Models.Brokers.Notifications;
 using ISL.Security.Client.Models.Clients;
 using LondonDataServices.IDecide.Core.Brokers.Audits;
 using LondonDataServices.IDecide.Core.Brokers.DateTimes;
@@ -194,20 +193,9 @@ namespace LondonDataServices.IDecide.Manage.Server
 
         private static void AddProviders(IServiceCollection services, IConfiguration configuration)
         {
-            NotificationConfigurations notificationConfigurations = configuration
-                .GetSection("NotificationConfigurations")
-                    .Get<NotificationConfigurations>();
-
-            NotifyConfigurations notifyConfigurations = new NotifyConfigurations
-            {
-                ApiKey = notificationConfigurations.ApiKey
-            };
-
             NotificationConfig notificationConfig = configuration.GetSection("NotificationConfig")
                 .Get<NotificationConfig>();
 
-            services.AddSingleton(notificationConfigurations);
-            services.AddSingleton(notifyConfigurations);
             services.AddSingleton(notificationConfig);
             services.AddTransient<INotificationAbstractionProvider, NotificationAbstractionProvider>();
             services.AddTransient<IPdsAbstractionProvider, PdsAbstractionProvider>();
@@ -257,10 +245,20 @@ namespace LondonDataServices.IDecide.Manage.Server
 
             if (interceptNotificationProviderMode == true)
             {
+                ISL.Providers.Notifications.GovUkNotifyIntercept.Models.NotifyConfigurations notifyConfigurations =
+                    configuration.GetSection("NotifyConfigurations")
+                            .Get<ISL.Providers.Notifications.GovUkNotifyIntercept.Models.NotifyConfigurations>();
+
+                services.AddSingleton(notifyConfigurations);
                 services.AddTransient<INotificationProvider, GovUkNotifyInterceptProvider>();
             }
             else
             {
+                ISL.Providers.Notifications.GovukNotify.Models.NotifyConfigurations notifyConfigurations =
+                    configuration.GetSection("NotifyConfigurations")
+                        .Get<NotifyConfigurations>();
+
+                services.AddSingleton(notifyConfigurations);
                 services.AddTransient<INotificationProvider, GovUkNotifyProvider>();
             }
         }
