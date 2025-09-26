@@ -23,7 +23,7 @@ namespace LondonDataServices.IDecide.Core.Brokers.Notifications
             string templateId,
             Dictionary<string, dynamic> personalisation) =>
             await notificationAbstractionProvider
-                .SendEmailAsync(toEmail, templateId, personalisation, null);
+                .SendEmailAsync(templateId, toEmail, personalisation, null);
 
         /// <summary>
         /// Sends a SMS using the specified template ID and personalisation items.

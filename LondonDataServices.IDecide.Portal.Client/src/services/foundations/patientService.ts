@@ -23,13 +23,16 @@ export const patientService = {
         return await broker.PostPatientWithNotificationPreference(patient, headers);
     },
 
-    useConfirmCode: () => {
+    useConfirmCode: async(
+        request: PatientCodeRequest,
+        headers?: Record<string, string>
+    ) => {
         const broker = new PatientCodeBroker();
-        return useMutation({
-            mutationFn: (request: PatientCodeRequest) => {
-                return broker.ConfirmPatientCodeAsync(request.nhsNumber!, request.verificationCode!);
-            }
-        });
+        return await broker.ConfirmPatientCodeAsync(
+            request.nhsNumber!,
+            request.verificationCode!,
+            headers
+        );
     },
 
     useCreatePatientByDetails: () => {
