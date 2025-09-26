@@ -262,7 +262,7 @@ namespace LondonDataServices.IDecide.Portal.Server
             {
                 ISL.Providers.Notifications.GovUkNotifyIntercept.Models.NotifyConfigurations notifyConfigurations =
                     configuration.GetSection("NotifyConfigurations")
-                            .Get<ISL.Providers.Notifications.GovUkNotifyIntercept.Models.NotifyConfigurations>();
+                        .Get<ISL.Providers.Notifications.GovUkNotifyIntercept.Models.NotifyConfigurations>();
 
                 services.AddSingleton(notifyConfigurations);
                 services.AddTransient<INotificationProvider, GovUkNotifyInterceptProvider>();
