@@ -19,8 +19,8 @@ namespace LondonDataServices.IDecide.Core.Brokers.Notifications
         }
 
         public async ValueTask<string> SendEmailAsync(
-            string toEmail,
             string templateId,
+            string toEmail,
             Dictionary<string, dynamic> personalisation) =>
             await notificationAbstractionProvider
                 .SendEmailAsync(templateId, toEmail, personalisation, null);
