@@ -9,7 +9,7 @@ import { fileURLToPath } from 'url';
 
 const webServerCommand =
     'dotnet run --project ../LondonDataServices.IDecide.Portal.Server/LondonDataServices.IDecide.Portal.Server.csproj' +
-    (process.env.CI ? ' --no-launch-profile' : '');
+    (process.env.CI ? ' --launch-profile CI' : '');
 
 export default defineConfig({
     testDir: './tests',
