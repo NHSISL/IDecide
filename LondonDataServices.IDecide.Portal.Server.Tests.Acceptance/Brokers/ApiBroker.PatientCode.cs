@@ -16,5 +16,11 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Brokers
             await this.apiFactoryClient.PostContentAsync<PatientCodeRequest>(
                 $"{patientCodeRelativeUrl}/PatientGenerationRequest", patientCodeRequest);
         }
+
+        public async ValueTask VerifyPatientCodeAsync(PatientCodeRequest patientCodeRequest)
+        {
+            await this.apiFactoryClient.PostContentAsync<PatientCodeRequest>(
+                $"{patientCodeRelativeUrl}/VerifyPatientCode", patientCodeRequest);
+        }
     }
 }
