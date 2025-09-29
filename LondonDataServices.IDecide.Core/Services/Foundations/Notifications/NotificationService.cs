@@ -51,13 +51,13 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                 {
                     case NotificationPreference.Email:
                         await ValidateSendEmailInputsOnSendCode(
-                           notificationInfo.Patient.Email,
                            this.notificationConfig.EmailCodeTemplateId,
+                           notificationInfo.Patient.Email,
                            personalisation);
 
                         await this.notificationBroker.SendEmailAsync(
-                            notificationInfo.Patient.Email,
                             this.notificationConfig.EmailCodeTemplateId,
+                            notificationInfo.Patient.Email,
                             personalisation);
 
                         break;
@@ -127,13 +127,13 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                 {
                     case NotificationPreference.Email:
                         await ValidateSendEmailInputsOnSendSubmissionSuccess(
-                            notificationInfo.Patient.Email,
                             this.notificationConfig.EmailSubmissionSuccessTemplateId,
+                            notificationInfo.Patient.Email,
                             personalisation);
 
                         await this.notificationBroker.SendEmailAsync(
-                            notificationInfo.Patient.Email,
                             this.notificationConfig.EmailSubmissionSuccessTemplateId,
+                            notificationInfo.Patient.Email,
                             personalisation);
 
                         break;
@@ -204,13 +204,13 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                 {
                     case NotificationPreference.Email:
                         await ValidateSendEmailInputsOnSendSubscriberUsage(
-                            notificationInfo.Patient.Email,
                             this.notificationConfig.EmailSubscriberUsageTemplateId,
+                            notificationInfo.Patient.Email,
                             personalisation);
 
                         await this.notificationBroker.SendEmailAsync(
-                            notificationInfo.Patient.Email,
                             this.notificationConfig.EmailSubscriberUsageTemplateId,
+                            notificationInfo.Patient.Email,
                             personalisation);
 
                         break;
