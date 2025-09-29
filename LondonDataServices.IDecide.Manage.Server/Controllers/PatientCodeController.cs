@@ -5,7 +5,7 @@
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
-using LondonDataServices.IDecide.Portal.Server.Models;
+using LondonDataServices.IDecide.Manage.Server.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
