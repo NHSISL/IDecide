@@ -25,7 +25,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Apis.Patient
             Decision inputDecision = randomDecision;
             Decision expectedDecision = inputDecision;
 
-            // when 
+            // when
             await this.apiBroker.PostPatientDecisionAsync(inputDecision);
 
             Models.Decisions.Decision actualDecision =

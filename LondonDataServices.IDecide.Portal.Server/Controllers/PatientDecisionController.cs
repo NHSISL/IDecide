@@ -3,11 +3,9 @@
 // ---------------------------------------------------------
 
 using System.Threading.Tasks;
-using Attrify.Attributes;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions.Exceptions;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
 
@@ -23,8 +21,6 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
             this.decisionOrchestrationService = decisionOrchestrationService;
 
         [HttpPost("PatientDecision")]
-        [InvisibleApi]
-        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators")]
         public async ValueTask<ActionResult> PostPatientDecisionAsync([FromBody] Decision decision)
         {
             try
