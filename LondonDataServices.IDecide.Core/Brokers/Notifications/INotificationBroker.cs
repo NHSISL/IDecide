@@ -17,8 +17,8 @@ namespace LondonDataServices.IDecide.Core.Brokers.Notifications
         /// <exception cref="NotificationDependencyProviderException" />
         /// <exception cref="NotificationServiceProviderException" />
         ValueTask<string> SendEmailAsync(
-            string toEmail,
             string templateId,
+            string toEmail,
             Dictionary<string, dynamic> personalisation);
 
         /// <summary>

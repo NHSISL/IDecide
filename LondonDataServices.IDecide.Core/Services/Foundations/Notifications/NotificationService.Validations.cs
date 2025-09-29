@@ -176,14 +176,14 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
         }
 
         private async ValueTask ValidateSendEmailInputsOnSendCode(
-            string email,
             string emailCodeTemplateId,
+            string email,
             Dictionary<string, dynamic> personalisation)
         {
             Validate<InvalidArgumentsNotificationException>(
                 message: "Invalid notification arguments. Please correct the errors and try again.",
-                (Rule: IsInvalid(email), Parameter: nameof(email)),
                 (Rule: IsInvalid(emailCodeTemplateId), Parameter: nameof(NotificationConfig.EmailCodeTemplateId)),
+                (Rule: IsInvalid(email), Parameter: nameof(email)),
                 (Rule: IsInvalid(personalisation), Parameter: nameof(personalisation)));
         }
 
@@ -214,8 +214,8 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
         }
 
         private async ValueTask ValidateSendEmailInputsOnSendSubmissionSuccess(
-            string email,
             string emailSubmissionSuccessTemplateId,
+            string email,
             Dictionary<string, dynamic> personalisation)
         {
             Validate<InvalidArgumentsNotificationException>(
@@ -255,8 +255,8 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
         }
 
         private async ValueTask ValidateSendEmailInputsOnSendSubscriberUsage(
-            string email,
             string emailSubscriberUsageTemplateId,
+            string email,
             Dictionary<string, dynamic> personalisation)
         {
             Validate<InvalidArgumentsNotificationException>(

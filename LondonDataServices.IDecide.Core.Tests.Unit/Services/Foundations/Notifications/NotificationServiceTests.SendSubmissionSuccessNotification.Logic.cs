@@ -32,8 +32,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
 
                     this.notificationBrokerMock.Setup(broker =>
                         broker.SendEmailAsync(
-                            inputNotificationInfo.Patient.Email,
                             this.notificationConfig.EmailSubmissionSuccessTemplateId,
+                            inputNotificationInfo.Patient.Email,
                             personalisation))
                         .ReturnsAsync(result);
 
@@ -74,8 +74,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                 case NotificationPreference.Email:
                     this.notificationBrokerMock.Verify(broker =>
                             broker.SendEmailAsync(
-                                inputNotificationInfo.Patient.Email,
                                 this.notificationConfig.EmailSubmissionSuccessTemplateId,
+                                inputNotificationInfo.Patient.Email,
                                 personalisation),
                         Times.Once);
                     break;

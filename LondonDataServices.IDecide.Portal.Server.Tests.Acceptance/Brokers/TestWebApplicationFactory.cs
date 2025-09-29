@@ -2,11 +2,17 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
+using System.IO;
 using System.Linq;
 using Attrify.InvisibleApi.Models;
+using ISL.Providers.Notifications.Abstractions;
+using ISL.Providers.Notifications.GovUkNotifyIntercept.Models;
+using ISL.Providers.Notifications.GovUkNotifyIntercept.Providers.Notifications;
 using ISL.Providers.PDS.Abstractions;
 using ISL.Providers.PDS.FakeFHIR.Models;
 using ISL.Providers.PDS.FakeFHIR.Providers.FakeFHIR;
+using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -21,20 +27,21 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Brokers
         {
             builder.ConfigureAppConfiguration((context, config) =>
             {
+                var testProjectPath = Path.GetFullPath(
+                    Path.Combine(AppContext.BaseDirectory, "..", "..", ".."));
+
                 config
                     .AddJsonFile("appsettings.json", optional: true)
                     .AddJsonFile("appsettings.Development.json", optional: true)
-                    .AddJsonFile("appsettings.Acceptance.json", optional: true)
+                    .AddJsonFile(Path.Combine(testProjectPath, "appsettings.json"), optional: true)
                     .AddEnvironmentVariables();
             });
 
             builder.ConfigureServices((context, services) =>
             {
                 OverrideSecurityForTesting(services);
-
-                OverrideFhirProviderForTesting(
-                    services,
-                    context.Configuration);
+                OverrideFhirProviderForTesting(services, context.Configuration);
+                OverrideNotificationProviderForTesting(services, context.Configuration);
             });
         }
 
@@ -97,6 +104,30 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Brokers
 
             services.AddSingleton(fakeFHIRProviderConfigurations);
             services.AddTransient<IPdsProvider, FakeFHIRProvider>();
+        }
+
+        private static void OverrideNotificationProviderForTesting(
+            IServiceCollection services,
+            IConfiguration configuration)
+        {
+            var notificationDescriptor = services
+                .FirstOrDefault(d => d.ServiceType == typeof(INotificationProvider));
+
+            if (notificationDescriptor != null)
+            {
+                services.Remove(notificationDescriptor);
+            }
+
+            NotifyConfigurations notificationInterceptProviderConfigurations = configuration
+                 .GetSection("NotifyConfigurations")
+                     .Get<NotifyConfigurations>();
+
+            NotificationConfig notificationConfig = configuration.GetSection("NotificationConfig")
+                .Get<NotificationConfig>();
+
+            services.AddSingleton(notificationConfig);
+            services.AddSingleton(notificationInterceptProviderConfigurations);
+            services.AddTransient<INotificationProvider, GovUkNotifyInterceptProvider>();
         }
     }
 }
