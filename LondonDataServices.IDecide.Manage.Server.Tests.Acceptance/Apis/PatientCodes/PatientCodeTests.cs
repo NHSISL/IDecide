@@ -4,12 +4,12 @@
 
 using System;
 using System.Threading.Tasks;
-using LondonDataServices.IDecide.Portal.Server.Models;
-using LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Brokers;
-using LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Models.Patients;
+using LondonDataServices.IDecide.Manage.Server.Models;
+using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Brokers;
+using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.Patients;
 using Tynamix.ObjectFiller;
 
-namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Apis.PatientCodes
+namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.PatientCodes
 {
     [Collection(nameof(ApiTestCollection))]
     public partial class PatientCodeTests

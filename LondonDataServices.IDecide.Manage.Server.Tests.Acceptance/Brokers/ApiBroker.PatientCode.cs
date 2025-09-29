@@ -3,19 +3,13 @@
 // ---------------------------------------------------------
 
 using System.Threading.Tasks;
-using LondonDataServices.IDecide.Portal.Server.Models;
+using LondonDataServices.IDecide.Manage.Server.Models;
 
-namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Brokers
+namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Brokers
 {
     public partial class ApiBroker
     {
         private const string patientCodeRelativeUrl = "api/patientcode";
-
-        public async ValueTask PostPatientGenerationRequestAsync(PatientCodeRequest patientCodeRequest)
-        {
-            await this.apiFactoryClient.PostContentAsync<PatientCodeRequest>(
-                $"{patientCodeRelativeUrl}/PatientGenerationRequest", patientCodeRequest);
-        }
 
         public async ValueTask VerifyPatientCodeAsync(PatientCodeRequest patientCodeRequest)
         {

@@ -2,7 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-namespace LondonDataServices.IDecide.Portal.Server.Models
+namespace LondonDataServices.IDecide.Manage.Server.Models
 {
     public class PatientCodeRequest
     {
