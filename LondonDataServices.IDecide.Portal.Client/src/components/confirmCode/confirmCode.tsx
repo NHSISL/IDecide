@@ -48,6 +48,18 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
         }
 
         try {
+            await loadRecaptchaScript(RECAPTCHA_SITE_KEY);
+
+            if (!(window as any).grecaptcha) {
+                setError("reCAPTCHA is not loaded. Please try again later.");
+                return;
+            }
+
+            const token = await (window as any).grecaptcha.execute(
+                RECAPTCHA_SITE_KEY,
+                { action: RECAPTCHA_ACTION_SUBMIT }
+            );
+
             const request = new PatientCodeRequest({
                 nhsNumber: createdPatient.nhsNumber!,
                 verificationCode: code,
@@ -55,7 +67,9 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
                 generateNewCode: false
             });
 
-            await confirmCodeMutation.mutateAsync(request);
+            await confirmCodeMutation.mutate(request, {
+                headers: { "X-Recaptcha-Token": token }
+            });
             createdPatient.validationCode = code;
             nextStep(undefined, undefined, createdPatient);
         } catch (error: unknown) {
@@ -272,7 +286,7 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
                         />
                         {/* Info message section */}
                         {info && (
-                            <div
+                            <Alert
                                 className="nhsuk-info-message"
                                 style={{
                                     marginTop: "0.5rem",
@@ -284,11 +298,12 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
                                 role="status"
                             >
                                 {info}
-                            </div>
+                            </Alert>
                         )}
                         {/* Error message section */}
                         {error && (
-                            <div
+                            <Alert
+                                variant="danger"
                                 id="code-error"
                                 className="nhsuk-error-message"
                                 style={{ marginTop: "0.5rem" }}
@@ -315,55 +330,57 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
                                         </a>
                                     </div>
                                 )}
-                            </div>
+                            </Alert>
                         )}
                         <br />
                         <button
                             className="nhsuk-button"
                             type="submit"
                             style={{ width: "70%", marginTop: "0.2rem" }}
-                            disabled={confirmCodeMutation.isPending}
                         >
-                            {confirmCodeMutation.isPending
-                                ? translate("ConfirmCode.submittingButton")
-                                : translate("ConfirmCode.submitButton")}
+                            {translate("ConfirmCode.submitButton")}
                         </button>
-                        <div style={{ marginTop: "1rem", fontSize: "0.95rem", color: "#333" }}>
-                            I have not received a code;{" "}
-                            <span
-                                onClick={resendPending ? undefined : handleResendCode}
-                                style={{
-                                    color: resendPending ? "#999" : "#005eb8",
-                                    textDecoration: "underline",
-                                    cursor: resendPending ? "not-allowed" : "pointer"
-                                }}
-                                aria-disabled={resendPending}
-                                tabIndex={resendPending ? -1 : 0}
-                                role="button"
-                                onKeyPress={e => {
-                                    if (!resendPending && (e.key === "Enter" || e.key === " ")) {
-                                        handleResendCode();
-                                    }
-                                }}
-                            >
-                                click here to resend
-                            </span>
-                            ; alternatively, please call the helpdesk on&nbsp;
-                            <a
-                                href="tel:0300303677"
-                                style={{ textDecoration: "underline" }}
-                            >
-                                0300 303 677
-                            </a>
-                            &nbsp;or email&nbsp;
-                            <a
-                                href="mailto:itservicedesk.nelicb@nhs.net"
-                                style={{ textDecoration: "underline" }}
-                            >
-                                itservicedesk.nelicb@nhs.net
-                            </a>
-                            .
-                        </div>
+                        <Alert>
+                            <div style={{  fontSize: "0.95rem", color: "#333" }}>
+                                I have not received a code {" "}
+                                <span
+                                    onClick={resendPending ? undefined : handleResendCode}
+                                    style={{
+                                        color: resendPending ? "#999" : "#005eb8",
+                                        textDecoration: "underline",
+                                        cursor: resendPending ? "not-allowed" : "pointer"
+                                    }}
+                                    aria-disabled={resendPending}
+                                    tabIndex={resendPending ? -1 : 0}
+                                    role="button"
+                                    onKeyDown={e => {
+                                        if (!resendPending && (e.key === "Enter" || e.key === " ")) {
+                                            if (e.key === " ") {
+                                                e.preventDefault();
+                                            }
+                                            handleResendCode();
+                                        }
+                                    }}
+                                >
+                                    click here to resend
+                                </span>
+                                &nbsp; alternatively, please call the helpdesk on&nbsp;
+                                <a
+                                    href={`tel:${configuration.helpdeskContactNumber}`}
+                                    style={{ textDecoration: "underline" }}
+                                >
+                                    {configuration.helpdeskContactNumber}
+                                </a>{" "}
+                                &nbsp;or email&nbsp;
+                                <a
+                                    href={`mailto:${configuration.helpdeskContactEmail}`}
+                                    style={{ textDecoration: "underline" }}
+                                >
+                                    {configuration.helpdeskContactEmail}
+                                </a>
+                                .
+                            </div>
+                        </Alert>
                     </form>
                 </Col>
                 <Col xs={12} md={6} lg={6} className="custom-col-spacing">

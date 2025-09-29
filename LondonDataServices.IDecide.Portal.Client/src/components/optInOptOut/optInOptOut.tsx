@@ -126,7 +126,10 @@ export const OptInOptOut: React.FC<OptInOptOutProps> = ({ createdPatient }) => {
                                 <div>
                                     <strong>{translate("OptOut.optInLabel")}</strong>
                                     <div id="optin-desc" style={{ marginTop: "0.5rem" }}>
-                                        {translate("OptOut.optInDesc")}
+                                        {translate("OptOut.optInDesc1")}
+                                    </div>
+                                    <div id="optin-desc" style={{ marginTop: "0.5rem", color: "#505a5f" }}>
+                                        {translate("OptOut.optInDesc2")}
                                     </div>
                                 </div>
                             </label>

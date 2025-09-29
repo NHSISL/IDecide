@@ -82,6 +82,20 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
         {
             ValidateFhirPatientIsNotNull(fhirPatient);
 
+            var isSensitivePatient = fhirPatient.Meta?.Security?.FirstOrDefault()?.Code == "R";
+
+            if (isSensitivePatient)
+            {
+                Patient partialPatient = new Patient
+                {
+                    GivenName = GetFirstName(fhirPatient),
+                    Surname = GetSurname(fhirPatient),
+                    IsSensitive = true
+                };
+
+                return partialPatient;
+            }
+
             Patient patient = new Patient
             {
                 NhsNumber = fhirPatient.Id,
@@ -93,7 +107,8 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
                 PostCode = GetCurrentPostcode(fhirPatient),
                 Phone = GetCurrentPhoneNumber(fhirPatient),
                 Gender = GetPatientGender(fhirPatient),
-                Title = GetPatientTitle(fhirPatient)
+                Title = GetPatientTitle(fhirPatient),
+                IsSensitive = false
             };
 
             return patient;

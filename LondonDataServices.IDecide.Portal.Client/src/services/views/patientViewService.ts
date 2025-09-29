@@ -69,6 +69,23 @@ export const patientViewService = {
         };
     },
     useConfirmCode: () => {
-        return patientService.useConfirmCode();
+        return {
+            mutate: async (
+                request: PatientCodeRequest,
+                options?: {
+                    headers?: Record<string, string>,
+                    onSuccess?: () => void,
+                    onError?: (error: unknown) => void
+                }
+            ) => {
+                try {
+                    await patientService.useConfirmCode(request, options?.headers);
+                    options?.onSuccess?.();
+                } catch (error) {
+                    options?.onError?.(error);
+                    throw error;
+                }
+            }
+        };
     },
 };
