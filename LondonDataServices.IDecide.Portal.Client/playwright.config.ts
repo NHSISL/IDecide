@@ -7,7 +7,12 @@ import { fileURLToPath } from 'url';
 //const __dirname = path.dirname(__filename);
 // const authFile = path.join(__dirname, './playwright/.auth/user.json');
 
+//const webServerCommand =
+//    'dotnet run --project ../LondonDataServices.IDecide.Portal.Server/LondonDataServices.IDecide.Portal.Server.csproj' +
+//    (process.env.CI ? ' --environment ContinuousIntegration' : '');
+
 const webServerCommand =
+    (process.env.CI ? 'ASPNETCORE_ENVIRONMENT=ContinuousIntegration ' : '') +
     'dotnet run --project ../LondonDataServices.IDecide.Portal.Server/LondonDataServices.IDecide.Portal.Server.csproj' +
     (process.env.CI ? ' --environment ContinuousIntegration' : '');
 
