@@ -5,8 +5,8 @@
 using System.Threading.Tasks;
 using FluentAssertions;
 using Force.DeepCloner;
-using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
+using LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Models.Patients;
 
 namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Apis.PatientSearches
 {
