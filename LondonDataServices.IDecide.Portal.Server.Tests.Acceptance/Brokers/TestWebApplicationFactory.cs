@@ -128,7 +128,6 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Brokers
             services.AddSingleton(notificationConfig);
             services.AddSingleton(notificationInterceptProviderConfigurations);
             services.AddTransient<INotificationProvider, GovUkNotifyInterceptProvider>();
-
         }
     }
 }
