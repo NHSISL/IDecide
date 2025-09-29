@@ -7,6 +7,9 @@ using System.IO;
 using System.Linq;
 using Attrify.InvisibleApi.Models;
 using ISL.Providers.Notifications.Abstractions;
+using ISL.Providers.Notifications.GovUkNotifyIntercept.Models;
+using ISL.Providers.Notifications.GovUkNotifyIntercept.Providers.Notifications;
+using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -34,10 +37,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Brokers
             builder.ConfigureServices((context, services) =>
             {
                 OverrideSecurityForTesting(services);
-
-                OverrideNotificationProviderForTesting(
-                    services,
-                    context.Configuration);
+                OverrideNotificationProviderForTesting(services, context.Configuration);
             });
         }
 
@@ -87,14 +87,23 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Brokers
             IConfiguration configuration)
         {
             var notificationDescriptor = services
-                .FirstOrDefault(service => service.ServiceType == typeof(INotificationProvider));
+                .FirstOrDefault(d => d.ServiceType == typeof(INotificationProvider));
 
-            if (notificationDescriptor is not null)
+            if (notificationDescriptor != null)
             {
                 services.Remove(notificationDescriptor);
             }
 
-            services.AddTransient<INotificationProvider, GovukNotifyProvider>();
+            NotifyConfigurations notificationInterceptProviderConfigurations = configuration
+                 .GetSection("NotifyConfigurations")
+                     .Get<NotifyConfigurations>();
+
+            NotificationConfig notificationConfig = configuration.GetSection("NotificationConfig")
+                .Get<NotificationConfig>();
+
+            services.AddSingleton(notificationConfig);
+            services.AddSingleton(notificationInterceptProviderConfigurations);
+            services.AddTransient<INotificationProvider, GovUkNotifyInterceptProvider>();
         }
     }
 }
