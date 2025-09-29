@@ -1,14 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { defineConfig, devices } from '@playwright/test';
-import path from 'path';
+//import path from 'path';
 import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+//const __filename = fileURLToPath(import.meta.url);
+//const __dirname = path.dirname(__filename);
+// const authFile = path.join(__dirname, './playwright/.auth/user.json');
 
-const authFile = path.join(__dirname, './playwright/.auth/user.json');
+//const webServerCommand =
+//    'dotnet run --project ../LondonDataServices.IDecide.Portal.Server/LondonDataServices.IDecide.Portal.Server.csproj' +
+//    (process.env.CI ? ' --environment ContinuousIntegration' : '');
 
 const webServerCommand =
+    (process.env.CI ? 'ASPNETCORE_ENVIRONMENT=ContinuousIntegration ' : '') +
     'dotnet run --project ../LondonDataServices.IDecide.Portal.Server/LondonDataServices.IDecide.Portal.Server.csproj' +
     (process.env.CI ? ' --environment ContinuousIntegration' : '');
 
@@ -21,13 +25,13 @@ export default defineConfig({
         command: webServerCommand,
         url: 'https://localhost:5173',
         reuseExistingServer: !process.env.CI,
-        timeout: 60 * 1000, // Reduce timeout for faster failure if server doesn't start
+        timeout: 120 * 1000, // Reduce timeout for faster failure if server doesn't start
         ignoreHTTPSErrors: true,
         stdout: 'pipe'
     },
     use: {
         ignoreHTTPSErrors: true,
-        baseURL: 'http://localhost:5173',
+        baseURL: 'https://localhost:5173',
         headless: true,
         screenshot: 'off', // Disable screenshots unless debugging
         video: 'off',      // Disable video unless debugging

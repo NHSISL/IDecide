@@ -144,6 +144,8 @@ steps:
       npx playwright test
     workingDirectory: './LondonDataServices.IDecide.Portal.Client'
     displayName: 'Playwright test'
+    env:
+        ASPNETCORE_ENVIRONMENT: ContinuousIntegration
 
   - task: Npm@1
     displayName: 'Install client dependencies (patient portal)'
