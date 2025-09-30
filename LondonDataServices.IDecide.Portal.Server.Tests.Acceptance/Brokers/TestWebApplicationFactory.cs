@@ -7,17 +7,15 @@ using System.IO;
 using System.Linq;
 using Attrify.InvisibleApi.Models;
 using ISL.Providers.Notifications.Abstractions;
-using ISL.Providers.Notifications.GovUkNotifyIntercept.Models;
-using ISL.Providers.Notifications.GovUkNotifyIntercept.Providers.Notifications;
 using ISL.Providers.PDS.Abstractions;
 using ISL.Providers.PDS.FakeFHIR.Models;
 using ISL.Providers.PDS.FakeFHIR.Providers.FakeFHIR;
-using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 
 namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Brokers
 {
@@ -118,16 +116,8 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Brokers
                 services.Remove(notificationDescriptor);
             }
 
-            NotifyConfigurations notificationInterceptProviderConfigurations = configuration
-                 .GetSection("NotifyConfigurations")
-                     .Get<NotifyConfigurations>();
-
-            NotificationConfig notificationConfig = configuration.GetSection("NotificationConfig")
-                .Get<NotificationConfig>();
-
-            services.AddSingleton(notificationConfig);
-            services.AddSingleton(notificationInterceptProviderConfigurations);
-            services.AddTransient<INotificationProvider, GovUkNotifyInterceptProvider>();
+            var mockNotificationProvider = new Mock<INotificationProvider>();
+            services.AddTransient<INotificationProvider>(serviceProvider => mockNotificationProvider.Object);
         }
     }
 }
