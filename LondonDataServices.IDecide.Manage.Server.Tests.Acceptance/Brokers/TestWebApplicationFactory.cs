@@ -7,6 +7,9 @@ using System.IO;
 using System.Linq;
 using Attrify.InvisibleApi.Models;
 using ISL.Providers.Notifications.Abstractions;
+using ISL.Providers.PDS.Abstractions;
+using ISL.Providers.PDS.FakeFHIR.Models;
+using ISL.Providers.PDS.FakeFHIR.Providers.FakeFHIR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -35,6 +38,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Brokers
             builder.ConfigureServices((context, services) =>
             {
                 OverrideSecurityForTesting(services);
+                OverrideFhirProviderForTesting(services, context.Configuration);
                 OverrideNotificationProviderForTesting(services, context.Configuration);
             });
         }
@@ -78,6 +82,26 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Brokers
             {
                 options.AddPolicy("TestPolicy", policy => policy.RequireAssertion(_ => true));
             });
+        }
+
+        private static void OverrideFhirProviderForTesting(
+            IServiceCollection services,
+            IConfiguration configuration)
+        {
+            var fhirDescriptor = services
+                .FirstOrDefault(d => d.ServiceType == typeof(IPdsProvider));
+
+            if (fhirDescriptor != null)
+            {
+                services.Remove(fhirDescriptor);
+            }
+
+            FakeFHIRProviderConfigurations fakeFHIRProviderConfigurations = configuration
+                 .GetSection("FakeFHIRProviderConfigurations")
+                     .Get<FakeFHIRProviderConfigurations>();
+
+            services.AddSingleton(fakeFHIRProviderConfigurations);
+            services.AddTransient<IPdsProvider, FakeFHIRProvider>();
         }
 
         private static void OverrideNotificationProviderForTesting(
