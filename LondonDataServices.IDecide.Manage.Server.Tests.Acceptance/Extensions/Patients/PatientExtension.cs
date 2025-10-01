@@ -40,9 +40,9 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Extensions.P
         private static string RedactAddress(string address)
         {
             var tokens = Regex.Matches(address, @"\w+|[^\w\s]+|\s+")
-                      .Cast<Match>()
-                      .Select(m => m.Value)
-                      .ToList();
+                .Cast<Match>()
+                .Select(m => m.Value)
+                .ToList();
 
             return string.Concat(tokens.Select(token =>
             {
