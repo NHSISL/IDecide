@@ -3,10 +3,10 @@ import { useTranslation } from "react-i18next";
 import { useStep } from "../../hooks/useStep";
 import { PowerOfAttorney } from "../../models/powerOfAttourneys/powerOfAttourney";
 import { patientViewService } from "../../services/views/patientViewService";
-import { TextInput, Button, Select, Card } from "nhsuk-react-components";
+import { TextInput, Button, Select, Card  } from "nhsuk-react-components";
 import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
 import { loadRecaptchaScript } from "../../helpers/recaptureLoad";
-import { Container, Row, Col } from "react-bootstrap";
+import { Container, Row, Col, Alert } from "react-bootstrap";
 import { StepContext } from "../context/stepContext";
 import { PatientLookup } from "../../models/patients/patientLookup";
 import { Patient } from "../../models/patients/patient";
@@ -29,6 +29,7 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
     const [poaSurname, setPoaSurname] = useState("");
     const [poaRelationship, setPoaRelationship] = useState("");
     const [error, setError] = useState("");
+    const [apiError, setApiError] = useState<string | JSX.Element>("");
     const [poaNhsNumberError, setPoaNhsNumberError] = useState("");
     const [poaFirstnameError, setPoaFirstnameError] = useState("");
     const [poaSurnameError, setPoaSurnameError] = useState("");
@@ -163,8 +164,42 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
                             nextStep(undefined, nhsNumberToUse, createdPatient, poaModel);
                             setLoading(false);
                         },
-                        onError: () => {
-                            setError(translate("SearchBySHSNumber.errorCreatePatient"));
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        onError: (error: any) => {
+                            const errorData = error?.response?.data;
+                            const errorTitle = errorData?.title;
+
+                            if (errorTitle === "The patient is marked as sensitive.") {
+                                setApiError(
+                                    <>
+                                        There is an issue with this patient record. For further assistance please e-mail{" "}
+                                        <a
+                                            href={`mailto:${configuration.helpdeskContactEmail}`}
+                                            style={{ textDecoration: "underline" }}
+                                        >
+                                            {configuration.helpdeskContactEmail}
+                                        </a>
+                                        {" or leave a voicemail with the One London Service desk on "}
+                                        <a
+                                            href={`tel:${configuration.helpdeskContactNumber}`}
+                                            style={{ textDecoration: "underline" }}
+                                        >
+                                            {configuration.helpdeskContactNumber}
+                                        </a>
+                                        {" for a call back and assistance."}
+                                    </>
+                                );
+                            } else if (errorTitle) {
+                                setError(errorTitle);
+                            } else if (error?.response?.status === 400) {
+                                setError(translate("1"));
+                            } else if (error?.response?.status === 404) {
+                                setError(translate("2"));
+                            } else if (error?.response?.status === 409) {
+                                setError(translate("3"));
+                            } else {
+                                setError(translate("SearchBySHSNumber.errorCreatePatient"));
+                            }
                             setLoading(false);
                         }
                     }
@@ -300,6 +335,12 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
                             </Button>
                         </div>
                     </form>
+
+                    {apiError && (
+                        <Alert variant="danger">
+                            {apiError}
+                        </Alert>
+                    )}
                 </Col>
                 <Col xs={12} md={6} lg={6} className="custom-col-spacing">
                     {!powerOfAttorney && (

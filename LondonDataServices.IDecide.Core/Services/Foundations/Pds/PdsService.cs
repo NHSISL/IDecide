@@ -90,7 +90,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
                 {
                     GivenName = GetFirstName(fhirPatient),
                     Surname = GetSurname(fhirPatient),
-                    IsSensitive = true
+                    IsSensitive = false
                 };
 
                 return partialPatient;
