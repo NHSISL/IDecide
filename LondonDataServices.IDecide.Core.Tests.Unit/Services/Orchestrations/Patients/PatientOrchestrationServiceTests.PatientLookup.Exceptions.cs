@@ -202,23 +202,23 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             var externalOptOutPatientOrchestrationException =
                 new ExternalOptOutPatientOrchestrationException("The patient is marked as sensitive.");
 
-            var expectedPatientOrchestrationServiceException =
-                new PatientOrchestrationServiceException(
-                    message: "Patient orchestration service error occurred, contact support.",
+            var expectedPatientOrchestrationValidationException =
+                new PatientOrchestrationValidationException(
+                    message: "Patient orchestration validation error occurred, please fix the errors and try again.",
                     innerException: externalOptOutPatientOrchestrationException);
 
             // when
             ValueTask<Patient> patientLookupTask =
                 patientOrchestrationServiceMock.Object.PatientLookupAsync(inputPatientLookup);
 
-            PatientOrchestrationServiceException
-                actualPatientOrchestrationServiceException =
-                    await Assert.ThrowsAsync<PatientOrchestrationServiceException>(
+            PatientOrchestrationValidationException
+                actualPatientOrchestrationValidationException =
+                    await Assert.ThrowsAsync<PatientOrchestrationValidationException>(
                         testCode: patientLookupTask.AsTask);
 
             //then
-            actualPatientOrchestrationServiceException.
-                Should().BeEquivalentTo(expectedPatientOrchestrationServiceException);
+            actualPatientOrchestrationValidationException
+                .Should().BeEquivalentTo(expectedPatientOrchestrationValidationException);
 
             patientOrchestrationServiceMock.Verify(service =>
                 service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
@@ -230,7 +230,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
-                    expectedPatientOrchestrationServiceException))),
+                    expectedPatientOrchestrationValidationException))),
                         Times.Once);
 
             patientOrchestrationServiceMock.VerifyNoOtherCalls();
@@ -475,8 +475,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         }
 
         [Fact]
-        public async Task
-            ShouldThrowExceptionOnPatientLookupWithNhsNumberIfExternalOptOutPatientOrchestrationOccurredAndLogItAsync()
+        public async Task ShouldThrowExceptionOnPatientLookupWithNhsNumberIfExternalOptOutPatientOrchestrationOccurredAndLogItAsync()
         {
             // given
             string randomNhsNumber = GenerateRandom10DigitNumber();
@@ -508,23 +507,23 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             var externalOptOutPatientOrchestrationException =
                 new ExternalOptOutPatientOrchestrationException("The patient is marked as sensitive.");
 
-            var expectedPatientOrchestrationServiceException =
-                new PatientOrchestrationServiceException(
-                    message: "Patient orchestration service error occurred, contact support.",
+            var expectedPatientOrchestrationValidationException =
+                new PatientOrchestrationValidationException(
+                    message: "Patient orchestration validation error occurred, please fix the errors and try again.",
                     innerException: externalOptOutPatientOrchestrationException);
 
             // when
             ValueTask<Patient> patientLookupTask =
                 patientOrchestrationServiceMock.Object.PatientLookupAsync(inputPatientLookup);
 
-            PatientOrchestrationServiceException
-                actualPatientOrchestrationServiceException =
-                    await Assert.ThrowsAsync<PatientOrchestrationServiceException>(
+            PatientOrchestrationValidationException
+                actualPatientOrchestrationValidationException =
+                    await Assert.ThrowsAsync<PatientOrchestrationValidationException>(
                         testCode: patientLookupTask.AsTask);
 
-            //then
-            actualPatientOrchestrationServiceException.
-                Should().BeEquivalentTo(expectedPatientOrchestrationServiceException);
+            // then
+            actualPatientOrchestrationValidationException
+                .Should().BeEquivalentTo(expectedPatientOrchestrationValidationException);
 
             patientOrchestrationServiceMock.Verify(service =>
                 service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
@@ -536,7 +535,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
-                    expectedPatientOrchestrationServiceException))),
+                    expectedPatientOrchestrationValidationException))),
                         Times.Once);
 
             patientOrchestrationServiceMock.VerifyNoOtherCalls();
