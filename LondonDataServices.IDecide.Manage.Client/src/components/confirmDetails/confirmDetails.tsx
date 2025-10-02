@@ -29,7 +29,6 @@ export const ConfirmDetails = ({ createdPatient, powerOfAttorney }: ConfirmDetai
         }
     };
 
-    // Check if only givenName and surname are present
     const isSensitivePatient =
         !!createdPatient.givenName &&
         !!createdPatient.surname &&
@@ -97,8 +96,6 @@ export const ConfirmDetails = ({ createdPatient, powerOfAttorney }: ConfirmDetai
                                 <dd className="nhsuk-summary-list__value">{createdPatient.address}</dd>
                             </div>
                         </dl>
-
-
 
                         {isSensitivePatient ? (
                             <Alert variant="danger">

@@ -114,8 +114,7 @@ export const ConfirmDetails: React.FC<ConfirmDetailsProps> = ({ goToConfirmCode 
                         border: "1px solid #d1e3f0",
                         borderRadius: "8px",
                         boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
-                    }}
-                >
+                    }}>
                     <h2 className="mb-3" style={{ color: "#005eb8" }}>{translate("ConfirmDetails.helpGuidance")}</h2>
                     <h3 className="mb-3" style={{ color: "#005eb8" }}>
                         {translate("ConfirmDetails.checkingYourDetails")}

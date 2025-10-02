@@ -165,6 +165,7 @@ export const SearchByDetails = () => {
                         navigate("/confirmDetails", { state: { createdPatient, poaModel } });
                         setLoading(false);
                     },
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     onError: (error: any) => {
                         const errorData = error?.response?.data;
                         let apiTitle = "";

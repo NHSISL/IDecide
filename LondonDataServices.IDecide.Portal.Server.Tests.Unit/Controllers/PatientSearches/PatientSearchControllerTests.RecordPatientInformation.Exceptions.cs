@@ -114,7 +114,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Patien
                         new ExternalOptOutPatientOrchestrationException("The patient is marked as sensitive."));
 
             InternalServerErrorObjectResult expectedInternalServerErrorObjectResult =
-                InternalServerError(inputPatientOrchestrationServiceException);
+                InternalServerError(inputPatientOrchestrationServiceException.InnerException);
 
             var expectedActionResult = expectedInternalServerErrorObjectResult;
 

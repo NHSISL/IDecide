@@ -511,9 +511,6 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttorn
                             {loading ? translate("SearchByDetails.submitting") : translate("SearchByDetails.searchButton")}
                         </button>
                     </form>
-
-
-                    
                 </Col>
                 <Col xs={12} md={5} lg={5} className="custom-col-spacing">
                     {powerOfAttorney && (
