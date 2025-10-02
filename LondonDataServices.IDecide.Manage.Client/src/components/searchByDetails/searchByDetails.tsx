@@ -9,6 +9,7 @@ import { PatientLookup } from "../../models/patients/patientLookup";
 import { SearchCriteria } from "../../models/searchCriterias/searchCriteria";
 import { isApiErrorResponse } from "../../helpers/isApiErrorResponse";
 import { useNavigate } from "react-router-dom";
+import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
 
 export const SearchByDetails = () => {
     const { t: translate } = useTranslation();
@@ -26,6 +27,7 @@ export const SearchByDetails = () => {
     const [poaRelationship, setPoaRelationship] = useState("");
     const addPatient = patientViewService.usePostPatientDetails();
     const navigate = useNavigate();
+    const { configuration } = useFrontendConfiguration();
 
     // PoA handlers
     const handlePoaFirstnameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
