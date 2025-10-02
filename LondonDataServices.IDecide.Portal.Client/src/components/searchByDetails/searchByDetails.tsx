@@ -4,7 +4,7 @@ import { Patient } from "../../models/patients/patient";
 import { PowerOfAttorney } from "../../models/powerOfAttourneys/powerOfAttourney";
 import { patientViewService } from "../../services/views/patientViewService";
 import { TextInput, Select, Card } from "nhsuk-react-components";
-import { Col, Container, Row } from "react-bootstrap";
+import { Col, Container, Row, Alert } from "react-bootstrap";
 import { StepContext } from "../context/stepContext";
 import { useTranslation } from "react-i18next";
 import { PatientLookup } from "../../models/patients/patientLookup";
@@ -495,6 +495,12 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttorn
                             </Card>
                         )}
 
+                        {apiError && (
+                            <Alert variant="danger">
+                                {apiError}
+                            </Alert>
+                        )}
+
                         {errors.submit && (
                             <div className="nhsuk-error-message" style={{ marginBottom: "1rem" }} role="alert">
                                 <strong>{translate("SearchByDetails.errorPrefix")}</strong> {errors.submit}
@@ -507,11 +513,7 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttorn
                     </form>
 
 
-                    {apiError && (
-                        <Alert variant="danger">
-                            {apiError}
-                        </Alert>
-                    )}
+                    
                 </Col>
                 <Col xs={12} md={5} lg={5} className="custom-col-spacing">
                     {powerOfAttorney && (

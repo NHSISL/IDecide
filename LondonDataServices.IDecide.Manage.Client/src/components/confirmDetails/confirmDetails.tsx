@@ -29,6 +29,14 @@ export const ConfirmDetails = ({ createdPatient, powerOfAttorney }: ConfirmDetai
         }
     };
 
+    // Check if only givenName and surname are present
+    const isSensitivePatient =
+        !!createdPatient.givenName &&
+        !!createdPatient.surname &&
+        !createdPatient.email &&
+        !createdPatient.phone &&
+        !createdPatient.address;
+
     return (
         <Row className="custom-col-spacing">
             <Col xs={12} md={6} lg={6}>
@@ -82,7 +90,7 @@ export const ConfirmDetails = ({ createdPatient, powerOfAttorney }: ConfirmDetai
                             </div>
                             <div className="nhsuk-summary-list__row">
                                 <dt className="nhsuk-summary-list__key">{translate("ConfirmDetails.mobileNumber")}</dt>
-                                <dd className="nhsuk-summary-list__value">07******084</dd>
+                                <dd className="nhsuk-summary-list__value">{createdPatient.phone}</dd>
                             </div>
                             <div className="nhsuk-summary-list__row">
                                 <dt className="nhsuk-summary-list__key">{translate("ConfirmDetails.address")}</dt>
@@ -90,36 +98,48 @@ export const ConfirmDetails = ({ createdPatient, powerOfAttorney }: ConfirmDetai
                             </div>
                         </dl>
 
-                        <div style={{ display: "flex", gap: "1rem", marginBottom: "0.2rem" }}>
-                            <button
-                                type="button"
-                                className="nhsuk-button"
-                                style={{ flex: 1 }}
-                                value="yes"
-                                onClick={handleSubmit}
-                            >
-                                {translate("ConfirmDetails.yes")}
-                            </button>
-                            <button
-                                type="button"
-                                className="nhsuk-button nhsuk-button--secondary"
-                                style={{ flex: 1 }}
-                                value="no"
-                                onClick={handleSubmit}
-                            >
-                                {translate("ConfirmDetails.no")}
-                            </button>
-                        </div>
 
-                        <button
-                            type="button"
-                            className="nhsuk-button"
-                            style={{ width: "100%", marginBottom: 0, borderBottom: "none" }}
-                            value="use-code"
-                            onClick={handleSubmit}
-                        >
-                            {translate("ConfirmDetails.useExistingCode")}
-                        </button>
+
+                        {isSensitivePatient ? (
+                            <Alert variant="danger">
+                                <p>{translate("ConfirmDetails.nameOnlyMessage1")}</p>
+                                <p>{translate("ConfirmDetails.nameOnlyMessage2")}</p>
+                            </Alert>
+                        ) : (
+                            <>
+
+                                <div style={{ display: "flex", gap: "1rem", marginBottom: "0.2rem" }}>
+                                    <button
+                                        type="button"
+                                        className="nhsuk-button"
+                                        style={{ flex: 1 }}
+                                        value="yes"
+                                        onClick={handleSubmit}
+                                    >
+                                        {translate("ConfirmDetails.yes")}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="nhsuk-button nhsuk-button--secondary"
+                                        style={{ flex: 1 }}
+                                        value="no"
+                                        onClick={handleSubmit}
+                                    >
+                                        {translate("ConfirmDetails.no")}
+                                    </button>
+                                </div>
+
+                                <button
+                                    type="button"
+                                    className="nhsuk-button"
+                                    style={{ width: "100%", marginBottom: 0, borderBottom: "none" }}
+                                    value="use-code"
+                                    onClick={handleSubmit}
+                                >
+                                    {translate("ConfirmDetails.useExistingCode")}
+                                </button>
+                            </>
+                        )}
                     </form>
                 </div>
             </Col>

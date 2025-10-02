@@ -202,15 +202,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             var externalOptOutPatientOrchestrationException =
                 new ExternalOptOutPatientOrchestrationException("The patient is marked as sensitive.");
 
-            var failedServicePatientOrchestrationException =
-                new FailedPatientOrchestrationServiceException(
-                    message: "Failed patient orchestration service error occurred, contact support.",
-                    innerException: externalOptOutPatientOrchestrationException);
-
             var expectedPatientOrchestrationServiceException =
                 new PatientOrchestrationServiceException(
                     message: "Patient orchestration service error occurred, contact support.",
-                    innerException: failedServicePatientOrchestrationException);
+                    innerException: externalOptOutPatientOrchestrationException);
 
             // when
             ValueTask<Patient> patientLookupTask =
@@ -513,15 +508,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             var externalOptOutPatientOrchestrationException =
                 new ExternalOptOutPatientOrchestrationException("The patient is marked as sensitive.");
 
-            var failedServicePatientOrchestrationException =
-                new FailedPatientOrchestrationServiceException(
-                    message: "Failed patient orchestration service error occurred, contact support.",
-                    innerException: externalOptOutPatientOrchestrationException);
-
             var expectedPatientOrchestrationServiceException =
                 new PatientOrchestrationServiceException(
                     message: "Patient orchestration service error occurred, contact support.",
-                    innerException: failedServicePatientOrchestrationException);
+                    innerException: externalOptOutPatientOrchestrationException);
 
             // when
             ValueTask<Patient> patientLookupTask =

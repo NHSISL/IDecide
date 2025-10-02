@@ -232,7 +232,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
                 {
                     GivenName = fhirPatient.Name.Select(n => string.Join(' ', n.Given)).FirstOrDefault(),
                     Surname = fhirPatient.Name.Select(n => n.Family).FirstOrDefault(),
-                    IsSensitive = true
+                    IsSensitive = isSensitive
                 };
             }
 
@@ -275,6 +275,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
                 .OnProperty(n => n.Title).Use(title)
                 .OnProperty(n => n.Email).Use(email)
                 .OnProperty(n => n.Phone).Use(phone)
+                .OnProperty(n => n.IsSensitive).Use(false)
                 .OnProperty(n => n.Id).IgnoreIt()
                 .OnProperty(n => n.ValidationCode).IgnoreIt()
                 .OnProperty(n => n.ValidationCodeExpiresOn).IgnoreIt()

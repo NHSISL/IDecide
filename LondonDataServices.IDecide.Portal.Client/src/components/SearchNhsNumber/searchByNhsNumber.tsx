@@ -121,6 +121,7 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
+        setApiError("");
         setPoaNhsNumberError("");
         setPoaFirstnameError("");
         setPoaSurnameError("");

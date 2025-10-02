@@ -68,7 +68,7 @@ export const ConfirmDetails: React.FC<ConfirmDetailsProps> = ({ goToConfirmCode 
                             </div>
                             <div className="nhsuk-summary-list__row">
                                 <dt className="nhsuk-summary-list__key">{translate("ConfirmDetails.mobileNumber")}</dt>
-                                <dd className="nhsuk-summary-list__value">07******084</dd>
+                                <dd className="nhsuk-summary-list__value">{createdPatient.phone}</dd>
                             </div>
                             <div className="nhsuk-summary-list__row">
                                 <dt className="nhsuk-summary-list__key">{translate("ConfirmDetails.address")}</dt>
