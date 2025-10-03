@@ -4,6 +4,7 @@
 
 using System.Threading.Tasks;
 using FluentAssertions;
+using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
 using LondonDataServices.IDecide.Portal.Server.Models;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -78,6 +79,51 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Patien
                     inputRecordPatientInformationRequest.NotificationPreference,
                     inputRecordPatientInformationRequest.GenerateNewCode))
                     .ThrowsAsync(serverException);
+
+            // when
+            ActionResult actualActionResult =
+                await this.patientSearchController.RecordPatientInformationAsync(inputRecordPatientInformationRequest);
+
+            // then
+            actualActionResult.Should().BeEquivalentTo(expectedActionResult);
+
+            this.patientOrchestrationServiceMock.Verify(service =>
+                service.RecordPatientInformationAsync(
+                    inputRecordPatientInformationRequest.NhsNumber,
+                    inputRecordPatientInformationRequest.NotificationPreference,
+                    inputRecordPatientInformationRequest.GenerateNewCode),
+                    Times.Once);
+
+            this.patientOrchestrationServiceMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldReturnInternalServerErrorOnExternalOptOutPatientIfServerErrorOccurredAsync()
+        {
+            // given
+            RecordPatientInformationRequest randomRecordPatientInformationRequest =
+                GetRecordPatientInformationRequest();
+
+            RecordPatientInformationRequest inputRecordPatientInformationRequest =
+                randomRecordPatientInformationRequest;
+
+            PatientOrchestrationServiceException inputPatientOrchestrationServiceException =
+                new PatientOrchestrationServiceException(
+                    message: "Service error occurred, please contact support.",
+                    innerException:
+                        new ExternalOptOutPatientOrchestrationException("The patient is marked as sensitive."));
+
+            InternalServerErrorObjectResult expectedInternalServerErrorObjectResult =
+                InternalServerError(inputPatientOrchestrationServiceException);
+
+            var expectedActionResult = expectedInternalServerErrorObjectResult;
+
+            this.patientOrchestrationServiceMock.Setup(service =>
+                service.RecordPatientInformationAsync(
+                    inputRecordPatientInformationRequest.NhsNumber,
+                    inputRecordPatientInformationRequest.NotificationPreference,
+                    inputRecordPatientInformationRequest.GenerateNewCode))
+                    .ThrowsAsync(inputPatientOrchestrationServiceException);
 
             // when
             ActionResult actualActionResult =

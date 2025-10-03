@@ -160,7 +160,10 @@
     "detailsIncorrect": "If these details do not match you, click <strong>No</strong> to return and try searching again with your NHS Number.",
     "alreadyReceivedCode": "If you have already received a code by SMS, email, or post, you can use it now by clicking the button below to go straight to the code confirmation page.",
     "securityInfo": "This process helps us keep your information secure and ensures only you can access your records.",
-    "noPatientDetails": "No patient details available."
+    "noPatientDetails": "No patient details available.",
+    "nameOnlyMessage1": "We can only confirm the patient’s name and cannot use their contact details.",
+    "nameOnlyMessage2": "However you can confirm to the patient that their personal data is already opted-out of use for secondary purposes."
+
   },
   "PositiveConfirmation": {
     "poaDetailsTitle": "Power of Attorney Details",

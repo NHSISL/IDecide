@@ -4,7 +4,7 @@ import { Patient } from "../../models/patients/patient";
 import { PowerOfAttorney } from "../../models/powerOfAttourneys/powerOfAttourney";
 import { patientViewService } from "../../services/views/patientViewService";
 import { TextInput, Select, Card } from "nhsuk-react-components";
-import { Col, Container, Row } from "react-bootstrap";
+import { Col, Container, Row, Alert } from "react-bootstrap";
 import { StepContext } from "../context/stepContext";
 import { useTranslation } from "react-i18next";
 import { PatientLookup } from "../../models/patients/patientLookup";
@@ -29,6 +29,7 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttorn
     const [dobMonth, setDobMonth] = useState("");
     const [dobYear, setDobYear] = useState("");
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
+    const [apiError, setApiError] = useState<string | JSX.Element>("");
     const [loading, setLoading] = useState(false);
 
     // PoA fields (NHS Number removed)
@@ -197,8 +198,11 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttorn
                             nextStep(undefined, undefined, createdPatient, poaModel);
                             setLoading(false);
                         },
-                        onError: (error: unknown) => {
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        onError: (error: any) => {
+                            const errorData = error?.response?.data;
                             let apiTitle = "";
+                            const errorTitle = errorData?.title;
                             if (isApiErrorResponse(error)) {
                                 const errResponse = error.response;
                                 apiTitle =
@@ -206,7 +210,32 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttorn
                                     errResponse.data?.message ||
                                     errResponse.statusText ||
                                     translate("SearchByDetails.unknownApiError");
-                                setErrors({ submit: apiTitle });
+
+                                if (errorTitle === "The patient is marked as sensitive.") {
+                                    setApiError(
+                                        <>
+                                            There is an issue with this patient record. For further assistance please e-mail{" "}
+                                            <a
+                                                href={`mailto:${configuration.helpdeskContactEmail}`}
+                                                style={{ textDecoration: "underline" }}
+                                            >
+                                                {configuration.helpdeskContactEmail}
+                                            </a>
+                                            {" or leave a voicemail with the One London Service desk on "}
+                                            <a
+                                                href={`tel:${configuration.helpdeskContactNumber}`}
+                                                style={{ textDecoration: "underline" }}
+                                            >
+                                                {configuration.helpdeskContactNumber}
+                                            </a>
+                                            {" for a call back and assistance."}
+                                        </>
+                                    );
+                                    setErrors({}); // Optionally clear other errors
+                                } else {
+                                    setErrors({ submit: apiTitle });
+                                    setApiError(""); // Optionally clear apiError
+                                }
                                 console.error("API Error submitting patient:", apiTitle, errResponse);
                             } else if (
                                 error &&
@@ -215,9 +244,11 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttorn
                                 typeof (error as { message?: unknown }).message === "string"
                             ) {
                                 setErrors({ submit: (error as { message: string }).message });
+                                setApiError(""); // Optionally clear apiError
                                 console.error("Error submitting patient:", (error as { message: string }).message, error);
                             } else {
                                 setErrors({ submit: translate("SearchByDetails.unexpectedError") });
+                                setApiError(""); // Optionally clear apiError
                                 console.error("Unexpected error submitting patient:", error);
                             }
                             setLoading(false);
@@ -462,6 +493,12 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttorn
                                     </Card.Description>
                                 </Card.Content>
                             </Card>
+                        )}
+
+                        {apiError && (
+                            <Alert variant="danger">
+                                {apiError}
+                            </Alert>
                         )}
 
                         {errors.submit && (

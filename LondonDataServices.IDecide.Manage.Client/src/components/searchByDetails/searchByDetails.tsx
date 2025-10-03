@@ -3,12 +3,13 @@ import { Patient } from "../../models/patients/patient";
 import { PowerOfAttourney } from "../../models/powerOfAttourneys/powerOfAttourney";
 import { patientViewService } from "../../services/views/patientViewService";
 import { TextInput, Select, Card } from "nhsuk-react-components";
-import { Col, Container, Row } from "react-bootstrap";
+import { Col, Container, Row, Alert } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 import { PatientLookup } from "../../models/patients/patientLookup";
 import { SearchCriteria } from "../../models/searchCriterias/searchCriteria";
 import { isApiErrorResponse } from "../../helpers/isApiErrorResponse";
 import { useNavigate } from "react-router-dom";
+import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
 
 export const SearchByDetails = () => {
     const { t: translate } = useTranslation();
@@ -18,6 +19,7 @@ export const SearchByDetails = () => {
     const [dobMonth, setDobMonth] = useState("");
     const [dobYear, setDobYear] = useState("");
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
+    const [apiError, setApiError] = useState<string | JSX.Element>("");
     const [loading, setLoading] = useState(false);
     const [isPowerOfAttorney, setIsPowerOfAttorney] = useState(false);
     const [poaFirstname, setPoaFirstname] = useState("");
@@ -25,6 +27,7 @@ export const SearchByDetails = () => {
     const [poaRelationship, setPoaRelationship] = useState("");
     const addPatient = patientViewService.usePostPatientDetails();
     const navigate = useNavigate();
+    const { configuration } = useFrontendConfiguration();
 
     // PoA handlers
     const handlePoaFirstnameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -164,22 +167,43 @@ export const SearchByDetails = () => {
                         navigate("/confirmDetails", { state: { createdPatient, poaModel } });
                         setLoading(false);
                     },
-                    onError: (error: unknown) => {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    onError: (error: any) => {
+                        const errorData = error?.response?.data;
                         let apiTitle = "";
+                        const errorTitle = errorData?.title;
                         if (isApiErrorResponse(error)) {
                             const errResponse = error.response;
-                            const status = (errResponse && typeof errResponse === "object" && "status" in errResponse)
-                                ? (errResponse as { status?: number }).status
-                                : undefined;
-                            if (status === 403) {
-                                setErrors({ submit: translate("SearchByDetails.errorNoAccess") });
+                            apiTitle =
+                                errResponse.data?.title ||
+                                errResponse.data?.message ||
+                                errResponse.statusText ||
+                                translate("SearchByDetails.unknownApiError");
+
+                            if (errorTitle === "The patient is marked as sensitive.") {
+                                setApiError(
+                                    <>
+                                        There is an issue with this patient record. For further assistance please e-mail{" "}
+                                        <a
+                                            href={`mailto:${configuration.helpdeskContactEmail}`}
+                                            style={{ textDecoration: "underline" }}
+                                        >
+                                            {configuration.helpdeskContactEmail}
+                                        </a>
+                                        {" or leave a voicemail with the One London Service desk on "}
+                                        <a
+                                            href={`tel:${configuration.helpdeskContactNumber}`}
+                                            style={{ textDecoration: "underline" }}
+                                        >
+                                            {configuration.helpdeskContactNumber}
+                                        </a>
+                                        {" for a call back and assistance."}
+                                    </>
+                                );
+                                setErrors({}); // Optionally clear other errors
                             } else {
-                                apiTitle =
-                                    errResponse?.data?.title ||
-                                    errResponse?.data?.message ||
-                                    errResponse?.statusText ||
-                                    translate("SearchByDetails.unknownApiError");
                                 setErrors({ submit: apiTitle });
+                                setApiError(""); // Optionally clear apiError
                             }
                             console.error("API Error submitting patient:", apiTitle, errResponse);
                         } else if (
@@ -189,9 +213,11 @@ export const SearchByDetails = () => {
                             typeof (error as { message?: unknown }).message === "string"
                         ) {
                             setErrors({ submit: (error as { message: string }).message });
+                            setApiError(""); // Optionally clear apiError
                             console.error("Error submitting patient:", (error as { message: string }).message, error);
                         } else {
                             setErrors({ submit: translate("SearchByDetails.unexpectedError") });
+                            setApiError(""); // Optionally clear apiError
                             console.error("Unexpected error submitting patient:", error);
                         }
                         setLoading(false);
@@ -408,6 +434,12 @@ export const SearchByDetails = () => {
                                     </Card.Description>
                                 </Card.Content>
                             </Card>
+                        )}
+
+                        {apiError && (
+                            <Alert variant="danger">
+                                {apiError}
+                            </Alert>
                         )}
 
                         {errors.submit && (

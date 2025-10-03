@@ -68,7 +68,7 @@ export const ConfirmDetails: React.FC<ConfirmDetailsProps> = ({ goToConfirmCode 
                             </div>
                             <div className="nhsuk-summary-list__row">
                                 <dt className="nhsuk-summary-list__key">{translate("ConfirmDetails.mobileNumber")}</dt>
-                                <dd className="nhsuk-summary-list__value">07******084</dd>
+                                <dd className="nhsuk-summary-list__value">{createdPatient.phone}</dd>
                             </div>
                             <div className="nhsuk-summary-list__row">
                                 <dt className="nhsuk-summary-list__key">{translate("ConfirmDetails.address")}</dt>
@@ -114,8 +114,7 @@ export const ConfirmDetails: React.FC<ConfirmDetailsProps> = ({ goToConfirmCode 
                         border: "1px solid #d1e3f0",
                         borderRadius: "8px",
                         boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
-                    }}
-                >
+                    }}>
                     <h2 className="mb-3" style={{ color: "#005eb8" }}>{translate("ConfirmDetails.helpGuidance")}</h2>
                     <h3 className="mb-3" style={{ color: "#005eb8" }}>
                         {translate("ConfirmDetails.checkingYourDetails")}

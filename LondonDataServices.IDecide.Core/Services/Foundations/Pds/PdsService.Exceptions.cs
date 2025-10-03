@@ -93,8 +93,8 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
             {
                 ClientPdsException clientPdsException = new ClientPdsException(
                     message: "Client PDS error occurred, please contact support.",
-                    innerException: pdsProviderValidationException,
-                    data: pdsProviderValidationException.Data);
+                    innerException: pdsProviderValidationException.InnerException,
+                    data: pdsProviderValidationException.InnerException.Data);
 
                 throw await CreateAndLogDependencyValidationExceptionAsync(clientPdsException);
             }
@@ -102,8 +102,8 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
             {
                 ServerPdsException serverPdsException = new ServerPdsException(
                     message: "Server PDS error occurred, please contact support.",
-                    innerException: pdsProviderDependencyException,
-                    data: pdsProviderDependencyException.Data);
+                    innerException: pdsProviderDependencyException.InnerException,
+                    data: pdsProviderDependencyException.InnerException.Data);
 
                 throw await CreateAndLogDependencyExceptionAsync(serverPdsException);
             }
@@ -111,8 +111,8 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
             {
                 ServerPdsException serverPdsException = new ServerPdsException(
                     message: "Server PDS error occurred, please contact support.",
-                    innerException: pdsProviderServiceException,
-                    data: pdsProviderServiceException.Data);
+                    innerException: pdsProviderServiceException.InnerException,
+                    data: pdsProviderServiceException.InnerException.Data);
 
                 throw await CreateAndLogDependencyExceptionAsync(serverPdsException);
             }

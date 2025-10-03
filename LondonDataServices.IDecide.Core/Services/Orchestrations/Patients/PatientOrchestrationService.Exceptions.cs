@@ -42,6 +42,10 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             {
                 throw await CreateAndLogValidationExceptionAsync(nullPatientOrchestrationException);
             }
+            catch (ExternalOptOutPatientOrchestrationException externalOptOutPatientOrchestrationException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(externalOptOutPatientOrchestrationException);
+            }
             catch (PdsValidationException pdsValidationException)
             {
                 throw await CreateAndLogDependencyValidationExceptionAsync(pdsValidationException);
@@ -57,15 +61,6 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             catch (PdsDependencyException pdsDependencyException)
             {
                 throw await CreateAndLogDependencyExceptionAsync(pdsDependencyException);
-            }
-            catch (ExternalOptOutPatientOrchestrationException externalOptOutPatientOrchestrationException)
-            {
-                var failedPatientOrchestrationServiceException =
-                    new FailedPatientOrchestrationServiceException(
-                        message: "Failed patient orchestration service error occurred, contact support.",
-                        innerException: externalOptOutPatientOrchestrationException);
-
-                throw await CreateAndLogServiceExceptionAsync(failedPatientOrchestrationServiceException);
             }
             catch (Exception exception)
             {
