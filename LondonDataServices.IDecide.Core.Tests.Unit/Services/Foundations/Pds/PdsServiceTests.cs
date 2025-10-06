@@ -152,7 +152,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
                 .OnType<DateTimeOffset?>().Use(dateTimeOffset)
-                .OnProperty(n => n.Surname).Use(inputSurname);
+                .OnProperty(patient => patient.Surname).Use(inputSurname);
 
             return filler;
         }
@@ -162,18 +162,19 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
             var nameFiller = new Filler<HumanName>();
 
             nameFiller.Setup()
-                .OnProperty(n => n.Family).Use(surname)
+                .OnProperty(name => name.Family).Use(surname)
                 .OnType<string>().Use(withWhiteSpace ? " " : GetRandomString())
-                .OnProperty(n => n.Children).IgnoreIt()
-                .OnProperty(n => n.Extension).IgnoreIt()
-                .OnProperty(n => n.FamilyElement).IgnoreIt()
-                .OnProperty(n => n.GivenElement).IgnoreIt()
-                .OnProperty(n => n.NamedChildren).IgnoreIt()
-                .OnProperty(n => n.Period).IgnoreIt()
-                .OnProperty(n => n.PrefixElement).IgnoreIt()
-                .OnProperty(n => n.SuffixElement).IgnoreIt()
-                .OnProperty(n => n.TextElement).IgnoreIt()
-                .OnProperty(n => n.UseElement).IgnoreIt();
+                .OnProperty(name => name.Use).Use(HumanName.NameUse.Usual)
+                .OnProperty(name => name.Children).IgnoreIt()
+                .OnProperty(name => name.Extension).IgnoreIt()
+                .OnProperty(name => name.FamilyElement).IgnoreIt()
+                .OnProperty(name => name.GivenElement).IgnoreIt()
+                .OnProperty(name => name.NamedChildren).IgnoreIt()
+                .OnProperty(name => name.Period).IgnoreIt()
+                .OnProperty(name => name.PrefixElement).IgnoreIt()
+                .OnProperty(name => name.SuffixElement).IgnoreIt()
+                .OnProperty(name => name.TextElement).IgnoreIt()
+                .OnProperty(name => name.UseElement).IgnoreIt();
 
             return nameFiller;
         }
@@ -184,19 +185,20 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
 
             addressFiller.Setup()
                 .OnType<string>().Use(withWhiteSpace ? " " : GetRandomString())
-                .OnProperty(a => a.Children).IgnoreIt()
-                .OnProperty(a => a.CityElement).IgnoreIt()
-                .OnProperty(a => a.CountryElement).IgnoreIt()
-                .OnProperty(a => a.DistrictElement).IgnoreIt()
-                .OnProperty(a => a.Extension).IgnoreIt()
-                .OnProperty(a => a.LineElement).IgnoreIt()
-                .OnProperty(a => a.NamedChildren).IgnoreIt()
-                .OnProperty(a => a.Period).IgnoreIt()
-                .OnProperty(a => a.PostalCodeElement).IgnoreIt()
-                .OnProperty(a => a.StateElement).IgnoreIt()
-                .OnProperty(a => a.TextElement).IgnoreIt()
-                .OnProperty(a => a.TypeElement).IgnoreIt()
-                .OnProperty(a => a.UseElement).IgnoreIt();
+                .OnProperty(address => address.Use).Use(Address.AddressUse.Home)
+                .OnProperty(address => address.Children).IgnoreIt()
+                .OnProperty(address => address.CityElement).IgnoreIt()
+                .OnProperty(address => address.CountryElement).IgnoreIt()
+                .OnProperty(address => address.DistrictElement).IgnoreIt()
+                .OnProperty(address => address.Extension).IgnoreIt()
+                .OnProperty(address => address.LineElement).IgnoreIt()
+                .OnProperty(address => address.NamedChildren).IgnoreIt()
+                .OnProperty(address => address.Period).IgnoreIt()
+                .OnProperty(address => address.PostalCodeElement).IgnoreIt()
+                .OnProperty(address => address.StateElement).IgnoreIt()
+                .OnProperty(address => address.TextElement).IgnoreIt()
+                .OnProperty(address => address.TypeElement).IgnoreIt()
+                .OnProperty(address => address.UseElement).IgnoreIt();
 
             return addressFiller;
         }
@@ -206,18 +208,23 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
             bool withWhiteSpace = false)
         {
             var contactPointFiller = new Filler<ContactPoint>();
+            var isPhoneContactPoint = contactPointSystem == ContactPoint.ContactPointSystem.Phone;
 
             contactPointFiller.Setup()
                 .OnType<string>().Use(withWhiteSpace ? " " : GetRandomString())
-                .OnProperty(cp => cp.System).Use(contactPointSystem)
-                .OnProperty(cp => cp.Children).IgnoreIt()
-                .OnProperty(cp => cp.Extension).IgnoreIt()
-                .OnProperty(cp => cp.NamedChildren).IgnoreIt()
-                .OnProperty(cp => cp.Period).IgnoreIt()
-                .OnProperty(cp => cp.RankElement).IgnoreIt()
-                .OnProperty(cp => cp.SystemElement).IgnoreIt()
-                .OnProperty(cp => cp.UseElement).IgnoreIt()
-                .OnProperty(cp => cp.ValueElement).IgnoreIt();
+                .OnProperty(contact => contact.System).Use(contactPointSystem)
+
+                .OnProperty(contact => contact.Use).Use(isPhoneContactPoint ? ContactPoint.ContactPointUse.Mobile
+                    : ContactPoint.ContactPointUse.Home)
+
+                .OnProperty(contact => contact.Children).IgnoreIt()
+                .OnProperty(contact => contact.Extension).IgnoreIt()
+                .OnProperty(contact => contact.NamedChildren).IgnoreIt()
+                .OnProperty(contact => contact.Period).IgnoreIt()
+                .OnProperty(contact => contact.RankElement).IgnoreIt()
+                .OnProperty(contact => contact.SystemElement).IgnoreIt()
+                .OnProperty(contact => contact.UseElement).IgnoreIt()
+                .OnProperty(contact => contact.ValueElement).IgnoreIt();
 
             return contactPointFiller;
         }
