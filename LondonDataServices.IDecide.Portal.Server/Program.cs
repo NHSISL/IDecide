@@ -14,7 +14,7 @@ using ISL.Providers.Captcha.GoogleReCaptcha.Providers;
 using ISL.Providers.Notifications.Abstractions;
 using ISL.Providers.Notifications.GovukNotify.Models;
 using ISL.Providers.Notifications.GovukNotify.Providers.Notifications;
-using ISL.Providers.Notifications.GovUkNotifyIntercept.Providers.Notifications;
+using ISL.Providers.Notifications.NotifyIntercept.Providers.Notifications;
 using ISL.Providers.PDS.Abstractions;
 using ISL.Providers.PDS.FHIR.Models.Brokers.PdsFHIR;
 using ISL.Providers.PDS.FHIR.Providers;
@@ -211,7 +211,6 @@ namespace LondonDataServices.IDecide.Portal.Server
 
             services.AddSingleton(notificationConfig);
             services.AddTransient<IPdsAbstractionProvider, PdsAbstractionProvider>();
-            services.AddTransient<INotificationAbstractionProvider, NotificationAbstractionProvider>();
             services.AddTransient<ICaptchaAbstractionProvider, CaptchaAbstractionProvider>();
 
             bool fakeCaptchaProviderMode = configuration
@@ -243,21 +242,26 @@ namespace LondonDataServices.IDecide.Portal.Server
 
             if (interceptNotificationProviderMode == true)
             {
-                ISL.Providers.Notifications.GovUkNotifyIntercept.Models.NotifyConfigurations notifyConfigurations =
+                ISL.Providers.Notifications.NotifyIntercept.Models.NotifyConfigurations notifyConfigurations =
                     configuration.GetSection("NotifyConfigurations")
-                        .Get<ISL.Providers.Notifications.GovUkNotifyIntercept.Models.NotifyConfigurations>();
+                        .Get<ISL.Providers.Notifications.NotifyIntercept.Models.NotifyConfigurations>();
 
-                services.AddSingleton(notifyConfigurations);
-                services.AddTransient<INotificationProvider, GovUkNotifyInterceptProvider>();
+                NotifyConfigurations govUkNotifyConfigurations = configuration.GetSection("NotifyConfigurations")
+                    .Get<NotifyConfigurations>();
+
+                var govUkNotifyProvider = new GovUkNotifyProvider(govUkNotifyConfigurations);
+                var notifyInterceptProvider = new NotifyInterceptProvider(notifyConfigurations, govUkNotifyProvider);
+                var notificationAbstractionProvider = new NotificationAbstractionProvider(notifyInterceptProvider);
+                services.AddTransient<INotificationAbstractionProvider>(_ => notificationAbstractionProvider);
             }
             else
             {
-                ISL.Providers.Notifications.GovukNotify.Models.NotifyConfigurations notifyConfigurations =
-                    configuration.GetSection("NotifyConfigurations")
-                        .Get<NotifyConfigurations>();
+                NotifyConfigurations notifyConfigurations = configuration.GetSection("NotifyConfigurations")
+                    .Get<NotifyConfigurations>();
 
-                services.AddSingleton(notifyConfigurations);
-                services.AddTransient<INotificationProvider, GovUkNotifyProvider>();
+                var govUkNotifyProvider = new GovUkNotifyProvider(notifyConfigurations);
+                var notificationAbstractionProvider = new NotificationAbstractionProvider(govUkNotifyProvider);
+                services.AddTransient<INotificationAbstractionProvider>(_ => notificationAbstractionProvider);
             }
         }
 

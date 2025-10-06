@@ -4,7 +4,6 @@
 
 using System.Linq;
 using System.Text.RegularExpressions;
-using Hl7.Fhir.Model;
 using Hl7.FhirPath.Sprache;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 
