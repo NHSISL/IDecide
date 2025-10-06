@@ -109,15 +109,17 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Brokers
             IConfiguration configuration)
         {
             var notificationDescriptor = services
-                .FirstOrDefault(d => d.ServiceType == typeof(INotificationProvider));
+                .FirstOrDefault(d => d.ServiceType == typeof(INotificationAbstractionProvider));
 
             if (notificationDescriptor != null)
             {
                 services.Remove(notificationDescriptor);
             }
 
-            var mockNotificationProvider = new Mock<INotificationProvider>();
-            services.AddTransient<INotificationProvider>(serviceProvider => mockNotificationProvider.Object);
+            var mockNotificationAbstractionProvider = new Mock<INotificationAbstractionProvider>();
+
+            services.AddTransient<INotificationAbstractionProvider>(
+                serviceProvider => mockNotificationAbstractionProvider.Object);
         }
     }
 }

@@ -195,7 +195,6 @@ namespace LondonDataServices.IDecide.Manage.Server
                 .Get<NotificationConfig>();
 
             services.AddSingleton(notificationConfig);
-            services.AddTransient<INotificationAbstractionProvider, NotificationAbstractionProvider>();
             services.AddTransient<IPdsAbstractionProvider, PdsAbstractionProvider>();
             services.AddTransient<ICaptchaAbstractionProvider, CaptchaAbstractionProvider>();
 
