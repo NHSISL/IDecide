@@ -165,7 +165,7 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttorn
 
         if (Object.keys(newErrors).length === 0) {
             setLoading(true);
-            const dateOfBirth = `${dobYear}/${dobMonth}/${dobDay}`;
+            const dateOfBirth = `${dobYear}-${dobMonth}-${dobDay}`;
             const searchCriteria = new SearchCriteria({
                 surname: surname,
                 postcode: postcode,

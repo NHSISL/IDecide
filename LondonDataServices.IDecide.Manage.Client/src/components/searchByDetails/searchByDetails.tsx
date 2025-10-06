@@ -140,7 +140,7 @@ export const SearchByDetails = () => {
 
         if (Object.keys(newErrors).length === 0) {
             setLoading(true);
-            const dateOfBirth = `${dobYear}/${dobMonth.padStart(2, "0")}/${dobDay.padStart(2, "0")}`;
+            const dateOfBirth = `${dobYear}-${dobMonth.padStart(2, "0")}-${dobDay.padStart(2, "0")}`;
 
             const searchCriteria = new SearchCriteria({
                 surname: surname,
