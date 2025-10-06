@@ -3,6 +3,7 @@
 // ---------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Brokers.DateTimes;
@@ -90,5 +91,10 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions
 
                 return await this.storageBroker.DeleteConsumerAdoptionAsync(maybeConsumerAdoption);
             });
+
+        public async ValueTask BulkAddOrModifyConsumerAdoptionsAsync(
+            List<ConsumerAdoption> consumerAdoptions,
+            int batchSize = 10000) =>
+            throw new NotImplementedException();
     }
 }
