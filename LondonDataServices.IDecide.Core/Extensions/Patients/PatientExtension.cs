@@ -4,6 +4,7 @@
 
 using System.Linq;
 using System.Text.RegularExpressions;
+using Hl7.Fhir.Model;
 using Hl7.FhirPath.Sprache;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 
@@ -41,6 +42,11 @@ namespace LondonDataServices.IDecide.Core.Extensions.Patients
 
         private static string RedactAddress(string address)
         {
+            if (string.IsNullOrWhiteSpace(address))
+            {
+                return address;
+            }
+
             var tokens = Regex.Matches(address, @"\w+|[^\w\s]+|\s+")
                       .Cast<Match>()
                       .Select(m => m.Value)
@@ -67,6 +73,11 @@ namespace LondonDataServices.IDecide.Core.Extensions.Patients
 
         private static string RedactNames(string name)
         {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return name;
+            }
+
             string[] words = name.Split(' ');
 
             string redactedString = string.Join(" ", words.Select(word =>
@@ -77,6 +88,11 @@ namespace LondonDataServices.IDecide.Core.Extensions.Patients
 
         private static string RedactEmail(string email)
         {
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                return email;
+            }
+
             string[] parts = email.Split('@');
 
             if (parts.Length != 2)
