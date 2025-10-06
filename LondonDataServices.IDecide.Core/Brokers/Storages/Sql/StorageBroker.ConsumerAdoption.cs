@@ -3,6 +3,7 @@
 // ---------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerAdoptions;
@@ -17,6 +18,9 @@ namespace LondonDataServices.IDecide.Core.Brokers.Storages.Sql
         public async ValueTask<ConsumerAdoption> InsertConsumerAdoptionAsync(ConsumerAdoption consumerAdoption) =>
             await InsertAsync(consumerAdoption);
 
+        public async ValueTask BulkInsertConsumerAdoptionsAsync(List<ConsumerAdoption> consumerAdoptions) =>
+            await BulkInsertAsync(consumerAdoptions);
+
         public async ValueTask<IQueryable<ConsumerAdoption>> SelectAllConsumerAdoptionsAsync() =>
             await SelectAllAsync<ConsumerAdoption>();
 
@@ -25,6 +29,9 @@ namespace LondonDataServices.IDecide.Core.Brokers.Storages.Sql
 
         public async ValueTask<ConsumerAdoption> UpdateConsumerAdoptionAsync(ConsumerAdoption consumerAdoption) =>
             await UpdateAsync(consumerAdoption);
+
+        public async ValueTask BulkUpdateConsumerAdoptionsAsync(List<ConsumerAdoption> consumerAdoptions) =>
+            await BulkUpdateAsync(consumerAdoptions);
 
         public async ValueTask<ConsumerAdoption> DeleteConsumerAdoptionAsync(ConsumerAdoption consumerAdoption) =>
             await DeleteAsync(consumerAdoption);

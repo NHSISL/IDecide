@@ -95,6 +95,73 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions
         public async ValueTask BulkAddOrModifyConsumerAdoptionsAsync(
             List<ConsumerAdoption> consumerAdoptions,
             int batchSize = 10000) =>
-            throw new NotImplementedException();
+            await BulkAddOrModifyBatchAsync(consumerAdoptions, batchSize);
+
+        virtual internal async ValueTask BulkAddOrModifyBatchAsync(
+            List<ConsumerAdoption> consumerAdoptions, int batchSize = 10000)
+        {
+            int totalRecords = consumerAdoptions.Count;
+            var exceptions = new List<Exception>();
+
+            for (int i = 0; i < totalRecords; i += batchSize)
+            {
+                try
+                {
+                    List<ConsumerAdoption> batch = consumerAdoptions.Skip(i).Take(batchSize).ToList();
+                    List<Guid> batchIds = batch.Select(consumerAdoption => consumerAdoption.Id).ToList();
+
+                    IQueryable<ConsumerAdoption> storageConsumerAdoptions =
+                        (await this.storageBroker.SelectAllConsumerAdoptionsAsync())
+                        .Where(consumerAdoption => batchIds.Contains(consumerAdoption.Id));
+
+                    List<Guid> existingIds = storageConsumerAdoptions.Select(consumerAdoption =>
+                        consumerAdoption.Id).ToList();
+
+                    List<ConsumerAdoption> existingConsumerAdoptions = batch.Where(consumerAdoption =>
+                        existingIds.Contains(consumerAdoption.Id)).ToList();
+
+                    List<ConsumerAdoption> newConsumerAdoptions = batch.Where(consumerAdoption =>
+                        !existingIds.Contains(consumerAdoption.Id)).ToList();
+
+                    try
+                    {
+                        if (newConsumerAdoptions.Count is not 0)
+                        {
+                            await this.storageBroker.BulkInsertConsumerAdoptionsAsync(newConsumerAdoptions);
+                        }
+                    }
+                    catch (Exception insertException)
+                    {
+                        exceptions.Add(insertException);
+                        await this.loggingBroker.LogErrorAsync(insertException);
+                    }
+
+                    try
+                    {
+                        if (existingConsumerAdoptions.Count is not 0)
+                        {
+                            await this.storageBroker.BulkUpdateConsumerAdoptionsAsync(existingConsumerAdoptions);
+                        }
+                    }
+                    catch (Exception updateException)
+                    {
+                        exceptions.Add(updateException);
+                        await this.loggingBroker.LogErrorAsync(updateException);
+                    }
+                }
+                catch (Exception exception)
+                {
+                    exceptions.Add(exception);
+                    await this.loggingBroker.LogErrorAsync(exception);
+                }
+            }
+
+            if (exceptions.Any())
+            {
+                throw new AggregateException(
+                    $"Unable to process consumerAdoptions in {exceptions.Count} of the batch(es)",
+                    exceptions);
+            }
+        }
     }
 }
