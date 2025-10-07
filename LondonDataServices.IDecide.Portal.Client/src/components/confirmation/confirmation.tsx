@@ -207,7 +207,7 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
                                 </>
                             )}
                         </div>
-                        s
+                        
                     </Alert>
 
                     {apiError && (

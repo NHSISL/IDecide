@@ -85,7 +85,9 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                                 errorResponse.statusText ||
                                 "Unknown API error";
 
-                            handleApiError(errorTitle);
+                            if (!handleApiError(errorTitle)) {
+                                setApiError(errorTitle);
+                            }
                             setApiError(errorTitle);
                         } else if (
                             error &&
