@@ -92,10 +92,14 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions
                 return await this.storageBroker.DeleteConsumerAdoptionAsync(maybeConsumerAdoption);
             });
 
-        public async ValueTask BulkAddOrModifyConsumerAdoptionsAsync(
+        public ValueTask BulkAddOrModifyConsumerAdoptionsAsync(
             List<ConsumerAdoption> consumerAdoptions,
             int batchSize = 10000) =>
-            await BulkAddOrModifyBatchAsync(consumerAdoptions, batchSize);
+            TryCatch(async () =>
+            {
+                ValidateOnBulkAddOrModifyConsumerAdoptions(consumerAdoptions);
+                await BulkAddOrModifyBatchAsync(consumerAdoptions, batchSize);
+            });
 
         virtual internal async ValueTask BulkAddOrModifyBatchAsync(
             List<ConsumerAdoption> consumerAdoptions, int batchSize = 10000)

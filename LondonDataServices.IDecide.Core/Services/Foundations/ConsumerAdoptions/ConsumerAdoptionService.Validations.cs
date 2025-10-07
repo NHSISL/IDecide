@@ -3,6 +3,7 @@
 // ---------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerAdoptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerAdoptions.Exceptions;
@@ -93,6 +94,13 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions
             }
         }
 
+        private static void ValidateOnBulkAddOrModifyConsumerAdoptions(List<ConsumerAdoption> consumerAdoptions)
+        {
+            Validate<InvalidConsumerAdoptionException>(
+                message: "Invalid consumerAdoption. Please correct the errors and try again.",
+                validations: (Rule: IsInvalid(consumerAdoptions), Parameter: nameof(consumerAdoptions)));
+        }
+
         private static void ValidateConsumerAdoptionIsNotNull(ConsumerAdoption consumerAdoption)
         {
             if (consumerAdoption is null)
@@ -142,6 +150,12 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions
         {
             Condition = date == default,
             Message = "Date is required"
+        };
+
+        private static dynamic IsInvalid(List<ConsumerAdoption> consumerAdoptions) => new
+        {
+            Condition = consumerAdoptions == null,
+            Message = "ConsumerAdoptions is required"
         };
 
         private static dynamic IsGreaterThan(string text, int maxLength) => new

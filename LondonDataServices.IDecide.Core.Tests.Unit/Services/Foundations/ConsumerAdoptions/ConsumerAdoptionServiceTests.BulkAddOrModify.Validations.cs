@@ -27,10 +27,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                 key: "consumerAdoptions",
                 values: "ConsumerAdoptions is required");
 
-            invalidConsumerAdoptionException.AddData(
-                key: "fileName",
-                values: "Text is required");
-
             var expectedConsumerAdoptionValidationException =
                 new ConsumerAdoptionValidationException(
                     message: "ConsumerAdoption validation errors occurred, please try again.",

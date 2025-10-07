@@ -16,8 +16,21 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions
 {
     public partial class ConsumerAdoptionService
     {
+        private delegate ValueTask ReturningNothingFunction();
         private delegate ValueTask<ConsumerAdoption> ReturningConsumerAdoptionFunction();
         private delegate ValueTask<IQueryable<ConsumerAdoption>> ReturningConsumerAdoptionsFunction();
+
+        private async ValueTask TryCatch(ReturningNothingFunction returningNothingFunction)
+        {
+            try
+            {
+                await returningNothingFunction();
+            }
+            catch (InvalidConsumerAdoptionException invalidConsumerAdoptionException)
+            {
+                throw await CreateAndLogValidationException(invalidConsumerAdoptionException);
+            }
+        }
 
         private async ValueTask<ConsumerAdoption> TryCatch(
             ReturningConsumerAdoptionFunction returningConsumerAdoptionFunction)
