@@ -134,6 +134,58 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions
                     Parameter: nameof(ConsumerAdoption.UpdatedDate)));
         }
 
+        virtual internal async ValueTask<List<ConsumerAdoption>> ValidateConsumerAdoptionsAndAssignIdAndAuditOnAddAsync(
+            List<ConsumerAdoption> consumerAdoptions)
+        {
+            List<ConsumerAdoption> validatedConsumerAdoptions = new List<ConsumerAdoption>();
+
+            foreach (ConsumerAdoption consumerAdoption in consumerAdoptions)
+            {
+                try
+                {
+                    string currentUserId = await this.securityAuditBroker.GetCurrentUserIdAsync();
+                    var currentDateTime = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
+                    consumerAdoption.CreatedDate = currentDateTime;
+                    consumerAdoption.CreatedBy = currentUserId;
+                    consumerAdoption.UpdatedDate = currentDateTime;
+                    consumerAdoption.UpdatedBy = currentUserId;
+                    await ValidateConsumerAdoptionOnAdd(consumerAdoption);
+                    validatedConsumerAdoptions.Add(consumerAdoption);
+                }
+                catch (Exception ex)
+                {
+                    await this.loggingBroker.LogErrorAsync(ex);
+                }
+            }
+
+            return validatedConsumerAdoptions;
+        }
+
+        virtual internal async ValueTask<List<ConsumerAdoption>> ValidateConsumerAdoptionsAndAssignAuditOnModifyAsync(
+            List<ConsumerAdoption> consumerAdoptions)
+        {
+            List<ConsumerAdoption> validatedConsumerAdoptions = new List<ConsumerAdoption>();
+
+            foreach (ConsumerAdoption consumerAdoption in consumerAdoptions)
+            {
+                try
+                {
+                    string currentUserId = await this.securityAuditBroker.GetCurrentUserIdAsync();
+                    var currentDateTime = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
+                    consumerAdoption.UpdatedDate = currentDateTime;
+                    consumerAdoption.UpdatedBy = currentUserId;
+                    await ValidateConsumerAdoptionOnModify(consumerAdoption);
+                    validatedConsumerAdoptions.Add(consumerAdoption);
+                }
+                catch (Exception ex)
+                {
+                    await this.loggingBroker.LogErrorAsync(ex);
+                }
+            }
+
+            return validatedConsumerAdoptions;
+        }
+
         private static dynamic IsInvalid(Guid id) => new
         {
             Condition = id == Guid.Empty,

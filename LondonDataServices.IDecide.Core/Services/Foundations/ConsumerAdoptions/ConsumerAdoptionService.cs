@@ -121,17 +121,20 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions
                     List<Guid> existingIds = storageConsumerAdoptions.Select(consumerAdoption =>
                         consumerAdoption.Id).ToList();
 
-                    List<ConsumerAdoption> existingConsumerAdoptions = batch.Where(consumerAdoption =>
-                        existingIds.Contains(consumerAdoption.Id)).ToList();
-
                     List<ConsumerAdoption> newConsumerAdoptions = batch.Where(consumerAdoption =>
                         !existingIds.Contains(consumerAdoption.Id)).ToList();
+
+                    List<ConsumerAdoption> existingConsumerAdoptions = batch.Where(consumerAdoption =>
+                        existingIds.Contains(consumerAdoption.Id)).ToList();
 
                     try
                     {
                         if (newConsumerAdoptions.Count is not 0)
                         {
-                            await this.storageBroker.BulkInsertConsumerAdoptionsAsync(newConsumerAdoptions);
+                            List<ConsumerAdoption> validatedNewConsumerAdoptions =
+                                await ValidateConsumerAdoptionsAndAssignIdAndAuditOnAddAsync(newConsumerAdoptions);
+
+                            await this.storageBroker.BulkInsertConsumerAdoptionsAsync(validatedNewConsumerAdoptions);
                         }
                     }
                     catch (Exception insertException)
@@ -144,7 +147,11 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions
                     {
                         if (existingConsumerAdoptions.Count is not 0)
                         {
-                            await this.storageBroker.BulkUpdateConsumerAdoptionsAsync(existingConsumerAdoptions);
+                            List<ConsumerAdoption> validatedExistingConsumerAdoptions =
+                                await ValidateConsumerAdoptionsAndAssignAuditOnModifyAsync(existingConsumerAdoptions);
+
+                            await this.storageBroker.BulkUpdateConsumerAdoptionsAsync(
+                                validatedExistingConsumerAdoptions);
                         }
                     }
                     catch (Exception updateException)

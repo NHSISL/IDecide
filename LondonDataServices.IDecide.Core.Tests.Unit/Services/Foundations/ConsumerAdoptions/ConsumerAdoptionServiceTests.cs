@@ -137,5 +137,21 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
 
             return filler;
         }
+
+        int GetBatchSize(int count, int batchSize)
+        {
+            if (batchSize <= 0)
+            {
+                batchSize = 1;
+            }
+
+            if (count <= 0)
+            {
+                return 0;
+            }
+
+            return (count + batchSize - 1) / batchSize;
+        }
+
     }
 }
