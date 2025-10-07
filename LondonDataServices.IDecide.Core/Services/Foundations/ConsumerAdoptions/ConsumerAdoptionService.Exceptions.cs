@@ -30,6 +30,15 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions
             {
                 throw await CreateAndLogValidationException(invalidConsumerAdoptionException);
             }
+            catch (Exception exception)
+            {
+                var failedConsumerAdoptionServiceException =
+                    new FailedConsumerAdoptionServiceException(
+                        message: "Failed consumerAdoption service error occurred, please contact support.",
+                        innerException: exception);
+
+                throw await CreateAndLogServiceException(failedConsumerAdoptionServiceException);
+            }
         }
 
         private async ValueTask<ConsumerAdoption> TryCatch(

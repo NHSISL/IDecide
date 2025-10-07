@@ -26,12 +26,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
 
             var failedConsumerAdoptionServiceException =
                 new FailedConsumerAdoptionServiceException(
-                    message: "Failed consumer adoption service error occurred, please contact support.",
+                    message: "Failed consumerAdoption service error occurred, please contact support.",
                     innerException: serviceException);
 
             var expectedConsumerAdoptionServiceException =
                 new ConsumerAdoptionServiceException(
-                    message: "Consumer adoption service error occurred, please contact support.",
+                    message: "ConsumerAdoption service error occurred, contact support.",
                     innerException: failedConsumerAdoptionServiceException);
 
             var consumerAdoptionServiceMock = new Mock<ConsumerAdoptionService>(
