@@ -66,11 +66,9 @@ export function useApiErrorHandler({
         } else if (errorTitle) {
             setError(errorTitle);
         } else if (error?.response?.status === 400) {
-            setError(translate("1"));
+            setError(translate("errors.400"));
         } else if (error?.response?.status === 404) {
-            setError(translate("2"));
-        } else if (error?.response?.status === 409) {
-            setError(translate("3"));
+            setError(translate("errors.404"));
         } else {
             setError(translate("SearchBySHSNumber.errorCreatePatient"));
         }

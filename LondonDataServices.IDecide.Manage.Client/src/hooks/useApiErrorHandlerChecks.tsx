@@ -30,6 +30,8 @@ export function useApiErrorHandlerChecks({ setApiError, configuration }: Props) 
                     {" for a call back and assistance."}
                 </>
             );
-        } 
+            return true;
+        }
+        return false;
     }, [setApiError, configuration]);
 }
