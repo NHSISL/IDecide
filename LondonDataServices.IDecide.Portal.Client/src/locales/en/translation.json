@@ -276,5 +276,13 @@
   "DevEnvironmentWarning": {
     "bannerTitle": "Test Environment:",
     "bannerMessage": "This website is for demonstration and testing purposes only. Any information you enter here will not be saved to real patient records or used for clinical care. Please do not enter real patient data."
+  },
+  "errors": {
+    "400": "Please make sure all fields are filled in correctly.",
+    "404": "Page not found.",
+    "401": "You are not authorized to perform this action.",
+    "500": "A server error occurred. Please try again later.",
+    "PatientNotFound": "Patient not found. Please check the NHS number and try again.",
+    "CatchAll": "An unexpected error occurred. Please try again later."
   }
-}
+  }

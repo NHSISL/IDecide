@@ -30,6 +30,7 @@ export function useApiErrorHandlerChecks({ setApiError, configuration }: Props) 
                     {" for a call back and assistance."}
                 </>
             );
+            return true;
         } else if (errorTitle === "The provided captcha token is invalid.") {
             setApiError(
                 <>
@@ -50,6 +51,8 @@ export function useApiErrorHandlerChecks({ setApiError, configuration }: Props) 
                     {" for a call back and assistance."}
                 </>
             );
+            return true;
         }
+        return false;
     }, [setApiError, configuration]);
 }

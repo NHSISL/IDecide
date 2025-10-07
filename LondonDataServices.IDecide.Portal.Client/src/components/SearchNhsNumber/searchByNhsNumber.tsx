@@ -172,14 +172,38 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
                         },
                         // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         onError: (error: any) => {
+                            const status = error?.response?.status;
                             const errorData = error?.response?.data;
                             const errorTitle = errorData?.title;
-                            handleApiError(errorTitle);
 
-                            if (error?.response?.status === 400) {
-                                setError(translate("We couldn’t process your request. Please make sure all fields are filled in correctly"));
-                            } else if (error?.response?.status === 404) {
-                                setError(translate("Page not found."));
+                            if (handleApiError(errorTitle)) {
+                                setLoading(false);
+                                return;
+                            }
+
+                            switch (status) {
+                                case 400:
+                                    setError(translate("errors.400"));
+                                    break;
+                                case 404:
+                                    setError(translate("errors.404"));
+                                    break;
+                                case 401:
+                                    setError(translate("errors.401"));
+                                    break;
+                                case 500:
+                                    setError(
+                                        errorTitle === "Patient not found."
+                                            ? translate("errors.PatientNotFound")
+                                            : translate("errors.500")
+                                    );
+                                    break;
+                                default:
+                                    setError(
+                                        errorTitle ||
+                                        translate("errors.CatchAll")
+                                    );
+                                    break;
                             }
                             setLoading(false);
                         }

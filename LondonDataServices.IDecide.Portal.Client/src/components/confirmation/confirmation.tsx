@@ -32,7 +32,7 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
 
     const { nextStep } = useStep();
     const createDecisionMutation = decisionViewService.useCreatePatientDecision();
-    const [apiError, setApiError] = useState<string | null>(null);
+    const [apiError, setApiError] = useState<string | JSX.Element>("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { t: translate } = useTranslation();
     const { configuration } = useFrontendConfiguration();
@@ -77,7 +77,7 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
             return;
         }
 
-        setApiError(null);
+        setApiError("");
         setIsSubmitting(true);
 
         const decision = new PatientDecision({
@@ -207,11 +207,11 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
                                 </>
                             )}
                         </div>
-
+                        s
                     </Alert>
 
                     {apiError && (
-                        <Alert variant="danger" onClose={() => setError(null)} dismissible data-testid="error-alert">
+                        <Alert variant="danger" onClose={() => setApiError("")} dismissible data-testid="error-alert">
                             {apiError}
                         </Alert>
                     )}
