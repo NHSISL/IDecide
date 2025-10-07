@@ -28,9 +28,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                 GetNotificationProviderValidationException();
 
             var clientNotificationException = new ClientNotificationException(
-                message: "Client notification error occurred, contact support.",
-                innerException: notificationProviderValidationException,
-                data: notificationProviderValidationException.Data);
+                message: notificationProviderValidationException.InnerException.Message,
+                innerException: notificationProviderValidationException.InnerException,
+                data: notificationProviderValidationException.InnerException.Data);
 
             var expectedNotificationDependencyValidationException = new NotificationDependencyValidationException(
                 message: "Notification dependency validation error occurred, fix errors and try again.",
@@ -81,9 +81,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
             NotificationInfo inputNotificationInfo = randomNotificationInfo;
 
             var serverNotificationException = new ServerNotificationException(
-                message: "Server notification error occurred, contact support.",
-                innerException: dependencyException,
-                data: dependencyException.Data);
+                message: dependencyException.InnerException.Message,
+                innerException: dependencyException.InnerException,
+                data: dependencyException.InnerException.Data);
 
             var expectedNotificationDependencyException = new NotificationDependencyException(
                 message: "Notification dependency error occurred, contact support.",

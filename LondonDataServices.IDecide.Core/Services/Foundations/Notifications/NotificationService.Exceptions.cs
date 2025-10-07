@@ -31,27 +31,27 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
             catch (NotificationProviderValidationException notificationProviderValidationException)
             {
                 ClientNotificationException clientNotificationException = new ClientNotificationException(
-                    message: "Client notification error occurred, contact support.",
-                    innerException: notificationProviderValidationException,
-                    data: notificationProviderValidationException.Data);
+                    message: notificationProviderValidationException.InnerException.Message,
+                    innerException: notificationProviderValidationException.InnerException,
+                    data: notificationProviderValidationException.InnerException.Data);
 
                 throw await CreateAndLogDependencyValidationException(clientNotificationException);
             }
             catch (NotificationProviderDependencyException notificationProviderDependencyException)
             {
                 ServerNotificationException serverNotificationException = new ServerNotificationException(
-                    message: "Server notification error occurred, contact support.",
-                    innerException: notificationProviderDependencyException,
-                    data: notificationProviderDependencyException.Data);
+                    message: notificationProviderDependencyException.InnerException.Message,
+                    innerException: notificationProviderDependencyException.InnerException,
+                    data: notificationProviderDependencyException.InnerException.Data);
 
                 throw await CreateAndLogDependencyException(serverNotificationException);
             }
             catch (NotificationProviderServiceException notificationProviderServiceException)
             {
                 ServerNotificationException serverNotificationException = new ServerNotificationException(
-                    message: "Server notification error occurred, contact support.",
-                    innerException: notificationProviderServiceException,
-                    data: notificationProviderServiceException.Data);
+                    message: notificationProviderServiceException.InnerException.Message,
+                    innerException: notificationProviderServiceException.InnerException,
+                    data: notificationProviderServiceException.InnerException.Data);
 
                 throw await CreateAndLogDependencyException(serverNotificationException);
             }
