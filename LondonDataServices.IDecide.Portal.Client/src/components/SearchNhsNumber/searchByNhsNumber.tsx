@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useStep } from "../../hooks/useStep";
 import { PowerOfAttorney } from "../../models/powerOfAttourneys/powerOfAttourney";
 import { patientViewService } from "../../services/views/patientViewService";
-import { TextInput, Button, Select, Card  } from "nhsuk-react-components";
+import { TextInput, Button, Select, Card } from "nhsuk-react-components";
 import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
 import { loadRecaptchaScript } from "../../helpers/recaptureLoad";
 import { Container, Row, Col, Alert } from "react-bootstrap";
@@ -11,6 +11,7 @@ import { StepContext } from "../context/stepContext";
 import { PatientLookup } from "../../models/patients/patientLookup";
 import { Patient } from "../../models/patients/patient";
 import { SearchCriteria } from "../../models/searchCriterias/searchCriteria";
+import { useApiErrorHandlerChecks } from "../../hooks/useApiErrorHandlerChecks";
 
 export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
     onIDontKnow: (powerOfAttorney: boolean) => void;
@@ -40,8 +41,12 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
     const { configuration } = useFrontendConfiguration();
     const RECAPTCHA_ACTION_SUBMIT = "submit";
     const { nextStep, setCreatedPatient } = useStep();
-
     const addPatient = patientViewService.usePostPatientSearch();
+
+    const handleApiError = useApiErrorHandlerChecks({
+        setApiError,
+        configuration
+    });
 
     useEffect(() => {
         if (configuration?.recaptchaSiteKey) {
@@ -169,37 +174,12 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
                         onError: (error: any) => {
                             const errorData = error?.response?.data;
                             const errorTitle = errorData?.title;
+                            handleApiError(errorTitle);
 
-                            if (errorTitle === "The patient is marked as sensitive.") {
-                                setApiError(
-                                    <>
-                                        There is an issue with this patient record. For further assistance please e-mail{" "}
-                                        <a
-                                            href={`mailto:${configuration.helpdeskContactEmail}`}
-                                            style={{ textDecoration: "underline" }}
-                                        >
-                                            {configuration.helpdeskContactEmail}
-                                        </a>
-                                        {" or leave a voicemail with the One London Service desk on "}
-                                        <a
-                                            href={`tel:${configuration.helpdeskContactNumber}`}
-                                            style={{ textDecoration: "underline" }}
-                                        >
-                                            {configuration.helpdeskContactNumber}
-                                        </a>
-                                        {" for a call back and assistance."}
-                                    </>
-                                );
-                            } else if (errorTitle) {
-                                setError(errorTitle);
-                            } else if (error?.response?.status === 400) {
-                                setError(translate("1"));
+                            if (error?.response?.status === 400) {
+                                setError(translate("We couldn’t process your request. Please make sure all fields are filled in correctly"));
                             } else if (error?.response?.status === 404) {
-                                setError(translate("2"));
-                            } else if (error?.response?.status === 409) {
-                                setError(translate("3"));
-                            } else {
-                                setError(translate("SearchBySHSNumber.errorCreatePatient"));
+                                setError(translate("Page not found."));
                             }
                             setLoading(false);
                         }
