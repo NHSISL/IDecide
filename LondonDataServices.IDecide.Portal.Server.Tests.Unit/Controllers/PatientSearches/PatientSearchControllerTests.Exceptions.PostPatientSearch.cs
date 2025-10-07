@@ -59,7 +59,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Patien
             PatientLookup inputPatientLookup = randomPatientLookup;
 
             InternalServerErrorObjectResult expectedInternalServerErrorObjectResult =
-                InternalServerError(validationException);
+                InternalServerError(validationException.InnerException);
 
             var expectedActionResult =
                 new ActionResult<Patient>(expectedInternalServerErrorObjectResult);
