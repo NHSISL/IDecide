@@ -59,6 +59,38 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Consumers
             {
                 throw await CreateAndLogDependencyValidationExceptionAsync(notificationDependencyValidationException);
             }
+            catch (ConsumerDependencyException consumerDependencyException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(consumerDependencyException);
+            }
+            catch (ConsumerServiceException consumerServiceException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(consumerServiceException);
+            }
+            catch (ConsumerAdoptionDependencyException consumerAdoptionDependencyException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(consumerAdoptionDependencyException);
+            }
+            catch (ConsumerAdoptionServiceException consumerAdoptionServiceException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(consumerAdoptionServiceException);
+            }
+            catch (PatientDependencyException patientDependencyException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(patientDependencyException);
+            }
+            catch (PatientServiceException patientServiceException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(patientServiceException);
+            }
+            catch (NotificationDependencyException notificationDependencyException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(notificationDependencyException);
+            }
+            catch (NotificationServiceException notificationServiceException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(notificationServiceException);
+            }
         }
 
         private async ValueTask<ConsumerOrchestrationValidationException>
@@ -87,6 +119,20 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Consumers
             await this.loggingBroker.LogErrorAsync(consumerOrchestrationDependencyValidationException);
 
             return consumerOrchestrationDependencyValidationException;
+        }
+
+        private async ValueTask<ConsumerOrchestrationDependencyException>
+            CreateAndLogDependencyExceptionAsync(Xeption exception)
+        {
+            var consumerOrchestrationDependencyException =
+                new ConsumerOrchestrationDependencyException(
+                    message: "Consumer orchestration dependency error occurred, " +
+                             "please fix the errors and try again.",
+                    innerException: exception);
+
+            await this.loggingBroker.LogErrorAsync(consumerOrchestrationDependencyException);
+
+            return consumerOrchestrationDependencyException;
         }
     }
 }
