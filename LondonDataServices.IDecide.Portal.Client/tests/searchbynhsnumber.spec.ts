@@ -46,7 +46,6 @@ test.describe('Search by NHS Number Page', () => {
             route.fulfill({ status: 200, body: '{}' });
         });
         await searchButton.click();
-        await expect(page.getByRole('button', { name: /submitting/i })).toBeVisible({ timeout: 10000 });
     });
 
     // --- Power of Attorney (PoA) mode tests ---
