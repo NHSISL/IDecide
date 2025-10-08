@@ -8,7 +8,6 @@ using FluentAssertions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Consumers.Exceptions;
 using Moq;
-using Task = System.Threading.Tasks.Task;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Consumers
 {
