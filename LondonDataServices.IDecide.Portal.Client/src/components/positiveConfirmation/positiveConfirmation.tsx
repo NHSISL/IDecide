@@ -9,7 +9,7 @@ import { isApiErrorResponse } from "../../helpers/isApiErrorResponse";
 import { NotificationPreference } from "../../helpers/notificationPreference";
 import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
 import { useApiErrorHandlerChecks } from "../../hooks/useApiErrorHandlerChecks";
-
+import { useTimer } from "../../hooks/useTimer";
 interface PositiveConfirmationProps {
     goToConfirmCode: (createdPatient: PatientCodeRequest) => void;
 }
@@ -32,6 +32,10 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
     const [hideButtons, setHideButtons] = useState(false);
     const [resend, setResend] = useState(false);
     const [showAreYouSure, setShowAreYouSure] = useState(false);
+
+    const [timerActive, setTimerActive] = useState(false);
+    const [timerKey, setTimerKey] = useState(0);
+    const { remainingSeconds, timerExpired } = useTimer(timerActive ? configuration.notificationRequestCountdown : 0, timerKey);
 
     const handleApiError = useApiErrorHandlerChecks({
         setApiError,
@@ -123,6 +127,8 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
         setShowAreYouSure(false);
         setHideButtons(false);
         setResend(true);
+        setTimerActive(true);
+        setTimerKey(prev => prev + 1);
     };
 
     return (
@@ -229,15 +235,24 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                                 </button>
                             </div>
                             <Alert variant="warning">
-                                <p>If you have already requested a code but haven't received it please click here to resend yourself a code</p>
+                                <p>
+                                    {translate("PositiveConfirmation.resendInfo") ||
+                                        "If you have already requested a code but haven't received it, please click here to resend yourself a code."}
+                                </p>
                                 <button
                                     type="button"
                                     className="nhsuk-button nhsuk-button--reverse"
                                     style={{ flex: 1, minWidth: 225 }}
                                     onClick={handleRequestNewCodeClick}
+                                    disabled={timerActive && !timerExpired}
                                 >
                                     {translate("PositiveConfirmation.requestNewCode") || "Request New Code"}
                                 </button>
+                                {timerActive && !timerExpired && (
+                                    <div>
+                                        <small>Code can be resent in: {remainingSeconds} seconds</small>
+                                    </div>
+                                )}
                             </Alert>
                         </>
                     )}

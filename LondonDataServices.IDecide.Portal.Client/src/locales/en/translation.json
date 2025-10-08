@@ -186,7 +186,8 @@
     "requestNewCode": "Request New Code",
     "confirm": "Confirm",
     "cancel": "Cancel",
-    "confirmNewCodeMessage": "Are you sure you want to generate a new code? This will invalidate your previous code."
+    "confirmNewCodeMessage": "Are you sure you want to generate a new code? This will invalidate your previous code.",
+    "resendInfo": "If you have already requested a code but haven't received it please click here to resend yourself a code."
   },
   "ConfirmCode": {
     "powerOfAttorneyDetails": "Power of Attorney Details",
