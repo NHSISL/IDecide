@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerAdoptions.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Consumers.Exceptions;
@@ -91,6 +92,15 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Consumers
             {
                 throw await CreateAndLogDependencyExceptionAsync(notificationServiceException);
             }
+            catch (Exception exception)
+            {
+                var failedConsumerOrchestrationServiceException =
+                    new FailedConsumerOrchestrationServiceException(
+                        message: "Failed consumer orchestration service error occurred, contact support.",
+                        innerException: exception);
+
+                throw await CreateAndLogServiceExceptionAsync(failedConsumerOrchestrationServiceException);
+            }
         }
 
         private async ValueTask<ConsumerOrchestrationValidationException>
@@ -121,8 +131,8 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Consumers
             return consumerOrchestrationDependencyValidationException;
         }
 
-        private async ValueTask<ConsumerOrchestrationDependencyException>
-            CreateAndLogDependencyExceptionAsync(Xeption exception)
+        private async ValueTask<ConsumerOrchestrationDependencyException> CreateAndLogDependencyExceptionAsync(
+            Xeption exception)
         {
             var consumerOrchestrationDependencyException =
                 new ConsumerOrchestrationDependencyException(
@@ -133,6 +143,18 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Consumers
             await this.loggingBroker.LogErrorAsync(consumerOrchestrationDependencyException);
 
             return consumerOrchestrationDependencyException;
+        }
+
+        private async ValueTask<ConsumerOrchestrationServiceException> CreateAndLogServiceExceptionAsync(
+            Xeption exception)
+        {
+            var consumerOrchestrationServiceException = new ConsumerOrchestrationServiceException(
+                message: "Consumer orchestration service error occurred, contact support.",
+                innerException: exception);
+
+            await this.loggingBroker.LogErrorAsync(consumerOrchestrationServiceException);
+
+            return consumerOrchestrationServiceException;
         }
     }
 }
