@@ -33,8 +33,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
         private readonly Mock<IConsumerAdoptionService> consumerAdoptionServiceMock =
             new Mock<IConsumerAdoptionService>();
 
-        private readonly Mock<INotificationService> notificationServiceMock = new Mock<INotificationService>();
         private readonly Mock<IPatientService> patientServiceMock = new Mock<IPatientService>();
+        private readonly Mock<INotificationService> notificationServiceMock = new Mock<INotificationService>();
         private readonly IConsumerOrchestrationService consumerOrchestrationService;
 
         public ConsumerOrchestrationServiceTests()
@@ -44,9 +44,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
             this.securityBrokerMock = new Mock<ISecurityBroker>();
             this.consumerServiceMock = new Mock<IConsumerService>();
             this.consumerAdoptionServiceMock = new Mock<IConsumerAdoptionService>();
-            this.notificationServiceMock = new Mock<INotificationService>();
             this.patientServiceMock = new Mock<IPatientService>();
-
+            this.notificationServiceMock = new Mock<INotificationService>();
 
             this.consumerOrchestrationService = new ConsumerOrchestrationService(
                 loggingBroker: this.loggingBrokerMock.Object,
@@ -54,8 +53,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
                 securityBroker: this.securityBrokerMock.Object,
                 consumerService: this.consumerServiceMock.Object,
                 consumerAdoptionService: this.consumerAdoptionServiceMock.Object,
-                notificationService: this.notificationServiceMock.Object,
-                patientService: this.patientServiceMock.Object);
+                patientService: this.patientServiceMock.Object,
+                notificationService: this.notificationServiceMock.Object);
         }
         private static int GetRandomNumber() =>
             new IntRange(min: 2, max: 10).GetValue();
@@ -139,15 +138,32 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
             return filler;
         }
 
-        private static Patient GetRandomPatient(
-            DateTimeOffset validationCodeExpiresOn,
-            string inputNhsNumber = "1234567890",
-            string validationCode = "A1B2C",
-            int retryCount = 0) =>
-            CreatePatientFiller(validationCodeExpiresOn, inputNhsNumber, validationCode, retryCount).Create();
+        private static Patient CreateRandomPatient() =>
+            CreatePatientFiller(dateTimeOffset: GetRandomDateTimeOffset()).Create();
 
-        private static List<Patient> GetRandomPatients(DateTimeOffset validationCodeExpiresOn) =>
-            CreatePatientFiller(validationCodeExpiresOn).Create(GetRandomNumber()).ToList();
+        private static Filler<Patient> CreatePatientFiller(DateTimeOffset dateTimeOffset, string userId = "")
+        {
+            userId = string.IsNullOrEmpty(userId) ? Guid.NewGuid().ToString() : userId;
+            var filler = new Filler<Patient>();
+
+            filler.Setup()
+                .OnType<DateTimeOffset>().Use(dateTimeOffset)
+                .OnType<DateTimeOffset?>().Use(dateTimeOffset)
+                .OnProperty(patient => patient.NhsNumber).Use(GetRandomStringWithLengthOf(10))
+                .OnProperty(patient => patient.Title).Use(GetRandomStringWithLengthOf(35))
+                .OnProperty(patient => patient.GivenName).Use(GetRandomStringWithLengthOf(255))
+                .OnProperty(patient => patient.Surname).Use(GetRandomStringWithLengthOf(255))
+                .OnProperty(patient => patient.Gender).Use(GetRandomStringWithLengthOf(50))
+                .OnProperty(patient => patient.Email).Use(GetRandomStringWithLengthOf(255))
+                .OnProperty(patient => patient.Phone).Use(GetRandomStringWithLengthOf(15))
+                .OnProperty(patient => patient.PostCode).Use(GetRandomStringWithLengthOf(8))
+                .OnProperty(patient => patient.ValidationCode).Use(GetRandomStringWithLengthOf(5))
+                .OnProperty(patient => patient.CreatedBy).Use(userId)
+                .OnProperty(patient => patient.UpdatedBy).Use(userId)
+                .OnProperty(patient => patient.Decisions).IgnoreIt();
+
+            return filler;
+        }
 
         private static Consumer CreateRandomConsumer() =>
             CreateConsumerFiller(dateTimeOffset: GetRandomDateTimeOffset()).Create();
@@ -164,26 +180,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
                 .OnProperty(consumer => consumer.CreatedBy).Use(userId)
                 .OnProperty(consumer => consumer.UpdatedBy).Use(userId)
                 .OnProperty(consumer => consumer.ConsumerAdoptions).IgnoreIt();
-
-            return filler;
-        }
-
-        private static Filler<Patient> CreatePatientFiller(
-            DateTimeOffset validationCodeExpiresOn,
-            string inputNhsNumber = "1234567890",
-            string validationCode = "A1B2C",
-            int retryCount = 0)
-        {
-            DateTimeOffset dateTimeOffset = DateTimeOffset.UtcNow;
-            var filler = new Filler<Patient>();
-
-            filler.Setup()
-                .OnType<DateTimeOffset>().Use(dateTimeOffset)
-                .OnType<DateTimeOffset?>().Use(dateTimeOffset)
-                .OnProperty(patient => patient.ValidationCodeExpiresOn).Use(validationCodeExpiresOn)
-                .OnProperty(patient => patient.NhsNumber).Use(inputNhsNumber)
-                .OnProperty(patient => patient.ValidationCode).Use(validationCode)
-                .OnProperty(patient => patient.RetryCount).Use(retryCount);
 
             return filler;
         }
