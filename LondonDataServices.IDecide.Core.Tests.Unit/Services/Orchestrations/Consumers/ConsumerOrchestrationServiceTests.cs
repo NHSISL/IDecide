@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Security.Claims;
 using LondonDataServices.IDecide.Core.Brokers.DateTimes;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
@@ -20,6 +21,7 @@ using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Consumers;
 using Moq;
 using Tynamix.ObjectFiller;
+using Xeptions;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Consumers
 {
@@ -56,6 +58,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
                 patientService: this.patientServiceMock.Object,
                 notificationService: this.notificationServiceMock.Object);
         }
+
+        private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
+            actualException => actualException.SameExceptionAs(expectedException);
+
         private static int GetRandomNumber() =>
             new IntRange(min: 2, max: 10).GetValue();
 
