@@ -69,7 +69,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                 .AsQueryable();
         }
 
-        private static ConsumerAdoption CreateRandomModifyConsumerAdoption(DateTimeOffset dateTimeOffset, string userId = "")
+        private static ConsumerAdoption CreateRandomModifyConsumerAdoption(
+            DateTimeOffset dateTimeOffset,
+            string userId = "")
         {
             int randomDaysInPast = GetRandomNegativeNumber();
             ConsumerAdoption randomConsumerAdoption = CreateRandomConsumerAdoption(dateTimeOffset, userId);
@@ -118,7 +120,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
         private static ConsumerAdoption CreateRandomConsumerAdoption() =>
             CreateConsumerAdoptionFiller(dateTimeOffset: GetRandomDateTimeOffset()).Create();
 
-        private static ConsumerAdoption CreateRandomConsumerAdoption(DateTimeOffset dateTimeOffset, string userId = "") =>
+        private static ConsumerAdoption CreateRandomConsumerAdoption(
+            DateTimeOffset dateTimeOffset, string userId = "") =>
             CreateConsumerAdoptionFiller(dateTimeOffset, userId).Create();
 
         private static Filler<ConsumerAdoption> CreateConsumerAdoptionFiller(

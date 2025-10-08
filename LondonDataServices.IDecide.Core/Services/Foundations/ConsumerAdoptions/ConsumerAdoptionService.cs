@@ -70,7 +70,9 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions
                 ValidateStorageConsumerAdoption(maybeConsumerAdoption, consumerAdoption.Id);
 
                 consumerAdoption = await this.securityAuditBroker
-                    .EnsureAddAuditValuesRemainsUnchangedOnModifyAsync(consumerAdoption, maybeConsumerAdoption);
+                    .EnsureAddAuditValuesRemainsUnchangedOnModifyAsync(
+                        consumerAdoption,
+                        maybeConsumerAdoption);
 
                 ValidateAgainstStorageConsumerAdoptionOnModify(
                     inputConsumerAdoption: consumerAdoption,

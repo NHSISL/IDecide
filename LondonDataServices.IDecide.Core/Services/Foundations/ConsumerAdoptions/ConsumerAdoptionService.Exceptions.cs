@@ -168,8 +168,8 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions
             return consumerAdoptionDependencyException;
         }
 
-        private async ValueTask<ConsumerAdoptionDependencyValidationException> CreateAndLogDependencyValidationException(
-            Xeption exception)
+        private async ValueTask<ConsumerAdoptionDependencyValidationException>
+            CreateAndLogDependencyValidationException(Xeption exception)
         {
             var consumerAdoptionDependencyValidationException =
                 new ConsumerAdoptionDependencyValidationException(

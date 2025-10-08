@@ -63,8 +63,12 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions
                 (Rule: IsInvalid(consumerAdoption.CreatedBy), Parameter: nameof(ConsumerAdoption.CreatedBy)),
                 (Rule: IsInvalid(consumerAdoption.UpdatedDate), Parameter: nameof(ConsumerAdoption.UpdatedDate)),
                 (Rule: IsInvalid(consumerAdoption.UpdatedBy), Parameter: nameof(ConsumerAdoption.UpdatedBy)),
-                (Rule: IsGreaterThan(consumerAdoption.CreatedBy, 255), Parameter: nameof(ConsumerAdoption.CreatedBy)),
-                (Rule: IsGreaterThan(consumerAdoption.UpdatedBy, 255), Parameter: nameof(ConsumerAdoption.UpdatedBy)),
+
+                (Rule: IsGreaterThan(consumerAdoption.CreatedBy, 255),
+                    Parameter: nameof(ConsumerAdoption.CreatedBy)),
+
+                (Rule: IsGreaterThan(consumerAdoption.UpdatedBy, 255),
+                    Parameter: nameof(ConsumerAdoption.UpdatedBy)),
 
                 (Rule: IsNotSame(
                         first: currentUserId,
@@ -77,7 +81,8 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions
                         secondDateName: nameof(ConsumerAdoption.CreatedDate)),
                     Parameter: nameof(ConsumerAdoption.UpdatedDate)),
 
-                (Rule: await IsNotRecentAsync(consumerAdoption.UpdatedDate), Parameter: nameof(ConsumerAdoption.UpdatedDate)));
+                (Rule: await IsNotRecentAsync(consumerAdoption.UpdatedDate),
+                    Parameter: nameof(ConsumerAdoption.UpdatedDate)));
         }
 
         private static void ValidateConsumerAdoptionId(Guid consumerAdoptionId) =>
@@ -85,7 +90,9 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions
                 message: "Invalid consumerAdoption. Please correct the errors and try again.",
                 validations: (Rule: IsInvalid(consumerAdoptionId), Parameter: nameof(ConsumerAdoption.Id)));
 
-        private static void ValidateStorageConsumerAdoption(ConsumerAdoption maybeConsumerAdoption, Guid consumerAdoptionId)
+        private static void ValidateStorageConsumerAdoption(
+            ConsumerAdoption maybeConsumerAdoption,
+            Guid consumerAdoptionId)
         {
             if (maybeConsumerAdoption is null)
             {
@@ -134,8 +141,8 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions
                     Parameter: nameof(ConsumerAdoption.UpdatedDate)));
         }
 
-        virtual internal async ValueTask<List<ConsumerAdoption>> ValidateConsumerAdoptionsAndAssignIdAndAuditOnAddAsync(
-            List<ConsumerAdoption> consumerAdoptions)
+        virtual internal async ValueTask<List<ConsumerAdoption>>
+            ValidateConsumerAdoptionsAndAssignIdAndAuditOnAddAsync(List<ConsumerAdoption> consumerAdoptions)
         {
             List<ConsumerAdoption> validatedConsumerAdoptions = new List<ConsumerAdoption>();
 
