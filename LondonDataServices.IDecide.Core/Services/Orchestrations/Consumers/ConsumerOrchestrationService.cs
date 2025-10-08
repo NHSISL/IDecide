@@ -18,7 +18,7 @@ using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
 
 namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Consumers
 {
-    public class ConsumerOrchestrationService : IConsumerOrchestrationService
+    public partial class ConsumerOrchestrationService : IConsumerOrchestrationService
     {
         private readonly ILoggingBroker loggingBroker;
         private readonly IDateTimeBroker dateTimeBroker;
@@ -45,41 +45,42 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Consumers
             this.notificationService = notificationService;
         }
 
-        public async ValueTask AdoptPatientDecisions(List<Decision> decisions)
-        {
-            var user = await this.securityBroker.GetCurrentUserAsync();
-            var consumerId = Guid.Parse(user.UserId);
-            var consumer = await this.consumerService.RetrieveConsumerByIdAsync(consumerId);
-
-            var consumerAdoptions = new List<ConsumerAdoption>();
-
-            foreach (var decision in decisions)
+        public ValueTask AdoptPatientDecisions(List<Decision> decisions) =>
+            TryCatch(async () =>
             {
-                var consumerAdoption = new ConsumerAdoption
+                ValidateDecisions(decisions);
+                var user = await this.securityBroker.GetCurrentUserAsync();
+                var consumerId = Guid.Parse(user.UserId);
+                var consumer = await this.consumerService.RetrieveConsumerByIdAsync(consumerId);
+                var consumerAdoptions = new List<ConsumerAdoption>();
+
+                foreach (var decision in decisions)
                 {
-                    ConsumerId = consumer.Id,
-                    DecisionId = decision.Id,
-                    AdoptionDate = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync()
-                };
+                    var consumerAdoption = new ConsumerAdoption
+                    {
+                        ConsumerId = consumer.Id,
+                        DecisionId = decision.Id,
+                        AdoptionDate = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync()
+                    };
 
-                consumerAdoptions.Add(consumerAdoption);
-            }
+                    consumerAdoptions.Add(consumerAdoption);
+                }
 
-            await this.consumerAdoptionService.BulkAddOrModifyConsumerAdoptionsAsync(consumerAdoptions);
+                await this.consumerAdoptionService.BulkAddOrModifyConsumerAdoptionsAsync(consumerAdoptions);
 
-            foreach (var decision in decisions)
-            {
-                var patient =
-                    decision.Patient ?? await this.patientService.RetrievePatientByIdAsync(decision.PatientId);
-
-                var notificationInfo = new NotificationInfo
+                foreach (var decision in decisions)
                 {
-                    Decision = decision,
-                    Patient = patient
-                };
+                    var patient =
+                        decision.Patient ?? await this.patientService.RetrievePatientByIdAsync(decision.PatientId);
 
-                await this.notificationService.SendSubscriberUsageNotificationAsync(notificationInfo);
-            }
-        }
+                    var notificationInfo = new NotificationInfo
+                    {
+                        Decision = decision,
+                        Patient = patient
+                    };
+
+                    await this.notificationService.SendSubscriberUsageNotificationAsync(notificationInfo);
+                }
+            });
     }
 }
