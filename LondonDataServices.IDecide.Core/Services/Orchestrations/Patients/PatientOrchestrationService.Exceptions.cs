@@ -214,7 +214,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
         {
             var patientOrchestrationServiceException = new PatientOrchestrationServiceException(
                 message: "Patient orchestration service error occurred, contact support.",
-                innerException: exception);
+                innerException: exception.InnerException as Xeption);
 
             await this.loggingBroker.LogErrorAsync(patientOrchestrationServiceException);
 
