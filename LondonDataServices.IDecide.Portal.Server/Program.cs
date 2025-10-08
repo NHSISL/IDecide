@@ -16,6 +16,8 @@ using ISL.Providers.Notifications.GovukNotify.Models;
 using ISL.Providers.Notifications.GovukNotify.Providers.Notifications;
 using ISL.Providers.Notifications.NotifyIntercept.Providers.Notifications;
 using ISL.Providers.PDS.Abstractions;
+using ISL.Providers.PDS.FakeFHIR.Models;
+using ISL.Providers.PDS.FakeFHIR.Providers.FakeFHIR;
 using ISL.Providers.PDS.FHIR.Models.Brokers.PdsFHIR;
 using ISL.Providers.PDS.FHIR.Providers;
 using ISL.Security.Client.Models.Clients;
@@ -213,18 +215,33 @@ namespace LondonDataServices.IDecide.Portal.Server
             services.AddTransient<IPdsAbstractionProvider, PdsAbstractionProvider>();
             services.AddTransient<ICaptchaAbstractionProvider, CaptchaAbstractionProvider>();
 
+            bool fakeFHIRProviderMode = configuration
+               .GetSection("FakeFHIRProviderMode").Get<bool>();
+
             bool fakeCaptchaProviderMode = configuration
                 .GetSection("FakeCaptchaProviderMode").Get<bool>();
 
             bool interceptNotificationProviderMode = configuration
                 .GetSection("InterceptNotificationProviderMode").Get<bool>();
 
-            PdsFHIRConfigurations pdsFhirConfigurations = configuration
-            .GetSection("pdsFHIRConfigurations")
-                .Get<PdsFHIRConfigurations>();
+            if (fakeFHIRProviderMode == true)
+            {
+                FakeFHIRProviderConfigurations fakeFHIRProviderConfigurations = configuration
+                .GetSection("FakeFHIRProviderConfigurations")
+                    .Get<FakeFHIRProviderConfigurations>();
 
-            services.AddSingleton(pdsFhirConfigurations);
-            services.AddTransient<IPdsProvider, PdsFHIRProvider>();
+                services.AddSingleton(fakeFHIRProviderConfigurations);
+                services.AddTransient<IPdsProvider, FakeFHIRProvider>();
+            }
+            else
+            {
+                PdsFHIRConfigurations pdsFhirConfigurations = configuration
+                .GetSection("pdsFHIRConfigurations")
+                    .Get<PdsFHIRConfigurations>();
+
+                services.AddSingleton(pdsFhirConfigurations);
+                services.AddTransient<IPdsProvider, PdsFHIRProvider>();
+            }
 
             if (fakeCaptchaProviderMode == true)
             {

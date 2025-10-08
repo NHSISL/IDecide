@@ -248,17 +248,17 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
                             </div>
                         </div>
 
-                        <button
+                       <button
                             className="nhsuk-button"
                             type="submit"
                             style={{ width: "100%" }}
                             data-testid="save-preferences-btn"
-                            disabled={isSubmitting}
+                            disabled={isSubmitting || !selectedOption || !selectedMethod}
                             aria-busy={isSubmitting}
                         >
                             {isSubmitting ? translate("ConfirmAndSave.submitting") : translate("ConfirmAndSave.savePreferences")}
                         </button>
-                    </form>
+                                            </form>
                 </Col>
                 <Col xs={12} md={6} lg={6} className="custom-col-spacing">
                     <div

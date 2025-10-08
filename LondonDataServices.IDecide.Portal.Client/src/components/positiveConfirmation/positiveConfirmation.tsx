@@ -4,10 +4,11 @@ import { patientViewService } from "../../services/views/patientViewService";
 import { PatientCodeRequest } from "../../models/patients/patientCodeRequest";
 import { Row, Col, Alert } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
-import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
 import { loadRecaptchaScript } from "../../helpers/recaptureLoad";
 import { isApiErrorResponse } from "../../helpers/isApiErrorResponse";
 import { NotificationPreference } from "../../helpers/notificationPreference";
+import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
+import { useApiErrorHandlerChecks } from "../../hooks/useApiErrorHandlerChecks";
 
 interface PositiveConfirmationProps {
     goToConfirmCode: (createdPatient: PatientCodeRequest) => void;
@@ -26,18 +27,23 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
     const RECAPTCHA_SITE_KEY = configuration.recaptchaSiteKey;
     const RECAPTCHA_ACTION_SUBMIT = "submit";
     const updatePatient = patientViewService.useAddPatientAndGenerateCode();
-    const [error, setError] = useState<string | JSX.Element>("");
+    const [apiError, setApiError] = useState<string | JSX.Element>("");
     const [info, setInfo] = useState<string | JSX.Element>("");
     const [hideButtons, setHideButtons] = useState(false);
     const [resend, setResend] = useState(false);
     const [showAreYouSure, setShowAreYouSure] = useState(false);
+
+    const handleApiError = useApiErrorHandlerChecks({
+        setApiError,
+        configuration
+    });
 
     if (!createdPatient) {
         return <div>{translate("PositiveConfirmation.noPatientDetails")}</div>;
     }
 
     const handleSubmit = async (method: "Email" | "Letter" | "Sms", resendFlag = false) => {
-        setError("");
+        setApiError("");
         setInfo("");
 
         const patientToUpdate = new PatientCodeRequest({
@@ -64,38 +70,41 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                 {
                     headers: { "X-Recaptcha-Token": token },
                     onSuccess: () => {
-                        setError("");
+                        setApiError("");
                         setInfo("");
                         setResend(false);
                         goToConfirmCode(patientToUpdate);
                     },
                     onError: (error: unknown) => {
-                        let apiTitle = "";
                         if (isApiErrorResponse(error)) {
-                            const errResponse = error.response;
-                            apiTitle =
-                                errResponse.data?.title ||
-                                errResponse.data?.message ||
-                                errResponse.statusText ||
+                            const errorResponse = error?.response;
+
+                            const errorTitle =
+                                errorResponse?.data?.title ||
+                                errorResponse?.data?.message ||
+                                errorResponse.statusText ||
                                 "Unknown API error";
-                            setError(apiTitle);
-                            console.error("API Error updating patient:", apiTitle, errResponse);
+
+                            if (!handleApiError(errorTitle)) {
+                                setApiError(errorTitle);
+                            }
+                            setApiError(errorTitle);
                         } else if (
                             error &&
                             typeof error === "object" &&
                             "message" in error &&
                             typeof (error as { message?: unknown }).message === "string"
                         ) {
-                            setError((error as { message: string }).message);
+                            setApiError((error as { message: string }).message);
                             console.error("Error updating patient:", (error as { message: string }).message, error);
                         } else {
-                            setError("An unexpected error occurred.");
+                            setApiError("An unexpected error occurred.");
                         }
                     }
                 }
             );
         } catch (err) {
-            setError("Error executing reCAPTCHA.");
+            setApiError("Error executing reCAPTCHA.");
             console.error("Error executing reCAPTCHA:", err);
         }
     };
@@ -172,9 +181,9 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                         {translate("PositiveConfirmation.chooseMethod")}
                     </p>
 
-                    {error && (
+                    {apiError && (
                         <Alert variant="danger">
-                            <div id="code-error">{error}</div>
+                            <div id="code-error">{apiError}</div>
                         </Alert>
                     )}
 

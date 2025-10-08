@@ -44,7 +44,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
             }
             catch (PatientOrchestrationDependencyException patientOrchestrationDependencyException)
             {
-                return InternalServerError(patientOrchestrationDependencyException);
+                return InternalServerError(patientOrchestrationDependencyException.InnerException);
             }
             catch (PatientOrchestrationServiceException patientOrchestrationServiceException)
                 when (patientOrchestrationServiceException.InnerException is ExternalOptOutPatientOrchestrationException)
@@ -53,7 +53,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
             }
             catch (PatientOrchestrationServiceException patientOrchestrationServiceException)
             {
-                return InternalServerError(patientOrchestrationServiceException);
+                return InternalServerError(patientOrchestrationServiceException.InnerException);
             }
         }
 
