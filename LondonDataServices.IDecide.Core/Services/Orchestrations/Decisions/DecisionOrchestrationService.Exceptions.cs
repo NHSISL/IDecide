@@ -167,7 +167,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
         {
             var decisionOrchestrationServiceException = new DecisionOrchestrationServiceException(
                 message: "Decision orchestration service error occurred, contact support.",
-                innerException: exception);
+                innerException: exception.InnerException as Xeption);
 
             await this.loggingBroker.LogErrorAsync(decisionOrchestrationServiceException);
 

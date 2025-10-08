@@ -262,7 +262,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             var expectedPatientOrchestrationServiceException =
                 new PatientOrchestrationServiceException(
                     message: "Patient orchestration service error occurred, contact support.",
-                    innerException: failedServicePatientOrchestrationException);
+                    innerException: failedServicePatientOrchestrationException.InnerException as Xeption);
 
             var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
                 this.loggingBrokerMock.Object,
@@ -584,7 +584,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             var expectedPatientOrchestrationServiceException =
                 new PatientOrchestrationServiceException(
                     message: "Patient orchestration service error occurred, contact support.",
-                    innerException: failedServicePatientOrchestrationException);
+                    innerException: failedServicePatientOrchestrationException.InnerException as Xeption);
 
             this.pdsServiceMock.Setup(service =>
                 service.PatientLookupByNhsNumberAsync(inputNhsNumber))
