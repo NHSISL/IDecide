@@ -207,32 +207,67 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
                     innerException: innerException),
 
                 new ConsumerDependencyValidationException(
-                    message: "Consumer dependency validation occurred, please try again.",
-                    innerException: innerException),
+                   message: "Consumer dependency validation occurred, please try again.",
+                   innerException: innerException),
 
                 new ConsumerAdoptionValidationException(
-                    message: "ConsumerAdoption validation errors occurred, please try again.",
-                    innerException: innerException),
+                   message: "ConsumerAdoption validation errors occurred, please try again.",
+                   innerException: innerException),
 
                 new ConsumerAdoptionDependencyValidationException(
-                    message: "ConsumerAdoption dependency validation occurred, please try again.",
-                    innerException: innerException),
+                   message: "ConsumerAdoption dependency validation occurred, please try again.",
+                   innerException: innerException),
 
                 new PatientValidationException(
-                    message: "Patient validation errors occurred, please try again.",
-                    innerException: innerException),
+                   message: "Patient validation errors occurred, please try again.",
+                   innerException: innerException),
 
                 new PatientDependencyValidationException(
-                    message: "Patient dependency validation occurred, please try again.",
-                    innerException: innerException),
+                   message: "Patient dependency validation occurred, please try again.",
+                   innerException: innerException),
 
                 new NotificationValidationException(
-                    message: "Notification validation errors occurred, please try again.",
-                    innerException: innerException),
+                   message: "Notification validation errors occurred, please try again.",
+                   innerException: innerException),
 
                 new NotificationDependencyValidationException(
-                    message: "Notification dependency validation error occurred, fix errors and try again.",
-                    innerException: innerException)
+                   message: "Notification dependency validation error occurred, fix errors and try again.",
+                   innerException: innerException)
+            };
+        }
+
+        public static TheoryData<Xeption> DependencyExceptions()
+        {
+            string randomMessage = GetRandomString();
+            string exceptionMessage = randomMessage;
+            var innerException = new Xeption(exceptionMessage);
+
+            return new TheoryData<Xeption>
+            {
+                new ConsumerDependencyException(
+                    message: "Consumer dependency error occurred, contact support.",
+                    innerException: innerException),
+                new ConsumerServiceException(
+                    message: "Consumer service error occurred, contact support.",
+                    innerException: innerException),
+                new ConsumerAdoptionDependencyException(
+                    message: "ConsumerAdoption dependency error occurred, contact support.",
+                    innerException: innerException),
+                new ConsumerAdoptionServiceException(
+                    message: "ConsumerAdoption service error occurred, contact support.",
+                    innerException: innerException),
+                new PatientDependencyException(
+                    message: "Patient dependency error occurred, contact support.",
+                    innerException: innerException),
+                new PatientServiceException(
+                    message: "Patient service error occurred, contact support.",
+                    innerException: innerException),
+                new NotificationDependencyException(
+                    message: "Notification dependency error occurred, contact support.",
+                    innerException: innerException),
+                new NotificationServiceException(
+                    message: "Notification service error occurred, contact support.",
+                    innerException: innerException),
             };
         }
     }

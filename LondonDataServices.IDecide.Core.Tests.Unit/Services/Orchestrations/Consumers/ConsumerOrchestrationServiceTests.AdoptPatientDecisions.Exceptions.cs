@@ -9,7 +9,6 @@ using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Consumers.Exceptions;
 using Moq;
 using Xeptions;
-using Task = System.Threading.Tasks.Task;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Consumers
 {
@@ -17,7 +16,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
     {
         [Theory]
         [MemberData(nameof(DependencyValidationExceptions))]
-        public async Task ShouldThrowDependencyValidationOnAdoptPatientDecisionsAndLogItAsync(
+        public async Task ShouldThrowDependencyValidationExceptionOnAdoptPatientDecisionsAndLogItAsync(
             Xeption dependencyValidationException)
         {
             List<Decision> randomDecisions = CreateRandomDecisions();
@@ -45,6 +44,49 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
             // then
             actualConsumerOrchestrationDependencyValidationException
                 .Should().BeEquivalentTo(expectedConsumerOrchestrationDependencyValidationException);
+
+            this.securityBrokerMock.Verify(broker =>
+                broker.GetCurrentUserAsync(),
+                    Times.Once);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.securityBrokerMock.VerifyNoOtherCalls();
+            this.consumerServiceMock.VerifyNoOtherCalls();
+            this.consumerAdoptionServiceMock.VerifyNoOtherCalls();
+            this.patientServiceMock.VerifyNoOtherCalls();
+            this.notificationServiceMock.VerifyNoOtherCalls();
+        }
+
+        [Theory]
+        [MemberData(nameof(DependencyExceptions))]
+        public async Task ShouldThrowDependencyExceptionOnAdoptPatientDecisionsAndLogItAsync(
+            Xeption dependencyException)
+        {
+            List<Decision> randomDecisions = CreateRandomDecisions();
+            List<Decision> inputDecisions = randomDecisions;
+
+            this.securityBrokerMock.Setup(broker =>
+                broker.GetCurrentUserAsync())
+                    .ThrowsAsync(dependencyException);
+
+            var expectedConsumerOrchestrationDependencyException =
+                new ConsumerOrchestrationDependencyException(
+                    message: "Consumer orchestration dependency error occurred, " +
+                        "please fix the errors and try again.",
+                    innerException: dependencyException);
+
+            // when
+            ValueTask adoptPatientDecisionsTask =
+                this.consumerOrchestrationService.AdoptPatientDecisions(inputDecisions);
+
+            ConsumerOrchestrationDependencyException
+                actualConsumerOrchestrationDependencyException =
+                    await Assert.ThrowsAsync<ConsumerOrchestrationDependencyException>(() =>
+                        adoptPatientDecisionsTask.AsTask());
+
+            // then
+            actualConsumerOrchestrationDependencyException
+                .Should().BeEquivalentTo(expectedConsumerOrchestrationDependencyException);
 
             this.securityBrokerMock.Verify(broker =>
                 broker.GetCurrentUserAsync(),
