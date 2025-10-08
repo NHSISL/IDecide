@@ -25,25 +25,24 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Consumers
         private readonly ISecurityBroker securityBroker;
         private readonly IConsumerService consumerService;
         private readonly IConsumerAdoptionService consumerAdoptionService;
-        private readonly INotificationService notificationService;
         private readonly IPatientService patientService;
-
+        private readonly INotificationService notificationService;
         public ConsumerOrchestrationService(
             ILoggingBroker loggingBroker,
             IDateTimeBroker dateTimeBroker,
             ISecurityBroker securityBroker,
             IConsumerService consumerService,
             IConsumerAdoptionService consumerAdoptionService,
-            INotificationService notificationService,
-            IPatientService patientService)
+            IPatientService patientService,
+            INotificationService notificationService)
         {
             this.loggingBroker = loggingBroker;
             this.dateTimeBroker = dateTimeBroker;
             this.securityBroker = securityBroker;
             this.consumerService = consumerService;
             this.consumerAdoptionService = consumerAdoptionService;
-            this.notificationService = notificationService;
             this.patientService = patientService;
+            this.notificationService = notificationService;
         }
 
         public async ValueTask AdoptPatientDecisions(List<Decision> decisions)
