@@ -48,7 +48,39 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Consumers
 
         public async ValueTask AdoptPatientDecisions(List<Decision> decisions)
         {
-            throw new NotImplementedException();
+            var user = await this.securityBroker.GetCurrentUserAsync();
+            var consumerId = Guid.Parse(user.UserId);
+            var consumer = await this.consumerService.RetrieveConsumerByIdAsync(consumerId);
+
+            var consumerAdoptions = new List<ConsumerAdoption>();
+
+            foreach (var decision in decisions)
+            {
+                var consumerAdoption = new ConsumerAdoption
+                {
+                    ConsumerId = consumer.Id,
+                    DecisionId = decision.Id,
+                    AdoptionDate = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync()
+                };
+
+                consumerAdoptions.Add(consumerAdoption);
+            }
+
+            await this.consumerAdoptionService.BulkAddOrModifyConsumerAdoptionsAsync(consumerAdoptions);
+
+            foreach (var decision in decisions)
+            {
+                var patient =
+                    decision.Patient ?? await this.patientService.RetrievePatientByIdAsync(decision.PatientId);
+
+                var notificationInfo = new NotificationInfo
+                {
+                    Decision = decision,
+                    Patient = patient
+                };
+
+                await this.notificationService.SendSubscriberUsageNotificationAsync(notificationInfo);
+            }
         }
     }
 }
