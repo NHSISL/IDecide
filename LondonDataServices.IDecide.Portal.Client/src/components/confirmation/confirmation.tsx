@@ -3,7 +3,6 @@ import { Alert, Col, Row } from "react-bootstrap";
 import { useStep } from "../../hooks/useStep";
 import { decisionViewService } from "../../services/views/decisionViewService";
 import { PatientDecision } from "../../models/patientDecisions/patientDecision";
-import { isAxiosError } from "../../helpers/axiosErrorHelper";
 import { useTranslation } from "react-i18next";
 import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
 import { Patient } from "../../models/patients/patient";
@@ -59,10 +58,8 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
         .filter(([, value]) => value)
         .map(([key]) => key);
 
-    // Get the selected method as a string ("SMS", "Email", or "Post")
     const selectedMethod = selectedMethods[0];
 
-    // Map to the value expected by the helper
     const methodForHelper =
         selectedMethod === "SMS" ? "Sms" :
             selectedMethod === "Email" ? "Email" :
@@ -108,27 +105,47 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
                     },
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     onError: (error: any) => {
+                       
+                        const status = error?.response?.status;
                         const errorData = error?.response?.data;
                         const errorTitle = errorData?.title;
+
+                        if (handleApiError(errorTitle)) {
+                            setIsSubmitting(false);
+                            return;
+                        }
+
+                        console.log(status);
                         handleApiError(errorTitle);
                         setIsSubmitting(false);
-                        let message = translate("ConfirmAndSave.errorSaveFailed");
-                        if (error instanceof Error && error.message) {
-                            if (error.message === "Network Error") {
-                                message = translate("ConfirmAndSave.errorSaveFailed");
-                            } else {
-                                message = error.message;
-                            }
-                        } else if (typeof error === "string") {
-                            message = error;
-                        } else if (isAxiosError(error)) {
-                            const data = error.response?.data;
-                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                            if (data && typeof data === "object" && "message" in data && typeof (data as any).message === "string") {
-                                message = (data as { message: string }).message;
-                            }
+
+                        if (errorTitle === "Invalid decision reference error occurred.") {
+                            setApiError("Decision Type not set in database.");
+                            setIsSubmitting(false);
+                            return;
                         }
-                        setApiError(message);
+
+                        switch (status) {
+                            case 400:
+                                setApiError(translate("errors.400"));
+                                break;
+                            case 404:
+                                setApiError(translate("errors.404"));
+                                break;
+                            case 401:
+                                setApiError(translate("errors.401"));
+                                break;
+                            case 500:
+                                setApiError(translate("errors.500")
+                                );
+                                break;
+                            default:
+                                setApiError(
+                                    errorTitle ||
+                                    translate("errors.CatchAll")
+                                );
+                                break;
+                        }
                     }
                 });
         } catch (err) {
