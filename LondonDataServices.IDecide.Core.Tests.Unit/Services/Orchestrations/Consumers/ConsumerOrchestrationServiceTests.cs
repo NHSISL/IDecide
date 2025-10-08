@@ -10,9 +10,13 @@ using System.Security.Claims;
 using LondonDataServices.IDecide.Core.Brokers.DateTimes;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Brokers.Securities;
+using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerAdoptions.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Consumers;
+using LondonDataServices.IDecide.Core.Models.Foundations.Consumers.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
+using LondonDataServices.IDecide.Core.Models.Foundations.Notifications.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
+using LondonDataServices.IDecide.Core.Models.Foundations.Patients.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Securities;
 using LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions;
 using LondonDataServices.IDecide.Core.Services.Foundations.Consumers;
@@ -188,6 +192,48 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
                 .OnProperty(consumer => consumer.ConsumerAdoptions).IgnoreIt();
 
             return filler;
+        }
+
+        public static TheoryData<Xeption> DependencyValidationExceptions()
+        {
+            string randomMessage = GetRandomString();
+            string exceptionMessage = randomMessage;
+            var innerException = new Xeption(exceptionMessage);
+
+            return new TheoryData<Xeption>
+            {
+                new ConsumerValidationException(
+                    message: "Consumer validation errors occurred, please try again.",
+                    innerException: innerException),
+
+                new ConsumerDependencyValidationException(
+                    message: "Consumer dependency validation occurred, please try again.",
+                    innerException: innerException),
+
+                new ConsumerAdoptionValidationException(
+                    message: "ConsumerAdoption validation errors occurred, please try again.",
+                    innerException: innerException),
+
+                new ConsumerAdoptionDependencyValidationException(
+                    message: "ConsumerAdoption dependency validation occurred, please try again.",
+                    innerException: innerException),
+
+                new PatientValidationException(
+                    message: "Patient validation errors occurred, please try again.",
+                    innerException: innerException),
+
+                new PatientDependencyValidationException(
+                    message: "Patient dependency validation occurred, please try again.",
+                    innerException: innerException),
+
+                new NotificationValidationException(
+                    message: "Notification validation errors occurred, please try again.",
+                    innerException: innerException),
+
+                new NotificationDependencyValidationException(
+                    message: "Notification dependency validation error occurred, fix errors and try again.",
+                    innerException: innerException)
+            };
         }
     }
 }
