@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -87,6 +88,54 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
             // then
             actualConsumerOrchestrationDependencyException
                 .Should().BeEquivalentTo(expectedConsumerOrchestrationDependencyException);
+
+            this.securityBrokerMock.Verify(broker =>
+                broker.GetCurrentUserAsync(),
+                    Times.Once);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.securityBrokerMock.VerifyNoOtherCalls();
+            this.consumerServiceMock.VerifyNoOtherCalls();
+            this.consumerAdoptionServiceMock.VerifyNoOtherCalls();
+            this.patientServiceMock.VerifyNoOtherCalls();
+            this.notificationServiceMock.VerifyNoOtherCalls();
+        }
+
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnAdoptPatientDecisionsIfServiceErrorOccursAndLogItAsync()
+        {
+            // given
+            List<Decision> randomDecisions = CreateRandomDecisions();
+            List<Decision> inputDecisions = randomDecisions;
+            var serviceException = new Exception();
+
+            this.securityBrokerMock.Setup(broker =>
+                broker.GetCurrentUserAsync())
+                    .ThrowsAsync(serviceException);
+
+            var failedConsumerOrchestrationServiceException =
+                new FailedConsumerOrchestrationServiceException(
+                    message: "Failed consumer orchestration service error occurred, contact support.",
+                    innerException: serviceException);
+
+            var expectedDecisionOrchestrationServiceException =
+                new ConsumerOrchestrationServiceException(
+                    message: "Consumer orchestration service error occurred, contact support.",
+                    innerException: failedConsumerOrchestrationServiceException);
+
+            // when
+            ValueTask adoptPatientDecisionsTask =
+                this.consumerOrchestrationService.AdoptPatientDecisions(inputDecisions);
+
+            ConsumerOrchestrationServiceException
+                actualConsumerOrchestrationServiceException =
+                    await Assert.ThrowsAsync<ConsumerOrchestrationServiceException>(() =>
+                        adoptPatientDecisionsTask.AsTask());
+
+            // then
+            actualConsumerOrchestrationServiceException
+                .Should().BeEquivalentTo(expectedDecisionOrchestrationServiceException);
 
             this.securityBrokerMock.Verify(broker =>
                 broker.GetCurrentUserAsync(),
