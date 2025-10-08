@@ -12,7 +12,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.Patient
 {
     public partial class PatientSearchTests
     {
-        [Fact(Skip = "Fix after updating FakeFHIRProvider to return mobile as use case")]
+        [Fact]
         public async Task ShouldPostPatientSearch()
         {
             // given
