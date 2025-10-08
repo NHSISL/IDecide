@@ -13,6 +13,7 @@ using LondonDataServices.IDecide.Core.Brokers.DateTimes;
 using LondonDataServices.IDecide.Core.Brokers.Identifiers;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Brokers.Securities;
+using LondonDataServices.IDecide.Core.Models.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
@@ -42,6 +43,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
         private readonly Mock<INotificationService> notificationServiceMock = new Mock<INotificationService>();
         private readonly Mock<IDecisionService> decisionServiceMock = new Mock<IDecisionService>();
         private readonly DecisionConfigurations decisionConfigurations;
+        private readonly SecurityBrokerConfigurations securityBrokerConfigurations;
         private static readonly int maxRetryCount = 3;
         private static readonly int patientValidationCodeExpireAfterMinutes = 1440;
         private static readonly int validatedCodeValidForMinutes = 1440;
@@ -69,6 +71,11 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 DecisionWorkflowRoles = decisionWorkflowRoles
             };
 
+            this.securityBrokerConfigurations = new SecurityBrokerConfigurations
+            {
+                ReCaptchaScoreThreshold = 0.8
+            };
+
             this.decisionOrchestrationService = new DecisionOrchestrationService(
                 loggingBroker: this.loggingBrokerMock.Object,
                 dateTimeBroker: this.dateTimeBrokerMock.Object,
@@ -78,7 +85,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 patientService: this.patientServiceMock.Object,
                 notificationService: this.notificationServiceMock.Object,
                 decisionService: this.decisionServiceMock.Object,
-                decisionConfigurations: this.decisionConfigurations);
+                decisionConfigurations: this.decisionConfigurations,
+                securityBrokerConfigurations: this.securityBrokerConfigurations);
         }
 
         private static int GetRandomNumber() =>

@@ -5,11 +5,13 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using ISL.Providers.Captcha.Abstractions.Models;
 using LondonDataServices.IDecide.Core.Brokers.Audits;
 using LondonDataServices.IDecide.Core.Brokers.DateTimes;
 using LondonDataServices.IDecide.Core.Brokers.Identifiers;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Brokers.Securities;
+using LondonDataServices.IDecide.Core.Models.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
@@ -32,6 +34,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
         private readonly IDecisionService decisionService;
         private readonly INotificationService notificationService;
         private readonly DecisionConfigurations decisionConfigurations;
+        private readonly SecurityBrokerConfigurations securityBrokerConfigurations;
 
         public DecisionOrchestrationService(
             ILoggingBroker loggingBroker,
@@ -42,7 +45,8 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
             IPatientService patientService,
             IDecisionService decisionService,
             INotificationService notificationService,
-            DecisionConfigurations decisionConfigurations)
+            DecisionConfigurations decisionConfigurations,
+            SecurityBrokerConfigurations securityBrokerConfigurations)
         {
             this.loggingBroker = loggingBroker;
             this.dateTimeBroker = dateTimeBroker;
@@ -53,6 +57,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
             this.decisionService = decisionService;
             this.notificationService = notificationService;
             this.decisionConfigurations = decisionConfigurations;
+            this.securityBrokerConfigurations = securityBrokerConfigurations;
         }
 
         public ValueTask VerifyAndRecordDecisionAsync(Decision decision) =>
@@ -185,12 +190,18 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
             }
             else
             {
-                bool isCaptchaValid = await this.securityBroker.ValidateCaptchaAsync();
+                CaptchaResult captchaResult = await this.securityBroker.ValidateCaptchaAsync();
 
-                if (isCaptchaValid is false)
+                if (captchaResult.Success is false)
                 {
                     throw new InvalidCaptchaDecisionOrchestrationServiceException(
                         message: "The provided captcha token is invalid.");
+                }
+                else if (captchaResult.Success is true
+                    && captchaResult.Score < securityBrokerConfigurations.ReCaptchaScoreThreshold)
+                {
+                    throw new ReCaptchaLowConfidenceException(
+                        message: "The captcha score is below the configured threshold.");
                 }
                 else
                 {
