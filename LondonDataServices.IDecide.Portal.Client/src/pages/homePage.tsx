@@ -3,7 +3,7 @@ import Home from "../components/home/home";
 
 export const HomePage = () => {
     return (
-        <Container>
+        <Container fluid>
             <div className="fullscreen-bg">
                 <div className="fullscreen-bg-overlay">
                     <Home />
