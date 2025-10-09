@@ -139,6 +139,16 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
                 throw await CreateAndLogDependencyValidationExceptionAsync(
                     consumerDependencyValidationException);
             }
+            catch (ConsumerServiceException consumerServiceException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(
+                    consumerServiceException);
+            }
+            catch (ConsumerDependencyException consumerDependencyException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(
+                    consumerDependencyException);
+            }
             catch (DecisionValidationException decisionValidationException)
             {
                 throw await CreateAndLogDependencyValidationExceptionAsync(
@@ -148,6 +158,16 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
             {
                 throw await CreateAndLogDependencyValidationExceptionAsync(
                     decisionDependencyValidationException);
+            }
+            catch (DecisionServiceException decisionServiceException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(
+                    decisionServiceException);
+            }
+            catch (DecisionDependencyException decisionDependencyException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(
+                    decisionDependencyException);
             }
             catch (Exception exception)
             {
