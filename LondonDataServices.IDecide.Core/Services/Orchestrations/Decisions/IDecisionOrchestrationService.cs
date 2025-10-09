@@ -14,7 +14,6 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
         ValueTask VerifyAndRecordDecisionAsync(Decision decision);
 
         ValueTask<List<Decision>> RetrieveAllPendingAdoptionDecisionsForConsumer(
-            DateTimeOffset changesSinceDate,
-            string decisionType);
+            DateTimeOffset changesSinceDate, string decisionType);
     }
 }
