@@ -3,6 +3,7 @@
 // ---------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerAdoptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerAdoptions.Exceptions;
@@ -62,8 +63,12 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions
                 (Rule: IsInvalid(consumerAdoption.CreatedBy), Parameter: nameof(ConsumerAdoption.CreatedBy)),
                 (Rule: IsInvalid(consumerAdoption.UpdatedDate), Parameter: nameof(ConsumerAdoption.UpdatedDate)),
                 (Rule: IsInvalid(consumerAdoption.UpdatedBy), Parameter: nameof(ConsumerAdoption.UpdatedBy)),
-                (Rule: IsGreaterThan(consumerAdoption.CreatedBy, 255), Parameter: nameof(ConsumerAdoption.CreatedBy)),
-                (Rule: IsGreaterThan(consumerAdoption.UpdatedBy, 255), Parameter: nameof(ConsumerAdoption.UpdatedBy)),
+
+                (Rule: IsGreaterThan(consumerAdoption.CreatedBy, 255),
+                    Parameter: nameof(ConsumerAdoption.CreatedBy)),
+
+                (Rule: IsGreaterThan(consumerAdoption.UpdatedBy, 255),
+                    Parameter: nameof(ConsumerAdoption.UpdatedBy)),
 
                 (Rule: IsNotSame(
                         first: currentUserId,
@@ -76,7 +81,8 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions
                         secondDateName: nameof(ConsumerAdoption.CreatedDate)),
                     Parameter: nameof(ConsumerAdoption.UpdatedDate)),
 
-                (Rule: await IsNotRecentAsync(consumerAdoption.UpdatedDate), Parameter: nameof(ConsumerAdoption.UpdatedDate)));
+                (Rule: await IsNotRecentAsync(consumerAdoption.UpdatedDate),
+                    Parameter: nameof(ConsumerAdoption.UpdatedDate)));
         }
 
         private static void ValidateConsumerAdoptionId(Guid consumerAdoptionId) =>
@@ -84,13 +90,22 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions
                 message: "Invalid consumerAdoption. Please correct the errors and try again.",
                 validations: (Rule: IsInvalid(consumerAdoptionId), Parameter: nameof(ConsumerAdoption.Id)));
 
-        private static void ValidateStorageConsumerAdoption(ConsumerAdoption maybeConsumerAdoption, Guid consumerAdoptionId)
+        private static void ValidateStorageConsumerAdoption(
+            ConsumerAdoption maybeConsumerAdoption,
+            Guid consumerAdoptionId)
         {
             if (maybeConsumerAdoption is null)
             {
                 throw new NotFoundConsumerAdoptionException(
                     message: $"Couldn't find consumerAdoption with consumerAdoptionId: {consumerAdoptionId}.");
             }
+        }
+
+        private static void ValidateOnBulkAddOrModifyConsumerAdoptions(List<ConsumerAdoption> consumerAdoptions)
+        {
+            Validate<InvalidConsumerAdoptionException>(
+                message: "Invalid consumerAdoption. Please correct the errors and try again.",
+                validations: (Rule: IsInvalid(consumerAdoptions), Parameter: nameof(consumerAdoptions)));
         }
 
         private static void ValidateConsumerAdoptionIsNotNull(ConsumerAdoption consumerAdoption)
@@ -126,6 +141,58 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions
                     Parameter: nameof(ConsumerAdoption.UpdatedDate)));
         }
 
+        virtual internal async ValueTask<List<ConsumerAdoption>>
+            ValidateConsumerAdoptionsAndAssignIdAndAuditOnAddAsync(List<ConsumerAdoption> consumerAdoptions)
+        {
+            List<ConsumerAdoption> validatedConsumerAdoptions = new List<ConsumerAdoption>();
+
+            foreach (ConsumerAdoption consumerAdoption in consumerAdoptions)
+            {
+                try
+                {
+                    string currentUserId = await this.securityAuditBroker.GetCurrentUserIdAsync();
+                    var currentDateTime = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
+                    consumerAdoption.CreatedDate = currentDateTime;
+                    consumerAdoption.CreatedBy = currentUserId;
+                    consumerAdoption.UpdatedDate = currentDateTime;
+                    consumerAdoption.UpdatedBy = currentUserId;
+                    await ValidateConsumerAdoptionOnAdd(consumerAdoption);
+                    validatedConsumerAdoptions.Add(consumerAdoption);
+                }
+                catch (Exception ex)
+                {
+                    await this.loggingBroker.LogErrorAsync(ex);
+                }
+            }
+
+            return validatedConsumerAdoptions;
+        }
+
+        virtual internal async ValueTask<List<ConsumerAdoption>> ValidateConsumerAdoptionsAndAssignAuditOnModifyAsync(
+            List<ConsumerAdoption> consumerAdoptions)
+        {
+            List<ConsumerAdoption> validatedConsumerAdoptions = new List<ConsumerAdoption>();
+
+            foreach (ConsumerAdoption consumerAdoption in consumerAdoptions)
+            {
+                try
+                {
+                    string currentUserId = await this.securityAuditBroker.GetCurrentUserIdAsync();
+                    var currentDateTime = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
+                    consumerAdoption.UpdatedDate = currentDateTime;
+                    consumerAdoption.UpdatedBy = currentUserId;
+                    await ValidateConsumerAdoptionOnModify(consumerAdoption);
+                    validatedConsumerAdoptions.Add(consumerAdoption);
+                }
+                catch (Exception ex)
+                {
+                    await this.loggingBroker.LogErrorAsync(ex);
+                }
+            }
+
+            return validatedConsumerAdoptions;
+        }
+
         private static dynamic IsInvalid(Guid id) => new
         {
             Condition = id == Guid.Empty,
@@ -142,6 +209,12 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions
         {
             Condition = date == default,
             Message = "Date is required"
+        };
+
+        private static dynamic IsInvalid(List<ConsumerAdoption> consumerAdoptions) => new
+        {
+            Condition = consumerAdoptions == null,
+            Message = "ConsumerAdoptions is required"
         };
 
         private static dynamic IsGreaterThan(string text, int maxLength) => new

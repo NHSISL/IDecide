@@ -16,8 +16,30 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions
 {
     public partial class ConsumerAdoptionService
     {
+        private delegate ValueTask ReturningNothingFunction();
         private delegate ValueTask<ConsumerAdoption> ReturningConsumerAdoptionFunction();
         private delegate ValueTask<IQueryable<ConsumerAdoption>> ReturningConsumerAdoptionsFunction();
+
+        private async ValueTask TryCatch(ReturningNothingFunction returningNothingFunction)
+        {
+            try
+            {
+                await returningNothingFunction();
+            }
+            catch (InvalidConsumerAdoptionException invalidConsumerAdoptionException)
+            {
+                throw await CreateAndLogValidationException(invalidConsumerAdoptionException);
+            }
+            catch (Exception exception)
+            {
+                var failedConsumerAdoptionServiceException =
+                    new FailedConsumerAdoptionServiceException(
+                        message: "Failed consumerAdoption service error occurred, please contact support.",
+                        innerException: exception);
+
+                throw await CreateAndLogServiceException(failedConsumerAdoptionServiceException);
+            }
+        }
 
         private async ValueTask<ConsumerAdoption> TryCatch(
             ReturningConsumerAdoptionFunction returningConsumerAdoptionFunction)
@@ -146,8 +168,8 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions
             return consumerAdoptionDependencyException;
         }
 
-        private async ValueTask<ConsumerAdoptionDependencyValidationException> CreateAndLogDependencyValidationException(
-            Xeption exception)
+        private async ValueTask<ConsumerAdoptionDependencyValidationException>
+            CreateAndLogDependencyValidationException(Xeption exception)
         {
             var consumerAdoptionDependencyValidationException =
                 new ConsumerAdoptionDependencyValidationException(
