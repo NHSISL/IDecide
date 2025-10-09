@@ -13,6 +13,7 @@ using LondonDataServices.IDecide.Core.Brokers.DateTimes;
 using LondonDataServices.IDecide.Core.Brokers.Identifiers;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Brokers.Securities;
+using LondonDataServices.IDecide.Core.Models.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
@@ -42,6 +43,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         private readonly Mock<IPatientService> patientServiceMock = new Mock<IPatientService>();
         private readonly Mock<INotificationService> notificationServiceMock = new Mock<INotificationService>();
         private readonly DecisionConfigurations decisionConfigurations;
+        private readonly SecurityBrokerConfigurations securityBrokerConfigurations;
         private readonly PatientOrchestrationService patientOrchestrationService;
         private static readonly int expireAfterMinutes = 1440;
         private static readonly int validatedCodeValidForMinutes = 1440;
@@ -69,6 +71,11 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 DecisionWorkflowRoles = decisionWorkflowRoles
             };
 
+            this.securityBrokerConfigurations = new SecurityBrokerConfigurations
+            {
+                ReCaptchaScoreThreshold = 0.8
+            };
+
             this.patientOrchestrationService = new PatientOrchestrationService(
                 loggingBroker: this.loggingBrokerMock.Object,
                 securityBroker: this.securityBrokerMock.Object,
@@ -78,7 +85,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 pdsService: this.pdsServiceMock.Object,
                 patientService: this.patientServiceMock.Object,
                 notificationService: this.notificationServiceMock.Object,
-                decisionConfigurations: this.decisionConfigurations);
+                decisionConfigurations: this.decisionConfigurations,
+                securityBrokerConfigurations: this.securityBrokerConfigurations);
 
         }
 

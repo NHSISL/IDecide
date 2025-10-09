@@ -54,7 +54,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 this.patientServiceMock.Object,
                 this.decisionServiceMock.Object,
                 this.notificationServiceMock.Object,
-                this.decisionConfigurations)
+                this.decisionConfigurations,
+                this.securityBrokerConfigurations)
             { CallBase = true };
 
             this.patientServiceMock.Setup(service =>
@@ -189,7 +190,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 this.patientServiceMock.Object,
                 this.decisionServiceMock.Object,
                 this.notificationServiceMock.Object,
-                this.decisionConfigurations)
+                this.decisionConfigurations,
+                this.securityBrokerConfigurations)
             { CallBase = true };
 
             this.patientServiceMock.Setup(service =>
@@ -323,7 +325,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 this.patientServiceMock.Object,
                 this.decisionServiceMock.Object,
                 this.notificationServiceMock.Object,
-                this.decisionConfigurations)
+                this.decisionConfigurations,
+                this.securityBrokerConfigurations)
             { CallBase = true };
 
             this.patientServiceMock.Setup(service =>
@@ -456,7 +459,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 this.patientServiceMock.Object,
                 this.decisionServiceMock.Object,
                 this.notificationServiceMock.Object,
-                this.decisionConfigurations)
+                this.decisionConfigurations,
+                this.securityBrokerConfigurations)
             { CallBase = true };
 
             this.patientServiceMock.Setup(service =>
@@ -594,7 +598,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 this.patientServiceMock.Object,
                 this.decisionServiceMock.Object,
                 this.notificationServiceMock.Object,
-                this.decisionConfigurations)
+                this.decisionConfigurations,
+                this.securityBrokerConfigurations)
             { CallBase = true };
 
             this.patientServiceMock.Setup(service =>
@@ -728,7 +733,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 this.patientServiceMock.Object,
                 this.decisionServiceMock.Object,
                 this.notificationServiceMock.Object,
-                this.decisionConfigurations)
+                this.decisionConfigurations,
+                this.securityBrokerConfigurations)
             { CallBase = true };
 
             this.patientServiceMock.Setup(service =>

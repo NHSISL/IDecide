@@ -48,7 +48,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 this.pdsServiceMock.Object,
                 this.patientServiceMock.Object,
                 this.notificationServiceMock.Object,
-                this.decisionConfigurations)
+                this.decisionConfigurations,
+                this.securityBrokerConfigurations)
             { CallBase = true };
 
             patientOrchestrationServiceMock.Setup(service =>
@@ -158,7 +159,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 this.pdsServiceMock.Object,
                 this.patientServiceMock.Object,
                 this.notificationServiceMock.Object,
-                this.decisionConfigurations)
+                this.decisionConfigurations,
+                this.securityBrokerConfigurations)
             { CallBase = true };
 
             patientOrchestrationServiceMock.Setup(service =>
@@ -267,7 +269,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 this.pdsServiceMock.Object,
                 this.patientServiceMock.Object,
                 this.notificationServiceMock.Object,
-                this.decisionConfigurations)
+                this.decisionConfigurations,
+                this.securityBrokerConfigurations)
             { CallBase = true };
 
             patientOrchestrationServiceMock.Setup(service =>
@@ -395,7 +398,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 this.pdsServiceMock.Object,
                 this.patientServiceMock.Object,
                 this.notificationServiceMock.Object,
-                this.decisionConfigurations)
+                this.decisionConfigurations,
+                this.securityBrokerConfigurations)
             { CallBase = true };
 
             patientOrchestrationServiceMock.Setup(service =>
@@ -529,7 +533,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 this.pdsServiceMock.Object,
                 this.patientServiceMock.Object,
                 this.notificationServiceMock.Object,
-                this.decisionConfigurations)
+                this.decisionConfigurations,
+                this.securityBrokerConfigurations)
             { CallBase = true };
 
             patientOrchestrationServiceMock.Setup(service =>

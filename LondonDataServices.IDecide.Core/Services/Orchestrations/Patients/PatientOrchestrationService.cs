@@ -5,16 +5,19 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using ISL.Providers.Captcha.Abstractions.Models;
 using LondonDataServices.IDecide.Core.Brokers.Audits;
 using LondonDataServices.IDecide.Core.Brokers.DateTimes;
 using LondonDataServices.IDecide.Core.Brokers.Identifiers;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Extensions.Patients;
+using LondonDataServices.IDecide.Core.Models.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions;
+using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
 using LondonDataServices.IDecide.Core.Services.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
@@ -33,6 +36,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
         private readonly IPatientService patientService;
         private readonly INotificationService notificationService;
         private readonly DecisionConfigurations decisionConfigurations;
+        private readonly SecurityBrokerConfigurations securityBrokerConfigurations;
 
         public PatientOrchestrationService(
             ILoggingBroker loggingBroker,
@@ -43,7 +47,8 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             IPdsService pdsService,
             IPatientService patientService,
             INotificationService notificationService,
-            DecisionConfigurations decisionConfigurations)
+            DecisionConfigurations decisionConfigurations,
+            SecurityBrokerConfigurations securityBrokerConfigurations)
         {
             this.loggingBroker = loggingBroker;
             this.securityBroker = securityBroker;
@@ -54,6 +59,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             this.patientService = patientService;
             this.notificationService = notificationService;
             this.decisionConfigurations = decisionConfigurations;
+            this.securityBrokerConfigurations = securityBrokerConfigurations;
         }
 
         public ValueTask<Patient> PatientLookupAsync(PatientLookup patientLookup) =>
@@ -428,12 +434,18 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             }
             else
             {
-                bool isCaptchaValid = await this.securityBroker.ValidateCaptchaAsync();
+                CaptchaResult captchaResult = await this.securityBroker.ValidateCaptchaAsync();
 
-                if (isCaptchaValid is false)
+                if (captchaResult.Success is false)
                 {
                     throw new InvalidCaptchaPatientOrchestrationServiceException(
                         message: "The provided captcha token is invalid.");
+                }
+                else if (captchaResult.Success is true
+                    && captchaResult.Score < securityBrokerConfigurations.ReCaptchaScoreThreshold)
+                {
+                    throw new ReCaptchaLowConfidenceException(
+                        message: "The captcha score is below the configured threshold.");
                 }
                 else
                 {
