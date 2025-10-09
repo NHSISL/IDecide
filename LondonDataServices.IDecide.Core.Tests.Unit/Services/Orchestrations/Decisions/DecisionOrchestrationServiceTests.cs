@@ -15,6 +15,7 @@ using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Models.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Models.Foundations.Consumers;
+using LondonDataServices.IDecide.Core.Models.Foundations.Consumers.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
@@ -291,7 +292,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
         private Expression<Func<Patient, bool>> SamePatientAs(Patient expectedPatient) =>
             actualPatient => this.compareLogic.Compare(expectedPatient, actualPatient).AreEqual;
 
-        public static TheoryData<Xeption> DependencyValidationExceptions()
+        public static TheoryData<Xeption> VerifyAndRecordDecisionDependencyValidationExceptions()
         {
             string randomMessage = GetRandomString();
             string exceptionMessage = randomMessage;
@@ -325,7 +326,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             };
         }
 
-        public static TheoryData<Xeption> DependencyExceptions()
+        public static TheoryData<Xeption> VerifyAndRecordDecisionDependencyExceptions()
         {
             string randomMessage = GetRandomString();
             string exceptionMessage = randomMessage;
@@ -355,6 +356,33 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
 
                 new NotificationServiceException(
                     message: "Notification service error occurred, please contact support.",
+                    innerException),
+            };
+        }
+
+        public static TheoryData<Xeption>
+            RetrieveAllPendingAdoptionDecisionsForConsumerDependencyValidationExceptions()
+        {
+            string randomMessage = GetRandomString();
+            string exceptionMessage = randomMessage;
+            var innerException = new Xeption(exceptionMessage);
+
+            return new TheoryData<Xeption>
+            {
+                new ConsumerValidationException(
+                    message: "Consumer validation errors occured, please try again",
+                    innerException),
+
+                new ConsumerDependencyValidationException(
+                    message: "Consumer dependency validation occurred, please try again.",
+                    innerException),
+
+                new DecisionValidationException(
+                    message: "Decision validation errors occured, please try again",
+                    innerException),
+
+                new DecisionDependencyValidationException(
+                    message: "Decision dependency validation occurred, please try again.",
                     innerException),
             };
         }
