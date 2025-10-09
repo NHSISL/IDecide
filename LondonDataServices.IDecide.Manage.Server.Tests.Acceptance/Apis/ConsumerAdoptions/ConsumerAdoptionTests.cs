@@ -215,6 +215,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.Consume
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(now)
                 .OnType<DateTimeOffset?>().Use(now)
+                .OnProperty(consumer => consumer.EntraId).Use(Guid.NewGuid().ToString())
                 .OnProperty(consumer => consumer.Name).Use(GetRandomStringWithLengthOf(255))
                 .OnProperty(consumer => consumer.CreatedDate).Use(now)
                 .OnProperty(consumer => consumer.CreatedBy).Use(user)
