@@ -383,7 +383,33 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
 
                 new DecisionDependencyValidationException(
                     message: "Decision dependency validation occurred, please try again.",
+                    innerException)
+            };
+        }
+
+        public static TheoryData<Xeption> RetrieveAllPendingAdoptionDecisionsForConsumerDependencyExceptions()
+        {
+            string randomMessage = GetRandomString();
+            string exceptionMessage = randomMessage;
+            var innerException = new Xeption(exceptionMessage);
+
+            return new TheoryData<Xeption>
+            {
+                new ConsumerDependencyException(
+                    message: "Consumer dependency error occurred, please contact support.",
                     innerException),
+
+                new ConsumerServiceException(
+                    message: "Consumer service error occurred, please contact support.",
+                    innerException),
+
+                new DecisionDependencyException(
+                    message: "Decision dependency error occurred, please contact support.",
+                    innerException),
+
+                new DecisionServiceException(
+                    message: "Decision service error occurred, please contact support.",
+                    innerException)
             };
         }
     }
