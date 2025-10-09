@@ -105,6 +105,11 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 broker.GetCurrentUserAsync(),
                     Times.Once);
 
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedDecisionOrchestrationDependencyValidationException))),
+                        Times.Once);
+
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.securityBrokerMock.VerifyNoOtherCalls();
             this.consumerServiceMock.VerifyNoOtherCalls();
