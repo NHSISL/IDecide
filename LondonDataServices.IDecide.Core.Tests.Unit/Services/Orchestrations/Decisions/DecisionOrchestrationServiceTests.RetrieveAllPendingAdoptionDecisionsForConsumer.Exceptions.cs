@@ -12,6 +12,7 @@ using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Securities;
 using Moq;
+using Xeptions;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Decisions
 {
@@ -59,6 +60,49 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
 
             this.consumerServiceMock.Verify(service =>
                 service.RetrieveAllConsumersAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.securityBrokerMock.VerifyNoOtherCalls();
+            this.consumerServiceMock.VerifyNoOtherCalls();
+            this.decisionServiceMock.VerifyNoOtherCalls();
+        }
+
+        [Theory]
+        [MemberData(nameof(RetrieveAllPendingAdoptionDecisionsForConsumerDependencyValidationExceptions))]
+        public async Task ShouldThrowDependencyValidationExceptionOnRetrieveAllPendingAdoptionDecisionsAndLogItAsync(
+            Xeption dependencyValidationException)
+        {
+            // given
+            DateTimeOffset changesSinceDate = GetRandomDateTimeOffset();
+            string decisionType = GetRandomString();
+
+            this.securityBrokerMock.Setup(broker =>
+                broker.GetCurrentUserAsync())
+                    .ThrowsAsync(dependencyValidationException);
+
+            var expectedDecisionOrchestrationDependencyValidationException =
+                new DecisionOrchestrationDependencyValidationException(
+                    message: "Decision orchestration dependency validation error occurred, " +
+                        "please fix the errors and try again.",
+                    innerException: dependencyValidationException.InnerException as Xeption);
+
+            // when
+            ValueTask<List<Decision>> retrieveAllPendingAdoptionDecisionsForConsumerTask =
+                this.decisionOrchestrationService.RetrieveAllPendingAdoptionDecisionsForConsumer(
+                    changesSinceDate, decisionType);
+
+            DecisionOrchestrationDependencyValidationException
+                actualDecisionOrchestrationDependencyValidationException =
+                    await Assert.ThrowsAsync<DecisionOrchestrationDependencyValidationException>(() =>
+                        retrieveAllPendingAdoptionDecisionsForConsumerTask.AsTask());
+
+            // then
+            actualDecisionOrchestrationDependencyValidationException
+                .Should().BeEquivalentTo(expectedDecisionOrchestrationDependencyValidationException);
+
+            this.securityBrokerMock.Verify(broker =>
+                broker.GetCurrentUserAsync(),
                     Times.Once);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
