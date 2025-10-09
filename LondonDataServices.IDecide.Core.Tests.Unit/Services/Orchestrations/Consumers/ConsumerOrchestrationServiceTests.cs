@@ -45,14 +45,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
 
         public ConsumerOrchestrationServiceTests()
         {
-            this.loggingBrokerMock = new Mock<ILoggingBroker>();
-            this.dateTimeBrokerMock = new Mock<IDateTimeBroker>();
-            this.securityBrokerMock = new Mock<ISecurityBroker>();
-            this.consumerServiceMock = new Mock<IConsumerService>();
-            this.consumerAdoptionServiceMock = new Mock<IConsumerAdoptionService>();
-            this.patientServiceMock = new Mock<IPatientService>();
-            this.notificationServiceMock = new Mock<INotificationService>();
-
             this.consumerOrchestrationService = new ConsumerOrchestrationService(
                 loggingBroker: this.loggingBrokerMock.Object,
                 dateTimeBroker: this.dateTimeBrokerMock.Object,
@@ -185,8 +177,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
 
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
+                .OnProperty(consumer => consumer.EntraId).Use(GetRandomStringWithLengthOf(255))
                 .OnProperty(consumer => consumer.Name).Use(GetRandomStringWithLengthOf(255))
-                .OnProperty(consumer => consumer.Name).Use(GetRandomStringWithLengthOf(36))
                 .OnProperty(consumer => consumer.CreatedBy).Use(userId)
                 .OnProperty(consumer => consumer.UpdatedBy).Use(userId)
                 .OnProperty(consumer => consumer.ConsumerAdoptions).IgnoreIt();
