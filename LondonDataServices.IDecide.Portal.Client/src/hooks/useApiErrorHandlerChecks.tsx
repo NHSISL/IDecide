@@ -50,7 +50,6 @@ export function useApiErrorHandlerChecks({ setApiError, configuration }: Props) 
                     </a>
                     {" for a call back and assistance."}
                 </>
-
             );
             return true;
         }
