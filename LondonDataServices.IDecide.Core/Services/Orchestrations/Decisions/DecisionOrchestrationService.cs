@@ -3,6 +3,7 @@
 // ---------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ISL.Providers.Captcha.Abstractions.Models;
@@ -12,11 +13,13 @@ using LondonDataServices.IDecide.Core.Brokers.Identifiers;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Models.Brokers.Securities;
+using LondonDataServices.IDecide.Core.Models.Foundations.Consumers;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions.Exceptions;
+using LondonDataServices.IDecide.Core.Services.Foundations.Consumers;
 using LondonDataServices.IDecide.Core.Services.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Services.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
@@ -33,6 +36,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
         private readonly IPatientService patientService;
         private readonly IDecisionService decisionService;
         private readonly INotificationService notificationService;
+        private readonly IConsumerService consumerService;
         private readonly DecisionConfigurations decisionConfigurations;
         private readonly SecurityBrokerConfigurations securityBrokerConfigurations;
 
@@ -45,6 +49,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
             IPatientService patientService,
             IDecisionService decisionService,
             INotificationService notificationService,
+            IConsumerService consumerService,
             DecisionConfigurations decisionConfigurations,
             SecurityBrokerConfigurations securityBrokerConfigurations)
         {
@@ -56,6 +61,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
             this.patientService = patientService;
             this.decisionService = decisionService;
             this.notificationService = notificationService;
+            this.consumerService = consumerService;
             this.decisionConfigurations = decisionConfigurations;
             this.securityBrokerConfigurations = securityBrokerConfigurations;
         }
@@ -155,11 +161,19 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
 
                     message: $"The patient's decision has been successfully submitted for " +
                         $"decisionId {addedDecision.Id}, " +
-                        $"patient Nhs Number: {maybeMatchingPatient.NhsNumber}, with PatientId {maybeMatchingPatient.Id}",
+                        $"patient Nhs Number: {maybeMatchingPatient.NhsNumber}, with " +
+                        $"PatientId {maybeMatchingPatient.Id}",
 
                     fileName: null,
                     correlationId: correlationId.ToString());
             });
+
+        public async ValueTask<List<Decision>> RetrieveAllPendingAdoptionDecisionsForConsumer(
+            DateTimeOffset changesSinceDate,
+            string decisionType)
+        {
+            throw new NotImplementedException();
+        }
 
         virtual internal async ValueTask<bool> CheckIfIsAuthenticatedUserWithRequiredRoleAsync()
         {
