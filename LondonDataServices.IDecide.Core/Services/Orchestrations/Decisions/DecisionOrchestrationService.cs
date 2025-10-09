@@ -172,7 +172,31 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
             DateTimeOffset changesSinceDate,
             string decisionType)
         {
-            throw new NotImplementedException();
+            var currentUser = await this.securityBroker.GetCurrentUserAsync();
+            IQueryable<Consumer> consumers = await this.consumerService.RetrieveAllConsumersAsync();
+            Consumer maybeConsumer = consumers.FirstOrDefault(c => c.EntraId == currentUser.UserId);
+            //ValidateConsumerExists(maybeConsumer);
+            Guid consumerId = maybeConsumer.Id;
+
+            IQueryable<Decision> decisions = await this.decisionService.RetrieveAllDecisionsAsync();
+
+            if (changesSinceDate != default)
+            {
+                decisions = decisions.Where(d => d.CreatedDate > changesSinceDate);
+            }
+
+            if (!string.IsNullOrWhiteSpace(decisionType))
+            {
+                decisions = decisions.Where(decision =>
+                    decision.DecisionType != null &&
+                    decision.DecisionType.Name == decisionType);
+            }
+
+            List<Decision> pendingAdoptionDecisions = decisions
+                .Where(decision => decision.ConsumerAdoptions.All(a => a.ConsumerId != consumerId))
+                .ToList();
+
+            return pendingAdoptionDecisions;
         }
 
         virtual internal async ValueTask<bool> CheckIfIsAuthenticatedUserWithRequiredRoleAsync()
