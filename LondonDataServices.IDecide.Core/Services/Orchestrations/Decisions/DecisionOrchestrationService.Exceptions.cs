@@ -3,7 +3,10 @@
 // ---------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using LondonDataServices.IDecide.Core.Models.Foundations.Consumers.Exceptions;
+using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients.Exceptions;
@@ -21,9 +24,9 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
     public partial class DecisionOrchestrationService
     {
         private delegate ValueTask ReturningNothingFunction();
+        private delegate ValueTask<List<Decision>> ReturningDecisionsFunction();
 
-        private async ValueTask TryCatch(
-            ReturningNothingFunction returningNothingFunction)
+        private async ValueTask TryCatch(ReturningNothingFunction returningNothingFunction)
         {
             try
             {
@@ -108,6 +111,43 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
             {
                 throw await CreateAndLogDependencyExceptionAsync(
                     notificationDependencyException);
+            }
+            catch (Exception exception)
+            {
+                var failedDecisionOrchestrationServiceException =
+                    new FailedDecisionOrchestrationServiceException(
+                        message: "Failed decision orchestration service error occurred, contact support.",
+                        innerException: exception);
+
+                throw await CreateAndLogServiceExceptionAsync(failedDecisionOrchestrationServiceException);
+            }
+        }
+
+        private async ValueTask<List<Decision>> TryCatch(ReturningDecisionsFunction returningDecisionsFunction)
+        {
+            try
+            {
+                return await returningDecisionsFunction();
+            }
+            catch (ConsumerValidationException consumerValidationException)
+            {
+                throw await CreateAndLogDependencyValidationExceptionAsync(
+                    consumerValidationException);
+            }
+            catch (ConsumerDependencyValidationException consumerDependencyValidationException)
+            {
+                throw await CreateAndLogDependencyValidationExceptionAsync(
+                    consumerDependencyValidationException);
+            }
+            catch (DecisionValidationException decisionValidationException)
+            {
+                throw await CreateAndLogDependencyValidationExceptionAsync(
+                    decisionValidationException);
+            }
+            catch (DecisionDependencyValidationException decisionDependencyValidationException)
+            {
+                throw await CreateAndLogDependencyValidationExceptionAsync(
+                    decisionDependencyValidationException);
             }
             catch (Exception exception)
             {

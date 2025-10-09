@@ -168,41 +168,41 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
                     correlationId: correlationId.ToString());
             });
 
-        public async ValueTask<List<Decision>> RetrieveAllPendingAdoptionDecisionsForConsumer(
-            DateTimeOffset changesSinceDate,
-            string decisionType)
-        {
-            var currentUser = await this.securityBroker.GetCurrentUserAsync();
-            IQueryable<Consumer> consumers = await this.consumerService.RetrieveAllConsumersAsync();
-            Consumer maybeConsumer = consumers.FirstOrDefault(c => c.EntraId == currentUser.UserId);
-
-            if (maybeConsumer is null)
+        public ValueTask<List<Decision>> RetrieveAllPendingAdoptionDecisionsForConsumer(
+            DateTimeOffset changesSinceDate, string decisionType) =>
+            TryCatch(async () =>
             {
-                throw new UnauthorizedDecisionOrchestrationServiceException(
-                    message: "The current user is not authorized to perform this operation.");
-            }
+                var currentUser = await this.securityBroker.GetCurrentUserAsync();
+                IQueryable<Consumer> consumers = await this.consumerService.RetrieveAllConsumersAsync();
+                Consumer maybeConsumer = consumers.FirstOrDefault(c => c.EntraId == currentUser.UserId);
 
-            Guid consumerId = maybeConsumer.Id;
-            IQueryable<Decision> decisions = await this.decisionService.RetrieveAllDecisionsAsync();
+                if (maybeConsumer is null)
+                {
+                    throw new UnauthorizedDecisionOrchestrationServiceException(
+                        message: "The current user is not authorized to perform this operation.");
+                }
 
-            if (changesSinceDate != default)
-            {
-                decisions = decisions.Where(d => d.CreatedDate > changesSinceDate);
-            }
+                Guid consumerId = maybeConsumer.Id;
+                IQueryable<Decision> decisions = await this.decisionService.RetrieveAllDecisionsAsync();
 
-            if (!string.IsNullOrWhiteSpace(decisionType))
-            {
-                decisions = decisions.Where(decision =>
-                    decision.DecisionType != null &&
-                    decision.DecisionType.Name == decisionType);
-            }
+                if (changesSinceDate != default)
+                {
+                    decisions = decisions.Where(d => d.CreatedDate > changesSinceDate);
+                }
 
-            List<Decision> pendingAdoptionDecisions = decisions
-                .Where(decision => decision.ConsumerAdoptions.All(a => a.ConsumerId != consumerId))
-                .ToList();
+                if (!string.IsNullOrWhiteSpace(decisionType))
+                {
+                    decisions = decisions.Where(decision =>
+                        decision.DecisionType != null &&
+                        decision.DecisionType.Name == decisionType);
+                }
 
-            return pendingAdoptionDecisions;
-        }
+                List<Decision> pendingAdoptionDecisions = decisions
+                    .Where(decision => decision.ConsumerAdoptions.All(a => a.ConsumerId != consumerId))
+                    .ToList();
+
+                return pendingAdoptionDecisions;
+            });
 
         virtual internal async ValueTask<bool> CheckIfIsAuthenticatedUserWithRequiredRoleAsync()
         {
