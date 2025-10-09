@@ -30,8 +30,30 @@ export function useApiErrorHandlerChecks({ setApiError, configuration }: Props) 
                     {" for a call back and assistance."}
                 </>
             );
+            return true; 
+        } else if (errorTitle === "The captcha score is below the configured threshold.") {
+            setApiError(
+                <>
+                    Your activity looks unusual. For your security, for further assistance please e-mail{" "}
+                    <a
+                        href={`mailto:${configuration.helpdeskContactEmail}`}
+                        style={{ textDecoration: "underline" }}
+                    >
+                        {configuration.helpdeskContactEmail}
+                    </a>
+                    {" or leave a voicemail with the One London Service desk on "}
+                    <a
+                        href={`tel:${configuration.helpdeskContactNumber}`}
+                        style={{ textDecoration: "underline" }}
+                    >
+                        {configuration.helpdeskContactNumber}
+                    </a>
+                    {" for a call back and assistance."}
+                </>
+            );
             return true;
-        } else if (errorTitle === "The provided captcha token is invalid.") {
+        }
+        else if (errorTitle === "The provided captcha token is invalid.") {
             setApiError(
                 <>
                     There was a problem verifying you are not a robot. Please try again, or contact support at{" "}
