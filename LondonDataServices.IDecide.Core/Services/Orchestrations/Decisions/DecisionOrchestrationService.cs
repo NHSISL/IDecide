@@ -175,9 +175,14 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
             var currentUser = await this.securityBroker.GetCurrentUserAsync();
             IQueryable<Consumer> consumers = await this.consumerService.RetrieveAllConsumersAsync();
             Consumer maybeConsumer = consumers.FirstOrDefault(c => c.EntraId == currentUser.UserId);
-            //ValidateConsumerExists(maybeConsumer);
-            Guid consumerId = maybeConsumer.Id;
 
+            if (maybeConsumer is null)
+            {
+                throw new UnauthorizedDecisionOrchestrationServiceException(
+                    message: "The current user is not authorized to perform this operation.");
+            }
+
+            Guid consumerId = maybeConsumer.Id;
             IQueryable<Decision> decisions = await this.decisionService.RetrieveAllDecisionsAsync();
 
             if (changesSinceDate != default)
