@@ -115,5 +115,53 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             this.consumerServiceMock.VerifyNoOtherCalls();
             this.decisionServiceMock.VerifyNoOtherCalls();
         }
+
+        [Theory]
+        [MemberData(nameof(RetrieveAllPendingAdoptionDecisionsForConsumerDependencyExceptions))]
+        public async Task ShouldThrowDependencyExceptionOnRetrieveAllPendingAdoptionDecisionsAndLogItAsync(
+            Xeption dependencyException)
+        {
+            // given
+            DateTimeOffset changesSinceDate = GetRandomDateTimeOffset();
+            string decisionType = GetRandomString();
+
+            this.securityBrokerMock.Setup(broker =>
+                broker.GetCurrentUserAsync())
+                    .ThrowsAsync(dependencyException);
+
+            var expectedDecisionOrchestrationDependencyException =
+                new DecisionOrchestrationDependencyException(
+                    message: "Decision orchestration dependency error occurred, " +
+                        "please fix the errors and try again.",
+                    innerException: dependencyException.InnerException as Xeption);
+
+            // when
+            ValueTask<List<Decision>> retrieveAllPendingAdoptionDecisionsForConsumerTask =
+                this.decisionOrchestrationService.RetrieveAllPendingAdoptionDecisionsForConsumer(
+                    changesSinceDate, decisionType);
+
+            DecisionOrchestrationDependencyException
+                actualDecisionOrchestrationDependencyException =
+                    await Assert.ThrowsAsync<DecisionOrchestrationDependencyException>(
+                        testCode: retrieveAllPendingAdoptionDecisionsForConsumerTask.AsTask);
+
+            // then
+            actualDecisionOrchestrationDependencyException
+                .Should().BeEquivalentTo(expectedDecisionOrchestrationDependencyException);
+
+            this.securityBrokerMock.Verify(broker =>
+                broker.GetCurrentUserAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedDecisionOrchestrationDependencyException))),
+                        Times.Once);
+
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.securityBrokerMock.VerifyNoOtherCalls();
+            this.consumerServiceMock.VerifyNoOtherCalls();
+            this.decisionServiceMock.VerifyNoOtherCalls();
+        }
     }
 }
