@@ -16,9 +16,9 @@
 
 	<ItemGroup>
 		<PackageReference Include="EFxceptions" Version="1.0.3" />
-		<PackageReference Include="ISL.Providers.Captcha.Abstractions" Version="1.0.0.2" />
-		<PackageReference Include="ISL.Providers.Captcha.FakeCaptcha" Version="1.0.0.2" />
-		<PackageReference Include="ISL.Providers.Captcha.GoogleReCaptcha" Version="1.0.0.2" />
+		<PackageReference Include="ISL.Providers.Captcha.Abstractions" Version="1.0.0.3" />
+		<PackageReference Include="ISL.Providers.Captcha.FakeCaptcha" Version="1.0.0.3" />
+		<PackageReference Include="ISL.Providers.Captcha.GoogleReCaptcha" Version="1.0.0.3" />
 		<PackageReference Include="ISL.Providers.Notifications.Abstractions" Version="1.0.0.3" />
 		<PackageReference Include="ISL.Providers.Notifications.GovukNotify" Version="1.0.0.3" />
 		<PackageReference Include="ISL.Providers.Notifications.NotifyIntercept" Version="1.0.0.3" />
