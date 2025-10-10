@@ -27,7 +27,19 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             User randomUser = CreateRandomUser();
             IQueryable<Consumer> consumers = CreateRandomConsumersWithMatchingEntraIdEntry(randomUser.UserId);
             IQueryable<Decision> decisions = CreateRandomDecisions();
-            List<Decision> expectedPendingAdoptionDecisions = decisions.ToList();
+            Guid consumerId = consumers.First().Id;
+
+            List<Decision> expectedPendingAdoptionDecisions = decisions
+                .Where(decision =>
+                    !decision.ConsumerAdoptions.Any(a => a.ConsumerId == consumerId)
+                    || (
+                        decision.ConsumerAdoptions.Any(a => a.ConsumerId == consumerId)
+                        && decision.ConsumerAdoptions
+                            .Where(a => a.ConsumerId == consumerId)
+                            .Max(a => a.CreatedDate) < decision.CreatedDate
+                    )
+                )
+                .ToList();
 
             this.securityBrokerMock.Setup(broker =>
                 broker.GetCurrentUserAsync())
@@ -67,8 +79,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
         }
 
         [Fact]
-        public async Task
-            ShouldRetrieveAllPendingAdoptionDecisionsForConsumerForPopulatedChangesSinceDateAsync()
+        public async Task ShouldRetrieveAllPendingAdoptionDecisionsForConsumerForPopulatedChangesSinceDateAsync()
         {
             // given
             DateTimeOffset nowDateTimeOffset = DateTimeOffset.Now;
@@ -77,11 +88,22 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             User randomUser = CreateRandomUser();
             IQueryable<Consumer> consumers = CreateRandomConsumersWithMatchingEntraIdEntry(randomUser.UserId);
             IQueryable<Decision> decisions = CreateRandomDecisions();
+            Guid consumerId = consumers.First().Id;
             List<Decision> allDecisions = decisions.ToList();
             allDecisions.First().CreatedDate = changesSinceDate.AddMinutes(-10);
 
-            List<Decision> expectedPendingAdoptionDecisions =
-                allDecisions.Where(d => d.CreatedDate > changesSinceDate).ToList();
+            List<Decision> expectedPendingAdoptionDecisions = allDecisions
+                .Where(d => d.CreatedDate > changesSinceDate)
+                .Where(decision =>
+                    !decision.ConsumerAdoptions.Any(a => a.ConsumerId == consumerId)
+                    || (
+                        decision.ConsumerAdoptions.Any(a => a.ConsumerId == consumerId)
+                        && decision.ConsumerAdoptions
+                            .Where(a => a.ConsumerId == consumerId)
+                            .Max(a => a.CreatedDate) < decision.CreatedDate
+                    )
+                )
+                .ToList();
 
             this.securityBrokerMock.Setup(broker =>
                 broker.GetCurrentUserAsync())
@@ -122,8 +144,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
         }
 
         [Fact]
-        public async Task
-            ShouldRetrieveAllPendingAdoptionDecisionsForConsumerForPopulatedChangesSinceDateAndDecisionTypeAsync()
+        public async Task ShouldRetrieveAllPendingAdoptionDecisionsForConsumerForPopulatedChangesSinceDateAndDecisionTypeAsync()
         {
             // given
             DateTimeOffset nowDateTimeOffset = DateTimeOffset.Now;
@@ -132,7 +153,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             User randomUser = CreateRandomUser();
             IQueryable<Consumer> consumers = CreateRandomConsumersWithMatchingEntraIdEntry(randomUser.UserId);
             List<Decision> decisions = CreateRandomDecisions().ToList();
-
+            Guid consumerId = consumers.First().Id;
             Decision excludedDecisionByDate = new Decision();
 
             excludedDecisionByDate.DecisionType = new DecisionType
@@ -173,12 +194,20 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             includedDecision.CreatedDate = changesSinceDate.AddMinutes(1);
             decisions.Add(includedDecision);
 
-            List<Decision> expectedPendingAdoptionDecisions =
-                decisions
-                    .Where(d =>
-                        d.CreatedDate > changesSinceDate &&
-                        d.DecisionType?.Name == decisionType)
-                    .ToList();
+            List<Decision> expectedPendingAdoptionDecisions = decisions
+                .Where(d =>
+                    d.CreatedDate > changesSinceDate &&
+                    d.DecisionType?.Name == decisionType)
+                .Where(decision =>
+                    !decision.ConsumerAdoptions.Any(a => a.ConsumerId == consumerId)
+                    || (
+                        decision.ConsumerAdoptions.Any(a => a.ConsumerId == consumerId)
+                        && decision.ConsumerAdoptions
+                            .Where(a => a.ConsumerId == consumerId)
+                            .Max(a => a.CreatedDate) < decision.CreatedDate
+                    )
+                )
+                .ToList();
 
             this.securityBrokerMock.Setup(broker =>
                 broker.GetCurrentUserAsync())
