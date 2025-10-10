@@ -105,7 +105,7 @@ export const SearchByNhsNumber = ({ powerOfAttourney = false }: {
         setPoaSurnameError("");
         setPoaRelationshipError("");
 
-        if (powerOfAttourney) {
+        if (isPowerOfAttorney) {
             if (!validatePoaFields()) return;
         } else {
             if (nhsNumberInput.length !== 10) {
@@ -114,7 +114,7 @@ export const SearchByNhsNumber = ({ powerOfAttourney = false }: {
             }
         }
         setLoading(true);
-        const nhsNumberToUse = powerOfAttourney ? poaNhsNumberInput : nhsNumberInput;
+        const nhsNumberToUse = isPowerOfAttorney ? poaNhsNumberInput : nhsNumberInput;
         const searchCriteria = new SearchCriteria({ nhsNumber: nhsNumberToUse });
         const patientLookup = new PatientLookup(searchCriteria, []);
         let poaModel = undefined;
@@ -290,7 +290,7 @@ export const SearchByNhsNumber = ({ powerOfAttourney = false }: {
                                 type="submit"
                                 disabled={
                                     loading ||
-                                    (powerOfAttourney
+                                    (isPowerOfAttorney
                                         ? !poaNhsNumberInput ||
                                         !poaFirstname.trim() ||
                                         !poaSurname.trim() ||
