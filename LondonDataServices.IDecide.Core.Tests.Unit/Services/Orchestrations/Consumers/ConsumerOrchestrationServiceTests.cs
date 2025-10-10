@@ -8,6 +8,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Security.Claims;
 using LondonDataServices.IDecide.Core.Brokers.DateTimes;
+using LondonDataServices.IDecide.Core.Brokers.Identifiers;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerAdoptions.Exceptions;
@@ -34,6 +35,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
         private readonly Mock<ILoggingBroker> loggingBrokerMock = new Mock<ILoggingBroker>();
         private readonly Mock<IDateTimeBroker> dateTimeBrokerMock = new Mock<IDateTimeBroker>();
         private readonly Mock<ISecurityBroker> securityBrokerMock = new Mock<ISecurityBroker>();
+        private readonly Mock<IIdentifierBroker> identifierBrokerMock = new Mock<IIdentifierBroker>();
         private readonly Mock<IConsumerService> consumerServiceMock = new Mock<IConsumerService>();
 
         private readonly Mock<IConsumerAdoptionService> consumerAdoptionServiceMock =
@@ -49,6 +51,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
                 loggingBroker: this.loggingBrokerMock.Object,
                 dateTimeBroker: this.dateTimeBrokerMock.Object,
                 securityBroker: this.securityBrokerMock.Object,
+                identifierBroker: this.identifierBrokerMock.Object,
                 consumerService: this.consumerServiceMock.Object,
                 consumerAdoptionService: this.consumerAdoptionServiceMock.Object,
                 patientService: this.patientServiceMock.Object,
@@ -167,8 +170,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
             return filler;
         }
 
-        private static Consumer CreateRandomConsumer() =>
-            CreateConsumerFiller(dateTimeOffset: GetRandomDateTimeOffset()).Create();
+        private static IQueryable<Consumer> CreateRandomConsumers() =>
+            CreateConsumerFiller(dateTimeOffset: GetRandomDateTimeOffset())
+                .Create(count: GetRandomNumber())
+                .AsQueryable();
 
         private static Filler<Consumer> CreateConsumerFiller(DateTimeOffset dateTimeOffset, string userId = "")
         {
