@@ -22,9 +22,7 @@ interface ErrorWithResponse {
     message?: string;
 }
 
-export const SearchByNhsNumber = ({ powerOfAttourney = false }: {
-    powerOfAttourney?: boolean;
-}) => {
+export const SearchByNhsNumber = () => {
     const { t: translate } = useTranslation();
     const stepContext = useContext(StepContext);
 
@@ -313,7 +311,7 @@ export const SearchByNhsNumber = ({ powerOfAttourney = false }: {
                     </form>
                 </Col>
                 <Col xs={12} md={6} lg={6} className="custom-col-spacing">
-                    {!powerOfAttourney && (
+                    {!isPowerOfAttorney && (
                         <div
                             className="p-4 mb-4"
                             style={{
@@ -333,7 +331,7 @@ export const SearchByNhsNumber = ({ powerOfAttourney = false }: {
                             <p>{translate("SearchBySHSNumber.helpGuidanceNhsNumberText4")}</p>
                         </div>
                     )}
-                    {powerOfAttourney && (
+                    {isPowerOfAttorney && (
                         <div
                             className="p-4 mb-4"
                             style={{
