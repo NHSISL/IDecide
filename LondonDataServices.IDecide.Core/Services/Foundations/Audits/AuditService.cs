@@ -40,10 +40,10 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Audits
         public ValueTask<Audit> AddAuditAsync(
             string auditType,
             string title,
-            string? message,
-            string? fileName,
-            string? correlationId,
-            string? logLevel = "Information") =>
+            string message,
+            string fileName,
+            string correlationId,
+            string logLevel = "Information") =>
         TryCatch(async () =>
         {
             DateTimeOffset dateTimeOffset = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
