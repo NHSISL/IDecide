@@ -26,32 +26,41 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
             List<Decision> inputDecisions = randomDecisions;
             User randomUser = CreateRandomUser();
             DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
-            Consumer randomConsumer = CreateRandomConsumer();
-            Guid consumerId = Guid.Parse(randomUser.UserId);
-            randomConsumer.Id = consumerId;
+            IQueryable<Consumer> randomConsumers = CreateRandomConsumers();
+            randomConsumers.First().EntraId = randomUser.UserId;
+            Consumer matchedConsumer = randomConsumers.First();
             List<ConsumerAdoption> consumerAdoptions = new List<ConsumerAdoption>();
+            List<Guid> generatedIds = new List<Guid>();
+
+            this.securityBrokerMock.Setup(broker =>
+                broker.GetCurrentUserAsync())
+                .ReturnsAsync(randomUser);
+
+            this.consumerServiceMock.Setup(service =>
+                service.RetrieveAllConsumersAsync())
+                .ReturnsAsync(randomConsumers);
 
             foreach (var decision in inputDecisions)
             {
+                Guid generatedId = Guid.NewGuid();
+                generatedIds.Add(generatedId);
+
+                this.identifierBrokerMock.Setup(broker =>
+                    broker.GetIdentifierAsync())
+                    .ReturnsAsync(generatedId);
+
+                this.dateTimeBrokerMock.Setup(broker =>
+                    broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTimeOffset);
+
                 consumerAdoptions.Add(new ConsumerAdoption
                 {
-                    ConsumerId = consumerId,
+                    Id = generatedId,
+                    ConsumerId = matchedConsumer.Id,
                     DecisionId = decision.Id,
                     AdoptionDate = randomDateTimeOffset
                 });
             }
-
-            this.securityBrokerMock.Setup(broker =>
-                broker.GetCurrentUserAsync())
-                    .ReturnsAsync(randomUser);
-
-            this.consumerServiceMock.Setup(service =>
-                service.RetrieveConsumerByIdAsync(consumerId))
-                    .ReturnsAsync(randomConsumer);
-
-            this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffsetAsync())
-                    .ReturnsAsync(randomDateTimeOffset);
 
             this.consumerAdoptionServiceMock.Setup(service =>
                 service.BulkAddOrModifyConsumerAdoptionsAsync(consumerAdoptions, It.IsAny<int>()))
@@ -76,8 +85,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
                     Times.Once);
 
             this.consumerServiceMock.Verify(service =>
-                service.RetrieveConsumerByIdAsync(consumerId),
+                service.RetrieveAllConsumersAsync(),
                     Times.Once);
+
+            this.identifierBrokerMock.Verify(broker =>
+                broker.GetIdentifierAsync(),
+                    Times.Exactly(inputDecisions.Count));
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffsetAsync(),
@@ -106,6 +119,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.securityBrokerMock.VerifyNoOtherCalls();
+            this.identifierBrokerMock.VerifyNoOtherCalls();
             this.consumerServiceMock.VerifyNoOtherCalls();
             this.consumerAdoptionServiceMock.VerifyNoOtherCalls();
             this.patientServiceMock.VerifyNoOtherCalls();
@@ -120,55 +134,61 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
             List<Decision> inputDecisions = randomDecisions;
             User randomUser = CreateRandomUser();
             DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
-            Consumer randomConsumer = CreateRandomConsumer();
-            Guid consumerId = Guid.Parse(randomUser.UserId);
-            randomConsumer.Id = consumerId;
+            IQueryable<Consumer> randomConsumers = CreateRandomConsumers();
+            randomConsumers.First().EntraId = randomUser.UserId;
+            Consumer matchedConsumer = randomConsumers.First();
+            Guid consumerId = matchedConsumer.Id;
             List<ConsumerAdoption> consumerAdoptions = new List<ConsumerAdoption>();
+            List<Guid> generatedIds = new List<Guid>();
+            var patientById = new Dictionary<Guid, Patient>();
+
+            this.securityBrokerMock.Setup(broker =>
+                broker.GetCurrentUserAsync())
+                .ReturnsAsync(randomUser);
+
+            this.consumerServiceMock.Setup(service =>
+                service.RetrieveAllConsumersAsync())
+                .ReturnsAsync(randomConsumers);
 
             foreach (var decision in inputDecisions)
             {
+                Guid generatedId = Guid.NewGuid();
+                generatedIds.Add(generatedId);
+
+                this.identifierBrokerMock.Setup(broker =>
+                    broker.GetIdentifierAsync())
+                    .ReturnsAsync(generatedId);
+
+                this.dateTimeBrokerMock.Setup(broker =>
+                    broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTimeOffset);
+
                 consumerAdoptions.Add(new ConsumerAdoption
                 {
+                    Id = generatedId,
                     ConsumerId = consumerId,
                     DecisionId = decision.Id,
                     AdoptionDate = randomDateTimeOffset
                 });
-            }
 
-            this.securityBrokerMock.Setup(broker =>
-                broker.GetCurrentUserAsync())
-                    .ReturnsAsync(randomUser);
-
-            this.consumerServiceMock.Setup(service =>
-                service.RetrieveConsumerByIdAsync(consumerId))
-                    .ReturnsAsync(randomConsumer);
-
-            this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffsetAsync())
-                    .ReturnsAsync(randomDateTimeOffset);
-
-            this.consumerAdoptionServiceMock.Setup(service =>
-                service.BulkAddOrModifyConsumerAdoptionsAsync(consumerAdoptions, It.IsAny<int>()))
-                    .Returns(ValueTask.CompletedTask);
-
-            var patientById = new Dictionary<Guid, Patient>();
-
-            foreach (var decision in inputDecisions)
-            {
                 var patient = CreateRandomPatient();
                 patientById[decision.PatientId] = patient;
 
                 this.patientServiceMock.Setup(service =>
                     service.RetrievePatientByIdAsync(decision.PatientId))
-                        .ReturnsAsync(patient);
+                    .ReturnsAsync(patient);
 
                 this.notificationServiceMock.Setup(service =>
                     service.SendSubscriberUsageNotificationAsync(
                         It.Is<NotificationInfo>(info =>
                             info.Decision == decision &&
                             info.Patient == patient)))
-                        .Returns(ValueTask.CompletedTask);
+                    .Returns(ValueTask.CompletedTask);
             }
+
+            this.consumerAdoptionServiceMock.Setup(service =>
+                service.BulkAddOrModifyConsumerAdoptionsAsync(consumerAdoptions, It.IsAny<int>()))
+                    .Returns(ValueTask.CompletedTask);
 
             // when
             await this.consumerOrchestrationService.AdoptPatientDecisions(inputDecisions);
@@ -179,8 +199,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
                     Times.Once);
 
             this.consumerServiceMock.Verify(service =>
-                service.RetrieveConsumerByIdAsync(consumerId),
+                service.RetrieveAllConsumersAsync(),
                     Times.Once);
+
+            this.identifierBrokerMock.Verify(broker =>
+                broker.GetIdentifierAsync(),
+                    Times.Exactly(inputDecisions.Count));
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffsetAsync(),
@@ -200,6 +224,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
             foreach (var decision in inputDecisions)
             {
                 var expectedPatient = patientById[decision.PatientId];
+
                 this.notificationServiceMock.Verify(service =>
                     service.SendSubscriberUsageNotificationAsync(
                         It.Is<NotificationInfo>(info =>
@@ -214,6 +239,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.securityBrokerMock.VerifyNoOtherCalls();
+            this.identifierBrokerMock.VerifyNoOtherCalls();
             this.consumerServiceMock.VerifyNoOtherCalls();
             this.consumerAdoptionServiceMock.VerifyNoOtherCalls();
             this.patientServiceMock.VerifyNoOtherCalls();
