@@ -3,6 +3,7 @@
 // ---------------------------------------------------------
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Brokers.Notifications;
@@ -77,8 +78,23 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                         await ValidateSendLetterInputsOnSendCode(
                            this.notificationConfig.LetterCodeTemplateId, personalisation);
 
+                        var addressLines = notificationInfo.Patient.Address.Split(',');
+                        var addressLine1 = addressLines.ElementAtOrDefault(0) ?? string.Empty;
+                        var addressLine2 = addressLines.ElementAtOrDefault(1) ?? string.Empty;
+                        var addressLine3 = addressLines.ElementAtOrDefault(2) ?? string.Empty;
+                        var addressLine4 = addressLines.ElementAtOrDefault(3) ?? string.Empty;
+                        var addressLine5 = addressLines.ElementAtOrDefault(4) ?? string.Empty;
+                        var addressLine6 = addressLines.ElementAtOrDefault(5) ?? string.Empty;
+
                         await this.notificationBroker.SendLetterAsync(
                             this.notificationConfig.LetterCodeTemplateId,
+                            addressLine1,
+                            addressLine2,
+                            addressLine3,
+                            addressLine4,
+                            addressLine5,
+                            addressLine6,
+                            addressLine7: notificationInfo.Patient.PostCode,
                             personalisation,
                             string.Empty);
 
@@ -153,8 +169,23 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                         await ValidateSendLetterInputsOnSendSubmissionSuccess(
                             this.notificationConfig.LetterSubmissionSuccessTemplateId, personalisation);
 
+                        var addressLines = notificationInfo.Patient.Address.Split(',');
+                        var addressLine1 = addressLines.ElementAtOrDefault(0) ?? string.Empty;
+                        var addressLine2 = addressLines.ElementAtOrDefault(1) ?? string.Empty;
+                        var addressLine3 = addressLines.ElementAtOrDefault(2) ?? string.Empty;
+                        var addressLine4 = addressLines.ElementAtOrDefault(3) ?? string.Empty;
+                        var addressLine5 = addressLines.ElementAtOrDefault(4) ?? string.Empty;
+                        var addressLine6 = addressLines.ElementAtOrDefault(5) ?? string.Empty;
+
                         await this.notificationBroker.SendLetterAsync(
                             this.notificationConfig.LetterSubmissionSuccessTemplateId,
+                            addressLine1,
+                            addressLine2,
+                            addressLine3,
+                            addressLine4,
+                            addressLine5,
+                            addressLine6,
+                            addressLine7: notificationInfo.Patient.PostCode,
                             personalisation,
                             string.Empty);
 
@@ -230,8 +261,23 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                         await ValidateSendLetterInputsOnSendSubscriberUsage(
                             this.notificationConfig.LetterSubscriberUsageTemplateId, personalisation);
 
+                        var addressLines = notificationInfo.Patient.Address.Split(',');
+                        var addressLine1 = addressLines.ElementAtOrDefault(0) ?? string.Empty;
+                        var addressLine2 = addressLines.ElementAtOrDefault(1) ?? string.Empty;
+                        var addressLine3 = addressLines.ElementAtOrDefault(2) ?? string.Empty;
+                        var addressLine4 = addressLines.ElementAtOrDefault(3) ?? string.Empty;
+                        var addressLine5 = addressLines.ElementAtOrDefault(4) ?? string.Empty;
+                        var addressLine6 = addressLines.ElementAtOrDefault(5) ?? string.Empty;
+
                         await this.notificationBroker.SendLetterAsync(
                             this.notificationConfig.LetterSubscriberUsageTemplateId,
+                            addressLine1,
+                            addressLine2,
+                            addressLine3,
+                            addressLine4,
+                            addressLine5,
+                            addressLine6,
+                            addressLine7: notificationInfo.Patient.PostCode,
                             personalisation,
                             string.Empty);
 
