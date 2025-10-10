@@ -22,9 +22,7 @@ interface ErrorWithResponse {
     message?: string;
 }
 
-export const SearchByNhsNumber = ({ powerOfAttourney = false }: {
-    powerOfAttourney?: boolean;
-}) => {
+export const SearchByNhsNumber = () => {
     const { t: translate } = useTranslation();
     const stepContext = useContext(StepContext);
 
@@ -105,7 +103,7 @@ export const SearchByNhsNumber = ({ powerOfAttourney = false }: {
         setPoaSurnameError("");
         setPoaRelationshipError("");
 
-        if (powerOfAttourney) {
+        if (isPowerOfAttorney) {
             if (!validatePoaFields()) return;
         } else {
             if (nhsNumberInput.length !== 10) {
@@ -114,7 +112,7 @@ export const SearchByNhsNumber = ({ powerOfAttourney = false }: {
             }
         }
         setLoading(true);
-        const nhsNumberToUse = powerOfAttourney ? poaNhsNumberInput : nhsNumberInput;
+        const nhsNumberToUse = isPowerOfAttorney ? poaNhsNumberInput : nhsNumberInput;
         const searchCriteria = new SearchCriteria({ nhsNumber: nhsNumberToUse });
         const patientLookup = new PatientLookup(searchCriteria, []);
         let poaModel = undefined;
@@ -290,7 +288,7 @@ export const SearchByNhsNumber = ({ powerOfAttourney = false }: {
                                 type="submit"
                                 disabled={
                                     loading ||
-                                    (powerOfAttourney
+                                    (isPowerOfAttorney
                                         ? !poaNhsNumberInput ||
                                         !poaFirstname.trim() ||
                                         !poaSurname.trim() ||
@@ -313,7 +311,7 @@ export const SearchByNhsNumber = ({ powerOfAttourney = false }: {
                     </form>
                 </Col>
                 <Col xs={12} md={6} lg={6} className="custom-col-spacing">
-                    {!powerOfAttourney && (
+                    {!isPowerOfAttorney && (
                         <div
                             className="p-4 mb-4"
                             style={{
@@ -333,7 +331,7 @@ export const SearchByNhsNumber = ({ powerOfAttourney = false }: {
                             <p>{translate("SearchBySHSNumber.helpGuidanceNhsNumberText4")}</p>
                         </div>
                     )}
-                    {powerOfAttourney && (
+                    {isPowerOfAttorney && (
                         <div
                             className="p-4 mb-4"
                             style={{
