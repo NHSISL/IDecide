@@ -2,7 +2,6 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using System;
 using System.Threading.Tasks;
 using Hl7.Fhir.Model;
 using ISL.Providers.PDS.Abstractions;

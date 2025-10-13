@@ -179,7 +179,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                         var addressLine5 = addressLines.ElementAtOrDefault(4) ?? string.Empty;
 
                         await this.notificationBroker.SendLetterAsync(
-                            templateId: this.notificationConfig.LetterCodeTemplateId,
+                            templateId: this.notificationConfig.LetterSubmissionSuccessTemplateId,
                             recipientName:
                                 $"{notificationInfo.Patient.Title} " +
                                 $"{notificationInfo.Patient.GivenName} " +
@@ -273,7 +273,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                         var addressLine5 = addressLines.ElementAtOrDefault(4) ?? string.Empty;
 
                         await this.notificationBroker.SendLetterAsync(
-                            templateId: this.notificationConfig.LetterCodeTemplateId,
+                            templateId: this.notificationConfig.LetterSubscriberUsageTemplateId,
                             recipientName:
                                 $"{notificationInfo.Patient.Title} " +
                                 $"{notificationInfo.Patient.GivenName} " +
