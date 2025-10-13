@@ -36,23 +36,28 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 service.RetrieveAllConsumersAsync())
                     .ReturnsAsync(consumers);
 
-            var expectedUnauthorizedDecisionOrchestrationServiceException =
+            var unauthorizedDecisionOrchestrationServiceException =
                 new UnauthorizedDecisionOrchestrationServiceException(
                     "The current user is not authorized to perform this operation.");
+
+            var expectedDecisionOrchestrationServiceException =
+                new DecisionOrchestrationServiceException(
+                    message: "Decision orchestration service error occurred, contact support.",
+                    innerException: unauthorizedDecisionOrchestrationServiceException);
 
             // when
             ValueTask<List<Decision>> retrieveAllPendingAdoptionDecisionsForConsumerTask =
                 this.decisionOrchestrationService.RetrieveAllPendingAdoptionDecisionsForConsumer(
                     changesSinceDate, decisionType);
 
-            UnauthorizedDecisionOrchestrationServiceException
-                actualUnauthorizedDecisionOrchestrationServiceException =
-                    await Assert.ThrowsAsync<UnauthorizedDecisionOrchestrationServiceException>(() =>
-                        retrieveAllPendingAdoptionDecisionsForConsumerTask.AsTask());
+            DecisionOrchestrationServiceException
+                actualDecisionOrchestrationServiceException =
+                    await Assert.ThrowsAsync<DecisionOrchestrationServiceException>(
+                        testCode: retrieveAllPendingAdoptionDecisionsForConsumerTask.AsTask);
 
             // then
-            actualUnauthorizedDecisionOrchestrationServiceException.Should()
-                .BeEquivalentTo(expectedUnauthorizedDecisionOrchestrationServiceException);
+            actualDecisionOrchestrationServiceException.Should()
+                .BeEquivalentTo(expectedDecisionOrchestrationServiceException);
 
             this.securityBrokerMock.Verify(broker =>
                 broker.GetCurrentUserAsync(),
@@ -62,6 +67,11 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 service.RetrieveAllConsumersAsync(),
                     Times.Once);
 
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedDecisionOrchestrationServiceException))),
+                        Times.Once);
+
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.securityBrokerMock.VerifyNoOtherCalls();
             this.consumerServiceMock.VerifyNoOtherCalls();
@@ -69,7 +79,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
         }
 
         [Theory]
-        [MemberData(nameof(RetrieveAllPendingAdoptionDecisionsForConsumerDependencyValidationExceptions))]
+        [MemberData(nameof(DependencyValidationExceptions))]
         public async Task ShouldThrowDependencyValidationExceptionOnRetrieveAllPendingAdoptionDecisionsAndLogItAsync(
             Xeption dependencyValidationException)
         {
@@ -117,7 +127,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
         }
 
         [Theory]
-        [MemberData(nameof(RetrieveAllPendingAdoptionDecisionsForConsumerDependencyExceptions))]
+        [MemberData(nameof(DependencyExceptions))]
         public async Task ShouldThrowDependencyExceptionOnRetrieveAllPendingAdoptionDecisionsAndLogItAsync(
             Xeption dependencyException)
         {

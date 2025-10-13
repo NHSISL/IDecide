@@ -17,7 +17,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
     public partial class DecisionOrchestrationServiceTests
     {
         [Theory]
-        [MemberData(nameof(VerifyAndRecordDecisionDependencyValidationExceptions))]
+        [MemberData(nameof(DependencyValidationExceptions))]
         public async Task ShouldThrowDependencyValidationOnVerifyAndRecordDecisionAndLogItAsync(
             Xeption dependencyValidationException)
         {
@@ -72,7 +72,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
         }
 
         [Theory]
-        [MemberData(nameof(VerifyAndRecordDecisionDependencyExceptions))]
+        [MemberData(nameof(DependencyExceptions))]
         public async Task ShouldThrowDependencyOnVerifyAndRecordDecisionAndLogItAsync(
             Xeption dependencyException)
         {

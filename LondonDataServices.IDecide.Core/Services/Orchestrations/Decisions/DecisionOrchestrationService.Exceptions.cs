@@ -52,6 +52,26 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
             {
                 throw await CreateAndLogValidationExceptionAsync(validationCodeMatchExpiredException);
             }
+            catch (ConsumerValidationException consumerValidationException)
+            {
+                throw await CreateAndLogDependencyValidationExceptionAsync(
+                    consumerValidationException);
+            }
+            catch (ConsumerDependencyValidationException consumerDependencyValidationException)
+            {
+                throw await CreateAndLogDependencyValidationExceptionAsync(
+                    consumerDependencyValidationException);
+            }
+            catch (ConsumerServiceException consumerServiceException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(
+                    consumerServiceException);
+            }
+            catch (ConsumerDependencyException consumerDependencyException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(
+                    consumerDependencyException);
+            }
             catch (PatientValidationException patientValidationException)
             {
                 throw await CreateAndLogDependencyValidationExceptionAsync(
@@ -168,6 +188,46 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
             {
                 throw await CreateAndLogDependencyExceptionAsync(
                     decisionDependencyException);
+            }
+            catch (PatientValidationException patientValidationException)
+            {
+                throw await CreateAndLogDependencyValidationExceptionAsync(
+                    patientValidationException);
+            }
+            catch (PatientDependencyValidationException patientDependencyValidationException)
+            {
+                throw await CreateAndLogDependencyValidationExceptionAsync(
+                    patientDependencyValidationException);
+            }
+            catch (PatientServiceException patientServiceException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(
+                    patientServiceException);
+            }
+            catch (PatientDependencyException patientDependencyException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(
+                    patientDependencyException);
+            }
+            catch (NotificationValidationException notificationValidationException)
+            {
+                throw await CreateAndLogDependencyValidationExceptionAsync(
+                    notificationValidationException);
+            }
+            catch (NotificationDependencyValidationException notificationDependencyValidationException)
+            {
+                throw await CreateAndLogDependencyValidationExceptionAsync(
+                    notificationDependencyValidationException);
+            }
+            catch (NotificationServiceException notificationServiceException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(
+                    notificationServiceException);
+            }
+            catch (NotificationDependencyException notificationDependencyException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(
+                    notificationDependencyException);
             }
             catch (Exception exception)
             {

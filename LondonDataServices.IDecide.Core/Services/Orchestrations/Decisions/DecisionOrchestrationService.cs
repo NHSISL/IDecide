@@ -197,19 +197,15 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
                         decision.DecisionType.Name == decisionType);
                 }
 
-                // Returns decisions that are pending adoption for the current consumer.
-                // A decision is pending if:
-                // - It has never been adopted by this consumer.
-                // - It has been updated after the consumer's last adoption.
-                // - It is NOT pending if the consumer's last adoption happened after the decision's last update.
                 List<Decision> pendingAdoptionDecisions = decisions
                     .Where(decision =>
-                        !decision.ConsumerAdoptions.Any(a => a.ConsumerId == consumerId)
+                        !decision.ConsumerAdoptions.Any(consumerAdoption => consumerAdoption.ConsumerId == consumerId)
                         || (
-                            decision.ConsumerAdoptions.Any(a => a.ConsumerId == consumerId)
-                            && decision.ConsumerAdoptions
-                                .Where(a => a.ConsumerId == consumerId)
-                                .Max(a => a.CreatedDate) < decision.CreatedDate
+                            decision.ConsumerAdoptions.Any(
+                                consumerAdoption => consumerAdoption.ConsumerId == consumerId) &&
+                                    decision.ConsumerAdoptions
+                                .Where(consumerAdoption => consumerAdoption.ConsumerId == consumerId)
+                                .Max(consumerAdoption => consumerAdoption.CreatedDate) < decision.CreatedDate
                         )
                     )
                     .ToList();

@@ -292,7 +292,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
         private Expression<Func<Patient, bool>> SamePatientAs(Patient expectedPatient) =>
             actualPatient => this.compareLogic.Compare(expectedPatient, actualPatient).AreEqual;
 
-        public static TheoryData<Xeption> VerifyAndRecordDecisionDependencyValidationExceptions()
+        public static TheoryData<Xeption> DependencyValidationExceptions()
         {
             string randomMessage = GetRandomString();
             string exceptionMessage = randomMessage;
@@ -323,10 +323,18 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 new NotificationDependencyValidationException(
                     message: "Notification dependency validation occurred, please try again.",
                     innerException),
+
+                new ConsumerValidationException(
+                    message: "Consumer validation errors occured, please try again",
+                    innerException),
+
+                new ConsumerDependencyValidationException(
+                    message: "Consumer dependency validation occurred, please try again.",
+                    innerException)
             };
         }
 
-        public static TheoryData<Xeption> VerifyAndRecordDecisionDependencyExceptions()
+        public static TheoryData<Xeption> DependencyExceptions()
         {
             string randomMessage = GetRandomString();
             string exceptionMessage = randomMessage;
@@ -357,44 +365,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 new NotificationServiceException(
                     message: "Notification service error occurred, please contact support.",
                     innerException),
-            };
-        }
 
-        public static TheoryData<Xeption>
-            RetrieveAllPendingAdoptionDecisionsForConsumerDependencyValidationExceptions()
-        {
-            string randomMessage = GetRandomString();
-            string exceptionMessage = randomMessage;
-            var innerException = new Xeption(exceptionMessage);
-
-            return new TheoryData<Xeption>
-            {
-                new ConsumerValidationException(
-                    message: "Consumer validation errors occured, please try again",
-                    innerException),
-
-                new ConsumerDependencyValidationException(
-                    message: "Consumer dependency validation occurred, please try again.",
-                    innerException),
-
-                new DecisionValidationException(
-                    message: "Decision validation errors occured, please try again",
-                    innerException),
-
-                new DecisionDependencyValidationException(
-                    message: "Decision dependency validation occurred, please try again.",
-                    innerException)
-            };
-        }
-
-        public static TheoryData<Xeption> RetrieveAllPendingAdoptionDecisionsForConsumerDependencyExceptions()
-        {
-            string randomMessage = GetRandomString();
-            string exceptionMessage = randomMessage;
-            var innerException = new Xeption(exceptionMessage);
-
-            return new TheoryData<Xeption>
-            {
                 new ConsumerDependencyException(
                     message: "Consumer dependency error occurred, please contact support.",
                     innerException),
@@ -402,14 +373,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 new ConsumerServiceException(
                     message: "Consumer service error occurred, please contact support.",
                     innerException),
-
-                new DecisionDependencyException(
-                    message: "Decision dependency error occurred, please contact support.",
-                    innerException),
-
-                new DecisionServiceException(
-                    message: "Decision service error occurred, please contact support.",
-                    innerException)
             };
         }
     }

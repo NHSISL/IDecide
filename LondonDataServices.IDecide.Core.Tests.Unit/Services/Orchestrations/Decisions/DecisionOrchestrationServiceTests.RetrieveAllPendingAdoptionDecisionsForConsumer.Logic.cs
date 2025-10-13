@@ -31,12 +31,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
 
             List<Decision> expectedPendingAdoptionDecisions = decisions
                 .Where(decision =>
-                    !decision.ConsumerAdoptions.Any(a => a.ConsumerId == consumerId)
+                    !decision.ConsumerAdoptions.Any(consumerAdoption => consumerAdoption.ConsumerId == consumerId)
                     || (
-                        decision.ConsumerAdoptions.Any(a => a.ConsumerId == consumerId)
+                        decision.ConsumerAdoptions.Any(consumerAdoption => consumerAdoption.ConsumerId == consumerId)
                         && decision.ConsumerAdoptions
-                            .Where(a => a.ConsumerId == consumerId)
-                            .Max(a => a.CreatedDate) < decision.CreatedDate
+                            .Where(consumerAdoption => consumerAdoption.ConsumerId == consumerId)
+                            .Max(consumerAdoption => consumerAdoption.CreatedDate) < decision.CreatedDate
                     )
                 )
                 .ToList();
@@ -93,14 +93,14 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             allDecisions.First().CreatedDate = changesSinceDate.AddMinutes(-10);
 
             List<Decision> expectedPendingAdoptionDecisions = allDecisions
-                .Where(d => d.CreatedDate > changesSinceDate)
+                .Where(decision => decision.CreatedDate > changesSinceDate)
                 .Where(decision =>
-                    !decision.ConsumerAdoptions.Any(a => a.ConsumerId == consumerId)
+                    !decision.ConsumerAdoptions.Any(consumerAdoption => consumerAdoption.ConsumerId == consumerId)
                     || (
-                        decision.ConsumerAdoptions.Any(a => a.ConsumerId == consumerId)
+                        decision.ConsumerAdoptions.Any(consumerAdoption => consumerAdoption.ConsumerId == consumerId)
                         && decision.ConsumerAdoptions
-                            .Where(a => a.ConsumerId == consumerId)
-                            .Max(a => a.CreatedDate) < decision.CreatedDate
+                            .Where(consumerAdoption => consumerAdoption.ConsumerId == consumerId)
+                            .Max(consumerAdoption => consumerAdoption.CreatedDate) < decision.CreatedDate
                     )
                 )
                 .ToList();
@@ -144,7 +144,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
         }
 
         [Fact]
-        public async Task ShouldRetrieveAllPendingAdoptionDecisionsForConsumerForPopulatedChangesSinceDateAndDecisionTypeAsync()
+        public async Task
+            ShouldRetrieveAllPendingAdoptionDecisionsForConsumerForPopulatedChangesSinceDateAndDecisionTypeAsync()
         {
             // given
             DateTimeOffset nowDateTimeOffset = DateTimeOffset.Now;
@@ -195,16 +196,16 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             decisions.Add(includedDecision);
 
             List<Decision> expectedPendingAdoptionDecisions = decisions
-                .Where(d =>
-                    d.CreatedDate > changesSinceDate &&
-                    d.DecisionType?.Name == decisionType)
                 .Where(decision =>
-                    !decision.ConsumerAdoptions.Any(a => a.ConsumerId == consumerId)
+                    decision.CreatedDate > changesSinceDate &&
+                    decision.DecisionType?.Name == decisionType)
+                .Where(decision =>
+                    !decision.ConsumerAdoptions.Any(consumerAdoption => consumerAdoption.ConsumerId == consumerId)
                     || (
-                        decision.ConsumerAdoptions.Any(a => a.ConsumerId == consumerId)
+                        decision.ConsumerAdoptions.Any(consumerAdoption => consumerAdoption.ConsumerId == consumerId)
                         && decision.ConsumerAdoptions
-                            .Where(a => a.ConsumerId == consumerId)
-                            .Max(a => a.CreatedDate) < decision.CreatedDate
+                            .Where(consumerAdoption => consumerAdoption.ConsumerId == consumerId)
+                            .Max(consumerAdoption => consumerAdoption.CreatedDate) < decision.CreatedDate
                     )
                 )
                 .ToList();
