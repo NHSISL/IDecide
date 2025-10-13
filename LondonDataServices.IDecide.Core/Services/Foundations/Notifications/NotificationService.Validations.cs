@@ -157,7 +157,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
 
                 (Rule: IsInvalid(notificationInfo.Patient.Gender), Parameter: nameof(NotificationInfo.Patient.Gender)),
 
-                 (Rule: IsInvalidContact(
+                (Rule: IsInvalidContact(
                     NotificationPreference.Email, notificationInfo.Patient, notificationInfo.Patient.Email),
                     Parameter: nameof(NotificationInfo.Patient.Email)),
 

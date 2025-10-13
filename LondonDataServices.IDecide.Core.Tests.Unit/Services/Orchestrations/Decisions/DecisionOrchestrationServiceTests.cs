@@ -14,6 +14,8 @@ using LondonDataServices.IDecide.Core.Brokers.Identifiers;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Models.Brokers.Securities;
+using LondonDataServices.IDecide.Core.Models.Foundations.Consumers;
+using LondonDataServices.IDecide.Core.Models.Foundations.Consumers.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
@@ -22,6 +24,7 @@ using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Securities;
+using LondonDataServices.IDecide.Core.Services.Foundations.Consumers;
 using LondonDataServices.IDecide.Core.Services.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Services.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
@@ -42,6 +45,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
         private readonly Mock<IPatientService> patientServiceMock = new Mock<IPatientService>();
         private readonly Mock<INotificationService> notificationServiceMock = new Mock<INotificationService>();
         private readonly Mock<IDecisionService> decisionServiceMock = new Mock<IDecisionService>();
+        private readonly Mock<IConsumerService> consumerServiceMock = new Mock<IConsumerService>();
         private readonly DecisionConfigurations decisionConfigurations;
         private readonly SecurityBrokerConfigurations securityBrokerConfigurations;
         private static readonly int maxRetryCount = 3;
@@ -61,6 +65,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             this.patientServiceMock = new Mock<IPatientService>();
             this.notificationServiceMock = new Mock<INotificationService>();
             this.decisionServiceMock = new Mock<IDecisionService>();
+            this.consumerServiceMock = new Mock<IConsumerService>();
             this.compareLogic = new CompareLogic();
 
             this.decisionConfigurations = new DecisionConfigurations
@@ -85,6 +90,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 patientService: this.patientServiceMock.Object,
                 notificationService: this.notificationServiceMock.Object,
                 decisionService: this.decisionServiceMock.Object,
+                consumerService: this.consumerServiceMock.Object,
                 decisionConfigurations: this.decisionConfigurations,
                 securityBrokerConfigurations: this.securityBrokerConfigurations);
         }
@@ -111,6 +117,72 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             string result = new MnemonicString(wordCount: 1, wordMinLength: length, wordMaxLength: length).GetValue();
 
             return result.Length > length ? result.Substring(0, length) : result;
+        }
+
+        private static IQueryable<Consumer> CreateRandomConsumers()
+        {
+            return CreateConsumerFiller()
+                .Create(count: GetRandomNumber())
+                .AsQueryable();
+        }
+
+        private static IQueryable<Consumer> CreateRandomConsumersWithMatchingEntraIdEntry(string userId)
+        {
+            List<Consumer> consumers = CreateConsumerFiller()
+                .Create(count: GetRandomNumber())
+                .ToList();
+
+            if (!string.IsNullOrWhiteSpace(userId) && consumers.Count > 0)
+            {
+                consumers[0].EntraId = userId;
+            }
+
+            return consumers.AsQueryable();
+        }
+
+        private static Filler<Consumer> CreateConsumerFiller()
+        {
+            string userId = Guid.NewGuid().ToString();
+            DateTimeOffset dateTimeOffset = DateTimeOffset.UtcNow;
+            var filler = new Filler<Consumer>();
+
+            filler.Setup()
+                .OnType<DateTimeOffset>().Use(dateTimeOffset)
+                .OnProperty(consumer => consumer.EntraId).Use(GetRandomStringWithLengthOf(255))
+                .OnProperty(consumer => consumer.Name).Use(GetRandomStringWithLengthOf(255))
+                .OnProperty(consumer => consumer.CreatedBy).Use(userId)
+                .OnProperty(consumer => consumer.UpdatedBy).Use(userId)
+                .OnProperty(consumer => consumer.ConsumerAdoptions).IgnoreIt();
+
+            return filler;
+        }
+
+        private static Patient CreateRandomPatient() =>
+            CreatePatientFiller().Create();
+
+        private static Filler<Patient> CreatePatientFiller()
+        {
+            string userId = Guid.NewGuid().ToString();
+            DateTimeOffset dateTimeOffset = DateTimeOffset.UtcNow;
+            var filler = new Filler<Patient>();
+
+            filler.Setup()
+                .OnType<DateTimeOffset>().Use(dateTimeOffset)
+                .OnType<DateTimeOffset?>().Use(dateTimeOffset)
+                .OnProperty(patient => patient.NhsNumber).Use(GetRandomStringWithLengthOf(10))
+                .OnProperty(patient => patient.Title).Use(GetRandomStringWithLengthOf(35))
+                .OnProperty(patient => patient.GivenName).Use(GetRandomStringWithLengthOf(255))
+                .OnProperty(patient => patient.Surname).Use(GetRandomStringWithLengthOf(255))
+                .OnProperty(patient => patient.Gender).Use(GetRandomStringWithLengthOf(50))
+                .OnProperty(patient => patient.Email).Use(GetRandomStringWithLengthOf(255))
+                .OnProperty(patient => patient.Phone).Use(GetRandomStringWithLengthOf(15))
+                .OnProperty(patient => patient.PostCode).Use(GetRandomStringWithLengthOf(8))
+                .OnProperty(patient => patient.ValidationCode).Use(GetRandomStringWithLengthOf(5))
+                .OnProperty(patient => patient.CreatedBy).Use(userId)
+                .OnProperty(patient => patient.UpdatedBy).Use(userId)
+                .OnProperty(patient => patient.Decisions).IgnoreIt();
+
+            return filler;
         }
 
         private static Patient GetRandomPatient(
@@ -141,6 +213,13 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 .OnProperty(patient => patient.RetryCount).Use(retryCount);
 
             return filler;
+        }
+
+        private static IQueryable<Decision> CreateRandomDecisions()
+        {
+            return CreateDecisionFiller(CreateRandomPatient())
+                .Create(count: GetRandomNumber())
+                .AsQueryable();
         }
 
         private static Decision GetRandomDecision(Patient patient) =>
@@ -244,6 +323,14 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 new NotificationDependencyValidationException(
                     message: "Notification dependency validation occurred, please try again.",
                     innerException),
+
+                new ConsumerValidationException(
+                    message: "Consumer validation errors occured, please try again",
+                    innerException),
+
+                new ConsumerDependencyValidationException(
+                    message: "Consumer dependency validation occurred, please try again.",
+                    innerException)
             };
         }
 
@@ -277,6 +364,14 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
 
                 new NotificationServiceException(
                     message: "Notification service error occurred, please contact support.",
+                    innerException),
+
+                new ConsumerDependencyException(
+                    message: "Consumer dependency error occurred, please contact support.",
+                    innerException),
+
+                new ConsumerServiceException(
+                    message: "Consumer service error occurred, please contact support.",
                     innerException),
             };
         }

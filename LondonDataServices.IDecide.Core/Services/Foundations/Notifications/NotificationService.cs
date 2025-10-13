@@ -87,10 +87,12 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
 
                         await this.notificationBroker.SendLetterAsync(
                             templateId: this.notificationConfig.LetterCodeTemplateId,
+
                             recipientName:
                                 $"{notificationInfo.Patient.Title} " +
                                 $"{notificationInfo.Patient.GivenName} " +
                                 $"{notificationInfo.Patient.Surname}",
+                            
                             addressLine1: addressLine1,
                             addressLine2: addressLine2,
                             addressLine3: addressLine3,
@@ -180,10 +182,12 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
 
                         await this.notificationBroker.SendLetterAsync(
                             templateId: this.notificationConfig.LetterSubmissionSuccessTemplateId,
+                            
                             recipientName:
                                 $"{notificationInfo.Patient.Title} " +
                                 $"{notificationInfo.Patient.GivenName} " +
                                 $"{notificationInfo.Patient.Surname}",
+                            
                             addressLine1: addressLine1,
                             addressLine2: addressLine2,
                             addressLine3: addressLine3,
@@ -274,10 +278,12 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
 
                         await this.notificationBroker.SendLetterAsync(
                             templateId: this.notificationConfig.LetterSubscriberUsageTemplateId,
+                            
                             recipientName:
                                 $"{notificationInfo.Patient.Title} " +
                                 $"{notificationInfo.Patient.GivenName} " +
                                 $"{notificationInfo.Patient.Surname}",
+                            
                             addressLine1: addressLine1,
                             addressLine2: addressLine2,
                             addressLine3: addressLine3,
