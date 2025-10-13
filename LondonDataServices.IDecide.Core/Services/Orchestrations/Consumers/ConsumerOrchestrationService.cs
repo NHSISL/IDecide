@@ -59,6 +59,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Consumers
                 IQueryable<Consumer> consumers = await this.consumerService.RetrieveAllConsumersAsync();
                 Consumer consumer = consumers.FirstOrDefault(c => c.EntraId == user.UserId);
                 var consumerAdoptions = new List<ConsumerAdoption>();
+                DateTimeOffset adoptionDate = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
 
                 foreach (var decision in decisions)
                 {
@@ -69,9 +70,8 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Consumers
                             Id = await this.identifierBroker.GetIdentifierAsync(),
                             ConsumerId = consumer.Id,
                             DecisionId = decision.Id,
-                            AdoptionDate = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync()
+                            AdoptionDate = adoptionDate
                         };
-
                         consumerAdoptions.Add(consumerAdoption);
                     }
                     catch (Exception ex)

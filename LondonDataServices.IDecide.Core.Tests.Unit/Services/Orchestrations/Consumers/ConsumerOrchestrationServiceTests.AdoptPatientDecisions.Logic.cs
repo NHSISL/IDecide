@@ -40,6 +40,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
                 service.RetrieveAllConsumersAsync())
                 .ReturnsAsync(randomConsumers);
 
+            DateTimeOffset adoptionDate = GetRandomDateTimeOffset();
+
             foreach (var decision in inputDecisions)
             {
                 Guid generatedId = Guid.NewGuid();
@@ -51,14 +53,14 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
 
                 this.dateTimeBrokerMock.Setup(broker =>
                     broker.GetCurrentDateTimeOffsetAsync())
-                    .ReturnsAsync(randomDateTimeOffset);
+                    .ReturnsAsync(adoptionDate);
 
                 consumerAdoptions.Add(new ConsumerAdoption
                 {
                     Id = generatedId,
                     ConsumerId = matchedConsumer.Id,
                     DecisionId = decision.Id,
-                    AdoptionDate = randomDateTimeOffset
+                    AdoptionDate = adoptionDate
                 });
             }
 
@@ -94,7 +96,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffsetAsync(),
-                    Times.Exactly(inputDecisions.Count));
+                    Times.Once);
 
             this.consumerAdoptionServiceMock.Verify(service =>
                 service.BulkAddOrModifyConsumerAdoptionsAsync(
@@ -208,7 +210,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffsetAsync(),
-                    Times.Exactly(inputDecisions.Count));
+                    Times.Once);
 
             this.consumerAdoptionServiceMock.Verify(service =>
                 service.BulkAddOrModifyConsumerAdoptionsAsync(
