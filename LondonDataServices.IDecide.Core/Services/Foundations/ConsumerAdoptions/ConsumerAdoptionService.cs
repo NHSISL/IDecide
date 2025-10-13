@@ -114,20 +114,32 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions
                 try
                 {
                     List<ConsumerAdoption> batch = consumerAdoptions.Skip(i).Take(batchSize).ToList();
-                    List<Guid> batchIds = batch.Select(consumerAdoption => consumerAdoption.Id).ToList();
 
-                    IQueryable<ConsumerAdoption> storageConsumerAdoptions =
+                    var batchCompositeKeys = batch
+                        .Select(consumerAdoption => new { consumerAdoption.DecisionId, consumerAdoption.ConsumerId })
+                        .ToList();
+
+                    IQueryable<ConsumerAdoption> storageBatchConsumerAdoptions =
                         (await this.storageBroker.SelectAllConsumerAdoptionsAsync())
-                        .Where(consumerAdoption => batchIds.Contains(consumerAdoption.Id));
+                            .Where(consumerAdoption => batchCompositeKeys.Any(
+                                key => key.DecisionId == consumerAdoption.DecisionId &&
+                                    key.ConsumerId == consumerAdoption.ConsumerId));
 
-                    List<Guid> existingIds = storageConsumerAdoptions.Select(consumerAdoption =>
-                        consumerAdoption.Id).ToList();
+                    var existingCompositeKeys = storageBatchConsumerAdoptions
+                        .Select(consumerAdoption => new { consumerAdoption.DecisionId, consumerAdoption.ConsumerId })
+                        .ToList();
 
-                    List<ConsumerAdoption> newConsumerAdoptions = batch.Where(consumerAdoption =>
-                        !existingIds.Contains(consumerAdoption.Id)).ToList();
+                    List<ConsumerAdoption> newConsumerAdoptions = batch
+                        .Where(consumerAdoption => !existingCompositeKeys.Any(
+                            key => key.DecisionId == consumerAdoption.DecisionId &&
+                                key.ConsumerId == consumerAdoption.ConsumerId))
+                        .ToList();
 
-                    List<ConsumerAdoption> existingConsumerAdoptions = batch.Where(consumerAdoption =>
-                        existingIds.Contains(consumerAdoption.Id)).ToList();
+                    List<ConsumerAdoption> existingConsumerAdoptions = batch
+                        .Where(consumerAdoption => existingCompositeKeys.Any(
+                            key => key.DecisionId == consumerAdoption.DecisionId &&
+                                key.ConsumerId == consumerAdoption.ConsumerId))
+                        .ToList();
 
                     try
                     {
@@ -150,7 +162,8 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions
                         if (existingConsumerAdoptions.Count is not 0)
                         {
                             List<ConsumerAdoption> validatedExistingConsumerAdoptions =
-                                await ValidateConsumerAdoptionsAndAssignAuditOnModifyAsync(existingConsumerAdoptions);
+                                await ValidateConsumerAdoptionsAndAssignAuditOnModifyAsync(
+                                    existingConsumerAdoptions);
 
                             await this.storageBroker.BulkUpdateConsumerAdoptionsAsync(
                                 validatedExistingConsumerAdoptions);
