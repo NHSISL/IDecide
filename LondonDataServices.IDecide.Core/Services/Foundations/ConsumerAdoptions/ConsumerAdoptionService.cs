@@ -121,9 +121,9 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions
 
                     IQueryable<ConsumerAdoption> storageBatchConsumerAdoptions =
                         (await this.storageBroker.SelectAllConsumerAdoptionsAsync())
-                        .Where(consumerAdoption => batchCompositeKeys.Any(
-                            key => key.DecisionId == consumerAdoption.DecisionId &&
-                                key.ConsumerId == consumerAdoption.ConsumerId));
+                            .Where(consumerAdoption => batchCompositeKeys.Any(
+                                key => key.DecisionId == consumerAdoption.DecisionId &&
+                                    key.ConsumerId == consumerAdoption.ConsumerId));
 
                     var existingCompositeKeys = storageBatchConsumerAdoptions
                         .Select(consumerAdoption => new { consumerAdoption.DecisionId, consumerAdoption.ConsumerId })
