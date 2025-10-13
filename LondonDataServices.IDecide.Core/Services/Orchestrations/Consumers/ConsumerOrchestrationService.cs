@@ -109,7 +109,49 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Consumers
 
         public async ValueTask RecordConsumerAdoption(List<Guid> decisionIds)
         {
-            throw new NotImplementedException();
+            bool currentUserIsAuthenticated = await this.securityBroker.IsCurrentUserAuthenticatedAsync();
+
+            if (!currentUserIsAuthenticated)
+            {
+                throw new UnauthorizedConsumerOrchestrationServiceException(
+                    message: "The current user is not authorized to perform this operation.");
+            }
+
+            User currentUser = await this.securityBroker.GetCurrentUserAsync();
+            IQueryable<Consumer> consumers = await this.consumerService.RetrieveAllConsumersAsync();
+            Consumer maybeConsumer = consumers.FirstOrDefault(consumer => consumer.EntraId == currentUser.UserId);
+
+            if (maybeConsumer is null)
+            {
+                throw new UnauthorizedConsumerOrchestrationServiceException(
+                    message: "The current user is not authorized to perform this operation.");
+            }
+
+            Guid consumerId = maybeConsumer.Id;
+            List<ConsumerAdoption> consumerAdoptions = new List<ConsumerAdoption>();
+            DateTimeOffset adoptionDate = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
+
+            foreach (var decisionId in decisionIds)
+            {
+                try
+                {
+                    var consumerAdoption = new ConsumerAdoption
+                    {
+                        Id = await this.identifierBroker.GetIdentifierAsync(),
+                        ConsumerId = consumerId,
+                        DecisionId = decisionId,
+                        AdoptionDate = adoptionDate
+                    };
+
+                    consumerAdoptions.Add(consumerAdoption);
+                }
+                catch (Exception ex)
+                {
+                    await this.loggingBroker.LogErrorAsync(ex);
+                }
+            }
+
+            await this.consumerAdoptionService.BulkAddOrModifyConsumerAdoptionsAsync(consumerAdoptions);
         }
     }
 }

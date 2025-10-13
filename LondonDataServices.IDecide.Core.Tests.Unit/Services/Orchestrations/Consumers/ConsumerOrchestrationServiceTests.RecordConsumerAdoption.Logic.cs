@@ -31,19 +31,19 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
 
             this.securityBrokerMock.Setup(broker =>
                 broker.IsCurrentUserAuthenticatedAsync())
-                .ReturnsAsync(true);
+                    .ReturnsAsync(true);
 
             this.securityBrokerMock.Setup(broker =>
                 broker.GetCurrentUserAsync())
-                .ReturnsAsync(randomUser);
+                    .ReturnsAsync(randomUser);
 
             this.consumerServiceMock.Setup(service =>
                 service.RetrieveAllConsumersAsync())
-                .ReturnsAsync(randomConsumers);
+                    .ReturnsAsync(randomConsumers);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
-                .ReturnsAsync(adoptionDate);
+                    .ReturnsAsync(adoptionDate);
 
             foreach (var decisionId in decisionIds)
             {

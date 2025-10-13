@@ -174,7 +174,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
             {
                 var currentUser = await this.securityBroker.GetCurrentUserAsync();
                 IQueryable<Consumer> consumers = await this.consumerService.RetrieveAllConsumersAsync();
-                Consumer maybeConsumer = consumers.FirstOrDefault(c => c.EntraId == currentUser.UserId);
+                Consumer maybeConsumer = consumers.FirstOrDefault(consumer => consumer.EntraId == currentUser.UserId);
 
                 if (maybeConsumer is null)
                 {
