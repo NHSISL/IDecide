@@ -14,6 +14,8 @@ using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerAdoptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Consumers;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
+using LondonDataServices.IDecide.Core.Models.Orchestrations.Consumers.Exceptions;
+using LondonDataServices.IDecide.Core.Models.Securities;
 using LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions;
 using LondonDataServices.IDecide.Core.Services.Foundations.Consumers;
 using LondonDataServices.IDecide.Core.Services.Foundations.Notifications;
@@ -72,6 +74,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Consumers
                             DecisionId = decision.Id,
                             AdoptionDate = adoptionDate
                         };
+
                         consumerAdoptions.Add(consumerAdoption);
                     }
                     catch (Exception ex)
@@ -103,5 +106,10 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Consumers
                     }
                 }
             });
+
+        public async ValueTask RecordConsumerAdoption(List<Guid> decisionIds)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
