@@ -119,7 +119,11 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
 
                 (Rule: IsInvalid(
                     notificationInfo.Decision?.DecisionChoice),
-                    Parameter: nameof(NotificationInfo.Decision.DecisionChoice)));
+                    Parameter: nameof(NotificationInfo.Decision.DecisionChoice)),
+
+                (Rule: IsInvalid(
+                    notificationInfo.Decision?.DecisionType.Name),
+                    Parameter: nameof(NotificationInfo.Decision.DecisionType.Name)));
         }
 
         private async ValueTask ValidateOnSendSubscriberUsageNotificationAsync(NotificationInfo notificationInfo)
