@@ -27,6 +27,10 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Consumers
             {
                 throw await CreateAndLogValidationExceptionAsync(invalidDecisionsException);
             }
+            catch (InvalidDecisionIdsException invalidDecisionIdsException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(invalidDecisionIdsException);
+            }
             catch (ConsumerValidationException consumerValidationException)
             {
                 throw await CreateAndLogDependencyValidationExceptionAsync(consumerValidationException);
