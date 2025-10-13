@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications.Exceptions;
+using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using Xeptions;
 
 namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
@@ -39,8 +40,14 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                     Parameter: nameof(NotificationInfo.Patient.DateOfBirth)),
 
                 (Rule: IsInvalid(notificationInfo.Patient.Gender), Parameter: nameof(NotificationInfo.Patient.Gender)),
-                (Rule: IsInvalid(notificationInfo.Patient.Email), Parameter: nameof(NotificationInfo.Patient.Email)),
-                (Rule: IsInvalid(notificationInfo.Patient.Phone), Parameter: nameof(NotificationInfo.Patient.Phone)),
+
+                (Rule: IsInvalidContact(
+                    NotificationPreference.Email, notificationInfo.Patient, notificationInfo.Patient.Email),
+                    Parameter: nameof(NotificationInfo.Patient.Email)),
+
+                (Rule: IsInvalidContact(
+                    NotificationPreference.Sms, notificationInfo.Patient, notificationInfo.Patient.Phone),
+                    Parameter: nameof(NotificationInfo.Patient.Phone)),
 
                 (Rule: IsInvalid(
                     notificationInfo.Patient.Address),
@@ -89,8 +96,14 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                     Parameter: nameof(NotificationInfo.Patient.DateOfBirth)),
 
                 (Rule: IsInvalid(notificationInfo.Patient.Gender), Parameter: nameof(NotificationInfo.Patient.Gender)),
-                (Rule: IsInvalid(notificationInfo.Patient.Email), Parameter: nameof(NotificationInfo.Patient.Email)),
-                (Rule: IsInvalid(notificationInfo.Patient.Phone), Parameter: nameof(NotificationInfo.Patient.Phone)),
+
+                 (Rule: IsInvalidContact(
+                    NotificationPreference.Email, notificationInfo.Patient, notificationInfo.Patient.Email),
+                    Parameter: nameof(NotificationInfo.Patient.Email)),
+
+                (Rule: IsInvalidContact(
+                    NotificationPreference.Sms, notificationInfo.Patient, notificationInfo.Patient.Phone),
+                    Parameter: nameof(NotificationInfo.Patient.Phone)),
 
                 (Rule: IsInvalid(
                     notificationInfo.Patient.Address),
@@ -143,8 +156,14 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                     Parameter: nameof(NotificationInfo.Patient.DateOfBirth)),
 
                 (Rule: IsInvalid(notificationInfo.Patient.Gender), Parameter: nameof(NotificationInfo.Patient.Gender)),
-                (Rule: IsInvalid(notificationInfo.Patient.Email), Parameter: nameof(NotificationInfo.Patient.Email)),
-                (Rule: IsInvalid(notificationInfo.Patient.Phone), Parameter: nameof(NotificationInfo.Patient.Phone)),
+
+                 (Rule: IsInvalidContact(
+                    NotificationPreference.Email, notificationInfo.Patient, notificationInfo.Patient.Email),
+                    Parameter: nameof(NotificationInfo.Patient.Email)),
+
+                (Rule: IsInvalidContact(
+                    NotificationPreference.Sms, notificationInfo.Patient, notificationInfo.Patient.Phone),
+                    Parameter: nameof(NotificationInfo.Patient.Phone)),
 
                 (Rule: IsInvalid(
                     notificationInfo.Patient.Address),
@@ -308,6 +327,23 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
             Condition = String.IsNullOrWhiteSpace(text),
             Message = "Text is required"
         };
+
+        private static dynamic IsInvalidContact(
+            NotificationPreference notificationPreference, Patient patient, string value)
+        {
+            var isInvalid = false;
+
+            if (notificationPreference == patient.NotificationPreference)
+            {
+                isInvalid = String.IsNullOrWhiteSpace(value);
+            }
+
+            return new
+            {
+                Condition = isInvalid,
+                Message = "Text is required"
+            };
+        }
 
         private static dynamic IsInvalid(DateTimeOffset date) => new
         {
