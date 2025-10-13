@@ -97,5 +97,51 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
             this.identifierBrokerMock.VerifyNoOtherCalls();
             this.consumerAdoptionServiceMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnRecordConsumerAdoptionIfServiceErrorOccursAndLogItAsync()
+        {
+            // given
+            List<Guid> randomDecisionIds = CreateRandomDecisionIds();
+            List<Guid> inputDecisionIds = randomDecisionIds;
+            var serviceException = new Exception();
+
+            this.securityBrokerMock.Setup(broker =>
+                broker.IsCurrentUserAuthenticatedAsync())
+                    .ThrowsAsync(serviceException);
+
+            var failedConsumerOrchestrationServiceException =
+                new FailedConsumerOrchestrationServiceException(
+                    message: "Failed consumer orchestration service error occurred, contact support.",
+                    innerException: serviceException);
+
+            var expectedDecisionOrchestrationServiceException =
+                new ConsumerOrchestrationServiceException(
+                    message: "Consumer orchestration service error occurred, contact support.",
+                    innerException: failedConsumerOrchestrationServiceException);
+
+            // when
+            ValueTask adoptPatientDecisionsTask =
+                this.consumerOrchestrationService.RecordConsumerAdoption(inputDecisionIds);
+
+            ConsumerOrchestrationServiceException
+                actualConsumerOrchestrationServiceException =
+                    await Assert.ThrowsAsync<ConsumerOrchestrationServiceException>(() =>
+                        adoptPatientDecisionsTask.AsTask());
+
+            // then
+            actualConsumerOrchestrationServiceException
+                .Should().BeEquivalentTo(expectedDecisionOrchestrationServiceException);
+
+            this.securityBrokerMock.Verify(broker =>
+                broker.IsCurrentUserAuthenticatedAsync(),
+                    Times.Once);
+
+            this.securityBrokerMock.VerifyNoOtherCalls();
+            this.consumerServiceMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.identifierBrokerMock.VerifyNoOtherCalls();
+            this.consumerAdoptionServiceMock.VerifyNoOtherCalls();
+        }
     }
 }

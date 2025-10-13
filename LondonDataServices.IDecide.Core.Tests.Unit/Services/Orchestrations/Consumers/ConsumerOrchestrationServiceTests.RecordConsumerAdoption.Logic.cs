@@ -19,7 +19,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
         public async Task ShouldRecordConsumerAdoptionAsync()
         {
             // given
-            List<Guid> decisionIds = CreateRandomDecisionIds();
+            List<Guid> randomDecisionIds = CreateRandomDecisionIds();
+            List<Guid> inputDecisionIds = randomDecisionIds;
             User randomUser = CreateRandomUser();
             IQueryable<Consumer> randomConsumers = CreateRandomConsumers();
             randomConsumers.First().EntraId = randomUser.UserId;
@@ -45,7 +46,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
                 broker.GetCurrentDateTimeOffsetAsync())
                     .ReturnsAsync(adoptionDate);
 
-            foreach (var decisionId in decisionIds)
+            foreach (var decisionId in inputDecisionIds)
             {
                 Guid generatedId = Guid.NewGuid();
 
@@ -69,7 +70,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
                     .Returns(ValueTask.CompletedTask);
 
             // when
-            await this.consumerOrchestrationService.RecordConsumerAdoption(decisionIds);
+            await this.consumerOrchestrationService.RecordConsumerAdoption(inputDecisionIds);
 
             // then
             this.securityBrokerMock.Verify(broker =>
@@ -90,7 +91,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
 
             this.identifierBrokerMock.Verify(broker =>
                 broker.GetIdentifierAsync(),
-                    Times.Exactly(decisionIds.Count));
+                    Times.Exactly(inputDecisionIds.Count));
 
             this.consumerAdoptionServiceMock.Verify(service =>
                 service.BulkAddOrModifyConsumerAdoptionsAsync(
