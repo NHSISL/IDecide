@@ -54,6 +54,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 this.patientServiceMock.Object,
                 this.decisionServiceMock.Object,
                 this.notificationServiceMock.Object,
+                this.consumerServiceMock.Object,
                 this.decisionConfigurations,
                 this.securityBrokerConfigurations)
             { CallBase = true };
@@ -190,6 +191,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 this.patientServiceMock.Object,
                 this.decisionServiceMock.Object,
                 this.notificationServiceMock.Object,
+                this.consumerServiceMock.Object,
                 this.decisionConfigurations,
                 this.securityBrokerConfigurations)
             { CallBase = true };
@@ -308,25 +310,19 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             List<Patient> outputPatients = randomPatients.DeepClone();
             Decision randomDecision = GetRandomDecision(randomPatient);
             Decision inputDecision = randomDecision.DeepClone();
-            Decision outputDecision = inputDecision.DeepClone();
-
-            NotificationInfo inputNotificationInfo = new NotificationInfo
-            {
-                Patient = randomPatient,
-                Decision = outputDecision
-            };
 
             var decisionOrchestrationServiceMock = new Mock<DecisionOrchestrationService>(
-                this.loggingBrokerMock.Object,
-                this.dateTimeBrokerMock.Object,
-                this.securityBrokerMock.Object,
-                this.auditBrokerMock.Object,
-                this.identifierBrokerMock.Object,
-                this.patientServiceMock.Object,
-                this.decisionServiceMock.Object,
-                this.notificationServiceMock.Object,
-                this.decisionConfigurations,
-                this.securityBrokerConfigurations)
+                    this.loggingBrokerMock.Object,
+                    this.dateTimeBrokerMock.Object,
+                    this.securityBrokerMock.Object,
+                    this.auditBrokerMock.Object,
+                    this.identifierBrokerMock.Object,
+                    this.patientServiceMock.Object,
+                    this.decisionServiceMock.Object,
+                    this.notificationServiceMock.Object,
+                    this.consumerServiceMock.Object,
+                    this.decisionConfigurations,
+                    this.securityBrokerConfigurations)
             { CallBase = true };
 
             this.patientServiceMock.Setup(service =>
@@ -442,13 +438,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             List<Patient> outputPatients = randomPatients.DeepClone();
             Decision randomDecision = GetRandomDecision(randomPatient);
             Decision inputDecision = randomDecision.DeepClone();
-            Decision outputDecision = inputDecision.DeepClone();
-
-            NotificationInfo inputNotificationInfo = new NotificationInfo
-            {
-                Patient = randomPatient,
-                Decision = outputDecision
-            };
 
             var decisionOrchestrationServiceMock = new Mock<DecisionOrchestrationService>(
                 this.loggingBrokerMock.Object,
@@ -459,6 +448,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 this.patientServiceMock.Object,
                 this.decisionServiceMock.Object,
                 this.notificationServiceMock.Object,
+                this.consumerServiceMock.Object,
                 this.decisionConfigurations,
                 this.securityBrokerConfigurations)
             { CallBase = true };
@@ -581,13 +571,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             List<Patient> outputPatients = randomPatients.DeepClone();
             Decision randomDecision = GetRandomDecision(randomPatient);
             Decision inputDecision = randomDecision.DeepClone();
-            Decision outputDecision = inputDecision.DeepClone();
-
-            NotificationInfo inputNotificationInfo = new NotificationInfo
-            {
-                Patient = randomPatient,
-                Decision = outputDecision
-            };
 
             var decisionOrchestrationServiceMock = new Mock<DecisionOrchestrationService>(
                 this.loggingBrokerMock.Object,
@@ -598,6 +581,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 this.patientServiceMock.Object,
                 this.decisionServiceMock.Object,
                 this.notificationServiceMock.Object,
+                this.consumerServiceMock.Object,
                 this.decisionConfigurations,
                 this.securityBrokerConfigurations)
             { CallBase = true };
@@ -716,13 +700,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             List<Patient> outputPatients = randomPatients.DeepClone();
             Decision randomDecision = GetRandomDecision(randomPatient);
             Decision inputDecision = randomDecision.DeepClone();
-            Decision outputDecision = inputDecision.DeepClone();
-
-            NotificationInfo inputNotificationInfo = new NotificationInfo
-            {
-                Patient = randomPatient,
-                Decision = outputDecision
-            };
 
             var decisionOrchestrationServiceMock = new Mock<DecisionOrchestrationService>(
                 this.loggingBrokerMock.Object,
@@ -733,6 +710,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 this.patientServiceMock.Object,
                 this.decisionServiceMock.Object,
                 this.notificationServiceMock.Object,
+                this.consumerServiceMock.Object,
                 this.decisionConfigurations,
                 this.securityBrokerConfigurations)
             { CallBase = true };
