@@ -49,12 +49,12 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                     NotificationPreference.Sms, notificationInfo.Patient, notificationInfo.Patient.Phone),
                     Parameter: nameof(NotificationInfo.Patient.Phone)),
 
-                (Rule: IsInvalid(
-                    notificationInfo.Patient.Address),
+                (Rule: IsInvalidContact(
+                    NotificationPreference.Letter, notificationInfo.Patient, notificationInfo.Patient.Address),
                     Parameter: nameof(NotificationInfo.Patient.Address)),
 
-                (Rule: IsInvalid(
-                    notificationInfo.Patient.PostCode),
+                (Rule: IsInvalidContact(
+                    NotificationPreference.Letter, notificationInfo.Patient, notificationInfo.Patient.PostCode),
                     Parameter: nameof(NotificationInfo.Patient.PostCode)),
 
                 (Rule: IsInvalid(
@@ -105,12 +105,12 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                     NotificationPreference.Sms, notificationInfo.Patient, notificationInfo.Patient.Phone),
                     Parameter: nameof(NotificationInfo.Patient.Phone)),
 
-                (Rule: IsInvalid(
-                    notificationInfo.Patient.Address),
+                (Rule: IsInvalidContact(
+                    NotificationPreference.Letter, notificationInfo.Patient, notificationInfo.Patient.Address),
                     Parameter: nameof(NotificationInfo.Patient.Address)),
 
-                (Rule: IsInvalid(
-                    notificationInfo.Patient.PostCode),
+                (Rule: IsInvalidContact(
+                    NotificationPreference.Letter, notificationInfo.Patient, notificationInfo.Patient.PostCode),
                     Parameter: nameof(NotificationInfo.Patient.PostCode)),
 
                 (Rule: IsInvalid(
@@ -165,12 +165,12 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                     NotificationPreference.Sms, notificationInfo.Patient, notificationInfo.Patient.Phone),
                     Parameter: nameof(NotificationInfo.Patient.Phone)),
 
-                (Rule: IsInvalid(
-                    notificationInfo.Patient.Address),
+                (Rule: IsInvalidContact(
+                    NotificationPreference.Letter, notificationInfo.Patient, notificationInfo.Patient.Address),
                     Parameter: nameof(NotificationInfo.Patient.Address)),
 
-                (Rule: IsInvalid(
-                    notificationInfo.Patient.PostCode),
+                (Rule: IsInvalidContact(
+                    NotificationPreference.Letter, notificationInfo.Patient, notificationInfo.Patient.PostCode),
                     Parameter: nameof(NotificationInfo.Patient.PostCode)),
 
                 (Rule: IsInvalid(
