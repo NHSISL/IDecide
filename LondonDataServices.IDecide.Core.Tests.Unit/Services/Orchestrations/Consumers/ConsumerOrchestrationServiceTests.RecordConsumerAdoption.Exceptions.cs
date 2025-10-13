@@ -46,16 +46,56 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
                 .Should().BeEquivalentTo(expectedConsumerOrchestrationDependencyValidationException);
 
             this.securityBrokerMock.Verify(broker =>
-                broker.GetCurrentUserAsync(),
+                broker.IsCurrentUserAuthenticatedAsync(),
                     Times.Once);
 
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.securityBrokerMock.VerifyNoOtherCalls();
-            this.identifierBrokerMock.VerifyNoOtherCalls();
             this.consumerServiceMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.identifierBrokerMock.VerifyNoOtherCalls();
             this.consumerAdoptionServiceMock.VerifyNoOtherCalls();
-            this.patientServiceMock.VerifyNoOtherCalls();
-            this.notificationServiceMock.VerifyNoOtherCalls();
+        }
+
+        [Theory]
+        [MemberData(nameof(DependencyExceptions))]
+        public async Task ShouldThrowDependencyExceptionOnRecordConsumerAdoptionAndLogItAsync(
+            Xeption dependencyException)
+        {
+            List<Guid> randomDecisionIds = CreateRandomDecisionIds();
+            List<Guid> inputDecisionIds = randomDecisionIds;
+
+            this.securityBrokerMock.Setup(broker =>
+                broker.IsCurrentUserAuthenticatedAsync())
+                    .ThrowsAsync(dependencyException);
+
+            var expectedConsumerOrchestrationDependencyException =
+                new ConsumerOrchestrationDependencyException(
+                    message: "Consumer orchestration dependency error occurred, " +
+                        "please fix the errors and try again.",
+                    innerException: dependencyException);
+
+            // when
+            ValueTask adoptPatientDecisionsTask =
+                this.consumerOrchestrationService.RecordConsumerAdoption(inputDecisionIds);
+
+            ConsumerOrchestrationDependencyException
+                actualConsumerOrchestrationDependencyException =
+                    await Assert.ThrowsAsync<ConsumerOrchestrationDependencyException>(() =>
+                        adoptPatientDecisionsTask.AsTask());
+
+            // then
+            actualConsumerOrchestrationDependencyException
+                .Should().BeEquivalentTo(expectedConsumerOrchestrationDependencyException);
+
+            this.securityBrokerMock.Verify(broker =>
+                broker.IsCurrentUserAuthenticatedAsync(),
+                    Times.Once);
+
+            this.securityBrokerMock.VerifyNoOtherCalls();
+            this.consumerServiceMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.identifierBrokerMock.VerifyNoOtherCalls();
+            this.consumerAdoptionServiceMock.VerifyNoOtherCalls();
         }
     }
 }
