@@ -32,7 +32,7 @@ namespace LondonDataServices.IDecide.Core.Models.Foundations.Patients
         {
             get
             {
-                var addressLines = Address.Split(',');
+                var addressLines = (Address ?? string.Empty).Split(',');
                 var addressLine1 = addressLines.ElementAtOrDefault(0) ?? string.Empty;
                 var addressLine2 = addressLines.ElementAtOrDefault(1) ?? string.Empty;
                 var addressLine3 = addressLines.ElementAtOrDefault(2) ?? string.Empty;
