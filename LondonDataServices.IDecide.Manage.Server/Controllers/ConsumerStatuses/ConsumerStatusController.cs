@@ -2,7 +2,6 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
@@ -27,7 +26,9 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers.ConsumerStatuses
         [HttpPost("AdoptPatientDecisions")]
         public async ValueTask<ActionResult> AdoptPatientDecisionsAsync([FromBody] List<Decision> decisions)
         {
-            throw new NotImplementedException();
+            await this.consumerOrchestrationService.AdoptPatientDecisions(decisions);
+
+            return Ok();
         }
     }
 }
