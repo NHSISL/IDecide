@@ -57,7 +57,32 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
             [FromQuery] DateTimeOffset? from = null,
             [FromQuery] string decisionType = null)
         {
-            throw new NotImplementedException();
+            try
+            {
+                List<Decision> decisions = await this.decisionOrchestrationService
+                    .RetrieveAllPendingAdoptionDecisionsForConsumer(
+                        changesSinceDate: from ?? default,
+                        decisionType: decisionType);
+
+                return Ok(decisions);
+            }
+            catch (DecisionOrchestrationValidationException decisionOrchestrationValidationException)
+            {
+                return BadRequest(decisionOrchestrationValidationException.InnerException);
+            }
+            catch (DecisionOrchestrationDependencyValidationException
+                   decisionOrchestrationDependencyValidationException)
+            {
+                return BadRequest(decisionOrchestrationDependencyValidationException.InnerException);
+            }
+            catch (DecisionOrchestrationDependencyException decisionOrchestrationDependencyException)
+            {
+                return InternalServerError(decisionOrchestrationDependencyException);
+            }
+            catch (DecisionOrchestrationServiceException decisionOrchestrationServiceException)
+            {
+                return InternalServerError(decisionOrchestrationServiceException);
+            }
         }
     }
 }
