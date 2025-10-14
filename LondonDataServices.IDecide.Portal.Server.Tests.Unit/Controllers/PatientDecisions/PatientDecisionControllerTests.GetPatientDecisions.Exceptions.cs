@@ -12,7 +12,7 @@ using Moq;
 using RESTFulSense.Models;
 using Xeptions;
 
-namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.PatientDecisions
+namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.PatientDecisions
 {
     public partial class PatientDecisionControllerTests
     {

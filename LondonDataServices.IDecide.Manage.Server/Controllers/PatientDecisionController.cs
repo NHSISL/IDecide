@@ -71,7 +71,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
                 return BadRequest(decisionOrchestrationValidationException.InnerException);
             }
             catch (DecisionOrchestrationDependencyValidationException
-                   decisionOrchestrationDependencyValidationException)
+                decisionOrchestrationDependencyValidationException)
             {
                 return BadRequest(decisionOrchestrationDependencyValidationException.InnerException);
             }

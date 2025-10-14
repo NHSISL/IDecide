@@ -10,7 +10,7 @@ using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
-namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.PatientDecisions
+namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.PatientDecisions
 {
     public partial class PatientDecisionControllerTests
     {
