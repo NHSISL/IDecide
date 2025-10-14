@@ -2,6 +2,8 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions.Exceptions;
@@ -48,6 +50,14 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
             {
                 return InternalServerError(decisionOrchestrationServiceException);
             }
+        }
+
+        [HttpGet("PatientDecision")]
+        public async ValueTask<ActionResult<List<Decision>>> GetPatientDecisionsAsync(
+            [FromQuery] DateTimeOffset? from = null,
+            [FromQuery] string decisionType = null)
+        {
+            throw new NotImplementedException();
         }
     }
 }
