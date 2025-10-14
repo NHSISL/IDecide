@@ -6,11 +6,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
+using LondonDataServices.IDecide.Core.Models.Orchestrations.Consumers.Exceptions;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Consumers;
 using LondonDataServices.IDecide.Manage.Server.Controllers.ConsumerStatuses;
 using Moq;
 using RESTFulSense.Controllers;
 using Tynamix.ObjectFiller;
+using Xeptions;
 
 namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.ConsumerStatuses
 {
@@ -26,6 +28,9 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Consum
             this.consumerStatusController =
                 new ConsumerStatusController(this.consumerOrchestrationServiceMock.Object);
         }
+
+        private static string GetRandomString() =>
+            new MnemonicString(wordCount: GetRandomNumber()).GetValue();
 
         private static string GetRandomStringWithLengthOf(int length)
         {
@@ -63,5 +68,21 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Consum
             return filler;
         }
 
+        public static TheoryData<Xeption> ValidationExceptions()
+        {
+            string randomMessage = GetRandomString();
+            var someInnerException = new Xeption();
+
+            return new TheoryData<Xeption>
+            {
+                new ConsumerOrchestrationValidationException(
+                    message: randomMessage,
+                    innerException: someInnerException),
+
+                new ConsumerOrchestrationDependencyValidationException(
+                    message: randomMessage,
+                    innerException: someInnerException)
+            };
+        }
     }
 }
