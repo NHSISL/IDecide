@@ -41,6 +41,14 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers.ConsumerStatuses
             {
                 return BadRequest(consumerOrchestrationDependencyValidationException.InnerException);
             }
+            catch (ConsumerOrchestrationDependencyException consumerOrchestrationDependencyException)
+            {
+                return InternalServerError(consumerOrchestrationDependencyException);
+            }
+            catch (ConsumerOrchestrationServiceException consumerOrchestrationServiceException)
+            {
+                return InternalServerError(consumerOrchestrationServiceException);
+            }
         }
     }
 }

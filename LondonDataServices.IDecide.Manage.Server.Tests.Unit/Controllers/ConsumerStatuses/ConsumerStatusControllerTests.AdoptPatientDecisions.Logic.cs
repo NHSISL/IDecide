@@ -9,7 +9,6 @@ using Force.DeepCloner;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using Task = System.Threading.Tasks.Task;
 
 namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.ConsumerStatuses
 {

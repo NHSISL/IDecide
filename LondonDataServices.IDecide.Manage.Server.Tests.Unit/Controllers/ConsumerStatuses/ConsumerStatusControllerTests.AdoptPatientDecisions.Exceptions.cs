@@ -3,6 +3,7 @@
 // ---------------------------------------------------------
 
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Force.DeepCloner;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
@@ -10,7 +11,6 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using RESTFulSense.Models;
 using Xeptions;
-using Task = System.Threading.Tasks.Task;
 
 namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.ConsumerStatuses
 {
