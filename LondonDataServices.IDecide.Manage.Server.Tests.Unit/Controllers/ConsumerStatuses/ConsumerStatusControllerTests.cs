@@ -84,5 +84,22 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Consum
                     innerException: someInnerException)
             };
         }
+
+        public static TheoryData<Xeption> ServerExceptions()
+        {
+            string randomMessage = GetRandomString();
+            var someInnerException = new Xeption();
+
+            return new TheoryData<Xeption>
+            {
+                new ConsumerOrchestrationDependencyException(
+                    message: randomMessage,
+                    innerException: someInnerException),
+
+                new ConsumerOrchestrationServiceException(
+                    message: randomMessage,
+                    innerException: someInnerException)
+            };
+        }
     }
 }
