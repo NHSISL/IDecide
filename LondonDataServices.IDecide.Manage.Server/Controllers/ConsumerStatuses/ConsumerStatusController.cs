@@ -26,9 +26,21 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers.ConsumerStatuses
         [HttpPost("AdoptPatientDecisions")]
         public async ValueTask<ActionResult> AdoptPatientDecisionsAsync([FromBody] List<Decision> decisions)
         {
-            await this.consumerOrchestrationService.AdoptPatientDecisions(decisions);
+            try
+            {
+                await this.consumerOrchestrationService.AdoptPatientDecisions(decisions);
 
-            return Ok();
+                return Ok();
+            }
+            catch (ConsumerOrchestrationValidationException consumerOrchestrationValidationException)
+            {
+                return BadRequest(consumerOrchestrationValidationException.InnerException);
+            }
+            catch (ConsumerOrchestrationDependencyValidationException
+                consumerOrchestrationDependencyValidationException)
+            {
+                return BadRequest(consumerOrchestrationDependencyValidationException.InnerException);
+            }
         }
     }
 }
