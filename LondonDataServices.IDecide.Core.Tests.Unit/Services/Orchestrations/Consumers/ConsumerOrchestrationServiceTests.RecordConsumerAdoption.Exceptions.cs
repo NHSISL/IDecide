@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
-using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Consumers.Exceptions;
 using Moq;
 using Xeptions;
@@ -17,25 +16,25 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
     {
         [Theory]
         [MemberData(nameof(DependencyValidationExceptions))]
-        public async Task ShouldThrowDependencyValidationExceptionOnAdoptPatientDecisionsAndLogItAsync(
+        public async Task ShouldThrowDependencyValidationExceptionOnRecordConsumerAdoptionAndLogItAsync(
             Xeption dependencyValidationException)
         {
-            List<Decision> randomDecisions = CreateRandomDecisions();
-            List<Decision> inputDecisions = randomDecisions;
+            List<Guid> randomDecisionIds = CreateRandomDecisionIds();
+            List<Guid> inputDecisionIds = randomDecisionIds;
 
             this.securityBrokerMock.Setup(broker =>
-                broker.GetCurrentUserAsync())
+                broker.IsCurrentUserAuthenticatedAsync())
                     .ThrowsAsync(dependencyValidationException);
 
             var expectedConsumerOrchestrationDependencyValidationException =
                 new ConsumerOrchestrationDependencyValidationException(
                     message: "Consumer orchestration dependency validation error occurred, " +
-                        "please fix the errors and try again.",
+                             "please fix the errors and try again.",
                     innerException: dependencyValidationException);
 
             // when
             ValueTask adoptPatientDecisionsTask =
-                this.consumerOrchestrationService.AdoptPatientDecisions(inputDecisions);
+                this.consumerOrchestrationService.RecordConsumerAdoption(inputDecisionIds);
 
             ConsumerOrchestrationDependencyValidationException
                 actualConsumerOrchestrationDependencyValidationException =
@@ -47,28 +46,26 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
                 .Should().BeEquivalentTo(expectedConsumerOrchestrationDependencyValidationException);
 
             this.securityBrokerMock.Verify(broker =>
-                broker.GetCurrentUserAsync(),
+                broker.IsCurrentUserAuthenticatedAsync(),
                     Times.Once);
 
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.securityBrokerMock.VerifyNoOtherCalls();
-            this.identifierBrokerMock.VerifyNoOtherCalls();
             this.consumerServiceMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.identifierBrokerMock.VerifyNoOtherCalls();
             this.consumerAdoptionServiceMock.VerifyNoOtherCalls();
-            this.patientServiceMock.VerifyNoOtherCalls();
-            this.notificationServiceMock.VerifyNoOtherCalls();
         }
 
         [Theory]
         [MemberData(nameof(DependencyExceptions))]
-        public async Task ShouldThrowDependencyExceptionOnAdoptPatientDecisionsAndLogItAsync(
+        public async Task ShouldThrowDependencyExceptionOnRecordConsumerAdoptionAndLogItAsync(
             Xeption dependencyException)
         {
-            List<Decision> randomDecisions = CreateRandomDecisions();
-            List<Decision> inputDecisions = randomDecisions;
+            List<Guid> randomDecisionIds = CreateRandomDecisionIds();
+            List<Guid> inputDecisionIds = randomDecisionIds;
 
             this.securityBrokerMock.Setup(broker =>
-                broker.GetCurrentUserAsync())
+                broker.IsCurrentUserAuthenticatedAsync())
                     .ThrowsAsync(dependencyException);
 
             var expectedConsumerOrchestrationDependencyException =
@@ -79,7 +76,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
 
             // when
             ValueTask adoptPatientDecisionsTask =
-                this.consumerOrchestrationService.AdoptPatientDecisions(inputDecisions);
+                this.consumerOrchestrationService.RecordConsumerAdoption(inputDecisionIds);
 
             ConsumerOrchestrationDependencyException
                 actualConsumerOrchestrationDependencyException =
@@ -91,29 +88,26 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
                 .Should().BeEquivalentTo(expectedConsumerOrchestrationDependencyException);
 
             this.securityBrokerMock.Verify(broker =>
-                broker.GetCurrentUserAsync(),
+                broker.IsCurrentUserAuthenticatedAsync(),
                     Times.Once);
 
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.securityBrokerMock.VerifyNoOtherCalls();
-            this.identifierBrokerMock.VerifyNoOtherCalls();
             this.consumerServiceMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.identifierBrokerMock.VerifyNoOtherCalls();
             this.consumerAdoptionServiceMock.VerifyNoOtherCalls();
-            this.patientServiceMock.VerifyNoOtherCalls();
-            this.notificationServiceMock.VerifyNoOtherCalls();
         }
 
-
         [Fact]
-        public async Task ShouldThrowServiceExceptionOnAdoptPatientDecisionsIfServiceErrorOccursAndLogItAsync()
+        public async Task ShouldThrowServiceExceptionOnRecordConsumerAdoptionIfServiceErrorOccursAndLogItAsync()
         {
             // given
-            List<Decision> randomDecisions = CreateRandomDecisions();
-            List<Decision> inputDecisions = randomDecisions;
+            List<Guid> randomDecisionIds = CreateRandomDecisionIds();
+            List<Guid> inputDecisionIds = randomDecisionIds;
             var serviceException = new Exception();
 
             this.securityBrokerMock.Setup(broker =>
-                broker.GetCurrentUserAsync())
+                broker.IsCurrentUserAuthenticatedAsync())
                     .ThrowsAsync(serviceException);
 
             var failedConsumerOrchestrationServiceException =
@@ -128,7 +122,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
 
             // when
             ValueTask adoptPatientDecisionsTask =
-                this.consumerOrchestrationService.AdoptPatientDecisions(inputDecisions);
+                this.consumerOrchestrationService.RecordConsumerAdoption(inputDecisionIds);
 
             ConsumerOrchestrationServiceException
                 actualConsumerOrchestrationServiceException =
@@ -140,16 +134,14 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
                 .Should().BeEquivalentTo(expectedDecisionOrchestrationServiceException);
 
             this.securityBrokerMock.Verify(broker =>
-                broker.GetCurrentUserAsync(),
+                broker.IsCurrentUserAuthenticatedAsync(),
                     Times.Once);
 
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.securityBrokerMock.VerifyNoOtherCalls();
-            this.identifierBrokerMock.VerifyNoOtherCalls();
             this.consumerServiceMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.identifierBrokerMock.VerifyNoOtherCalls();
             this.consumerAdoptionServiceMock.VerifyNoOtherCalls();
-            this.patientServiceMock.VerifyNoOtherCalls();
-            this.notificationServiceMock.VerifyNoOtherCalls();
         }
     }
 }
