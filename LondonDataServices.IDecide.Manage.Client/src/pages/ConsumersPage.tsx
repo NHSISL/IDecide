@@ -6,9 +6,7 @@ export const ConsumersPage = () => {
         <Container fluid className="mt-4">
             <Row className="mb-4 p-2">
                 <Col>
-                    <h3>Consumers</h3>
                     <ConsumerTable />
-                    
                 </Col>
             </Row>
         </Container>

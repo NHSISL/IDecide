@@ -93,7 +93,6 @@ const ConsumerTable = () => {
 
     const addConsumer = consumerViewService.useCreatePatientConsumer();
     const handleAddConsumerSave = (consumer: Consumer) => {
-        alert("Pow");
         addConsumer.mutate(consumer, {
             onSuccess: () => {
                 setAddConsumerClicked(false);
@@ -116,7 +115,6 @@ const ConsumerTable = () => {
 
     const deleteConsumer = consumerViewService.useRemoveConsumer();
     const handleDeleteConsumer = (id: string) => {
-        alert(`Delete Consumer with ID: ${id}`);
         deleteConsumer.mutateAsync(id);
         refetch();
     };
@@ -126,13 +124,11 @@ const ConsumerTable = () => {
             <Container fluid className="infiniteScrollContainer">
                 <Card>
                     <Card.Header>
-                        <FontAwesomeIcon icon={faDatabase} className="me-2" />
-                        Consumers
+                        <span style={{ fontSize: "30px" }}>Consumers</span>
                         <Button
                             variant="primary"
                             className="float-end"
-                            onClick={handleAddConsumer}
-                        >
+                            onClick={handleAddConsumer}>
                             Add Consumer
                         </Button>
                     </Card.Header>
