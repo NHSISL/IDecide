@@ -7,7 +7,6 @@ import { Col, Container, Row, Alert } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 import { PatientLookup } from "../../models/patients/patientLookup";
 import { SearchCriteria } from "../../models/searchCriterias/searchCriteria";
-import { isApiErrorResponse } from "../../helpers/isApiErrorResponse";
 import { useNavigate } from "react-router-dom";
 import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
 
@@ -18,6 +17,7 @@ export const SearchByDetails = () => {
     const [dobDay, setDobDay] = useState("");
     const [dobMonth, setDobMonth] = useState("");
     const [dobYear, setDobYear] = useState("");
+    const [error, setError] = useState("");
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [apiError, setApiError] = useState<string | JSX.Element>("");
     const [loading, setLoading] = useState(false);
@@ -169,57 +169,60 @@ export const SearchByDetails = () => {
                     },
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     onError: (error: any) => {
+                        const status = error?.response?.status;
                         const errorData = error?.response?.data;
-                        let apiTitle = "";
                         const errorTitle = errorData?.title;
-                        if (isApiErrorResponse(error)) {
-                            const errResponse = error.response;
-                            apiTitle =
-                                errResponse.data?.title ||
-                                errResponse.data?.message ||
-                                errResponse.statusText ||
-                                translate("SearchByDetails.unknownApiError");
 
-                            if (errorTitle === "The patient is marked as sensitive.") {
-                                setApiError(
-                                    <>
-                                        There is an issue with this patient record. For further assistance please e-mail{" "}
-                                        <a
-                                            href={`mailto:${configuration.helpdeskContactEmail}`}
-                                            style={{ textDecoration: "underline" }}
-                                        >
-                                            {configuration.helpdeskContactEmail}
-                                        </a>
-                                        {" or leave a voicemail with the One London Service desk on "}
-                                        <a
-                                            href={`tel:${configuration.helpdeskContactNumber}`}
-                                            style={{ textDecoration: "underline" }}
-                                        >
-                                            {configuration.helpdeskContactNumber}
-                                        </a>
-                                        {" for a call back and assistance."}
-                                    </>
-                                );
-                                setErrors({}); // Optionally clear other errors
-                            } else {
-                                setErrors({ submit: apiTitle });
-                                setApiError(""); // Optionally clear apiError
-                            }
-                            console.error("API Error submitting patient:", apiTitle, errResponse);
-                        } else if (
-                            error &&
-                            typeof error === "object" &&
-                            "message" in error &&
-                            typeof (error as { message?: unknown }).message === "string"
-                        ) {
-                            setErrors({ submit: (error as { message: string }).message });
-                            setApiError(""); // Optionally clear apiError
-                            console.error("Error submitting patient:", (error as { message: string }).message, error);
-                        } else {
-                            setErrors({ submit: translate("SearchByDetails.unexpectedError") });
-                            setApiError(""); // Optionally clear apiError
-                            console.error("Unexpected error submitting patient:", error);
+                        if (errorTitle === "Patient not found.") {
+                            setError(translate("errors.PatientNotFound"));
+                            setLoading(false);
+                            return;
                         }
+
+                        if (errorTitle === "The patient is marked as sensitive.") {
+                            setApiError(
+                                <>
+                                    There is an issue with this patient record. For further assistance please e-mail{" "}
+                                    <a
+                                        href={`mailto:${configuration.helpdeskContactEmail}`}
+                                        style={{ textDecoration: "underline" }}
+                                    >
+                                        {configuration.helpdeskContactEmail}
+                                    </a>
+                                    {" or leave a voicemail with the One London Service desk on "}
+                                    <a
+                                        href={`tel:${configuration.helpdeskContactNumber}`}
+                                        style={{ textDecoration: "underline" }}
+                                    >
+                                        {configuration.helpdeskContactNumber}
+                                    </a>
+                                    {" for a call back and assistance."}
+                                </>
+                            );
+                            setErrors({});
+
+                            switch (status) {
+                                case 400:
+                                    setError(translate("errors.400"));
+                                    break;
+                                case 404:
+                                    setError(translate("errors.404"));
+                                    break;
+                                case 401:
+                                    setError(translate("errors.401"));
+                                    break;
+                                case 500:
+                                    setError(translate("errors.500"));
+                                    break;
+                                default:
+                                    setError(errorTitle || translate("errors.CatchAll"));
+                                    break;
+                            }
+                            setLoading(false);
+                            return;
+                        }
+
+                        setError(errorTitle || translate("errors.CatchAll"));
                         setLoading(false);
                     }
                 }
@@ -439,6 +442,12 @@ export const SearchByDetails = () => {
                         {apiError && (
                             <Alert variant="danger">
                                 {apiError}
+                            </Alert>
+                        )}
+
+                        {error && (
+                            <Alert variant="danger">
+                                {error}
                             </Alert>
                         )}
 
