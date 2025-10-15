@@ -3,10 +3,13 @@
 // ---------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerAdoptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerAdoptions.Exceptions;
+using LondonDataServices.IDecide.Core.Models.Orchestrations.Consumers.Exceptions;
 using LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions;
+using LondonDataServices.IDecide.Core.Services.Orchestrations.Consumers;
 using LondonDataServices.IDecide.Manage.Server.Controllers;
 using Moq;
 using RESTFulSense.Controllers;
@@ -19,12 +22,17 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Consum
     {
 
         private readonly Mock<IConsumerAdoptionService> consumerAdoptionServiceMock;
+        private readonly Mock<IConsumerOrchestrationService> consumerOrchestrationServiceMock;
         private readonly ConsumerAdoptionsController consumerAdoptionsController;
 
         public ConsumerAdoptionsControllerTests()
         {
             consumerAdoptionServiceMock = new Mock<IConsumerAdoptionService>();
-            consumerAdoptionsController = new ConsumerAdoptionsController(consumerAdoptionServiceMock.Object);
+            consumerOrchestrationServiceMock = new Mock<IConsumerOrchestrationService>();
+
+            consumerAdoptionsController = new ConsumerAdoptionsController(
+                consumerAdoptionServiceMock.Object,
+                consumerOrchestrationServiceMock.Object);
         }
 
         public static TheoryData<Xeption> ValidationExceptions()
@@ -61,6 +69,40 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Consum
             };
         }
 
+        public static TheoryData<Xeption> OrchestrationValidationExceptions()
+        {
+            var someInnerException = new Xeption();
+            string someMessage = GetRandomString();
+
+            return new TheoryData<Xeption>
+            {
+                new ConsumerOrchestrationValidationException(
+                    message: someMessage,
+                    innerException: someInnerException),
+
+                new ConsumerOrchestrationDependencyValidationException(
+                    message: someMessage,
+                    innerException: someInnerException)
+            };
+        }
+
+        public static TheoryData<Xeption> OrchestrationServerExceptions()
+        {
+            var someInnerException = new Xeption();
+            string someMessage = GetRandomString();
+
+            return new TheoryData<Xeption>
+            {
+                new ConsumerOrchestrationDependencyException(
+                    message: someMessage,
+                    innerException: someInnerException),
+
+                new ConsumerOrchestrationServiceException(
+                    message: someMessage,
+                    innerException: someInnerException)
+            };
+        }
+
         private static string GetRandomString() =>
             new MnemonicString(wordCount: GetRandomNumber()).GetValue();
 
@@ -76,6 +118,11 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Consum
 
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
+
+        private static List<Guid> GetRandomGuids() =>
+            Enumerable.Range(0, GetRandomNumber())
+                .Select(_ => Guid.NewGuid())
+                    .ToList();
 
         private static ConsumerAdoption CreateRandomConsumerAdoption() =>
             CreateConsumerAdoptionFiller().Create();
