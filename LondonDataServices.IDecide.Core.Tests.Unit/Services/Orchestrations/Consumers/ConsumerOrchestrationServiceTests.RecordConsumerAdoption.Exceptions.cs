@@ -34,7 +34,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
 
             // when
             ValueTask adoptPatientDecisionsTask =
-                this.consumerOrchestrationService.RecordConsumerAdoption(inputDecisionIds);
+                this.consumerOrchestrationService.RecordConsumerAdoptionAsync(inputDecisionIds);
 
             ConsumerOrchestrationDependencyValidationException
                 actualConsumerOrchestrationDependencyValidationException =
@@ -76,7 +76,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
 
             // when
             ValueTask adoptPatientDecisionsTask =
-                this.consumerOrchestrationService.RecordConsumerAdoption(inputDecisionIds);
+                this.consumerOrchestrationService.RecordConsumerAdoptionAsync(inputDecisionIds);
 
             ConsumerOrchestrationDependencyException
                 actualConsumerOrchestrationDependencyException =
@@ -122,7 +122,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
 
             // when
             ValueTask adoptPatientDecisionsTask =
-                this.consumerOrchestrationService.RecordConsumerAdoption(inputDecisionIds);
+                this.consumerOrchestrationService.RecordConsumerAdoptionAsync(inputDecisionIds);
 
             ConsumerOrchestrationServiceException
                 actualConsumerOrchestrationServiceException =

@@ -79,7 +79,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
             }
 
             // when
-            await this.consumerOrchestrationService.AdoptPatientDecisions(inputDecisions);
+            await this.consumerOrchestrationService.AdoptPatientDecisionsAsync(inputDecisions);
 
             // then
             this.securityBrokerMock.Verify(broker =>
@@ -193,7 +193,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
                     .Returns(ValueTask.CompletedTask);
 
             // when
-            await this.consumerOrchestrationService.AdoptPatientDecisions(inputDecisions);
+            await this.consumerOrchestrationService.AdoptPatientDecisionsAsync(inputDecisions);
 
             // then
             this.securityBrokerMock.Verify(broker =>

@@ -11,7 +11,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Consumers
 {
     public interface IConsumerOrchestrationService
     {
-        ValueTask AdoptPatientDecisions(List<Decision> decisions);
-        ValueTask RecordConsumerAdoption(List<Guid> decisionIds);
+        ValueTask AdoptPatientDecisionsAsync(List<Decision> decisions);
+        ValueTask RecordConsumerAdoptionAsync(List<Guid> decisionIds);
     }
 }

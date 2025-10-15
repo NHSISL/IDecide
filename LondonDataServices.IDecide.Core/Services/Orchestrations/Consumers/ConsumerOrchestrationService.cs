@@ -53,7 +53,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Consumers
             this.notificationService = notificationService;
         }
 
-        public ValueTask AdoptPatientDecisions(List<Decision> decisions) =>
+        public ValueTask AdoptPatientDecisionsAsync(List<Decision> decisions) =>
             TryCatch(async () =>
             {
                 ValidateDecisions(decisions);
@@ -107,7 +107,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Consumers
                 }
             });
 
-        public ValueTask RecordConsumerAdoption(List<Guid> decisionIds) =>
+        public ValueTask RecordConsumerAdoptionAsync(List<Guid> decisionIds) =>
             TryCatch(async () =>
             {
                 ValidateDecisionIds(decisionIds);

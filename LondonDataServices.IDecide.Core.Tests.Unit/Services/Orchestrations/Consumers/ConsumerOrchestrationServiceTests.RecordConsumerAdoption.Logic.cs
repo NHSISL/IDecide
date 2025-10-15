@@ -70,7 +70,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
                     .Returns(ValueTask.CompletedTask);
 
             // when
-            await this.consumerOrchestrationService.RecordConsumerAdoption(inputDecisionIds);
+            await this.consumerOrchestrationService.RecordConsumerAdoptionAsync(inputDecisionIds);
 
             // then
             this.securityBrokerMock.Verify(broker =>

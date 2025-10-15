@@ -28,7 +28,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
 
             // when
             ValueTask recordConsumerAdoptionTask =
-                this.consumerOrchestrationService.RecordConsumerAdoption(emptyDecisionIds);
+                this.consumerOrchestrationService.RecordConsumerAdoptionAsync(emptyDecisionIds);
 
             ConsumerOrchestrationValidationException actualConsumerOrchestrationValidationException =
                 await Assert.ThrowsAsync<ConsumerOrchestrationValidationException>(() =>

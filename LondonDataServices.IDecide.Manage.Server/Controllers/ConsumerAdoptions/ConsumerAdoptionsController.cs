@@ -3,11 +3,14 @@
 // ---------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerAdoptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerAdoptions.Exceptions;
+using LondonDataServices.IDecide.Core.Models.Orchestrations.Consumers.Exceptions;
 using LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions;
+using LondonDataServices.IDecide.Core.Services.Orchestrations.Consumers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
@@ -20,9 +23,15 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
     public class ConsumerAdoptionsController : RESTFulController
     {
         private readonly IConsumerAdoptionService consumerAdoptionService;
+        private readonly IConsumerOrchestrationService consumerOrchestrationService;
 
-        public ConsumerAdoptionsController(IConsumerAdoptionService consumerAdoptionService) =>
+        public ConsumerAdoptionsController(
+            IConsumerAdoptionService consumerAdoptionService,
+            IConsumerOrchestrationService consumerOrchestrationService)
+        {
             this.consumerAdoptionService = consumerAdoptionService;
+            this.consumerOrchestrationService = consumerOrchestrationService;
+        }
 
         [HttpPost]
         [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,ConsumerAdoptions.Create")]
@@ -193,6 +202,34 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
             catch (ConsumerAdoptionServiceException consumerAdoptionServiceException)
             {
                 return InternalServerError(consumerAdoptionServiceException);
+            }
+        }
+
+        [HttpPost("RecordConsumerAdoption")]
+        public async ValueTask<ActionResult> RecordConsumerAdoptionAsync([FromBody] List<Guid> decisionIds)
+        {
+            try
+            {
+                await this.consumerOrchestrationService.RecordConsumerAdoptionAsync(decisionIds);
+
+                return Ok();
+            }
+            catch (ConsumerOrchestrationValidationException consumerOrchestrationValidationException)
+            {
+                return BadRequest(consumerOrchestrationValidationException.InnerException);
+            }
+            catch (ConsumerOrchestrationDependencyValidationException
+                consumerOrchestrationDependencyValidationException)
+            {
+                return BadRequest(consumerOrchestrationDependencyValidationException.InnerException);
+            }
+            catch (ConsumerOrchestrationDependencyException consumerOrchestrationDependencyException)
+            {
+                return InternalServerError(consumerOrchestrationDependencyException);
+            }
+            catch (ConsumerOrchestrationServiceException consumerOrchestrationServiceException)
+            {
+                return InternalServerError(consumerOrchestrationServiceException);
             }
         }
     }
