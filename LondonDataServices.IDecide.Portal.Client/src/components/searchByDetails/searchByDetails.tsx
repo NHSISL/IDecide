@@ -208,6 +208,12 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttorn
                             const errorData = error?.response?.data;
                             const errorTitle = errorData?.title;
 
+                            if (errorTitle === "Patient not found.") {
+                                setError(translate("Patient Not found. Please check and try again."));
+                                setLoading(false);
+                                return;
+                            }
+
                             if (handleApiError(errorTitle)) {
                                 setLoading(false);
                                 return;
