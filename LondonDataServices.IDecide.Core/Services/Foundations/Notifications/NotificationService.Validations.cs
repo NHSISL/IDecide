@@ -49,13 +49,9 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                     NotificationPreference.Sms, notificationInfo.Patient, notificationInfo.Patient.Phone),
                     Parameter: nameof(NotificationInfo.Patient.Phone)),
 
-                (Rule: IsInvalidContact(
-                    NotificationPreference.Letter, notificationInfo.Patient, notificationInfo.Patient.Address),
-                    Parameter: nameof(NotificationInfo.Patient.Address)),
-
-                (Rule: IsInvalidContact(
-                    NotificationPreference.Letter, notificationInfo.Patient, notificationInfo.Patient.PostCode),
-                    Parameter: nameof(NotificationInfo.Patient.PostCode)),
+                (Rule: IsInvalidContactAddress(
+                    NotificationPreference.Letter, notificationInfo.Patient, notificationInfo.Patient.PostalAddress),
+                    Parameter: nameof(NotificationInfo.Patient.PostalAddress)),
 
                 (Rule: IsInvalid(
                     notificationInfo.Patient.ValidationCode),
@@ -105,13 +101,9 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                     NotificationPreference.Sms, notificationInfo.Patient, notificationInfo.Patient.Phone),
                     Parameter: nameof(NotificationInfo.Patient.Phone)),
 
-                (Rule: IsInvalidContact(
-                    NotificationPreference.Letter, notificationInfo.Patient, notificationInfo.Patient.Address),
-                    Parameter: nameof(NotificationInfo.Patient.Address)),
-
-                (Rule: IsInvalidContact(
-                    NotificationPreference.Letter, notificationInfo.Patient, notificationInfo.Patient.PostCode),
-                    Parameter: nameof(NotificationInfo.Patient.PostCode)),
+                (Rule: IsInvalidContactAddress(
+                    NotificationPreference.Letter, notificationInfo.Patient, notificationInfo.Patient.PostalAddress),
+                    Parameter: nameof(NotificationInfo.Patient.PostalAddress)),
 
                 (Rule: IsInvalid(
                     notificationInfo.Patient.ValidationCode),
@@ -127,7 +119,11 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
 
                 (Rule: IsInvalid(
                     notificationInfo.Decision?.DecisionChoice),
-                    Parameter: nameof(NotificationInfo.Decision.DecisionChoice)));
+                    Parameter: nameof(NotificationInfo.Decision.DecisionChoice)),
+
+                (Rule: IsInvalid(
+                    notificationInfo.Decision?.DecisionType.Name),
+                    Parameter: nameof(NotificationInfo.Decision.DecisionType.Name)));
         }
 
         private async ValueTask ValidateOnSendSubscriberUsageNotificationAsync(NotificationInfo notificationInfo)
@@ -165,13 +161,9 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                     NotificationPreference.Sms, notificationInfo.Patient, notificationInfo.Patient.Phone),
                     Parameter: nameof(NotificationInfo.Patient.Phone)),
 
-                (Rule: IsInvalidContact(
-                    NotificationPreference.Letter, notificationInfo.Patient, notificationInfo.Patient.Address),
-                    Parameter: nameof(NotificationInfo.Patient.Address)),
-
-                (Rule: IsInvalidContact(
-                    NotificationPreference.Letter, notificationInfo.Patient, notificationInfo.Patient.PostCode),
-                    Parameter: nameof(NotificationInfo.Patient.PostCode)),
+                (Rule: IsInvalidContactAddress(
+                    NotificationPreference.Letter, notificationInfo.Patient, notificationInfo.Patient.PostalAddress),
+                    Parameter: nameof(NotificationInfo.Patient.PostalAddress)),
 
                 (Rule: IsInvalid(
                     notificationInfo.Patient.ValidationCode),
@@ -342,6 +334,26 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
             {
                 Condition = isInvalid,
                 Message = "Text is required"
+            };
+        }
+
+        private static dynamic IsInvalidContactAddress(
+            NotificationPreference notificationPreference, Patient patient, Address address)
+        {
+            var isInvalid = false;
+
+            if (notificationPreference == patient.NotificationPreference)
+            {
+                isInvalid =
+                    string.IsNullOrWhiteSpace(address.RecipientName) ||
+                    string.IsNullOrWhiteSpace(address.AddressLine1) ||
+                    string.IsNullOrWhiteSpace(address.PostCode);
+            }
+
+            return new
+            {
+                Condition = isInvalid,
+                Message = "Address is required"
             };
         }
 
