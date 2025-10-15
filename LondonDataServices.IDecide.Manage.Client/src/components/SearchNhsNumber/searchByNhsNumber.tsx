@@ -10,18 +10,6 @@ import { Patient } from "../../models/patients/patient";
 import { SearchCriteria } from "../../models/searchCriterias/searchCriteria";
 import { useNavigate } from "react-router-dom";
 
-interface ErrorWithResponse {
-    response?: {
-        status?: number;
-        statusText?: string;
-        data?: {
-            title?: string;
-            message?: string;
-        };
-    };
-    message?: string;
-}
-
 export const SearchByNhsNumber = () => {
     const { t: translate } = useTranslation();
     const stepContext = useContext(StepContext);
