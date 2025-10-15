@@ -3,10 +3,10 @@
 // ---------------------------------------------------------
 
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using ISL.Providers.Captcha.Abstractions;
+using ISL.Providers.Captcha.Abstractions.Models;
 using ISL.Security.Client.Clients;
 using LondonDataServices.IDecide.Core.Models.Securities;
 using Microsoft.AspNetCore.Http;
@@ -23,7 +23,7 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
         private readonly ClaimsPrincipal claimsPrincipal;
         private string remoteIpAddress;
         private StringValues captchaToken;
-        private readonly IHeaderDictionary headers = new HeaderDictionary(); 
+        private readonly IHeaderDictionary headers = new HeaderDictionary();
         private readonly ISecurityClient securityClient;
         private readonly ICaptchaAbstractionProvider captchaAbstractionProvider;
 
@@ -126,11 +126,8 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
         /// <param name="captchaToken">The captcha token to check.</param>
         /// <param name="userIp">An optional ip address for the requesting user.</param>
         /// <returns>True if the user request is successfully validated; otherwise, false.</returns>
-        public async ValueTask<bool> ValidateCaptchaAsync() =>
-            //TODO: Capture Testing to be carried out in another branch
-            //USER STORY - 23123
-            //await this.captchaAbstractionProvider.ValidateCaptchaAsync(this.captchaToken, this.remoteIpAddress);
-            true;
+        public async ValueTask<CaptchaResult> ValidateCaptchaAsync() =>
+            await this.captchaAbstractionProvider.ValidateCaptchaAsync(this.captchaToken, this.remoteIpAddress);
 
         /// <summary>
         /// Extracts a <see cref="ClaimsPrincipal"/> from a given JWT token.
@@ -159,8 +156,8 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
         /// <param name="key">The header key.</param>
         public async ValueTask<string> GetHeaderAsync(string key)
         {
-            return this.headers.TryGetValue(key, out var value) 
-                ? (string)value 
+            return this.headers.TryGetValue(key, out var value)
+                ? (string)value
                 : string.Empty;
         }
     }

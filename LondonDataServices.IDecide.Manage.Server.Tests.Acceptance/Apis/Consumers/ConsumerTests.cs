@@ -37,6 +37,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.Consume
             DateTimeOffset now = DateTimeOffset.UtcNow;
             var updatedConsumer = CreateRandomConsumer();
             updatedConsumer.Id = inputConsumer.Id;
+            updatedConsumer.EntraId = inputConsumer.EntraId;
             updatedConsumer.CreatedDate = inputConsumer.CreatedDate;
             updatedConsumer.CreatedBy = inputConsumer.CreatedBy;
             updatedConsumer.UpdatedDate = now;
@@ -77,6 +78,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.Consume
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(now)
                 .OnType<DateTimeOffset?>().Use(now)
+                .OnProperty(consumer => consumer.EntraId).Use(GetRandomStringWithLengthOf(255))
                 .OnProperty(consumer => consumer.Name).Use(GetRandomStringWithLengthOf(255))
                 .OnProperty(consumer => consumer.CreatedDate).Use(now)
                 .OnProperty(consumer => consumer.CreatedBy).Use(user)

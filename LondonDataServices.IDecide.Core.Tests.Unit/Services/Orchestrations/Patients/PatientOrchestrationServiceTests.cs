@@ -13,6 +13,7 @@ using LondonDataServices.IDecide.Core.Brokers.DateTimes;
 using LondonDataServices.IDecide.Core.Brokers.Identifiers;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Brokers.Securities;
+using LondonDataServices.IDecide.Core.Models.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
@@ -42,10 +43,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         private readonly Mock<IPatientService> patientServiceMock = new Mock<IPatientService>();
         private readonly Mock<INotificationService> notificationServiceMock = new Mock<INotificationService>();
         private readonly DecisionConfigurations decisionConfigurations;
+        private readonly SecurityBrokerConfigurations securityBrokerConfigurations;
         private readonly PatientOrchestrationService patientOrchestrationService;
         private static readonly int expireAfterMinutes = 1440;
         private static readonly int validatedCodeValidForMinutes = 1440;
         private static readonly int retryCount = 3;
+        private static readonly int notificationRequestCountdownSeconds = 120;
         private static readonly List<string> decisionWorkflowRoles = new List<string> { "Administrator" };
         private readonly ICompareLogic compareLogic;
 
@@ -66,7 +69,13 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 PatientValidationCodeExpireAfterMinutes = expireAfterMinutes,
                 ValidatedCodeValidForMinutes = validatedCodeValidForMinutes,
                 MaxRetryCount = retryCount,
-                DecisionWorkflowRoles = decisionWorkflowRoles
+                DecisionWorkflowRoles = decisionWorkflowRoles,
+                NotificationRequestCountdownSeconds = 120
+            };
+
+            this.securityBrokerConfigurations = new SecurityBrokerConfigurations
+            {
+                ReCaptchaScoreThreshold = 0.8
             };
 
             this.patientOrchestrationService = new PatientOrchestrationService(
@@ -78,7 +87,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 pdsService: this.pdsServiceMock.Object,
                 patientService: this.patientServiceMock.Object,
                 notificationService: this.notificationServiceMock.Object,
-                decisionConfigurations: this.decisionConfigurations);
+                decisionConfigurations: this.decisionConfigurations,
+                securityBrokerConfigurations: this.securityBrokerConfigurations);
 
         }
 
@@ -142,6 +152,21 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         private static List<Patient> GetRandomPatients() =>
             CreatePatientFiller().Create(GetRandomNumber()).ToList();
 
+        private static Patient CreateRandomSensitivePatient(string inputSurname)
+        {
+            DateTimeOffset dateTimeOffset = DateTimeOffset.UtcNow;
+            var filler = new Filler<Patient>();
+
+            filler.Setup()
+                .OnType<DateTimeOffset>().Use(dateTimeOffset)
+                .OnType<DateTimeOffset?>().Use(dateTimeOffset)
+                .OnProperty(p => p.GivenName).Use(GetRandomString())
+                .OnProperty(p => p.Surname).Use(inputSurname)
+                .OnProperty(p => p.IsSensitive).Use(true);
+
+            return filler.Create();
+        }
+
         private static Filler<Patient> CreatePatientFiller(string inputSurname = "Test")
         {
             DateTimeOffset dateTimeOffset = DateTimeOffset.UtcNow;
@@ -150,13 +175,24 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
                 .OnType<DateTimeOffset?>().Use(dateTimeOffset)
-                .OnProperty(n => n.Surname).Use(inputSurname);
+                .OnProperty(n => n.Surname).Use(inputSurname)
+                .OnProperty(n => n.IsSensitive).Use(false);
 
             return filler;
         }
 
         private static Patient GetRandomPatientWithNhsNumber(string nhsNumber) =>
             CreatePatientFillerWithNhsNumber(nhsNumber).Create();
+
+        private static Patient GetRandomSensitivePatient()
+        {
+            return new Patient
+            {
+                GivenName = GetRandomString(),
+                Surname = GetRandomString(),
+                IsSensitive = true
+            };
+        }
 
         private static Filler<Patient> CreatePatientFillerWithNhsNumber(string nhsNumber = "1234567890")
         {
@@ -167,7 +203,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
                 .OnType<DateTimeOffset?>().Use(dateTimeOffset)
                 .OnProperty(n => n.NhsNumber).Use(nhsNumber)
-                .OnProperty(n => n.RetryCount).Use(0);
+                .OnProperty(n => n.RetryCount).Use(0)
+                .OnProperty(n => n.IsSensitive).Use(false);
 
             return filler;
         }

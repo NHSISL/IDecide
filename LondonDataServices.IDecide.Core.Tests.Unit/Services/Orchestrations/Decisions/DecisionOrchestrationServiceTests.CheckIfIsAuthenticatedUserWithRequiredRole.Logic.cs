@@ -5,6 +5,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using ISL.Providers.Captcha.Abstractions.Models;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions.Exceptions;
 using Moq;
 
@@ -109,13 +110,19 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             ShouldErrorOnCheckIfIsAuthenticatedUserWithRequiredRoleAsyncWithNonAuthenticatedUserInvalidCaptcha()
         {
             // given
+            CaptchaResult outputCaptchaResult = new CaptchaResult
+            {
+                Success = false,
+                Score = 0.0
+            };
+
             this.securityBrokerMock.Setup(broker =>
                 broker.IsCurrentUserAuthenticatedAsync())
                     .ReturnsAsync(false);
 
             this.securityBrokerMock.Setup(broker =>
                  broker.ValidateCaptchaAsync())
-                     .ReturnsAsync(false);
+                     .ReturnsAsync(outputCaptchaResult);
 
             var invalidCaptchaDecisionOrchestrationServiceException =
                 new InvalidCaptchaDecisionOrchestrationServiceException(
@@ -153,9 +160,69 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
         }
 
         [Fact]
+        public async Task
+            ShouldErrorOnCheckIfIsAuthenticatedUserWithRequiredRoleAsyncWithNonAuthenticatedUserLowScoringCaptcha()
+        {
+            // given
+            CaptchaResult outputCaptchaResult = new CaptchaResult
+            {
+                Success = true,
+                Score = 0.3
+            };
+
+            this.securityBrokerMock.Setup(broker =>
+                broker.IsCurrentUserAuthenticatedAsync())
+                    .ReturnsAsync(false);
+
+            this.securityBrokerMock.Setup(broker =>
+                 broker.ValidateCaptchaAsync())
+                     .ReturnsAsync(outputCaptchaResult);
+
+            var reCaptchaLowConfidenceException =
+                new ReCaptchaLowConfidenceException(
+                    "The captcha score is below the configured threshold.");
+
+            // when
+            ValueTask<bool> checkUserAction =
+                decisionOrchestrationService.CheckIfIsAuthenticatedUserWithRequiredRoleAsync();
+
+            ReCaptchaLowConfidenceException
+                actualReCaptchaLowConfidenceException =
+                    await Assert.ThrowsAsync<ReCaptchaLowConfidenceException>(
+                        testCode: checkUserAction.AsTask);
+
+            //then
+            actualReCaptchaLowConfidenceException
+                .Should().BeEquivalentTo(reCaptchaLowConfidenceException);
+
+            this.securityBrokerMock.Verify(broker =>
+                broker.IsCurrentUserAuthenticatedAsync(),
+                    Times.Once);
+
+            this.securityBrokerMock.Verify(broker =>
+                broker.ValidateCaptchaAsync(),
+                    Times.Once);
+
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.securityBrokerMock.VerifyNoOtherCalls();
+            this.auditBrokerMock.VerifyNoOtherCalls();
+            this.identifierBrokerMock.VerifyNoOtherCalls();
+            this.patientServiceMock.VerifyNoOtherCalls();
+            this.notificationServiceMock.VerifyNoOtherCalls();
+            this.decisionServiceMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
         public async Task ShouldCheckIfIsAuthenticatedUserWithRequiredRoleAsyncWithNonAuthenticatedUserValidCaptcha()
         {
             // given
+            CaptchaResult outputCaptchaResult = new CaptchaResult
+            {
+                Success = true,
+                Score = 1.0
+            };
+
             bool expectedResult = false;
 
             this.securityBrokerMock.Setup(broker =>
@@ -164,7 +231,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
 
             this.securityBrokerMock.Setup(broker =>
                  broker.ValidateCaptchaAsync())
-                     .ReturnsAsync(true);
+                     .ReturnsAsync(outputCaptchaResult);
 
             // when
             bool actualResult =

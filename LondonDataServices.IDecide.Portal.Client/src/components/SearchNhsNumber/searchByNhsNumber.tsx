@@ -6,11 +6,12 @@ import { patientViewService } from "../../services/views/patientViewService";
 import { TextInput, Button, Select, Card } from "nhsuk-react-components";
 import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
 import { loadRecaptchaScript } from "../../helpers/recaptureLoad";
-import { Container, Row, Col } from "react-bootstrap";
+import { Container, Row, Col, Alert } from "react-bootstrap";
 import { StepContext } from "../context/stepContext";
 import { PatientLookup } from "../../models/patients/patientLookup";
 import { Patient } from "../../models/patients/patient";
 import { SearchCriteria } from "../../models/searchCriterias/searchCriteria";
+import { useApiErrorHandlerChecks } from "../../hooks/useApiErrorHandlerChecks";
 
 export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
     onIDontKnow: (powerOfAttorney: boolean) => void;
@@ -29,6 +30,7 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
     const [poaSurname, setPoaSurname] = useState("");
     const [poaRelationship, setPoaRelationship] = useState("");
     const [error, setError] = useState("");
+    const [apiError, setApiError] = useState<string | JSX.Element>("");
     const [poaNhsNumberError, setPoaNhsNumberError] = useState("");
     const [poaFirstnameError, setPoaFirstnameError] = useState("");
     const [poaSurnameError, setPoaSurnameError] = useState("");
@@ -39,8 +41,12 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
     const { configuration } = useFrontendConfiguration();
     const RECAPTCHA_ACTION_SUBMIT = "submit";
     const { nextStep, setCreatedPatient } = useStep();
-
     const addPatient = patientViewService.usePostPatientSearch();
+
+    const handleApiError = useApiErrorHandlerChecks({
+        setApiError,
+        configuration
+    });
 
     useEffect(() => {
         if (configuration?.recaptchaSiteKey) {
@@ -65,7 +71,7 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
                     waitForGrecaptcha();
                 })
                 .catch(() => {
-                    if (isMounted) setError(translate("SearchByNHSNumber.errorRecaptchaLoad"));
+                    if (isMounted) setError(translate("SearchBySHSNumber.errorRecaptchaLoad"));
                 });
         }
         return () => { isMounted = false; };
@@ -99,19 +105,19 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
     const validatePoaFields = () => {
         let valid = true;
         if (poaNhsNumberInput.length !== 10) {
-            setPoaNhsNumberError(translate("SearchByNHSNumber.errorNhsNumber"));
+            setPoaNhsNumberError(translate("SearchBySHSNumber.errorNhsNumber"));
             valid = false;
         }
         if (!poaFirstname.trim()) {
-            setPoaFirstnameError(translate("SearchByNHSNumber.errorFirstname"));
+            setPoaFirstnameError(translate("SearchBySHSNumber.errorFirstname"));
             valid = false;
         }
         if (!poaSurname.trim()) {
-            setPoaSurnameError(translate("SearchByNHSNumber.errorSurname"));
+            setPoaSurnameError(translate("SearchBySHSNumber.errorSurname"));
             valid = false;
         }
         if (!poaRelationship) {
-            setPoaRelationshipError(translate("SearchByNHSNumber.errorRelationship"));
+            setPoaRelationshipError(translate("SearchBySHSNumber.errorRelationship"));
             valid = false;
         }
         return valid;
@@ -120,6 +126,7 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
+        setApiError("");
         setPoaNhsNumberError("");
         setPoaFirstnameError("");
         setPoaSurnameError("");
@@ -129,13 +136,13 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
             if (!validatePoaFields()) return;
         } else {
             if (nhsNumberInput.length !== 10) {
-                setError(translate("SearchByNHSNumber.errorNhsNumber"));
+                setError(translate("SearchBySHSNumber.errorNhsNumber"));
                 return;
             }
         }
 
         if (!recaptchaReady || typeof grecaptcha === "undefined" || !recaptchaSiteKey) {
-            setError(translate("SearchByNHSNumber.errorRecaptchaNotReady"));
+            setError(translate("SearchBySHSNumber.errorRecaptchaNotReady"));
             return;
         }
         setLoading(true);
@@ -163,15 +170,51 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
                             nextStep(undefined, nhsNumberToUse, createdPatient, poaModel);
                             setLoading(false);
                         },
-                        onError: () => {
-                            setError(translate("SearchByNHSNumber.errorCreatePatient"));
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        onError: (error: any) => {
+                            const status = error?.response?.status;
+                            const errorData = error?.response?.data;
+                            const errorTitle = errorData?.title;
+
+                            if (errorTitle === "Patient not found.") {
+                                setError(translate("errors.PatientNotFound"));
+                                setLoading(false);
+                                return;
+                            }
+
+                            if (handleApiError(errorTitle)) {
+                                setLoading(false);
+                                return;
+                            }
+
+                            switch (status) {
+                                case 400:
+                                    setError(translate("errors.400"));
+                                    break;
+                                case 404:
+                                    setError(translate("errors.404"));
+                                    break;
+                                case 401:
+                                    setError(translate("errors.401"));
+                                    break;
+                                case 500:
+                                    setError(translate("errors.500")
+                                    );
+                                    break;
+                                default:
+                                    setError(
+                                        errorTitle ||
+                                        translate("errors.CatchAll")
+                                    );
+                                    break;
+                            }
                             setLoading(false);
                         }
                     }
                 );
             });
         } catch {
-            setError(translate("SearchByNHSNumber.errorRecaptchaFailed"));
+            setError(translate("SearchBySHSNumber.errorRecaptchaFailed"));
             setLoading(false);
         }
     };
@@ -183,8 +226,8 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
                     <form autoComplete="off" onSubmit={handleSubmit}>
                         {!powerOfAttorney && (
                             <TextInput
-                                label={translate("SearchByNHSNumber.nhsNumberLabel")}
-                                hint={translate("SearchByNHSNumber.nhsNumberHint")}
+                                label={translate("SearchBySHSNumber.nhsNumberLabel")}
+                                hint={translate("SearchBySHSNumber.nhsNumberHint")}
                                 id="nhs-number"
                                 name="nhs-number"
                                 inputMode="numeric"
@@ -202,9 +245,9 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
                             <div style={{ marginBottom: "1.5rem" }}>
                                 <Card cardType="feature">
                                     <Card.Content>
-                                        <Card.Heading>{translate("SearchByNHSNumber.poaNhsNumberLabel")}</Card.Heading>
+                                        <Card.Heading>{translate("SearchBySHSNumber.poaNhsNumberLabel")}</Card.Heading>
                                         <TextInput
-                                            label={translate("SearchByNHSNumber.nhsNumberLabel")}
+                                            label={translate("SearchBySHSNumber.nhsNumberLabel")}
                                             id="poa-nhs-number"
                                             name="poa-nhs-number"
                                             inputMode="numeric"
@@ -221,9 +264,9 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
 
                                 <Card cardType="feature">
                                     <Card.Content>
-                                        <Card.Heading>{translate("SearchByNHSNumber.poaMyDetailsHeading")}</Card.Heading>
+                                        <Card.Heading>{translate("SearchBySHSNumber.poaMyDetailsHeading")}</Card.Heading>
                                         <TextInput
-                                            label={translate("SearchByNHSNumber.poaFirstnameLabel")}
+                                            label={translate("SearchBySHSNumber.poaFirstnameLabel")}
                                             id="poa-firstname"
                                             name="poa-firstname"
                                             autoComplete="off"
@@ -233,7 +276,7 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
                                             style={{ maxWidth: "400px", marginBottom: "1rem" }}
                                         />
                                         <TextInput
-                                            label={translate("SearchByNHSNumber.poaSurnameLabel")}
+                                            label={translate("SearchBySHSNumber.poaSurnameLabel")}
                                             id="poa-surname"
                                             name="poa-surname"
                                             autoComplete="off"
@@ -244,10 +287,10 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
                                         />
                                         <div style={{ marginBottom: "1rem" }}>
                                             <Select
-                                                label={translate("SearchByNHSNumber.poaRelationshipLabel")}
+                                                label={translate("SearchBySHSNumber.poaRelationshipLabel")}
                                                 id="poa-relationship"
                                                 name="poa-relationship"
-                                                aria-label={translate("SearchByNHSNumber.poaRelationshipLabel")}
+                                                aria-label={translate("SearchBySHSNumber.poaRelationshipLabel")}
                                                 aria-required="true"
                                                 required
                                                 value={poaRelationship}
@@ -256,16 +299,16 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
                                                 style={{ maxWidth: "400px", marginBottom: "1rem" }}
                                             >
                                                 <option value="" disabled>
-                                                    {translate("SearchByNHSNumber.poaRelationshipSelect")}
+                                                    {translate("SearchBySHSNumber.poaRelationshipSelect")}
                                                 </option>
-                                                <option value={translate("SearchByNHSNumber.poaRelationshipOptions.parent")}>
-                                                    {translate("SearchByNHSNumber.poaRelationshipOptions.parent")}
+                                                <option value={translate("SearchBySHSNumber.poaRelationshipOptions.parent")}>
+                                                    {translate("SearchBySHSNumber.poaRelationshipOptions.parent")}
                                                 </option>
-                                                <option value={translate("SearchByNHSNumber.poaRelationshipOptions.guardian")}>
-                                                    {translate("SearchByNHSNumber.poaRelationshipOptions.guardian")}
+                                                <option value={translate("SearchBySHSNumber.poaRelationshipOptions.guardian")}>
+                                                    {translate("SearchBySHSNumber.poaRelationshipOptions.guardian")}
                                                 </option>
-                                                <option value={translate("SearchByNHSNumber.poaRelationshipOptions.attorney")}>
-                                                    {translate("SearchByNHSNumber.poaRelationshipOptions.attorney")}
+                                                <option value={translate("SearchBySHSNumber.poaRelationshipOptions.attorney")}>
+                                                    {translate("SearchBySHSNumber.poaRelationshipOptions.attorney")}
                                                 </option>
                                             </Select>
                                         </div>
@@ -288,7 +331,7 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
                                         : nhsNumberInput.length !== 10)
                                 }
                             >
-                                {loading ? translate("SearchByNHSNumber.submittingButton") : translate("SearchByNHSNumber.submitButton")}
+                                {loading ? translate("SearchBySHSNumber.submittingButton") : translate("SearchBySHSNumber.submitButton")}
                             </Button>
                             <Button
                                 type="button"
@@ -296,10 +339,16 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
                                 onClick={() => onIDontKnow(powerOfAttorney)}
                                 disabled={loading}
                             >
-                                {translate("SearchByNHSNumber.idontknowButton")}
+                                {translate("SearchBySHSNumber.idontknowButton")}
                             </Button>
                         </div>
                     </form>
+
+                    {apiError && (
+                        <Alert variant="danger">
+                            {apiError}
+                        </Alert>
+                    )}
                 </Col>
                 <Col xs={12} md={6} lg={6} className="custom-col-spacing">
                     {!powerOfAttorney && (
@@ -312,14 +361,14 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
                                 boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
                             }}
                         >
-                            <h2 className="mb-3" style={{ color: "#005eb8" }}>{translate("SearchByNHSNumber.helpGuidanceTitle")}</h2>
+                            <h2 className="mb-3" style={{ color: "#005eb8" }}>{translate("SearchBySHSNumber.helpGuidanceTitle")}</h2>
                             <h3 className="mb-3" style={{ color: "#005eb8" }}>
-                                {translate("SearchByNHSNumber.helpGuidanceNhsNumberHeading")}
+                                {translate("SearchBySHSNumber.helpGuidanceNhsNumberHeading")}
                             </h3>
-                            <p>{translate("SearchByNHSNumber.helpGuidanceNhsNumberText1")}</p>
-                            <p>{translate("SearchByNHSNumber.helpGuidanceNhsNumberText2")}</p>
-                            <p>{translate("SearchByNHSNumber.helpGuidanceNhsNumberText3")}</p>
-                            <p>{translate("SearchByNHSNumber.helpGuidanceNhsNumberText4")}</p>
+                            <p>{translate("SearchBySHSNumber.helpGuidanceNhsNumberText1")}</p>
+                            <p>{translate("SearchBySHSNumber.helpGuidanceNhsNumberText2")}</p>
+                            <p>{translate("SearchBySHSNumber.helpGuidanceNhsNumberText3")}</p>
+                            <p>{translate("SearchBySHSNumber.helpGuidanceNhsNumberText4")}</p>
                         </div>
                     )}
                     {powerOfAttorney && (
@@ -332,23 +381,23 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
                                 boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
                             }}
                         >
-                            <h2 className="mb-3" style={{ color: "#005eb8" }}>{translate("SearchByNHSNumber.helpGuidanceTitle")}</h2>
+                            <h2 className="mb-3" style={{ color: "#005eb8" }}>{translate("SearchBySHSNumber.helpGuidanceTitle")}</h2>
 
                             <div style={{ marginBottom: "1.5rem" }}>
-                                <h3 style={{ color: "#005eb8" }}>{translate("SearchByNHSNumber.helpGuidanceEligibilityHeading")}</h3>
+                                <h3 style={{ color: "#005eb8" }}>{translate("SearchBySHSNumber.helpGuidanceEligibilityHeading")}</h3>
                                 <ul>
-                                    <li>{translate("SearchByNHSNumber.helpGuidanceEligibilityList.parent")}</li>
-                                    <li>{translate("SearchByNHSNumber.helpGuidanceEligibilityList.guardian")}</li>
-                                    <li>{translate("SearchByNHSNumber.helpGuidanceEligibilityList.attorney")}</li>
+                                    <li>{translate("SearchBySHSNumber.helpGuidanceEligibilityList.parent")}</li>
+                                    <li>{translate("SearchBySHSNumber.helpGuidanceEligibilityList.guardian")}</li>
+                                    <li>{translate("SearchBySHSNumber.helpGuidanceEligibilityList.attorney")}</li>
                                 </ul>
-                                <p>{translate("SearchByNHSNumber.helpGuidanceEligibilityText")}</p>
+                                <p>{translate("SearchBySHSNumber.helpGuidanceEligibilityText")}</p>
                             </div>
 
                             <div>
-                                <h3 style={{ color: "#005eb8" }}>{translate("SearchByNHSNumber.helpGuidancePoaNhsNumberHeading")}</h3>
-                                <p>{translate("SearchByNHSNumber.helpGuidancePoaNhsNumberText1")}</p>
-                                <p>{translate("SearchByNHSNumber.helpGuidancePoaNhsNumberText2")}</p>
-                                <p>{translate("SearchByNHSNumber.helpGuidancePoaNhsNumberText3")}</p>
+                                <h3 style={{ color: "#005eb8" }}>{translate("SearchBySHSNumber.helpGuidancePoaNhsNumberHeading")}</h3>
+                                <p>{translate("SearchBySHSNumber.helpGuidancePoaNhsNumberText1")}</p>
+                                <p>{translate("SearchBySHSNumber.helpGuidancePoaNhsNumberText2")}</p>
+                                <p>{translate("SearchBySHSNumber.helpGuidancePoaNhsNumberText3")}</p>
                             </div>
                         </div>
                     )}

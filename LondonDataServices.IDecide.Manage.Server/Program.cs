@@ -14,12 +14,10 @@ using ISL.Providers.Captcha.GoogleReCaptcha.Providers;
 using ISL.Providers.Notifications.Abstractions;
 using ISL.Providers.Notifications.GovukNotify.Models;
 using ISL.Providers.Notifications.GovukNotify.Providers.Notifications;
+using ISL.Providers.Notifications.NotifyIntercept.Providers.Notifications;
 using ISL.Providers.PDS.Abstractions;
-using ISL.Providers.PDS.FakeFHIR.Models;
-using ISL.Providers.PDS.FakeFHIR.Providers.FakeFHIR;
 using ISL.Providers.PDS.FHIR.Models.Brokers.PdsFHIR;
 using ISL.Providers.PDS.FHIR.Providers;
-using ISL.Providers.ReIdentification.Necs.Models.Brokers.Notifications;
 using ISL.Security.Client.Models.Clients;
 using LondonDataServices.IDecide.Core.Brokers.Audits;
 using LondonDataServices.IDecide.Core.Brokers.DateTimes;
@@ -30,6 +28,7 @@ using LondonDataServices.IDecide.Core.Brokers.Pds;
 using LondonDataServices.IDecide.Core.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Brokers.Storages.Sql;
 using LondonDataServices.IDecide.Core.Clients.Audits;
+using LondonDataServices.IDecide.Core.Models.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Models.Foundations.Audits;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
@@ -43,6 +42,7 @@ using LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes;
 using LondonDataServices.IDecide.Core.Services.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Services.Foundations.Pds;
+using LondonDataServices.IDecide.Core.Services.Orchestrations.Consumers;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -193,50 +193,25 @@ namespace LondonDataServices.IDecide.Manage.Server
 
         private static void AddProviders(IServiceCollection services, IConfiguration configuration)
         {
-            NotificationConfigurations notificationConfigurations = configuration
-                .GetSection("NotificationConfigurations")
-                    .Get<NotificationConfigurations>();
-
-            NotifyConfigurations notifyConfigurations = new NotifyConfigurations
-            {
-                ApiKey = notificationConfigurations.ApiKey
-            };
-
             NotificationConfig notificationConfig = configuration.GetSection("NotificationConfig")
                 .Get<NotificationConfig>();
 
-            services.AddSingleton(notificationConfigurations);
-            services.AddSingleton(notifyConfigurations);
             services.AddSingleton(notificationConfig);
-            services.AddTransient<INotificationAbstractionProvider, NotificationAbstractionProvider>();
-            services.AddTransient<INotificationProvider, GovUkNotifyProvider>();
             services.AddTransient<IPdsAbstractionProvider, PdsAbstractionProvider>();
             services.AddTransient<ICaptchaAbstractionProvider, CaptchaAbstractionProvider>();
-
-            bool fakeFHIRProviderMode = configuration
-                .GetSection("FakeFHIRProviderMode").Get<bool>();
 
             bool fakeCaptchaProviderMode = configuration
                 .GetSection("FakeCaptchaProviderMode").Get<bool>();
 
-            if (fakeFHIRProviderMode == true)
-            {
-                FakeFHIRProviderConfigurations fakeFHIRProviderConfigurations = configuration
-                .GetSection("FakeFHIRProviderConfigurations")
-                    .Get<FakeFHIRProviderConfigurations>();
+            bool interceptNotificationProviderMode = configuration
+                .GetSection("InterceptNotificationProviderMode").Get<bool>();
 
-                services.AddSingleton(fakeFHIRProviderConfigurations);
-                services.AddTransient<IPdsProvider, FakeFHIRProvider>();
-            }
-            else
-            {
-                PdsFHIRConfigurations pdsFhirConfigurations = configuration
-                .GetSection("pdsFHIRConfigurations")
-                    .Get<PdsFHIRConfigurations>();
+            PdsFHIRConfigurations pdsFhirConfigurations = configuration
+            .GetSection("pdsFHIRConfigurations")
+                .Get<PdsFHIRConfigurations>();
 
-                services.AddSingleton(pdsFhirConfigurations);
-                services.AddTransient<IPdsProvider, PdsFHIRProvider>();
-            }
+            services.AddSingleton(pdsFhirConfigurations);
+            services.AddTransient<IPdsProvider, PdsFHIRProvider>();
 
             if (fakeCaptchaProviderMode == true)
             {
@@ -251,12 +226,43 @@ namespace LondonDataServices.IDecide.Manage.Server
                 services.AddSingleton(reCaptchaConfigurations);
                 services.AddTransient<ICaptchaProvider, GoogleReCaptchaProvider>();
             }
+
+            if (interceptNotificationProviderMode == true)
+            {
+                ISL.Providers.Notifications.NotifyIntercept.Models.NotifyConfigurations notifyConfigurations =
+                    configuration.GetSection("NotifyConfigurations")
+                        .Get<ISL.Providers.Notifications.NotifyIntercept.Models.NotifyConfigurations>();
+
+                NotifyConfigurations govUkNotifyConfigurations = configuration.GetSection("NotifyConfigurations")
+                    .Get<NotifyConfigurations>();
+
+                var govUkNotifyProvider = new GovUkNotifyProvider(govUkNotifyConfigurations);
+                var notifyInterceptProvider = new NotifyInterceptProvider(notifyConfigurations, govUkNotifyProvider);
+                var notificationAbstractionProvider = new NotificationAbstractionProvider(notifyInterceptProvider);
+                services.AddTransient<INotificationAbstractionProvider>(_ => notificationAbstractionProvider);
+            }
+            else
+            {
+                NotifyConfigurations notifyConfigurations = configuration.GetSection("NotifyConfigurations")
+                    .Get<NotifyConfigurations>();
+
+                var govUkNotifyProvider = new GovUkNotifyProvider(notifyConfigurations);
+                var notificationAbstractionProvider = new NotificationAbstractionProvider(govUkNotifyProvider);
+                services.AddTransient<INotificationAbstractionProvider>(_ => notificationAbstractionProvider);
+            }
         }
 
         private static void AddBrokers(IServiceCollection services, IConfiguration configuration)
         {
             SecurityConfigurations securityConfigurations = new SecurityConfigurations();
             services.AddSingleton(securityConfigurations);
+
+            SecurityBrokerConfigurations securityBrokerConfigurations = configuration
+                .GetSection("SecurityBrokerConfigurations")
+                    .Get<SecurityBrokerConfigurations>();
+
+            services.AddSingleton(securityBrokerConfigurations);
+
             services.AddTransient<IDateTimeBroker, DateTimeBroker>();
             services.AddTransient<IIdentifierBroker, IdentifierBroker>();
             services.AddTransient<ILoggingBroker, LoggingBroker>();
@@ -293,6 +299,7 @@ namespace LondonDataServices.IDecide.Manage.Server
             services.AddSingleton(decisionConfigurations);
             services.AddTransient<IPatientOrchestrationService, PatientOrchestrationService>();
             services.AddTransient<IDecisionOrchestrationService, DecisionOrchestrationService>();
+            services.AddTransient<IConsumerOrchestrationService, ConsumerOrchestrationService>();
         }
 
         private static void AddCoordinationServices(IServiceCollection services, IConfiguration configuration)

@@ -32,8 +32,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
 
                     this.notificationBrokerMock.Setup(broker =>
                         broker.SendEmailAsync(
-                            inputNotificationInfo.Patient.Email,
                             this.notificationConfig.EmailSubmissionSuccessTemplateId,
+                            inputNotificationInfo.Patient.Email,
                             personalisation))
                         .ReturnsAsync(result);
 
@@ -59,6 +59,13 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                     this.notificationBrokerMock.Setup(broker =>
                         broker.SendLetterAsync(
                             this.notificationConfig.LetterSubmissionSuccessTemplateId,
+                            inputNotificationInfo.Patient.PostalAddress.RecipientName,
+                            inputNotificationInfo.Patient.PostalAddress.AddressLine1,
+                            inputNotificationInfo.Patient.PostalAddress.AddressLine2,
+                            inputNotificationInfo.Patient.PostalAddress.AddressLine3,
+                            inputNotificationInfo.Patient.PostalAddress.AddressLine4,
+                            inputNotificationInfo.Patient.PostalAddress.AddressLine5,
+                            inputNotificationInfo.Patient.PostCode,
                             personalisation,
                             string.Empty))
                         .ReturnsAsync(result);
@@ -74,8 +81,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                 case NotificationPreference.Email:
                     this.notificationBrokerMock.Verify(broker =>
                             broker.SendEmailAsync(
-                                inputNotificationInfo.Patient.Email,
                                 this.notificationConfig.EmailSubmissionSuccessTemplateId,
+                                inputNotificationInfo.Patient.Email,
                                 personalisation),
                         Times.Once);
                     break;
@@ -93,6 +100,13 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                     this.notificationBrokerMock.Verify(broker =>
                             broker.SendLetterAsync(
                                 notificationConfig.LetterSubmissionSuccessTemplateId,
+                                inputNotificationInfo.Patient.PostalAddress.RecipientName,
+                                inputNotificationInfo.Patient.PostalAddress.AddressLine1,
+                                inputNotificationInfo.Patient.PostalAddress.AddressLine2,
+                                inputNotificationInfo.Patient.PostalAddress.AddressLine3,
+                                inputNotificationInfo.Patient.PostalAddress.AddressLine4,
+                                inputNotificationInfo.Patient.PostalAddress.AddressLine5,
+                                inputNotificationInfo.Patient.PostCode,
                                 personalisation,
                                 string.Empty),
                         Times.Once);

@@ -817,7 +817,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="3erFPh9-9C9WD2HGU6Cl-1" value="Hash Broker" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0a30a;fontColor=#000000;strokeColor=#BD7000;" parent="1" vertex="1">
+        <mxCell id="3erFPh9-9C9WD2HGU6Cl-1" value="Hash Broker" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#60a917;fontColor=#ffffff;strokeColor=#2D7600;" parent="1" vertex="1">
           <mxGeometry x="-800" y="1880" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="alTQPESJRtdc6jmR-ccT-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="alTQPESJRtdc6jmR-ccT-2" target="alTQPESJRtdc6jmR-ccT-3" edge="1">

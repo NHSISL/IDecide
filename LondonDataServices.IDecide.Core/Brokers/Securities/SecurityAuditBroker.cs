@@ -135,6 +135,6 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
         /// </code>
         /// </example>
         public async ValueTask<string> GetCurrentUserIdAsync() =>
-            await this.securityClient.Audits.GetCurrentUserIdAsync(claimsPrincipal);
+            await this.securityClient.Audits.GetUserIdAsync(claimsPrincipal);
     }
 }

@@ -4,11 +4,12 @@ import { patientViewService } from "../../services/views/patientViewService";
 import { PatientCodeRequest } from "../../models/patients/patientCodeRequest";
 import { Row, Col, Alert } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
-import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
 import { loadRecaptchaScript } from "../../helpers/recaptureLoad";
 import { isApiErrorResponse } from "../../helpers/isApiErrorResponse";
 import { NotificationPreference } from "../../helpers/notificationPreference";
-
+import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
+import { useApiErrorHandlerChecks } from "../../hooks/useApiErrorHandlerChecks";
+import { useTimer } from "../../hooks/useTimer";
 interface PositiveConfirmationProps {
     goToConfirmCode: (createdPatient: PatientCodeRequest) => void;
 }
@@ -19,9 +20,6 @@ const notificationPreferenceMap: Record<"Email" | "Letter" | "Sms", number> = {
     Sms: NotificationPreference.Sms
 };
 
-const VALID_CODE_MESSAGE =
-    "A valid code already exists for this patient, please go to the enter code screen.";
-
 const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirmCode }) => {
     const { t: translate } = useTranslation();
     const { createdPatient, powerOfAttorney, setCreatedPatient } = useStep();
@@ -29,18 +27,28 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
     const RECAPTCHA_SITE_KEY = configuration.recaptchaSiteKey;
     const RECAPTCHA_ACTION_SUBMIT = "submit";
     const updatePatient = patientViewService.useAddPatientAndGenerateCode();
-    const [error, setError] = useState<string | JSX.Element>("");
+    const [apiError, setApiError] = useState<string | JSX.Element>("");
     const [info, setInfo] = useState<string | JSX.Element>("");
     const [hideButtons, setHideButtons] = useState(false);
     const [resend, setResend] = useState(false);
-    const [showResendMessage, setShowResendMessage] = useState(false);
+    const [showAreYouSure, setShowAreYouSure] = useState(false);
+
+    const [timerActive, setTimerActive] = useState(false);
+    const [timerKey, setTimerKey] = useState(0);
+    const { remainingSeconds, timerExpired } = useTimer(timerActive ? configuration.notificationRequestCountdown : 0, timerKey);
+
+    const handleApiError = useApiErrorHandlerChecks({
+        setApiError,
+        configuration
+    });
 
     if (!createdPatient) {
         return <div>{translate("PositiveConfirmation.noPatientDetails")}</div>;
     }
 
     const handleSubmit = async (method: "Email" | "Letter" | "Sms", resendFlag = false) => {
-        setError("");
+        setApiError("");
+        setInfo("");
 
         const patientToUpdate = new PatientCodeRequest({
             nhsNumber: createdPatient.nhsNumber!,
@@ -49,7 +57,6 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
             generateNewCode: resendFlag ? true : false
         });
 
-        // Update the context so ConfirmCodePage sees the correct value
         if (setCreatedPatient) {
             setCreatedPatient({
                 ...createdPatient,
@@ -67,64 +74,61 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                 {
                     headers: { "X-Recaptcha-Token": token },
                     onSuccess: () => {
-                        setError("");
+                        setApiError("");
+                        setInfo("");
+                        setResend(false);
                         goToConfirmCode(patientToUpdate);
                     },
                     onError: (error: unknown) => {
-                        let apiTitle = "";
                         if (isApiErrorResponse(error)) {
-                            const errResponse = error.response;
-                            apiTitle =
-                                errResponse.data?.title ||
-                                errResponse.data?.message ||
-                                errResponse.statusText ||
+                            const errorResponse = error?.response;
+
+                            const errorTitle =
+                                errorResponse?.data?.title ||
+                                errorResponse?.data?.message ||
+                                errorResponse.statusText ||
                                 "Unknown API error";
-                            if (apiTitle === VALID_CODE_MESSAGE) {
-                                setInfo(
-                                    <span>
-                                        {apiTitle}{" Click "}
-                                        <a
-                                            href="#"
-                                            onClick={e => {
-                                                e.preventDefault();
-                                                setError("");
-                                                goToConfirmCode(patientToUpdate);
-                                            }}
-                                            style={{ textDecoration: "underline", color: "#005eb8" }}
-                                        >
-                                            {"Here"}
-                                        </a>
-                                    </span>
-                                );
-                                setHideButtons(true);
-                                setShowResendMessage(true);
-                                return;
+
+                            if (!handleApiError(errorTitle)) {
+                                setApiError(errorTitle);
                             }
-                            setError(apiTitle);
-                            setShowResendMessage(false);
-                            console.error("API Error updating patient:", apiTitle, errResponse);
+                            setApiError(errorTitle);
                         } else if (
                             error &&
                             typeof error === "object" &&
                             "message" in error &&
                             typeof (error as { message?: unknown }).message === "string"
                         ) {
-                            setError((error as { message: string }).message);
-                            setShowResendMessage(false);
+                            setApiError((error as { message: string }).message);
                             console.error("Error updating patient:", (error as { message: string }).message, error);
                         } else {
-                            setError("An unexpected error occurred.");
-                            setShowResendMessage(false);
-                            console.error("Error updating patient:", error);
+                            setApiError("An unexpected error occurred.");
                         }
                     }
                 }
             );
         } catch (err) {
-            setError("Error executing reCAPTCHA.");
-            setShowResendMessage(false);
+            setApiError("Error executing reCAPTCHA.");
             console.error("Error executing reCAPTCHA:", err);
         }
+    };
+
+    const handleRequestNewCodeClick = () => {
+        setShowAreYouSure(true);
+        setHideButtons(true);
+    };
+
+    const handleAreYouSureNo = () => {
+        setShowAreYouSure(false);
+        setHideButtons(false);
+    };
+
+    const handleAreYouSureYes = () => {
+        setShowAreYouSure(false);
+        setHideButtons(false);
+        setResend(true);
+        setTimerActive(true);
+        setTimerKey(prev => prev + 1);
     };
 
     return (
@@ -183,73 +187,100 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                         {translate("PositiveConfirmation.chooseMethod")}
                     </p>
 
-                    {error && (
+                    {apiError && (
                         <Alert variant="danger">
-                            <div id="code-error">{error}</div>
+                            <div id="code-error">{apiError}</div>
                         </Alert>
                     )}
 
                     {info && (
-                        <>
-                            <Alert variant="info">
-                                <div id="code-error" > {info} </div>
-                            </Alert>
-                        </>
-                    )}
-
-                    {showResendMessage && (
-                        <Alert variant="danger">
-                            <div id="code-error">
-                                {translate("PositiveConfirmation.noCodeRecieved")}{" "}
-                                <a
-                                    href="#"
-                                    onClick={e => {
-                                        e.preventDefault();
-                                        setHideButtons(false);
-                                        setResend(true);
-                                        setShowResendMessage(false);
-                                        setInfo("");
-                                    }}
-                                    style={{ textDecoration: "underline", color: "#005eb8" }}>
-                                    Here
-                                </a>
-                            </div>
+                        <Alert variant="info">
+                            <div id="code-info">{info}</div>
                         </Alert>
                     )}
 
                     {!hideButtons && (
-                        <div style={{
-                            display: "flex",
-                            gap: "1rem",
-                            flexWrap: "wrap"
-                        }}>
-                            <button
-                                type="button"
-                                className="nhsuk-button"
-                                style={{ flex: 1, minWidth: 120 }}
-                                onClick={() => handleSubmit("Email", resend)}
-                                disabled={!createdPatient.email}
-                            >
-                                {translate("PositiveConfirmation.methodEmail")}
-                            </button>
-                            <button
-                                type="button"
-                                className="nhsuk-button"
-                                style={{ flex: 1, minWidth: 120 }}
-                                onClick={() => handleSubmit("Sms", resend)}
-                                disabled={!createdPatient.phone}
-                            >
-                                {translate("PositiveConfirmation.methodSMS")}
-                            </button>
-                            <button
-                                type="button"
-                                className="nhsuk-button"
-                                style={{ flex: 1, minWidth: 120 }}
-                                onClick={() => handleSubmit("Letter", resend)}
-                                disabled={!createdPatient.address}
-                            >
-                                {translate("PositiveConfirmation.methodLetter")}
-                            </button>
+                        <>
+                            <div style={{
+                                display: "flex",
+                                gap: "1rem",
+                                flexWrap: "wrap"
+                            }}>
+                                <button
+                                    type="button"
+                                    className="nhsuk-button"
+                                    style={{ flex: 1, minWidth: 120 }}
+                                    onClick={() => handleSubmit("Email", resend)}
+                                    disabled={!createdPatient.email}
+                                >
+                                    {translate("PositiveConfirmation.methodEmail")}
+                                </button>
+                                <button
+                                    type="button"
+                                    className="nhsuk-button"
+                                    style={{ flex: 1, minWidth: 120 }}
+                                    onClick={() => handleSubmit("Sms", resend)}
+                                    disabled={!createdPatient.phone}
+                                >
+                                    {translate("PositiveConfirmation.methodSMS")}
+                                </button>
+                                <button
+                                    type="button"
+                                    className="nhsuk-button"
+                                    style={{ flex: 1, minWidth: 120 }}
+                                    onClick={() => handleSubmit("Letter", resend)}
+                                    disabled={!createdPatient.address}
+                                >
+                                    {translate("PositiveConfirmation.methodLetter")}
+                                </button>
+                            </div>
+                            <Alert variant="warning">
+                                <p>
+                                    {translate("PositiveConfirmation.resendInfo") ||
+                                        "If you have already requested a code but haven't received it, please click here to resend yourself a code."}
+                                </p>
+                                <button
+                                    type="button"
+                                    className="nhsuk-button nhsuk-button--reverse"
+                                    style={{ flex: 1, minWidth: 225 }}
+                                    onClick={handleRequestNewCodeClick}
+                                    disabled={timerActive && !timerExpired}
+                                >
+                                    {translate("PositiveConfirmation.requestNewCode") || "Request New Code"}
+                                </button>
+                                {timerActive && !timerExpired && (
+                                    <div>
+                                        <small>Code can be resent in: {remainingSeconds} seconds</small>
+                                    </div>
+                                )}
+                            </Alert>
+                        </>
+                    )}
+
+                    {showAreYouSure && (
+                        <div style={{ marginTop: "1.5rem" }}>
+                            <Alert variant="warning">
+                                <div style={{ marginBottom: "1rem" }}>
+                                    {translate("PositiveConfirmation.confirmNewCodeMessage") ||
+                                        "Are you sure you want to generate a new code? This will invalidate your previous code."}
+                                </div>
+                                <div style={{ display: "flex", gap: "1rem" }}>
+                                    <button
+                                        type="button"
+                                        className="nhsuk-button"
+                                        onClick={handleAreYouSureYes}
+                                    >
+                                        {translate("PositiveConfirmation.confirm") || "Yes"}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="nhsuk-button nhsuk-button--secondary"
+                                        onClick={handleAreYouSureNo}
+                                    >
+                                        {translate("PositiveConfirmation.cancel") || "No"}
+                                    </button>
+                                </div>
+                            </Alert>
                         </div>
                     )}
                 </div>

@@ -3,12 +3,12 @@ import { Alert, Col, Row } from "react-bootstrap";
 import { useStep } from "../../hooks/useStep";
 import { decisionViewService } from "../../services/views/decisionViewService";
 import { PatientDecision } from "../../models/patientDecisions/patientDecision";
-import { isAxiosError } from "../../helpers/axiosErrorHelper";
 import { useTranslation } from "react-i18next";
 import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
 import { Patient } from "../../models/patients/patient";
 import { PowerOfAttorney } from "../../models/powerOfAttourneys/powerOfAttourney";
 import { mapValidationCodeToNumber } from "../../helpers/mapValidationCodeToNumber";
+import { useApiErrorHandlerChecks } from "../../hooks/useApiErrorHandlerChecks";
 
 interface ConfirmationProps {
     selectedOption: "optout" | "optin" | null;
@@ -31,12 +31,17 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
 
     const { nextStep } = useStep();
     const createDecisionMutation = decisionViewService.useCreatePatientDecision();
-    const [error, setError] = useState<string | null>(null);
+    const [apiError, setApiError] = useState<string | JSX.Element>("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { t: translate } = useTranslation();
     const { configuration } = useFrontendConfiguration();
     const RECAPTCHA_SITE_KEY = configuration.recaptchaSiteKey;
     const RECAPTCHA_ACTION_SUBMIT = "submit";
+
+    const handleApiError = useApiErrorHandlerChecks({
+        setApiError,
+        configuration
+    });
 
     // Only one method can be selected at a time
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -53,10 +58,8 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
         .filter(([, value]) => value)
         .map(([key]) => key);
 
-    // Get the selected method as a string ("SMS", "Email", or "Post")
     const selectedMethod = selectedMethods[0];
 
-    // Map to the value expected by the helper
     const methodForHelper =
         selectedMethod === "SMS" ? "Sms" :
             selectedMethod === "Email" ? "Email" :
@@ -67,11 +70,11 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
         e.preventDefault();
 
         if (!nhsNumber || !selectedOption) {
-            setError(translate("ConfirmAndSave.errorMissingNhsOrOption"));
+            setApiError(translate("ConfirmAndSave.errorMissingNhsOrOption"));
             return;
         }
 
-        setError(null);
+        setApiError("");
         setIsSubmitting(true);
 
         const decision = new PatientDecision({
@@ -100,29 +103,53 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
                         setIsSubmitting(false);
                         nextStep();
                     },
-                    onError: (error: unknown) => {
-                        setIsSubmitting(false);
-                        let message = translate("ConfirmAndSave.errorSaveFailed");
-                        if (error instanceof Error && error.message) {
-                            if (error.message === "Network Error") {
-                                message = translate("ConfirmAndSave.errorSaveFailed");
-                            } else {
-                                message = error.message;
-                            }
-                        } else if (typeof error === "string") {
-                            message = error;
-                        } else if (isAxiosError(error)) {
-                            const data = error.response?.data;
-                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                            if (data && typeof data === "object" && "message" in data && typeof (data as any).message === "string") {
-                                message = (data as { message: string }).message;
-                            }
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    onError: (error: any) => {
+                       
+                        const status = error?.response?.status;
+                        const errorData = error?.response?.data;
+                        const errorTitle = errorData?.title;
+
+                        if (handleApiError(errorTitle)) {
+                            setIsSubmitting(false);
+                            return;
                         }
-                        setError(message);
+
+                        console.log(status);
+                        handleApiError(errorTitle);
+                        setIsSubmitting(false);
+
+                        if (errorTitle === "Invalid decision reference error occurred.") {
+                            setApiError("Decision Type not set in database.");
+                            setIsSubmitting(false);
+                            return;
+                        }
+
+                        switch (status) {
+                            case 400:
+                                setApiError(translate("errors.400"));
+                                break;
+                            case 404:
+                                setApiError(translate("errors.404"));
+                                break;
+                            case 401:
+                                setApiError(translate("errors.401"));
+                                break;
+                            case 500:
+                                setApiError(translate("errors.500")
+                                );
+                                break;
+                            default:
+                                setApiError(
+                                    errorTitle ||
+                                    translate("errors.CatchAll")
+                                );
+                                break;
+                        }
                     }
                 });
         } catch (err) {
-            setError("Error executing reCAPTCHA.");
+            setApiError("Error executing reCAPTCHA.");
             console.error("Error executing reCAPTCHA:", err);
         }
     };
@@ -197,12 +224,12 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
                                 </>
                             )}
                         </div>
-
+                        
                     </Alert>
 
-                    {error && (
-                        <Alert variant="danger" onClose={() => setError(null)} dismissible data-testid="error-alert">
-                            {error}
+                    {apiError && (
+                        <Alert variant="danger" onClose={() => setApiError("")} dismissible data-testid="error-alert">
+                            {apiError}
                         </Alert>
                     )}
 
@@ -260,7 +287,7 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
                             type="submit"
                             style={{ width: "100%" }}
                             data-testid="save-preferences-btn"
-                            disabled={isSubmitting}
+                            disabled={isSubmitting || !selectedOption || !selectedMethod}
                             aria-busy={isSubmitting}
                         >
                             {isSubmitting ? translate("ConfirmAndSave.submitting") : translate("ConfirmAndSave.savePreferences")}

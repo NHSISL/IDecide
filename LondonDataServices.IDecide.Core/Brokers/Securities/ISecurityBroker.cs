@@ -3,6 +3,7 @@
 // ---------------------------------------------------------
 
 using System.Threading.Tasks;
+using ISL.Providers.Captcha.Abstractions.Models;
 using LondonDataServices.IDecide.Core.Models.Securities;
 
 namespace LondonDataServices.IDecide.Core.Brokers.Securities
@@ -14,7 +15,7 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
         ValueTask<bool> IsInRoleAsync(string roleName);
         ValueTask<bool> HasClaimAsync(string claimType, string claimValue);
         ValueTask<bool> HasClaimAsync(string claimType);
-        ValueTask<bool> ValidateCaptchaAsync();
+        ValueTask<CaptchaResult> ValidateCaptchaAsync();
         ValueTask<string> GetIpAddressAsync();
         ValueTask<string> GetHeaderAsync(string key);
     }

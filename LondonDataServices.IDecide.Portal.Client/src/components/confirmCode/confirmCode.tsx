@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Patient } from "../../models/patients/patient";
 import { patientViewService } from "../../services/views/patientViewService";
@@ -9,7 +9,7 @@ import { useStep } from "../../hooks/useStep";
 import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
 import { isApiErrorResponse } from "../../helpers/isApiErrorResponse";
 import { loadRecaptchaScript } from "../../helpers/recaptureLoad";
-
+import { useTimer } from "../../hooks/useTimer";
 interface ConfirmCodeProps {
     createdPatient: Patient | null;
 }
@@ -26,11 +26,20 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
     const { nextStep, powerOfAttorney } = useStep();
     const confirmCodeMutation = patientViewService.useConfirmCode();
     const resendCodeMutation = patientViewService.useAddPatientAndGenerateCode();
+    const [timerActive, setTimerActive] = useState(false);
+    const [timerKey, setTimerKey] = useState(0);
+    const { remainingSeconds, timerExpired } = useTimer(timerActive ? 60 : 0, timerKey);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value.replace(/[^a-zA-Z0-9]/g, "").slice(0, 5);
         setCode(value);
     };
+
+    useEffect(() => {
+        if (timerExpired) {
+            setInfo("");
+        }
+    }, [timerExpired]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -48,6 +57,18 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
         }
 
         try {
+            await loadRecaptchaScript(RECAPTCHA_SITE_KEY);
+
+            if (!(window as any).grecaptcha) {
+                setError("reCAPTCHA is not loaded. Please try again later.");
+                return;
+            }
+
+            const token = await (window as any).grecaptcha.execute(
+                RECAPTCHA_SITE_KEY,
+                { action: RECAPTCHA_ACTION_SUBMIT }
+            );
+
             const request = new PatientCodeRequest({
                 nhsNumber: createdPatient.nhsNumber!,
                 verificationCode: code,
@@ -55,7 +76,9 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
                 generateNewCode: false
             });
 
-            await confirmCodeMutation.mutateAsync(request);
+            await confirmCodeMutation.mutate(request, {
+                headers: { "X-Recaptcha-Token": token }
+            });
             createdPatient.validationCode = code;
             nextStep(undefined, undefined, createdPatient);
         } catch (error: unknown) {
@@ -102,6 +125,8 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
         setResendPending(true);
         setError("");
         setInfo("");
+        setTimerActive(true);
+        setTimerKey(prev => prev + 1);
 
         const patientToUpdate = getPatientToUpdate();
         if (!patientToUpdate) {
@@ -272,7 +297,7 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
                         />
                         {/* Info message section */}
                         {info && (
-                            <div
+                            <Alert
                                 className="nhsuk-info-message"
                                 style={{
                                     marginTop: "0.5rem",
@@ -284,11 +309,12 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
                                 role="status"
                             >
                                 {info}
-                            </div>
+                            </Alert>
                         )}
                         {/* Error message section */}
                         {error && (
-                            <div
+                            <Alert
+                                variant="danger"
                                 id="code-error"
                                 className="nhsuk-error-message"
                                 style={{ marginTop: "0.5rem" }}
@@ -315,55 +341,66 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
                                         </a>
                                     </div>
                                 )}
-                            </div>
+                            </Alert>
                         )}
                         <br />
                         <button
                             className="nhsuk-button"
                             type="submit"
                             style={{ width: "70%", marginTop: "0.2rem" }}
-                            disabled={confirmCodeMutation.isPending}
                         >
-                            {confirmCodeMutation.isPending
-                                ? translate("ConfirmCode.submittingButton")
-                                : translate("ConfirmCode.submitButton")}
+                            {translate("ConfirmCode.submitButton")}
                         </button>
-                        <div style={{ marginTop: "1rem", fontSize: "0.95rem", color: "#333" }}>
-                            I have not received a code;{" "}
-                            <span
-                                onClick={resendPending ? undefined : handleResendCode}
-                                style={{
-                                    color: resendPending ? "#999" : "#005eb8",
-                                    textDecoration: "underline",
-                                    cursor: resendPending ? "not-allowed" : "pointer"
-                                }}
-                                aria-disabled={resendPending}
-                                tabIndex={resendPending ? -1 : 0}
-                                role="button"
-                                onKeyPress={e => {
-                                    if (!resendPending && (e.key === "Enter" || e.key === " ")) {
-                                        handleResendCode();
-                                    }
-                                }}
-                            >
-                                click here to resend
-                            </span>
-                            ; alternatively, please call the helpdesk on&nbsp;
-                            <a
-                                href="tel:0300303677"
-                                style={{ textDecoration: "underline" }}
-                            >
-                                0300 303 677
-                            </a>
-                            &nbsp;or email&nbsp;
-                            <a
-                                href="mailto:itservicedesk.nelicb@nhs.net"
-                                style={{ textDecoration: "underline" }}
-                            >
-                                itservicedesk.nelicb@nhs.net
-                            </a>
-                            .
-                        </div>
+                        <Alert>
+                            <div style={{ fontSize: "0.95rem", color: "#333" }}>
+                                I have not received a code{" "}
+                                <span
+                                    onClick={resendPending || (timerActive && !timerExpired) ? undefined : handleResendCode}
+                                    style={{
+                                        color: resendPending || (timerActive && !timerExpired) ? "#999" : "#005eb8",
+                                        textDecoration: "underline",
+                                        cursor: resendPending || (timerActive && !timerExpired) ? "not-allowed" : "pointer"
+                                    }}
+                                    aria-disabled={resendPending || (timerActive && !timerExpired)}
+                                    tabIndex={resendPending || (timerActive && !timerExpired) ? -1 : 0}
+                                    role="button"
+                                    onKeyDown={e => {
+                                        if (
+                                            !resendPending &&
+                                            !(timerActive && !timerExpired) &&
+                                            (e.key === "Enter" || e.key === " ")
+                                        ) {
+                                            if (e.key === " ") {
+                                                e.preventDefault();
+                                            }
+                                            handleResendCode();
+                                        }
+                                    }}
+                                >
+                                    click here to resend
+                                </span>
+                                {timerActive && !timerExpired && (
+                                    <span style={{ marginLeft: "0.5rem", color: "#666" }}>
+                                        (You can resend in {remainingSeconds} seconds)
+                                    </span>
+                                )}
+                                &nbsp; alternatively, please call the helpdesk on&nbsp;
+                                <a
+                                    href={`tel:${configuration.helpdeskContactNumber}`}
+                                    style={{ textDecoration: "underline" }}
+                                >
+                                    {configuration.helpdeskContactNumber}
+                                </a>{" "}
+                                &nbsp;or email&nbsp;
+                                <a
+                                    href={`mailto:${configuration.helpdeskContactEmail}`}
+                                    style={{ textDecoration: "underline" }}
+                                >
+                                    {configuration.helpdeskContactEmail}
+                                </a>
+                                .
+                            </div>
+                        </Alert>
                     </form>
                 </Col>
                 <Col xs={12} md={6} lg={6} className="custom-col-spacing">

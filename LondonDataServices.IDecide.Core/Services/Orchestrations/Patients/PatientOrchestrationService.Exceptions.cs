@@ -42,6 +42,10 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             {
                 throw await CreateAndLogValidationExceptionAsync(nullPatientOrchestrationException);
             }
+            catch (ExternalOptOutPatientOrchestrationException externalOptOutPatientOrchestrationException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(externalOptOutPatientOrchestrationException);
+            }
             catch (PdsValidationException pdsValidationException)
             {
                 throw await CreateAndLogDependencyValidationExceptionAsync(pdsValidationException);
@@ -83,6 +87,10 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             catch (UnauthorizedPatientOrchestrationServiceException unauthorizedPatientOrchestrationServiceException)
             {
                 throw await CreateAndLogValidationExceptionAsync(unauthorizedPatientOrchestrationServiceException);
+            }
+            catch (ValidationCodeRateLimitException validationCodeRateLimitException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(validationCodeRateLimitException);
             }
             catch (MaxRetryAttemptsExceededException maxRetryAttemptsExceededException)
             {
@@ -210,7 +218,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
         {
             var patientOrchestrationServiceException = new PatientOrchestrationServiceException(
                 message: "Patient orchestration service error occurred, contact support.",
-                innerException: exception);
+                innerException: exception.InnerException as Xeption);
 
             await this.loggingBroker.LogErrorAsync(patientOrchestrationServiceException);
 

@@ -20,6 +20,11 @@ namespace LondonDataServices.IDecide.Core.Brokers.Storages.Sql
                 .IsRequired();
 
             model
+                .Property(consumer => consumer.EntraId)
+                .HasMaxLength(255)
+                .IsRequired();
+
+            model
                 .Property(consumer => consumer.Name)
                 .HasMaxLength(255)
                 .IsRequired();
@@ -29,9 +34,13 @@ namespace LondonDataServices.IDecide.Core.Brokers.Storages.Sql
                 .IsUnique();
 
             model
-                .Property(consumer => consumer.AccessToken)
-                .HasMaxLength(36)
-                .IsRequired();
+                .Property(consumer => consumer.ContactPerson);
+
+            model
+                .Property(consumer => consumer.ContactNumber);
+
+            model
+                .Property(consumer => consumer.ContactEmail);
 
             model
                 .Property(consumer => consumer.CreatedBy)

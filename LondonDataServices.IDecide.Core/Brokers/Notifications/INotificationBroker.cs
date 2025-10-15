@@ -17,8 +17,8 @@ namespace LondonDataServices.IDecide.Core.Brokers.Notifications
         /// <exception cref="NotificationDependencyProviderException" />
         /// <exception cref="NotificationServiceProviderException" />
         ValueTask<string> SendEmailAsync(
-            string toEmail,
             string templateId,
+            string toEmail,
             Dictionary<string, dynamic> personalisation);
 
         /// <summary>
@@ -42,6 +42,13 @@ namespace LondonDataServices.IDecide.Core.Brokers.Notifications
         /// <exception cref="NotificationServiceProviderException" />
         ValueTask<string> SendLetterAsync(
             string templateId,
+            string recipientName,
+            string addressLine1,
+            string addressLine2,
+            string addressLine3,
+            string addressLine4,
+            string addressLine5,
+            string postCode,
             Dictionary<string, dynamic> personalisation,
             string clientReference = "");
 

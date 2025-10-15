@@ -11,7 +11,8 @@ export type FrontendConfigurationResponse = {
     recaptchaSiteKey: string,
     helpdeskContactEmail: string,
     helpdeskContactNumber: string,
-    decisionTypeId: string
+    decisionTypeId: string,
+    notificationRequestCountdown: number
 }
 
 export type FrontendConfiguration = {
@@ -25,7 +26,8 @@ export type FrontendConfiguration = {
     recaptchaSiteKey: string,
     helpdeskContactEmail: string
     helpdeskContactNumber: string,
-    decisionTypeId: string
+    decisionTypeId: string,
+    notificationRequestCountdown: number
 }
 
 class FrontendConfigurationBroker {
@@ -68,6 +70,10 @@ class FrontendConfigurationBroker {
 
             if (!result.decisionTypeId.length) {
                 throw new Error("decisionTypeId not provided");
+            }
+
+            if (!result.notificationRequestCountdown) {
+                throw new Error("notification Request Count down not provided in config");
             }
 
             return result;

@@ -19,11 +19,11 @@ namespace LondonDataServices.IDecide.Core.Brokers.Notifications
         }
 
         public async ValueTask<string> SendEmailAsync(
-            string toEmail,
             string templateId,
+            string toEmail,
             Dictionary<string, dynamic> personalisation) =>
             await notificationAbstractionProvider
-                .SendEmailAsync(toEmail, templateId, personalisation, null);
+                .SendEmailAsync(templateId, toEmail, personalisation, null);
 
         /// <summary>
         /// Sends a SMS using the specified template ID and personalisation items.
@@ -47,9 +47,29 @@ namespace LondonDataServices.IDecide.Core.Brokers.Notifications
         /// <exception cref="NotificationServiceProviderException" />
         public async ValueTask<string> SendLetterAsync(
             string templateId,
+            string recipientName,
+            string addressLine1,
+            string addressLine2,
+            string addressLine3,
+            string addressLine4,
+            string addressLine5,
+            string postCode,
             Dictionary<string, dynamic> personalisation,
-            string clientReference = "") =>
-            await notificationAbstractionProvider.SendLetterAsync(templateId, personalisation, clientReference);
+            string clientReference = "")
+        {
+            return await notificationAbstractionProvider.SendLetterAsync(
+                templateId,
+                recipientName,
+                addressLine1,
+                addressLine2,
+                addressLine3,
+                addressLine4,
+                addressLine5,
+                postCode,
+                personalisation,
+                clientReference);
+
+        }
 
         /// <summary>
         /// Sends a letter using the specified template ID and PDF contents.

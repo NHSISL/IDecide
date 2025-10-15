@@ -3,12 +3,12 @@ import { Patient } from "../../models/patients/patient";
 import { PowerOfAttourney } from "../../models/powerOfAttourneys/powerOfAttourney";
 import { patientViewService } from "../../services/views/patientViewService";
 import { TextInput, Select, Card } from "nhsuk-react-components";
-import { Col, Container, Row } from "react-bootstrap";
+import { Col, Container, Row, Alert } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 import { PatientLookup } from "../../models/patients/patientLookup";
 import { SearchCriteria } from "../../models/searchCriterias/searchCriteria";
-import { isApiErrorResponse } from "../../helpers/isApiErrorResponse";
 import { useNavigate } from "react-router-dom";
+import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
 
 export const SearchByDetails = () => {
     const { t: translate } = useTranslation();
@@ -17,7 +17,9 @@ export const SearchByDetails = () => {
     const [dobDay, setDobDay] = useState("");
     const [dobMonth, setDobMonth] = useState("");
     const [dobYear, setDobYear] = useState("");
+    const [error, setError] = useState("");
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
+    const [apiError, setApiError] = useState<string | JSX.Element>("");
     const [loading, setLoading] = useState(false);
     const [isPowerOfAttorney, setIsPowerOfAttorney] = useState(false);
     const [poaFirstname, setPoaFirstname] = useState("");
@@ -25,6 +27,7 @@ export const SearchByDetails = () => {
     const [poaRelationship, setPoaRelationship] = useState("");
     const addPatient = patientViewService.usePostPatientDetails();
     const navigate = useNavigate();
+    const { configuration } = useFrontendConfiguration();
 
     // PoA handlers
     const handlePoaFirstnameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -137,7 +140,7 @@ export const SearchByDetails = () => {
 
         if (Object.keys(newErrors).length === 0) {
             setLoading(true);
-            const dateOfBirth = `${dobYear}/${dobMonth.padStart(2, "0")}/${dobDay.padStart(2, "0")}`;
+            const dateOfBirth = `${dobYear}-${dobMonth.padStart(2, "0")}-${dobDay.padStart(2, "0")}`;
 
             const searchCriteria = new SearchCriteria({
                 surname: surname,
@@ -164,36 +167,62 @@ export const SearchByDetails = () => {
                         navigate("/confirmDetails", { state: { createdPatient, poaModel } });
                         setLoading(false);
                     },
-                    onError: (error: unknown) => {
-                        let apiTitle = "";
-                        if (isApiErrorResponse(error)) {
-                            const errResponse = error.response;
-                            const status = (errResponse && typeof errResponse === "object" && "status" in errResponse)
-                                ? (errResponse as { status?: number }).status
-                                : undefined;
-                            if (status === 403) {
-                                setErrors({ submit: translate("SearchByDetails.errorNoAccess") });
-                            } else {
-                                apiTitle =
-                                    errResponse?.data?.title ||
-                                    errResponse?.data?.message ||
-                                    errResponse?.statusText ||
-                                    translate("SearchByDetails.unknownApiError");
-                                setErrors({ submit: apiTitle });
-                            }
-                            console.error("API Error submitting patient:", apiTitle, errResponse);
-                        } else if (
-                            error &&
-                            typeof error === "object" &&
-                            "message" in error &&
-                            typeof (error as { message?: unknown }).message === "string"
-                        ) {
-                            setErrors({ submit: (error as { message: string }).message });
-                            console.error("Error submitting patient:", (error as { message: string }).message, error);
-                        } else {
-                            setErrors({ submit: translate("SearchByDetails.unexpectedError") });
-                            console.error("Unexpected error submitting patient:", error);
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    onError: (error: any) => {
+                        const status = error?.response?.status;
+                        const errorData = error?.response?.data;
+                        const errorTitle = errorData?.title;
+
+                        if (errorTitle === "Patient not found.") {
+                            setError(translate("errors.PatientNotFound"));
+                            setLoading(false);
+                            return;
                         }
+
+                        if (errorTitle === "The patient is marked as sensitive.") {
+                            setApiError(
+                                <>
+                                    There is an issue with this patient record. For further assistance please e-mail{" "}
+                                    <a
+                                        href={`mailto:${configuration.helpdeskContactEmail}`}
+                                        style={{ textDecoration: "underline" }}
+                                    >
+                                        {configuration.helpdeskContactEmail}
+                                    </a>
+                                    {" or leave a voicemail with the One London Service desk on "}
+                                    <a
+                                        href={`tel:${configuration.helpdeskContactNumber}`}
+                                        style={{ textDecoration: "underline" }}
+                                    >
+                                        {configuration.helpdeskContactNumber}
+                                    </a>
+                                    {" for a call back and assistance."}
+                                </>
+                            );
+                            setErrors({});
+
+                            switch (status) {
+                                case 400:
+                                    setError(translate("errors.400"));
+                                    break;
+                                case 404:
+                                    setError(translate("errors.404"));
+                                    break;
+                                case 401:
+                                    setError(translate("errors.401"));
+                                    break;
+                                case 500:
+                                    setError(translate("errors.500"));
+                                    break;
+                                default:
+                                    setError(errorTitle || translate("errors.CatchAll"));
+                                    break;
+                            }
+                            setLoading(false);
+                            return;
+                        }
+
+                        setError(errorTitle || translate("errors.CatchAll"));
                         setLoading(false);
                     }
                 }
@@ -408,6 +437,18 @@ export const SearchByDetails = () => {
                                     </Card.Description>
                                 </Card.Content>
                             </Card>
+                        )}
+
+                        {apiError && (
+                            <Alert variant="danger">
+                                {apiError}
+                            </Alert>
+                        )}
+
+                        {error && (
+                            <Alert variant="danger">
+                                {error}
+                            </Alert>
                         )}
 
                         {errors.submit && (

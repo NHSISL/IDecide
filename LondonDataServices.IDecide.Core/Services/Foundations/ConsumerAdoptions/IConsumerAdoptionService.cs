@@ -3,6 +3,7 @@
 // ---------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerAdoptions;
@@ -16,5 +17,8 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions
         ValueTask<ConsumerAdoption> RetrieveConsumerAdoptionByIdAsync(Guid consumerAdoptionId);
         ValueTask<ConsumerAdoption> ModifyConsumerAdoptionAsync(ConsumerAdoption consumerAdoption);
         ValueTask<ConsumerAdoption> RemoveConsumerAdoptionByIdAsync(Guid consumerAdoptionId);
+
+        ValueTask BulkAddOrModifyConsumerAdoptionsAsync(
+            List<ConsumerAdoption> consumerAdoptions, int batchSize = 10000);
     }
 }

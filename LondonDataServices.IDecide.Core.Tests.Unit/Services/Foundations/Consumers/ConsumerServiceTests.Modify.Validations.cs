@@ -71,13 +71,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
         [InlineData(" ")]
         public async Task ShouldThrowValidationExceptionOnModifyIfConsumerIsInvalidAndLogItAsync(string invalidText)
         {
-            // given 
+            // given
             string randomUserId = GetRandomString();
 
             var invalidConsumer = new Consumer
             {
                 Name = invalidText,
-                AccessToken = invalidText,
             };
 
             var invalidConsumerException =
@@ -89,11 +88,11 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                 values: "Id is required");
 
             invalidConsumerException.AddData(
-                key: nameof(Consumer.Name),
+                key: nameof(Consumer.EntraId),
                 values: "Text is required");
 
             invalidConsumerException.AddData(
-                key: nameof(Consumer.AccessToken),
+                key: nameof(Consumer.Name),
                 values: "Text is required");
 
             invalidConsumerException.AddData(
@@ -178,20 +177,20 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
             // given
             string randomUserId = GetRandomString();
             var invalidConsumer = CreateRandomModifyConsumer(GetRandomDateTimeOffset(), userId: randomUserId);
+            invalidConsumer.EntraId = GetRandomStringWithLengthOf(256);
             invalidConsumer.Name = GetRandomStringWithLengthOf(256);
-            invalidConsumer.AccessToken = GetRandomStringWithLengthOf(37);
 
             var invalidConsumerException =
                 new InvalidConsumerException(
                     message: "Invalid consumer. Please correct the errors and try again.");
 
             invalidConsumerException.AddData(
-                key: nameof(Consumer.Name),
-                values: $"Text exceed max length of {invalidConsumer.Name.Length - 1} characters");
+                key: nameof(Consumer.EntraId),
+                values: $"Text exceed max length of {invalidConsumer.EntraId.Length - 1} characters");
 
             invalidConsumerException.AddData(
-                key: nameof(Consumer.AccessToken),
-                values: $"Text exceed max length of {invalidConsumer.AccessToken.Length - 1} characters");
+                key: nameof(Consumer.Name),
+                values: $"Text exceed max length of {invalidConsumer.Name.Length - 1} characters");
 
             var expectedConsumerValidationException =
                 new ConsumerValidationException(
@@ -438,7 +437,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                 broker.GetCurrentUserIdAsync())
                     .ReturnsAsync(randomUserId);
 
-            // when 
+            // when
             ValueTask<Consumer> modifyConsumerTask =
                 this.consumerService.ModifyConsumerAsync(nonExistConsumer);
 

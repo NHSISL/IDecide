@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
 using ISL.Providers.Notifications.Abstractions.Models.Exceptions;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Brokers.Notifications;
@@ -53,17 +52,38 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
         private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
             actualException => actualException.SameExceptionAs(expectedException);
 
-        private static NotificationProviderValidationException GetNotificationProviderValidationException() =>
-            (NotificationProviderValidationException)RuntimeHelpers.GetUninitializedObject(
-                typeof(NotificationProviderValidationException));
+        private static NotificationProviderValidationException GetNotificationProviderValidationException()
+        {
+            string randomMessage = GetRandomString();
+            string exceptionMessage = randomMessage;
+            var innerException = new Xeption(exceptionMessage);
 
-        private static NotificationProviderDependencyException GetNotificationProviderDependencyException() =>
-            (NotificationProviderDependencyException)RuntimeHelpers.GetUninitializedObject(
-                typeof(NotificationProviderDependencyException));
+            return new NotificationProviderValidationException(
+                message: "Notification provider validation error occurred, fix errors and try again.",
+                innerException: innerException);
+        }
 
-        private static NotificationProviderServiceException GetNotificationProviderServiceException() =>
-            (NotificationProviderServiceException)RuntimeHelpers.GetUninitializedObject(
-                typeof(NotificationProviderServiceException));
+        private static NotificationProviderDependencyException GetNotificationProviderDependencyException()
+        {
+            string randomMessage = GetRandomString();
+            string exceptionMessage = randomMessage;
+            var innerException = new Xeption(exceptionMessage);
+
+            return new NotificationProviderDependencyException(
+                message: "Notification provider dependency error occurred, contact support.",
+                innerException: innerException);
+        }
+
+        private static NotificationProviderServiceException GetNotificationProviderServiceException()
+        {
+            string randomMessage = GetRandomString();
+            string exceptionMessage = randomMessage;
+            var innerException = new Xeption(exceptionMessage);
+
+            return new NotificationProviderServiceException(
+                message: "Notification provider service error occurred, contact support.",
+                innerException: innerException);
+        }
 
         public static TheoryData<Xeption> DependencyExceptions()
         {

@@ -41,6 +41,11 @@ namespace LondonDataServices.IDecide.Core.Extensions.Patients
 
         private static string RedactAddress(string address)
         {
+            if (string.IsNullOrWhiteSpace(address))
+            {
+                return address;
+            }
+
             var tokens = Regex.Matches(address, @"\w+|[^\w\s]+|\s+")
                       .Cast<Match>()
                       .Select(m => m.Value)
@@ -54,12 +59,24 @@ namespace LondonDataServices.IDecide.Core.Extensions.Patients
                 if (Regex.IsMatch(token, @"^[A-Za-z]+$"))
                     return token.Length > 0 ? token[0] + new string('*', token.Length - 1) : token;
 
+                if (Regex.IsMatch(token, @"^[A-Za-z0-9]+$"))
+                {
+                    return token.Length > 0
+                        ? token[0] + new string('*', token.Length - 1)
+                        : token;
+                }
+
                 return token;
             }));
         }
 
         private static string RedactNames(string name)
         {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return name;
+            }
+
             string[] words = name.Split(' ');
 
             string redactedString = string.Join(" ", words.Select(word =>
@@ -70,6 +87,11 @@ namespace LondonDataServices.IDecide.Core.Extensions.Patients
 
         private static string RedactEmail(string email)
         {
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                return email;
+            }
+
             string[] parts = email.Split('@');
 
             if (parts.Length != 2)

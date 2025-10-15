@@ -51,13 +51,13 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                 {
                     case NotificationPreference.Email:
                         await ValidateSendEmailInputsOnSendCode(
-                           notificationInfo.Patient.Email,
                            this.notificationConfig.EmailCodeTemplateId,
+                           notificationInfo.Patient.Email,
                            personalisation);
 
                         await this.notificationBroker.SendEmailAsync(
-                            notificationInfo.Patient.Email,
                             this.notificationConfig.EmailCodeTemplateId,
+                            notificationInfo.Patient.Email,
                             personalisation);
 
                         break;
@@ -78,7 +78,14 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                            this.notificationConfig.LetterCodeTemplateId, personalisation);
 
                         await this.notificationBroker.SendLetterAsync(
-                            this.notificationConfig.LetterCodeTemplateId,
+                            templateId: this.notificationConfig.LetterCodeTemplateId,
+                            recipientName: notificationInfo.Patient.PostalAddress.RecipientName,
+                            addressLine1: notificationInfo.Patient.PostalAddress.AddressLine1,
+                            addressLine2: notificationInfo.Patient.PostalAddress.AddressLine2,
+                            addressLine3: notificationInfo.Patient.PostalAddress.AddressLine3,
+                            addressLine4: notificationInfo.Patient.PostalAddress.AddressLine4,
+                            addressLine5: notificationInfo.Patient.PostalAddress.AddressLine5,
+                            postCode: notificationInfo.Patient.PostalAddress.PostCode,
                             personalisation,
                             string.Empty);
 
@@ -106,6 +113,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                     { "patient.validationCode", notificationInfo.Patient.ValidationCode },
                     { "patient.validationCodeExpiresOn", notificationInfo.Patient.ValidationCodeExpiresOn },
                     { "decision.decisionChoice", notificationInfo.Decision?.DecisionChoice },
+                    { "decision.decisionType.name", notificationInfo.Decision.DecisionType.Name }
                 };
 
                 AddIfNotNull(
@@ -127,13 +135,13 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                 {
                     case NotificationPreference.Email:
                         await ValidateSendEmailInputsOnSendSubmissionSuccess(
-                            notificationInfo.Patient.Email,
                             this.notificationConfig.EmailSubmissionSuccessTemplateId,
+                            notificationInfo.Patient.Email,
                             personalisation);
 
                         await this.notificationBroker.SendEmailAsync(
-                            notificationInfo.Patient.Email,
                             this.notificationConfig.EmailSubmissionSuccessTemplateId,
+                            notificationInfo.Patient.Email,
                             personalisation);
 
                         break;
@@ -154,7 +162,14 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                             this.notificationConfig.LetterSubmissionSuccessTemplateId, personalisation);
 
                         await this.notificationBroker.SendLetterAsync(
-                            this.notificationConfig.LetterSubmissionSuccessTemplateId,
+                            templateId: this.notificationConfig.LetterSubmissionSuccessTemplateId,
+                            recipientName: notificationInfo.Patient.PostalAddress.RecipientName,
+                            addressLine1: notificationInfo.Patient.PostalAddress.AddressLine1,
+                            addressLine2: notificationInfo.Patient.PostalAddress.AddressLine2,
+                            addressLine3: notificationInfo.Patient.PostalAddress.AddressLine3,
+                            addressLine4: notificationInfo.Patient.PostalAddress.AddressLine4,
+                            addressLine5: notificationInfo.Patient.PostalAddress.AddressLine5,
+                            postCode: notificationInfo.Patient.PostalAddress.PostCode,
                             personalisation,
                             string.Empty);
 
@@ -204,13 +219,13 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                 {
                     case NotificationPreference.Email:
                         await ValidateSendEmailInputsOnSendSubscriberUsage(
-                            notificationInfo.Patient.Email,
                             this.notificationConfig.EmailSubscriberUsageTemplateId,
+                            notificationInfo.Patient.Email,
                             personalisation);
 
                         await this.notificationBroker.SendEmailAsync(
-                            notificationInfo.Patient.Email,
                             this.notificationConfig.EmailSubscriberUsageTemplateId,
+                            notificationInfo.Patient.Email,
                             personalisation);
 
                         break;
@@ -231,7 +246,14 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                             this.notificationConfig.LetterSubscriberUsageTemplateId, personalisation);
 
                         await this.notificationBroker.SendLetterAsync(
-                            this.notificationConfig.LetterSubscriberUsageTemplateId,
+                            templateId: this.notificationConfig.LetterSubscriberUsageTemplateId,
+                            recipientName: notificationInfo.Patient.PostalAddress.RecipientName,
+                            addressLine1: notificationInfo.Patient.PostalAddress.AddressLine1,
+                            addressLine2: notificationInfo.Patient.PostalAddress.AddressLine2,
+                            addressLine3: notificationInfo.Patient.PostalAddress.AddressLine3,
+                            addressLine4: notificationInfo.Patient.PostalAddress.AddressLine4,
+                            addressLine5: notificationInfo.Patient.PostalAddress.AddressLine5,
+                            postCode: notificationInfo.Patient.PostalAddress.PostCode,
                             personalisation,
                             string.Empty);
 

@@ -20,14 +20,14 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Consumers
             Validate<InvalidConsumerException>(
                 message: "Invalid consumer. Please correct the errors and try again.",
                 (Rule: IsInvalid(consumer.Id), Parameter: nameof(Consumer.Id)),
+                (Rule: IsInvalid(consumer.EntraId), Parameter: nameof(Consumer.EntraId)),
                 (Rule: IsInvalid(consumer.Name), Parameter: nameof(Consumer.Name)),
-                (Rule: IsInvalid(consumer.AccessToken), Parameter: nameof(Consumer.AccessToken)),
                 (Rule: IsInvalid(consumer.CreatedDate), Parameter: nameof(Consumer.CreatedDate)),
                 (Rule: IsInvalid(consumer.CreatedBy), Parameter: nameof(Consumer.CreatedBy)),
                 (Rule: IsInvalid(consumer.UpdatedDate), Parameter: nameof(Consumer.UpdatedDate)),
                 (Rule: IsInvalid(consumer.UpdatedBy), Parameter: nameof(Consumer.UpdatedBy)),
+                (Rule: IsGreaterThan(consumer.EntraId, 255), Parameter: nameof(Consumer.EntraId)),
                 (Rule: IsGreaterThan(consumer.Name, 255), Parameter: nameof(Consumer.Name)),
-                (Rule: IsGreaterThan(consumer.AccessToken, 36), Parameter: nameof(Consumer.AccessToken)),
                 (Rule: IsGreaterThan(consumer.CreatedBy, 255), Parameter: nameof(Consumer.CreatedBy)),
                 (Rule: IsGreaterThan(consumer.UpdatedBy, 255), Parameter: nameof(Consumer.UpdatedBy)),
 
@@ -59,14 +59,14 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Consumers
             Validate<InvalidConsumerException>(
                 message: "Invalid consumer. Please correct the errors and try again.",
                 (Rule: IsInvalid(consumer.Id), Parameter: nameof(Consumer.Id)),
+                (Rule: IsInvalid(consumer.EntraId), Parameter: nameof(Consumer.EntraId)),
                 (Rule: IsInvalid(consumer.Name), Parameter: nameof(Consumer.Name)),
-                (Rule: IsInvalid(consumer.AccessToken), Parameter: nameof(Consumer.AccessToken)),
                 (Rule: IsInvalid(consumer.CreatedDate), Parameter: nameof(Consumer.CreatedDate)),
                 (Rule: IsInvalid(consumer.CreatedBy), Parameter: nameof(Consumer.CreatedBy)),
                 (Rule: IsInvalid(consumer.UpdatedDate), Parameter: nameof(Consumer.UpdatedDate)),
                 (Rule: IsInvalid(consumer.UpdatedBy), Parameter: nameof(Consumer.UpdatedBy)),
+                (Rule: IsGreaterThan(consumer.EntraId, 255), Parameter: nameof(Consumer.EntraId)),
                 (Rule: IsGreaterThan(consumer.Name, 255), Parameter: nameof(Consumer.Name)),
-                (Rule: IsGreaterThan(consumer.AccessToken, 36), Parameter: nameof(Consumer.AccessToken)),
                 (Rule: IsGreaterThan(consumer.CreatedBy, 255), Parameter: nameof(Consumer.CreatedBy)),
                 (Rule: IsGreaterThan(consumer.UpdatedBy, 255), Parameter: nameof(Consumer.UpdatedBy)),
 

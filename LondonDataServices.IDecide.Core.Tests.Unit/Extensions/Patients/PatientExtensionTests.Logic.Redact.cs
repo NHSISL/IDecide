@@ -40,5 +40,20 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Extensions.Patients
             // then
             actualResult.Should().BeEquivalentTo(expectedRedactedPatient);
         }
+
+        [Fact]
+        public void ShouldReturnRedactedPatientWhenRedactWithPostcodeInAddress()
+        {
+            // given
+            Patient somePatient = GetPatientToRedactWithPostcodeInAddress();
+            Patient inputPatient = somePatient.DeepClone();
+            Patient expectedRedactedPatient = GetRedactedPatientWithPostcodeInAddress(inputPatient);
+
+            // when
+            Patient actualResult = inputPatient.Redact();
+
+            // then
+            actualResult.Should().BeEquivalentTo(expectedRedactedPatient);
+        }
     }
 }

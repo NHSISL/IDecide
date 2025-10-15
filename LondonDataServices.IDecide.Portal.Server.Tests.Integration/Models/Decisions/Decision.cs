@@ -16,8 +16,8 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Integration.Models.Deci
         public DateTimeOffset CreatedDate { get; set; }
         public string UpdatedBy { get; set; }
         public DateTimeOffset UpdatedDate { get; set; }
-        public string? ResponsiblePersonGivenName { get; set; }
-        public string? ResponsiblePersonSurname { get; set; }
-        public string? ResponsiblePersonRelationship { get; set; }
+        public string ResponsiblePersonGivenName { get; set; }
+        public string ResponsiblePersonSurname { get; set; }
+        public string ResponsiblePersonRelationship { get; set; }
     }
 }

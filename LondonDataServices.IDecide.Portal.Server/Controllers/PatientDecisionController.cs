@@ -2,6 +2,8 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions.Exceptions;
@@ -28,6 +30,39 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
                 await this.decisionOrchestrationService.VerifyAndRecordDecisionAsync(decision);
 
                 return Ok();
+            }
+            catch (DecisionOrchestrationValidationException decisionOrchestrationValidationException)
+            {
+                return BadRequest(decisionOrchestrationValidationException.InnerException);
+            }
+            catch (DecisionOrchestrationDependencyValidationException
+                decisionOrchestrationDependencyValidationException)
+            {
+                return BadRequest(decisionOrchestrationDependencyValidationException.InnerException);
+            }
+            catch (DecisionOrchestrationDependencyException decisionOrchestrationDependencyException)
+            {
+                return InternalServerError(decisionOrchestrationDependencyException);
+            }
+            catch (DecisionOrchestrationServiceException decisionOrchestrationServiceException)
+            {
+                return InternalServerError(decisionOrchestrationServiceException);
+            }
+        }
+
+        [HttpGet("PatientDecision")]
+        public async ValueTask<ActionResult<List<Decision>>> GetPatientDecisionsAsync(
+            [FromQuery] DateTimeOffset? from = null,
+            [FromQuery] string decisionType = null)
+        {
+            try
+            {
+                List<Decision> decisions = await this.decisionOrchestrationService
+                    .RetrieveAllPendingAdoptionDecisionsForConsumer(
+                        changesSinceDate: from ?? default,
+                        decisionType: decisionType);
+
+                return Ok(decisions);
             }
             catch (DecisionOrchestrationValidationException decisionOrchestrationValidationException)
             {

@@ -4,14 +4,15 @@ import { Patient } from "../../models/patients/patient";
 import { PowerOfAttorney } from "../../models/powerOfAttourneys/powerOfAttourney";
 import { patientViewService } from "../../services/views/patientViewService";
 import { TextInput, Select, Card } from "nhsuk-react-components";
-import { Col, Container, Row } from "react-bootstrap";
+import { Col, Container, Row, Alert } from "react-bootstrap";
 import { StepContext } from "../context/stepContext";
 import { useTranslation } from "react-i18next";
 import { PatientLookup } from "../../models/patients/patientLookup";
 import { SearchCriteria } from "../../models/searchCriterias/searchCriteria";
-import { isApiErrorResponse } from "../../helpers/isApiErrorResponse";
 import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
 import { loadRecaptchaScript } from "../../helpers/recaptureLoad";
+import { useApiErrorHandlerChecks } from "../../hooks/useApiErrorHandlerChecks";
+
 interface SearchByDetailsProps {
     onBack: () => void;
     powerOfAttorney?: boolean;
@@ -29,20 +30,24 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttorn
     const [dobMonth, setDobMonth] = useState("");
     const [dobYear, setDobYear] = useState("");
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
+    const [error, setError] = useState("");
+    const [apiError, setApiError] = useState<string | JSX.Element>("");
     const [loading, setLoading] = useState(false);
-
-    // PoA fields (NHS Number removed)
+    const { configuration } = useFrontendConfiguration();
     const [poaFirstname, setPoaFirstname] = useState("");
     const [poaSurname, setPoaSurname] = useState("");
     const [poaRelationship, setPoaRelationship] = useState("");
     const [poaFirstnameError, setPoaFirstnameError] = useState("");
     const [poaSurnameError, setPoaSurnameError] = useState("");
     const [poaRelationshipError, setPoaRelationshipError] = useState("");
-
     const addPatient = patientViewService.usePostPatientDetails();
 
+    const handleApiError = useApiErrorHandlerChecks({
+        setApiError,
+        configuration
+    });
+
     const [recaptchaSiteKey, setRecaptchaSiteKey] = useState<string | undefined>(undefined);
-    const { configuration } = useFrontendConfiguration();
     const RECAPTCHA_ACTION_SUBMIT = "submit";
     const { nextStep, setCreatedPatient } = useStep();
 
@@ -164,7 +169,7 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttorn
 
         if (Object.keys(newErrors).length === 0) {
             setLoading(true);
-            const dateOfBirth = `${dobYear}/${dobMonth}/${dobDay}`;
+            const dateOfBirth = `${dobYear}-${dobMonth}-${dobDay}`;
             const searchCriteria = new SearchCriteria({
                 surname: surname,
                 postcode: postcode,
@@ -197,28 +202,46 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttorn
                             nextStep(undefined, undefined, createdPatient, poaModel);
                             setLoading(false);
                         },
-                        onError: (error: unknown) => {
-                            let apiTitle = "";
-                            if (isApiErrorResponse(error)) {
-                                const errResponse = error.response;
-                                apiTitle =
-                                    errResponse.data?.title ||
-                                    errResponse.data?.message ||
-                                    errResponse.statusText ||
-                                    translate("SearchByDetails.unknownApiError");
-                                setErrors({ submit: apiTitle });
-                                console.error("API Error submitting patient:", apiTitle, errResponse);
-                            } else if (
-                                error &&
-                                typeof error === "object" &&
-                                "message" in error &&
-                                typeof (error as { message?: unknown }).message === "string"
-                            ) {
-                                setErrors({ submit: (error as { message: string }).message });
-                                console.error("Error submitting patient:", (error as { message: string }).message, error);
-                            } else {
-                                setErrors({ submit: translate("SearchByDetails.unexpectedError") });
-                                console.error("Unexpected error submitting patient:", error);
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        onError: (error: any) => {
+                            const status = error?.response?.status;
+                            const errorData = error?.response?.data;
+                            const errorTitle = errorData?.title;
+
+                            if (errorTitle === "Patient not found.") {
+                                setError(translate("errors.PatientNotFound"));
+                                setLoading(false);
+                                return;
+                            }
+
+                            if (handleApiError(errorTitle)) {
+                                setLoading(false);
+                                return;
+                            }
+
+                            switch (status) {
+                                case 400:
+                                    setError(translate("errors.400"));
+                                    break;
+                                case 404:
+                                    setError(translate("errors.404"));
+                                    break;
+                                case 401:
+                                    setError(translate("errors.401"));
+                                    break;
+                                case 500:
+                                    setError(
+                                        errorTitle === "Patient not found."
+                                            ? translate("errors.PatientNotFound")
+                                            : translate("errors.500")
+                                    );
+                                    break;
+                                default:
+                                    setError(
+                                        errorTitle ||
+                                        translate("errors.CatchAll")
+                                    );
+                                    break;
                             }
                             setLoading(false);
                         }
@@ -462,6 +485,18 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttorn
                                     </Card.Description>
                                 </Card.Content>
                             </Card>
+                        )}
+
+                        {apiError && (
+                            <Alert variant="danger">
+                                {apiError}
+                            </Alert>
+                        )}
+
+                        {error && (
+                            <Alert variant="danger">
+                                {error}
+                            </Alert>
                         )}
 
                         {errors.submit && (

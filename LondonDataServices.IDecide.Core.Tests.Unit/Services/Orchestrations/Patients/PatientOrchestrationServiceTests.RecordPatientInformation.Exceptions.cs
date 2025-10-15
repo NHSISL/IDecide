@@ -43,7 +43,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 this.pdsServiceMock.Object,
                 this.patientServiceMock.Object,
                 this.notificationServiceMock.Object,
-                this.decisionConfigurations)
+                this.decisionConfigurations,
+                this.securityBrokerConfigurations)
             { CallBase = true };
 
             patientOrchestrationServiceMock.Setup(broker =>
@@ -112,7 +113,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 this.pdsServiceMock.Object,
                 this.patientServiceMock.Object,
                 this.notificationServiceMock.Object,
-                this.decisionConfigurations)
+                this.decisionConfigurations,
+                this.securityBrokerConfigurations)
             { CallBase = true };
 
             patientOrchestrationServiceMock.Setup(broker =>
@@ -173,7 +175,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             var expectedPatientOrchestrationServiceException =
                 new PatientOrchestrationServiceException(
                     message: "Patient orchestration service error occurred, contact support.",
-                    innerException: failedServicePatientOrchestrationException);
+                    innerException: failedServicePatientOrchestrationException.InnerException as Xeption);
 
             var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
                 this.loggingBrokerMock.Object,
@@ -184,7 +186,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 this.pdsServiceMock.Object,
                 this.patientServiceMock.Object,
                 this.notificationServiceMock.Object,
-                this.decisionConfigurations)
+                this.decisionConfigurations,
+                this.securityBrokerConfigurations)
             { CallBase = true };
 
             patientOrchestrationServiceMock.Setup(broker =>

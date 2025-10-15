@@ -146,7 +146,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             var expectedDecisionOrchestrationServiceException =
                 new DecisionOrchestrationServiceException(
                     message: "Decision orchestration service error occurred, contact support.",
-                    innerException: failedServiceDecisionOrchestrationException);
+                    innerException: failedServiceDecisionOrchestrationException.InnerException as Xeption);
 
             this.patientServiceMock.Setup(service =>
                 service.RetrieveAllPatientsAsync())
