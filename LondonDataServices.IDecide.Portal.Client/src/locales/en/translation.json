@@ -155,8 +155,8 @@
     "helpGuidance": "Help & Guidance",
     "checkingYourDetails": "Checking Your Details",
     "reviewDetails": "Please review the details shown on this page. Some information, such as your mobile number, may be partially hidden for your privacy.",
-    "detailsCorrect": "If these details are correct and belong to you, click <strong>Yes</strong> to continue.",
-    "detailsIncorrect": "If these details do not match you, click <strong>No</strong> to return and try searching again with your NHS Number.",
+    "detailsCorrect": "If these details are correct and belong to you, click Yes to continue.",
+    "detailsIncorrect": "If these details do not match you, click No to return and try searching again with your NHS Number.",
     "alreadyReceivedCode": "If you have already received a code by SMS, email, or post, you can use it now by clicking the button below to go straight to the code confirmation page.",
     "securityInfo": "This process helps us keep your information secure and ensures only you can access your records.",
     "noPatientDetails": "No patient details available."

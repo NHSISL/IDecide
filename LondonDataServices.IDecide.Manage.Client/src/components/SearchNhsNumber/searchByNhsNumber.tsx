@@ -10,18 +10,6 @@ import { Patient } from "../../models/patients/patient";
 import { SearchCriteria } from "../../models/searchCriterias/searchCriteria";
 import { useNavigate } from "react-router-dom";
 
-interface ErrorWithResponse {
-    response?: {
-        status?: number;
-        statusText?: string;
-        data?: {
-            title?: string;
-            message?: string;
-        };
-    };
-    message?: string;
-}
-
 export const SearchByNhsNumber = () => {
     const { t: translate } = useTranslation();
     const stepContext = useContext(StepContext);
@@ -132,38 +120,39 @@ export const SearchByNhsNumber = () => {
                     navigate("/confirmDetails", { state: { createdPatient, poaModel } });
                     setLoading(false);
                 },
-                onError: (error: unknown) => {
-                    if (
-                        typeof error === "object" &&
-                        error !== null &&
-                        "response" in error &&
-                        typeof (error as ErrorWithResponse).response === "object"
-                    ) {
-                        const response = (error as ErrorWithResponse).response;
-                        if (response?.status === 403) {
-                            setError(translate("SearchBySHSNumber.errorNoAccess"));
-                        } else {
-                            const apiTitle =
-                                response?.data?.title ||
-                                response?.data?.message ||
-                                response?.statusText ||
-                                translate("SearchBySHSNumber.unknownApiError");
-                            setError(apiTitle);
-                        }
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                onError: (error: any) => {
+                    const status = error?.response?.status;
+                    const errorData = error?.response?.data;
+                    const errorTitle = errorData?.title;
+
+                    if (errorTitle === "Patient not found.") {
+                        setError(translate("errors.PatientNotFound"));
                         setLoading(false);
                         return;
                     }
-                    if (
-                        error &&
-                        typeof error === "object" &&
-                        "message" in error &&
-                        typeof (error as { message?: unknown }).message === "string"
-                    ) {
-                        setError((error as { message: string }).message);
-                        setLoading(false);
-                        return;
+
+                    switch (status) {
+                        case 400:
+                            setError(translate("errors.400"));
+                            break;
+                        case 404:
+                            setError(translate("errors.404"));
+                            break;
+                        case 401:
+                            setError(translate("errors.401"));
+                            break;
+                        case 500:
+                            setError(translate("errors.500")
+                            );
+                            break;
+                        default:
+                            setError(
+                                errorTitle ||
+                                translate("errors.CatchAll")
+                            );
+                            break;
                     }
-                    setError(translate("SearchBySHSNumber.unexpectedError"));
                     setLoading(false);
                 }
             }
