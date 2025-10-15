@@ -3,6 +3,8 @@
 // ---------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions.Exceptions;
@@ -52,6 +54,9 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Patien
             return result.Length > length ? result.Substring(0, length) : result;
         }
 
+        private static Patient CreateRandomPatient() =>
+            CreatePatientFiller(validationCodeExpiresOn: GetRandomDateTimeOffset()).Create();
+
         private static Patient GetRandomPatient(
             DateTimeOffset validationCodeExpiresOn,
             string inputNhsNumber = "1234567890",
@@ -77,6 +82,13 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Patien
                 .OnProperty(patient => patient.RetryCount).Use(retryCount);
 
             return filler;
+        }
+
+        private static List<Decision> GetRandomDecisions()
+        {
+            return CreateDecisionFiller(CreateRandomPatient())
+                .Create(count: GetRandomNumber())
+                .ToList();
         }
 
         private static Decision GetRandomDecision(Patient patient) =>

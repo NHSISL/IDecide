@@ -83,7 +83,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Apis.Patient
             CreateRandomRecordPatientInformationFiller(nhsNumber).Create();
 
         private static Filler<RecordPatientInformationRequest> CreateRandomRecordPatientInformationFiller(
-            string? nhsNumber = null)
+            string nhsNumber = null)
         {
             var filler = new Filler<RecordPatientInformationRequest>();
 

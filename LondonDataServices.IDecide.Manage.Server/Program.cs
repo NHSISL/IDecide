@@ -43,6 +43,7 @@ using LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes;
 using LondonDataServices.IDecide.Core.Services.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Services.Foundations.Pds;
+using LondonDataServices.IDecide.Core.Services.Orchestrations.Consumers;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -300,6 +301,7 @@ namespace LondonDataServices.IDecide.Manage.Server
             services.AddSingleton(decisionConfigurations);
             services.AddTransient<IPatientOrchestrationService, PatientOrchestrationService>();
             services.AddTransient<IDecisionOrchestrationService, DecisionOrchestrationService>();
+            services.AddTransient<IConsumerOrchestrationService, ConsumerOrchestrationService>();
         }
 
         private static void AddCoordinationServices(IServiceCollection services, IConfiguration configuration)

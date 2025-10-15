@@ -2,7 +2,6 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -44,22 +43,32 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
             for (int i = 0; i < totalRecords; i += batchSize)
             {
                 var batch = inputConsumerAdoptions.Skip(i).Take(batchSize).ToList();
-                List<Guid> batchIds = batch.Select(consumerAdoption => consumerAdoption.Id).ToList();
 
-                List<Guid> storageIds = randomExistingConsumerAdoptions
-                    .Select(consumerAdoption => consumerAdoption.Id)
+                var batchKeys = batch
+                    .Select(consumerAdoption => new { consumerAdoption.DecisionId, consumerAdoption.ConsumerId })
                     .ToList();
 
-                var existingIds = storageIds
-                    .Where(storageId => batchIds.Contains(storageId))
-                    .Select(storageId => storageId)
+                var storageKeys = randomExistingConsumerAdoptions
+                    .Select(consumerAdoption => new { consumerAdoption.DecisionId, consumerAdoption.ConsumerId })
+                    .ToList();
+
+                var existingKeys = storageKeys
+                    .Where(storageKey => batchKeys.Any(batchKey =>
+                        batchKey.DecisionId == storageKey.DecisionId &&
+                            batchKey.ConsumerId == storageKey.ConsumerId))
+                    .ToList();
+
+                var newConsumerAdoptions = batch
+                    .Where(consumerAdoption => !existingKeys.Any(existingKey =>
+                        existingKey.DecisionId == consumerAdoption.DecisionId &&
+                            existingKey.ConsumerId == consumerAdoption.ConsumerId))
                     .ToList();
 
                 var existingConsumerAdoptions = batch
-                    .Where(consumerAdoption => existingIds.Contains(consumerAdoption.Id)).ToList();
-
-                var newConsumerAdoptions = batch
-                    .Where(consumerAdoption => !existingIds.Contains(consumerAdoption.Id)).ToList();
+                    .Where(consumerAdoption => existingKeys.Any(existingKey =>
+                        existingKey.DecisionId == consumerAdoption.DecisionId &&
+                            existingKey.ConsumerId == consumerAdoption.ConsumerId))
+                    .ToList();
 
                 consumerAdoptionServiceMock.Setup(service =>
                     service.ValidateConsumerAdoptionsAndAssignIdAndAuditOnAddAsync(newConsumerAdoptions))
@@ -85,26 +94,37 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
             // then
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectAllConsumerAdoptionsAsync(),
-                    Times.Exactly(batchCount));
+                Times.Exactly(batchCount));
 
             for (int i = 0; i < totalRecords; i += batchSize)
             {
                 var batch = inputConsumerAdoptions.Skip(i).Take(batchSize).ToList();
-                List<Guid> batchIds = batch.Select(consumerAdoption => consumerAdoption.Id).ToList();
 
-                List<Guid> storageIds = randomExistingConsumerAdoptions
-                    .Select(consumerAdoption => consumerAdoption.Id).ToList();
-
-                var existingIds = storageIds
-                    .Where(storageId => batchIds.Contains(storageId))
-                    .Select(storageId => storageId)
+                var batchKeys = batch
+                    .Select(consumerAdoption => new { consumerAdoption.DecisionId, consumerAdoption.ConsumerId })
                     .ToList();
 
-                var newConsumerAdoptions =
-                    batch.Where(consumerAdoption => !existingIds.Contains(consumerAdoption.Id)).ToList();
+                var storageKeys = randomExistingConsumerAdoptions
+                    .Select(consumerAdoption => new { consumerAdoption.DecisionId, consumerAdoption.ConsumerId })
+                    .ToList();
 
-                var existingConsumerAdoptions =
-                    batch.Where(consumerAdoption => existingIds.Contains(consumerAdoption.Id)).ToList();
+                var existingKeys = storageKeys
+                    .Where(storageKey => batchKeys.Any(batchKey =>
+                        batchKey.DecisionId == storageKey.DecisionId &&
+                            batchKey.ConsumerId == storageKey.ConsumerId))
+                    .ToList();
+
+                var newConsumerAdoptions = batch
+                    .Where(adoption => !existingKeys.Any(existingKey =>
+                        existingKey.DecisionId == adoption.DecisionId &&
+                            existingKey.ConsumerId == adoption.ConsumerId))
+                    .ToList();
+
+                var existingConsumerAdoptions = batch
+                    .Where(adoption => existingKeys.Any(existingKey =>
+                        existingKey.DecisionId == adoption.DecisionId &&
+                            existingKey.ConsumerId == adoption.ConsumerId))
+                    .ToList();
 
                 consumerAdoptionServiceMock.Verify(service =>
                     service.ValidateConsumerAdoptionsAndAssignIdAndAuditOnAddAsync(newConsumerAdoptions),
