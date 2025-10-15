@@ -177,7 +177,7 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
                             const errorTitle = errorData?.title;
 
                             if (errorTitle === "Patient not found.") {
-                                setError(translate("Patient Not found. Please check and try again."));
+                                setError(translate("errors.PatientNotFound"));
                                 setLoading(false);
                                 return;
                             }
@@ -198,10 +198,7 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
                                     setError(translate("errors.401"));
                                     break;
                                 case 500:
-                                    setError(
-                                        errorTitle === "Patient not found."
-                                            ? translate("errors.PatientNotFound")
-                                            : translate("errors.500")
+                                    setError(translate("errors.500")
                                     );
                                     break;
                                 default:
