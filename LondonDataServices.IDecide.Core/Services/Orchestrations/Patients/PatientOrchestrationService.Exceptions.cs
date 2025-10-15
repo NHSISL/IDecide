@@ -88,6 +88,10 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             {
                 throw await CreateAndLogValidationExceptionAsync(unauthorizedPatientOrchestrationServiceException);
             }
+            catch (ValidationCodeRateLimitException validationCodeRateLimitException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(validationCodeRateLimitException);
+            }
             catch (MaxRetryAttemptsExceededException maxRetryAttemptsExceededException)
             {
                 throw await CreateAndLogValidationExceptionAsync(maxRetryAttemptsExceededException);
