@@ -45,6 +45,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Consum
                     Times.Once);
 
             this.consumerAdoptionServiceMock.VerifyNoOtherCalls();
+            this.consumerOrchestrationServiceMock.VerifyNoOtherCalls();
         }
     }
 }

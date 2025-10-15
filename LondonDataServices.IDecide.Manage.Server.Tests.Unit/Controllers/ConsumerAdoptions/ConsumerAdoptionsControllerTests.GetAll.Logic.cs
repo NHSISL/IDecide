@@ -42,7 +42,8 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Consum
                .Verify(service => service.RetrieveAllConsumerAdoptionsAsync(),
                    Times.Once);
 
-            consumerAdoptionServiceMock.VerifyNoOtherCalls();
+            this.consumerAdoptionServiceMock.VerifyNoOtherCalls();
+            this.consumerOrchestrationServiceMock.VerifyNoOtherCalls();
         }
     }
 }

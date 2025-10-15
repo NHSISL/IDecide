@@ -43,7 +43,8 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Consum
                 .Verify(service => service.RemoveConsumerAdoptionByIdAsync(It.IsAny<Guid>()),
                     Times.Once);
 
-            consumerAdoptionServiceMock.VerifyNoOtherCalls();
+            this.consumerAdoptionServiceMock.VerifyNoOtherCalls();
+            this.consumerOrchestrationServiceMock.VerifyNoOtherCalls();
         }
     }
 }

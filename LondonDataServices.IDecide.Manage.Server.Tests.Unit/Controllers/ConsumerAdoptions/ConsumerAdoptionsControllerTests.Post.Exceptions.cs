@@ -45,6 +45,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Consum
                     Times.Once);
 
             this.consumerAdoptionServiceMock.VerifyNoOtherCalls();
+            this.consumerOrchestrationServiceMock.VerifyNoOtherCalls();
         }
 
         [Theory]
@@ -77,6 +78,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Consum
                     Times.Once);
 
             this.consumerAdoptionServiceMock.VerifyNoOtherCalls();
+            this.consumerOrchestrationServiceMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -119,6 +121,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Consum
                     Times.Once);
 
             this.consumerAdoptionServiceMock.VerifyNoOtherCalls();
+            this.consumerOrchestrationServiceMock.VerifyNoOtherCalls();
         }
     }
 }
