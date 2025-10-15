@@ -264,12 +264,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                     message: "Invalid notification arguments. Please correct the errors and try again.");
 
             invalidArgumentsNotificationException.AddData(
-                key: nameof(NotificationInfo.Patient.Address),
-                values: "Text is required");
-
-            invalidArgumentsNotificationException.AddData(
-                key: nameof(NotificationInfo.Patient.PostCode),
-                values: "Text is required");
+                key: nameof(NotificationInfo.Patient.PostalAddress),
+                values: "Address is required");
 
             var expectedNotificationValidationException =
                 new NotificationValidationException(

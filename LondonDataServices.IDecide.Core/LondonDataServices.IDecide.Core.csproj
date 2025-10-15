@@ -19,9 +19,9 @@
 		<PackageReference Include="ISL.Providers.Captcha.Abstractions" Version="1.0.0.3" />
 		<PackageReference Include="ISL.Providers.Captcha.FakeCaptcha" Version="1.0.0.3" />
 		<PackageReference Include="ISL.Providers.Captcha.GoogleReCaptcha" Version="1.0.0.3" />
-		<PackageReference Include="ISL.Providers.Notifications.Abstractions" Version="2.0.0" />
-		<PackageReference Include="ISL.Providers.Notifications.GovukNotify" Version="2.0.0" />
-		<PackageReference Include="ISL.Providers.Notifications.NotifyIntercept" Version="2.0.0" />
+		<PackageReference Include="ISL.Providers.Notifications.Abstractions" Version="2.0.0.1" />
+		<PackageReference Include="ISL.Providers.Notifications.GovukNotify" Version="2.0.0.1" />
+		<PackageReference Include="ISL.Providers.Notifications.NotifyIntercept" Version="2.0.0.1" />
 		<PackageReference Include="ISL.Providers.PDS.Abstractions" Version="1.0.0.8" />
 		<PackageReference Include="ISL.Providers.PDS.FakeFHIR" Version="1.0.0.8" />
 		<PackageReference Include="ISL.Providers.PDS.FHIR" Version="1.0.0.8" />
