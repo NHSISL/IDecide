@@ -56,7 +56,7 @@
       "thanks": "Proces finalizat"
     }
   },
-  "SearchBySHSNumber": {
+  "SearchByNHSNumber": {
     "nhsNumberLabel": "Număr NHS",
     "nhsNumberHint": "Puteți găsi numărul NHS pe scrisorile de la medicul de familie sau spital, pe rețete sau în aplicația NHS.",
     "poaNhsNumberLabel": "Numărul NHS al persoanei pe care o reprezentați",

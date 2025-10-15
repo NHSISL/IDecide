@@ -56,7 +56,7 @@
       "thanks": "Process Complete"
     }
   },
-  "SearchBySHSNumber": {
+  "SearchByNHSNumber": {
     "nhsNumberLabel": "NHS Number",
     "nhsNumberHint": "You can find your NHS Number on letters from your GP or hospital, prescriptions, or in the NHS App.",
     "poaNhsNumberLabel": "NHS Number of the Person You Are Representing",
