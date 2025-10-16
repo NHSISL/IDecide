@@ -14,7 +14,7 @@ using RESTFulSense.Controllers;
 
 namespace LondonDataServices.IDecide.Manage.Server.Controllers
 {
-    [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,LondonDataServices.IDecide.Manage.Server.Agents")]
+    [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,LondonDataServices.IDecide.Manage.Server.Agents, IDecide.Consumer")]
     [ApiController]
     [Route("api/[controller]")]
     public class PatientDecisionController : RESTFulController
