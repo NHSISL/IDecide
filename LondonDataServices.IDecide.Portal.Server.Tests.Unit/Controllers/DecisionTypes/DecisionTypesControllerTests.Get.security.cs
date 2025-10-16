@@ -57,7 +57,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Decisi
         }
 
         [Fact]
-        public void GetShouldNotHaveInvisibleApiAttribute()
+        public void GetShouldHaveInvisibleApiAttribute()
         {
             // Given
             var controllerType = typeof(DecisionTypesController);
@@ -76,7 +76,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Decisi
             var attribute = methodAttribute ?? controllerAttribute;
 
             // Then
-            attribute.Should().BeNull();
+            attribute.Should().NotBeNull();
         }
     }
 }

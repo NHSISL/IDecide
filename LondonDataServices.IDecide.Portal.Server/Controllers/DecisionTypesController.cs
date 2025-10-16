@@ -67,6 +67,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
 #if DEBUG
         [EnableQuery(PageSize = 5000)]
 #endif
+        [InvisibleApi]
         [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators,DecisionTypes.Read")]
         public async ValueTask<ActionResult<IQueryable<DecisionType>>> Get()
         {
@@ -88,6 +89,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
         }
 
         [HttpGet("{decisionTypeId}")]
+        [InvisibleApi]
         [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators,DecisionTypes.Read")]
         public async ValueTask<ActionResult<DecisionType>> GetDecisionTypeByIdAsync(Guid decisionTypeId)
         {
