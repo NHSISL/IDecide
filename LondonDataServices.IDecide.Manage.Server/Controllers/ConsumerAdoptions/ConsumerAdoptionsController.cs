@@ -25,7 +25,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
             this.consumerAdoptionService = consumerAdoptionService;
 
         [HttpPost]
-        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,LondonDataServices.IDecide.Manage.Server.Consumer")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,LondonDataServices.IDecide.Manage.Server.Consumers")]
         public async ValueTask<ActionResult<ConsumerAdoption>> PostConsumerAdoptionAsync([FromBody] ConsumerAdoption consumerAdoption)
         {
             try
@@ -65,7 +65,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
 #if DEBUG
         [EnableQuery(PageSize = 5000)]
 #endif
-        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,LondonDataServices.IDecide.Manage.Server.Consumer")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,LondonDataServices.IDecide.Manage.Server.Consumers")]
         public async ValueTask<ActionResult<IQueryable<ConsumerAdoption>>> Get()
         {
             try
@@ -86,7 +86,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
         }
 
         [HttpGet("{consumerAdoptionId}")]
-        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,LondonDataServices.IDecide.Manage.Server.Consumer")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,LondonDataServices.IDecide.Manage.Server.Consumers")]
         public async ValueTask<ActionResult<ConsumerAdoption>> GetConsumerAdoptionByIdAsync(Guid consumerAdoptionId)
         {
             try
@@ -119,7 +119,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
         }
 
         [HttpPut]
-        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,LondonDataServices.IDecide.Manage.Server.Consumer")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,LondonDataServices.IDecide.Manage.Server.Consumers")]
         public async ValueTask<ActionResult<ConsumerAdoption>> PutConsumerAdoptionAsync([FromBody] ConsumerAdoption consumerAdoption)
         {
             try
@@ -158,7 +158,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
         }
 
         [HttpDelete("{consumerAdoptionId}")]
-        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,LondonDataServices.IDecide.Manage.Server.Consumer")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,LondonDataServices.IDecide.Manage.Server.Consumers")]
         public async ValueTask<ActionResult<ConsumerAdoption>> DeleteConsumerAdoptionByIdAsync(Guid consumerAdoptionId)
         {
             try
