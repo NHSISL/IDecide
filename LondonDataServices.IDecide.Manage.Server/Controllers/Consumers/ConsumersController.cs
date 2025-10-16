@@ -25,7 +25,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
             this.consumerService = consumerService;
 
         [HttpPost]
-        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,Consumers.Create")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,IDecide.Consumer")]
         public async ValueTask<ActionResult<Consumer>> PostConsumerAsync([FromBody] Consumer consumer)
         {
             try
@@ -65,7 +65,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
 #if DEBUG
         [EnableQuery(PageSize = 5000)]
 #endif
-        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,Consumers.Read")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,IDecide.Consumer")]
         public async ValueTask<ActionResult<IQueryable<Consumer>>> Get()
         {
             try
@@ -86,7 +86,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
         }
 
         [HttpGet("{consumerId}")]
-        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,Consumers.Read")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,IDecide.Consumer")]
         public async ValueTask<ActionResult<Consumer>> GetConsumerByIdAsync(Guid consumerId)
         {
             try
@@ -119,7 +119,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
         }
 
         [HttpPut]
-        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,Consumers.Update")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,IDecide.Consumer")]
         public async ValueTask<ActionResult<Consumer>> PutConsumerAsync([FromBody] Consumer consumer)
         {
             try
@@ -158,7 +158,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
         }
 
         [HttpDelete("{consumerId}")]
-        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,Consumers.Delete")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,IDecide.Consumer")]
         public async ValueTask<ActionResult<Consumer>> DeleteConsumerByIdAsync(Guid consumerId)
         {
             try
