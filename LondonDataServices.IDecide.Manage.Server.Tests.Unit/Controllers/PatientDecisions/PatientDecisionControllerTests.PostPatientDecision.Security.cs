@@ -27,7 +27,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Patien
             {
                 "LondonDataServices.IDecide.Manage.Server.Administrators",
                 "LondonDataServices.IDecide.Manage.Server.Agents",
-                "IDecide.Consumer"
+                "LondonDataServices.IDecide.Manage.Server.Consumer"
             };
 
             // When

@@ -26,7 +26,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Consum
             List<string> expectedAttributeValues = new List<string>
             {
                 "LondonDataServices.IDecide.Manage.Server.Administrators",
-                "IDecide.Consumer"
+                "LondonDataServices.IDecide.Manage.Server.Consumer"
             };
 
             // When
