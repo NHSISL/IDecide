@@ -16,7 +16,6 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Brokers
         public async ValueTask<Decision> PostPatientDecisionAsync(Decision decision) =>
             await this.apiFactoryClient.PostContentAsync($"{patientDecisionsRelativeUrl}/PatientDecision", decision);
 
-
         public async ValueTask<List<Decision>> GetPatientDecisionsAsync(DateTimeOffset from, string decisionType)
         {
             string url =

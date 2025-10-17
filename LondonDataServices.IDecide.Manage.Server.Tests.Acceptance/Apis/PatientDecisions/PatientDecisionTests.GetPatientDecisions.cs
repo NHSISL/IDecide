@@ -6,10 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Force.DeepCloner;
 using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.Consumers;
 using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.DecisionTypes;
 using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.Patients;
-using DecisionEntity = LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.Decisions.Decision;
 using PatientDecision = LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.PatientDecisions.Decision;
 
 namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.PatientDecisions
@@ -22,21 +22,12 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.Patient
             // given
             Patient randomPatient = await PostRandomPatientAsync();
             DecisionType randomDecisionType = await PostRandomDecisionTypeAsync();
-            string userId = "65b5ccfb-b501-4ad5-8dd7-2a33ff64eaa3";
+            List<PatientDecision> randomDecisions = await PostRandomDecisionsAsync(randomPatient, randomDecisionType);
+            List<PatientDecision> expectedDecisions = randomDecisions.DeepClone();
+            string userId = TestAuthHandler.TestUserId;
 
             Consumer randomConsumerWithMatchingEntraId =
                 await PostRandomConsumerWithMatchingEntraIdEntryAsync(userId);
-
-            int decisionCount = GetRandomNumber();
-            List<PatientDecision> expectedDecisions = new List<PatientDecision>();
-
-            for (int i = 0; i < decisionCount; i++)
-            {
-                DecisionEntity randomDecision = await PostRandomDecisionAsync(randomPatient, randomDecisionType.Id);
-                randomDecision.Should().NotBeNull();
-                PatientDecision randomPatientDecision = ToPatientDecision(randomDecision, randomPatient);
-                expectedDecisions.Add(randomPatientDecision);
-            }
 
             DateTimeOffset from = DateTimeOffset.Now.AddDays(-1);
             string decisionType = randomDecisionType.Name;
@@ -51,7 +42,12 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.Patient
                     actualDecisions.Find(decision => decision.Id == expectedDecision.Id);
 
                 actualDecision.Should().BeEquivalentTo(expectedDecision, options => options
-                    .Excluding(property => property.Patient));
+                    .Excluding(property => property.CreatedBy)
+                    .Excluding(property => property.CreatedDate)
+                    .Excluding(property => property.UpdatedBy)
+                    .Excluding(property => property.UpdatedDate)
+                    .Excluding(property => property.Patient)
+                    .Excluding(property => property.DecisionType));
             }
 
             foreach (var decision in expectedDecisions)
