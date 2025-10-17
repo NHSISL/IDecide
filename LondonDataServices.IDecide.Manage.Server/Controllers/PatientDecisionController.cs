@@ -54,7 +54,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
         }
 
         [HttpGet("PatientDecision")]
-        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,LondonDataServices.IDecide.Manage.Server.Agents, LondonDataServices.IDecide.Manage.Server.Consumers")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,LondonDataServices.IDecide.Manage.Server.Agents,LondonDataServices.IDecide.Manage.Server.Consumers")]
         public async ValueTask<ActionResult<List<Decision>>> GetPatientDecisionsAsync(
             [FromQuery] DateTimeOffset? from = null,
             [FromQuery] string decisionType = null)
