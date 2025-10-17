@@ -20,7 +20,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.Patient
             DecisionType randomDecisionType = await PostRandomDecisionTypeAsync();
 
             Decision randomDecision =
-                CreateRandomDecision(patient: randomPatient, decisionTypeId: randomDecisionType.Id);
+                CreateRandomDecision(patient: randomPatient, decisionType: randomDecisionType);
 
             Decision inputDecision = randomDecision;
             Decision expectedDecision = inputDecision;
