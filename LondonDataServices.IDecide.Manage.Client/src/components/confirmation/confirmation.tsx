@@ -7,7 +7,6 @@ import { useTranslation } from "react-i18next";
 import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
 import { Patient } from "../../models/patients/patient";
 import { PowerOfAttourney } from "../../models/powerOfAttourneys/powerOfAttourney";
-import { mapValidationCodeToNumber } from "../../helpers/mapValidationCodeToNumber";
 import { useNavigate } from "react-router-dom";
 import { faArrowLeftLong } from "@fortawesome/free-solid-svg-icons/faArrowLeftLong";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

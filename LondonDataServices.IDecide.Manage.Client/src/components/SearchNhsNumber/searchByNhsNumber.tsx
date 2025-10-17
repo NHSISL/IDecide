@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { PowerOfAttourney } from "../../models/powerOfAttourneys/powerOfAttourney";
 import { patientViewService } from "../../services/views/patientViewService";
-import { TextInput, Button, Select, Card } from "nhsuk-react-components";
+import { TextInput, Button, Select } from "nhsuk-react-components";
 import { Container, Row, Col } from "react-bootstrap";
 import { StepContext } from "../context/stepContext";
 import { PatientLookup } from "../../models/patients/patientLookup";

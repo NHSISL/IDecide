@@ -8,7 +8,6 @@ import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
 import { Patient } from "../../models/patients/patient";
 import { PowerOfAttorney } from "../../models/powerOfAttourneys/powerOfAttourney";
 import { useApiErrorHandlerChecks } from "../../hooks/useApiErrorHandlerChecks";
-import { useNavigate } from "react-router-dom";
 import { faArrowLeftLong } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -27,7 +26,6 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
 }) => {
 
     const { nextStep, previousStep } = useStep();
-    const navigate = useNavigate();
     const createDecisionMutation = decisionViewService.useCreatePatientDecision();
     const [apiError, setApiError] = useState<string | JSX.Element>("");
     const [isSubmitting, setIsSubmitting] = useState(false);
