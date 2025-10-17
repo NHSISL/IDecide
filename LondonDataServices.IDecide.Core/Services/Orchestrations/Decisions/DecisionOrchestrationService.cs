@@ -15,7 +15,6 @@ using LondonDataServices.IDecide.Core.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Models.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Models.Foundations.Consumers;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
-using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions.Exceptions;
@@ -146,14 +145,6 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
                 updatedPatient.NotificationPreference = decision.Patient.NotificationPreference;
                 Patient modifiedPatient = await this.patientService.ModifyPatientAsync(updatedPatient);
                 Decision addedDecision = await this.decisionService.AddDecisionAsync(decision);
-
-                NotificationInfo notificationInfo = new NotificationInfo
-                {
-                    Patient = modifiedPatient,
-                    Decision = addedDecision
-                };
-
-                await this.notificationService.SendSubmissionSuccessNotificationAsync(notificationInfo);
 
                 await this.auditBroker.LogInformationAsync(
                     auditType: "Decision",
