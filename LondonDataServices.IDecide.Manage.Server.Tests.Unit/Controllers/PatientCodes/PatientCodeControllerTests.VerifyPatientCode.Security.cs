@@ -1,4 +1,4 @@
-// ---------------------------------------------------------
+﻿// ---------------------------------------------------------
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
@@ -7,26 +7,26 @@ using System.Collections.Generic;
 using System.Linq;
 using Attrify.Attributes;
 using FluentAssertions;
-using LondonDataServices.IDecide.Portal.Server.Controllers;
+using LondonDataServices.IDecide.Manage.Server.Controllers;
 using Microsoft.AspNetCore.Authorization;
 
-namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.DecisionTypes
+namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.PatientCodes
 {
-    public partial class DecisionTypesControllerTests
+    public partial class PatientCodeControllerTests
     {
         [Fact]
-        public void GetShouldHaveRoleAttributeWithRoles()
+        public void VerifyPatientCodeShouldHaveRoleAttributeWithRoles()
         {
             // Given
-            var controllerType = typeof(DecisionTypesController);
-            var methodInfo = controllerType.GetMethod("GetDecisionTypeByIdAsync");
+            var controllerType = typeof(PatientCodeController);
+            var methodInfo = controllerType.GetMethod("VerifyPatientCodeAsync");
             Type attributeType = typeof(AuthorizeAttribute);
             string attributeProperty = "Roles";
 
             List<string> expectedAttributeValues = new List<string>
             {
-                "LondonDataServices.IDecide.Portal.Server.Administrators",
-                "DecisionTypes.Read"
+                "LondonDataServices.IDecide.Manage.Server.Administrators",
+                "LondonDataServices.IDecide.Manage.Server.Agents"
             };
 
             // When
@@ -57,11 +57,11 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Decisi
         }
 
         [Fact]
-        public void GetShouldNotHaveInvisibleApiAttribute()
+        public void VerifyPatientCodeShouldNotHaveInvisibleApiAttribute()
         {
             // Given
-            var controllerType = typeof(DecisionTypesController);
-            var methodInfo = controllerType.GetMethod("GetDecisionTypeByIdAsync");
+            var controllerType = typeof(PatientCodeController);
+            var methodInfo = controllerType.GetMethod("VerifyPatientCodeAsync");
             Type attributeType = typeof(InvisibleApiAttribute);
 
             // When

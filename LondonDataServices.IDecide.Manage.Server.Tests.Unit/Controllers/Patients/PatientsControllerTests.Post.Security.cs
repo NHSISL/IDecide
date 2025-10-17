@@ -7,26 +7,25 @@ using System.Collections.Generic;
 using System.Linq;
 using Attrify.Attributes;
 using FluentAssertions;
-using LondonDataServices.IDecide.Portal.Server.Controllers;
+using LondonDataServices.IDecide.Manage.Server.Controllers;
 using Microsoft.AspNetCore.Authorization;
 
-namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.DecisionTypes
+namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Patients
 {
-    public partial class DecisionTypesControllerTests
+    public partial class PatientsControllerTests
     {
         [Fact]
-        public void DeleteShouldHaveRoleAttributeWithRoles()
+        public void PostShouldHaveRoleAttributeWithRoles()
         {
             // Given
-            var controllerType = typeof(DecisionTypesController);
-            var methodInfo = controllerType.GetMethod("DeleteDecisionTypeByIdAsync");
+            var controllerType = typeof(PatientsController);
+            var methodInfo = controllerType.GetMethod("PostPatientAsync");
             Type attributeType = typeof(AuthorizeAttribute);
             string attributeProperty = "Roles";
 
             List<string> expectedAttributeValues = new List<string>
             {
-                "LondonDataServices.IDecide.Portal.Server.Administrators",
-                "DecisionTypes.Delete"
+                "LondonDataServices.IDecide.Manage.Server.Administrators"
             };
 
             // When
@@ -57,11 +56,11 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Decisi
         }
 
         [Fact]
-        public void DeleteShouldHaveInvisibleApiAttribute()
+        public void PostShouldNotHaveInvisibleApiAttribute()
         {
             // Given
-            var controllerType = typeof(DecisionTypesController);
-            var methodInfo = controllerType.GetMethod("DeleteDecisionTypeByIdAsync");
+            var controllerType = typeof(PatientsController);
+            var methodInfo = controllerType.GetMethod("PostPatientAsync");
             Type attributeType = typeof(InvisibleApiAttribute);
 
             // When
@@ -76,7 +75,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Decisi
             var attribute = methodAttribute ?? controllerAttribute;
 
             // Then
-            attribute.Should().NotBeNull();
+            attribute.Should().BeNull();
         }
     }
 }

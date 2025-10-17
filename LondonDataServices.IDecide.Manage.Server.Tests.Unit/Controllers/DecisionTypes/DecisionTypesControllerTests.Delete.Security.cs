@@ -10,23 +10,22 @@ using FluentAssertions;
 using LondonDataServices.IDecide.Manage.Server.Controllers;
 using Microsoft.AspNetCore.Authorization;
 
-namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Patients
+namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.DecisionTypes
 {
-    public partial class PatientsControllerTests
+    public partial class DecisionTypesControllerTests
     {
         [Fact]
-        public void PutShouldHaveRoleAttributeWithRoles()
+        public void DeleteShouldHaveRoleAttributeWithRoles()
         {
             // Given
-            var controllerType = typeof(PatientsController);
-            var methodInfo = controllerType.GetMethod("PutPatientAsync");
+            var controllerType = typeof(DecisionTypesController);
+            var methodInfo = controllerType.GetMethod("DeleteDecisionTypeByIdAsync");
             Type attributeType = typeof(AuthorizeAttribute);
             string attributeProperty = "Roles";
 
             List<string> expectedAttributeValues = new List<string>
             {
-                "LondonDataServices.IDecide.Manage.Server.Administrators",
-                "LondonDataServices.IDecide.Manage.Server.Agents"
+                "LondonDataServices.IDecide.Manage.Server.Administrators"
             };
 
             // When
@@ -57,11 +56,11 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Patien
         }
 
         [Fact]
-        public void PutShouldNotHaveInvisibleApiAttribute()
+        public void DeleteShouldNotHaveInvisibleApiAttribute()
         {
             // Given
-            var controllerType = typeof(PatientsController);
-            var methodInfo = controllerType.GetMethod("PutPatientAsync");
+            var controllerType = typeof(DecisionTypesController);
+            var methodInfo = controllerType.GetMethod("DeleteDecisionTypeByIdAsync");
             Type attributeType = typeof(InvisibleApiAttribute);
 
             // When

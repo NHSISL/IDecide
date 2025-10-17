@@ -10,23 +10,22 @@ using FluentAssertions;
 using LondonDataServices.IDecide.Manage.Server.Controllers;
 using Microsoft.AspNetCore.Authorization;
 
-namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.DecisionTypes
+namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Decisions
 {
-    public partial class DecisionTypesControllerTests
+    public partial class DecisionsControllerTests
     {
         [Fact]
         public void DeleteShouldHaveRoleAttributeWithRoles()
         {
             // Given
-            var controllerType = typeof(DecisionTypesController);
-            var methodInfo = controllerType.GetMethod("DeleteDecisionTypeByIdAsync");
+            var controllerType = typeof(DecisionsController);
+            var methodInfo = controllerType.GetMethod("DeleteDecisionByIdAsync");
             Type attributeType = typeof(AuthorizeAttribute);
             string attributeProperty = "Roles";
 
             List<string> expectedAttributeValues = new List<string>
             {
-                "LondonDataServices.IDecide.Manage.Server.Administrators",
-                "LondonDataServices.IDecide.Manage.Server.Agents"
+                "LondonDataServices.IDecide.Manage.Server.Administrators"
             };
 
             // When
@@ -60,8 +59,8 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Decisi
         public void DeleteShouldNotHaveInvisibleApiAttribute()
         {
             // Given
-            var controllerType = typeof(DecisionTypesController);
-            var methodInfo = controllerType.GetMethod("DeleteDecisionTypeByIdAsync");
+            var controllerType = typeof(DecisionsController);
+            var methodInfo = controllerType.GetMethod("DeleteDecisionByIdAsync");
             Type attributeType = typeof(InvisibleApiAttribute);
 
             // When

@@ -10,23 +10,22 @@ using FluentAssertions;
 using LondonDataServices.IDecide.Manage.Server.Controllers;
 using Microsoft.AspNetCore.Authorization;
 
-namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.DecisionTypes
+namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Decisions
 {
-    public partial class DecisionTypesControllerTests
+    public partial class DecisionsControllerTests
     {
         [Fact]
-        public void PostShouldHaveRoleAttributeWithRoles()
+        public void PutShouldHaveRoleAttributeWithRoles()
         {
             // Given
-            var controllerType = typeof(DecisionTypesController);
-            var methodInfo = controllerType.GetMethod("PostDecisionTypeAsync");
+            var controllerType = typeof(DecisionsController);
+            var methodInfo = controllerType.GetMethod("PutDecisionAsync");
             Type attributeType = typeof(AuthorizeAttribute);
             string attributeProperty = "Roles";
 
             List<string> expectedAttributeValues = new List<string>
             {
-                "LondonDataServices.IDecide.Manage.Server.Administrators",
-                "LondonDataServices.IDecide.Manage.Server.Agents"
+                "LondonDataServices.IDecide.Manage.Server.Administrators"
             };
 
             // When
@@ -57,11 +56,11 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Decisi
         }
 
         [Fact]
-        public void PostShouldNotHaveInvisibleApiAttribute()
+        public void PutShouldNotHaveInvisibleApiAttribute()
         {
             // Given
-            var controllerType = typeof(DecisionTypesController);
-            var methodInfo = controllerType.GetMethod("PostDecisionTypeAsync");
+            var controllerType = typeof(DecisionsController);
+            var methodInfo = controllerType.GetMethod("PutDecisionAsync");
             Type attributeType = typeof(InvisibleApiAttribute);
 
             // When
