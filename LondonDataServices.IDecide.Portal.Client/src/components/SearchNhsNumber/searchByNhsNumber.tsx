@@ -176,6 +176,12 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
                             const errorData = error?.response?.data;
                             const errorTitle = errorData?.title;
 
+                            if (errorTitle === "Patient not found.") {
+                                setError(translate("errors.PatientNotFound"));
+                                setLoading(false);
+                                return;
+                            }
+
                             if (handleApiError(errorTitle)) {
                                 setLoading(false);
                                 return;
@@ -192,10 +198,7 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
                                     setError(translate("errors.401"));
                                     break;
                                 case 500:
-                                    setError(
-                                        errorTitle === "Patient not found."
-                                            ? translate("errors.PatientNotFound")
-                                            : translate("errors.500")
+                                    setError(translate("errors.500")
                                     );
                                     break;
                                 default:

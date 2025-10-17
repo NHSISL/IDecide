@@ -2,7 +2,6 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
@@ -17,14 +16,6 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Consumers
             if (decisions is null || !decisions.Any())
             {
                 throw new InvalidDecisionsException("Decisions required.");
-            }
-        }
-
-        private void ValidateDecisionIds(List<Guid> decisionIds)
-        {
-            if (decisionIds is null || !decisionIds.Any())
-            {
-                throw new InvalidDecisionIdsException("Decision Ids required.");
             }
         }
     }
