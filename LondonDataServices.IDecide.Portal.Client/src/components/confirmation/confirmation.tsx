@@ -7,8 +7,10 @@ import { useTranslation } from "react-i18next";
 import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
 import { Patient } from "../../models/patients/patient";
 import { PowerOfAttorney } from "../../models/powerOfAttourneys/powerOfAttourney";
-import { mapValidationCodeToNumber } from "../../helpers/mapValidationCodeToNumber";
 import { useApiErrorHandlerChecks } from "../../hooks/useApiErrorHandlerChecks";
+import { useNavigate } from "react-router-dom";
+import { faArrowLeftLong } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 interface ConfirmationProps {
     selectedOption: "optout" | "optin" | null;
@@ -23,13 +25,9 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
     createdPatient,
     powerOfAttorney
 }) => {
-    const [prefs, setPrefs] = useState({
-        SMS: false,
-        Email: false,
-        Post: false,
-    });
 
-    const { nextStep } = useStep();
+    const { nextStep, previousStep } = useStep();
+    const navigate = useNavigate();
     const createDecisionMutation = decisionViewService.useCreatePatientDecision();
     const [apiError, setApiError] = useState<string | JSX.Element>("");
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -42,6 +40,10 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
         setApiError,
         configuration
     });
+
+    const handleBack = () => {
+        previousStep();
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -60,7 +62,6 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
             patient: {
                 nhsNumber: nhsNumber || "",
                 validationCode: createdPatient?.validationCode
-                //notificationPreference: mapValidationCodeToNumber(methodForHelper) ?? undefined
             },
             decisionChoice: selectedOption,
             decisionTypeId: configuration.decisionTypeId,
@@ -135,7 +136,7 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
         <>
             <Row className="custom-col-spacing">
                 <Col xs={12} md={6} lg={6}>
-                   
+
 
                     <div className="nhsuk-card nhsuk-card--summary">
                         <div className="nhsuk-card__content">
@@ -167,7 +168,7 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
 
                             {powerOfAttorney && (
                                 <>
-                                <hr />
+                                    <hr />
                                     <h3 className="nhsuk-card__heading nhsuk-u-margin-top-4">
                                         {translate("ConfirmAndSave.powerOfAttorneyDetails")}
                                     </h3>
@@ -192,9 +193,37 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
                                     </dl>
                                 </>
                             )}
+
                             <hr />
-                            <p className="nhsuk-hint">
-                                <strong>You can change your choice at any time by returning to this site.</strong>
+                            <form className="nhsuk-form-group" onSubmit={handleSubmit} data-testid="confirmation-form" >
+                                <button
+                                    className="nhsuk-button"
+                                    type="submit"
+                                    style={{ width: "100%", marginBottom: "5px" }}
+                                    data-testid="save-preferences-btn"
+                                    disabled={isSubmitting || !selectedOption}
+                                    aria-busy={isSubmitting}
+                                >
+                                    {isSubmitting ? translate("ConfirmAndSave.submitting") : translate("ConfirmAndSave.savePreferences")}
+                                </button>
+                            </form>
+
+                            <hr />
+
+                            <p className="nhsuk-hint" style={{ marginBottom: "1rem" }}>
+                                    If you have changed your mind and want to update your choice, click below to go back.
+                            </p>
+                            <button
+                                className="nhsuk-button nhsuk-button--secondary"
+                                type="button"
+                                style={{ width: "100%", marginBottom: "1rem" }}
+                                onClick={handleBack}
+                                data-testid="back-btn"
+                            >
+                                <FontAwesomeIcon icon={faArrowLeftLong} /> Go Back
+                            </button>
+                            <p className="nhsuk-hint" style={{ marginBottom: "1.5rem" }}>
+                                <strong>You can change your mind at any time by returning to this site.</strong>
                             </p>
                         </div>
                     </div>
@@ -206,18 +235,6 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
                         </Alert>
                     )}
 
-                    <form className="nhsuk-form-group" onSubmit={handleSubmit} data-testid="confirmation-form">
-                        <button
-                            className="nhsuk-button"
-                            type="submit"
-                            style={{ width: "100%" }}
-                            data-testid="save-preferences-btn"
-                            disabled={isSubmitting || !selectedOption}
-                            aria-busy={isSubmitting}
-                        >
-                            {isSubmitting ? translate("ConfirmAndSave.submitting") : translate("ConfirmAndSave.savePreferences")}
-                        </button>
-                    </form>
                 </Col>
                 <Col xs={12} md={6} lg={6} className="custom-col-spacing">
                     <div

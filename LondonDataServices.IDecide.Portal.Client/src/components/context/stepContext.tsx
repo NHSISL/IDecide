@@ -11,6 +11,12 @@ type StepContextType = {
         patient?: Patient,
         powerOfAttorney?: PowerOfAttorney
     ) => void;
+    previousStep: (
+        selectedOption?: "optout" | "optin",
+        nhsNumber?: string,
+        patient?: Patient,
+        powerOfAttorney?: PowerOfAttorney
+    ) => void;
     createdPatient: Patient | null;
     setCreatedPatient: React.Dispatch<React.SetStateAction<Patient | null>>;
     selectedOption: "optout" | "optin" | null;
@@ -47,7 +53,20 @@ export const StepProvider = ({ children }: StepProviderProps) => {
         setCurrentStepIndex((i) => i + 1);
     };
 
-    // Add a reset function
+    const previousStep = (
+        option?: "optout" | "optin",
+        nhs?: string,
+        patient?: Patient,
+        poa?: PowerOfAttorney
+    ) => {
+        console.log("previousStep called with:", { option, nhs, patient, poa });
+        if (option) setSelectedOption(option);
+        if (nhs) setNhsNumber(nhs);
+        if (patient) setCreatedPatient(patient);
+        if (poa) setPowerOfAttorney(poa);
+        setCurrentStepIndex((i) => (i > 0 ? i - 1 : 0));
+    };
+
     const resetStepContext = () => {
         setCurrentStepIndex(0);
         setCreatedPatient(null);
@@ -62,6 +81,7 @@ export const StepProvider = ({ children }: StepProviderProps) => {
                 currentStepIndex,
                 setCurrentStepIndex,
                 nextStep,
+                previousStep,
                 createdPatient,
                 setCreatedPatient,
                 selectedOption,
