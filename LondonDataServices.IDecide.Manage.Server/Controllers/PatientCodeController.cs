@@ -12,7 +12,7 @@ using RESTFulSense.Controllers;
 
 namespace LondonDataServices.IDecide.Manage.Server.Controllers
 {
-    [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,LondonDataServices.IDecide.Manage.Server.Agents")]
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class PatientCodeController : RESTFulController
@@ -25,6 +25,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
         }
 
         [HttpPost("PatientGenerationRequest")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,LondonDataServices.IDecide.Manage.Server.Agents")]
         public async ValueTask<ActionResult> PostPatientGenerationRequestAsync(
             [FromBody] PatientCodeRequest patientCodeRequest)
         {
@@ -58,6 +59,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
         }
 
         [HttpPost("VerifyPatientCode")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,LondonDataServices.IDecide.Manage.Server.Agents")]
         public async ValueTask<ActionResult> VerifyPatientCodeAsync([FromBody] PatientCodeRequest patientCodeRequest)
         {
             try

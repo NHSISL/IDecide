@@ -19,7 +19,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Patien
         {
             // Given
             var controllerType = typeof(PatientSearchController);
-            var methodInfo = controllerType.GetMethod("RecordPatientInformation");
+            var methodInfo = controllerType.GetMethod("RecordPatientInformationAsync");
             Type attributeType = typeof(AuthorizeAttribute);
             string attributeProperty = "Roles";
 
@@ -61,7 +61,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Patien
         {
             // Given
             var controllerType = typeof(PatientSearchController);
-            var methodInfo = controllerType.GetMethod("RecordPatientInformation");
+            var methodInfo = controllerType.GetMethod("RecordPatientInformationAsync");
             Type attributeType = typeof(InvisibleApiAttribute);
 
             // When
