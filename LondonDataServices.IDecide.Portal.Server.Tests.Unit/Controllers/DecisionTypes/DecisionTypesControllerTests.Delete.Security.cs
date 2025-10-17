@@ -15,18 +15,17 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Decisi
     public partial class DecisionTypesControllerTests
     {
         [Fact]
-        public void GetAllShouldHaveRoleAttributeWithRoles()
+        public void DeleteShouldHaveRoleAttributeWithRoles()
         {
             // Given
             var controllerType = typeof(DecisionTypesController);
-            var methodInfo = controllerType.GetMethod("Get");
+            var methodInfo = controllerType.GetMethod("DeleteDecisionTypeByIdAsync");
             Type attributeType = typeof(AuthorizeAttribute);
             string attributeProperty = "Roles";
 
             List<string> expectedAttributeValues = new List<string>
             {
-                "LondonDataServices.IDecide.Portal.Server.Administrators",
-                "DecisionTypes.Read"
+                "LondonDataServices.IDecide.Portal.Server.Administrators"
             };
 
             // When
@@ -57,11 +56,11 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Decisi
         }
 
         [Fact]
-        public void GetAllShouldNotHaveInvisibleApiAttribute()
+        public void DeleteShouldHaveInvisibleApiAttribute()
         {
             // Given
             var controllerType = typeof(DecisionTypesController);
-            var methodInfo = controllerType.GetMethod("Get");
+            var methodInfo = controllerType.GetMethod("DeleteDecisionTypeByIdAsync");
             Type attributeType = typeof(InvisibleApiAttribute);
 
             // When
@@ -76,7 +75,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Decisi
             var attribute = methodAttribute ?? controllerAttribute;
 
             // Then
-            attribute.Should().BeNull();
+            attribute.Should().NotBeNull();
         }
     }
 }

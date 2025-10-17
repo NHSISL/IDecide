@@ -10,23 +10,22 @@ using FluentAssertions;
 using LondonDataServices.IDecide.Portal.Server.Controllers;
 using Microsoft.AspNetCore.Authorization;
 
-namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Patients
+namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.DecisionTypes
 {
-    public partial class PatientsControllerTests
+    public partial class DecisionTypesControllerTests
     {
         [Fact]
-        public void GetAllShouldHaveRoleAttributeWithRoles()
+        public void GetShouldHaveRoleAttributeWithRoles()
         {
             // Given
-            var controllerType = typeof(PatientsController);
-            var methodInfo = controllerType.GetMethod("Get");
+            var controllerType = typeof(DecisionTypesController);
+            var methodInfo = controllerType.GetMethod("GetDecisionTypeByIdAsync");
             Type attributeType = typeof(AuthorizeAttribute);
             string attributeProperty = "Roles";
 
             List<string> expectedAttributeValues = new List<string>
             {
-                "LondonDataServices.IDecide.Portal.Server.Administrators",
-                "Patients.Read"
+                "LondonDataServices.IDecide.Portal.Server.Administrators"
             };
 
             // When
@@ -57,11 +56,11 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Patien
         }
 
         [Fact]
-        public void GetAllShouldHaveInvisibleApiAttribute()
+        public void GetShouldHaveInvisibleApiAttribute()
         {
             // Given
-            var controllerType = typeof(PatientsController);
-            var methodInfo = controllerType.GetMethod("Get");
+            var controllerType = typeof(DecisionTypesController);
+            var methodInfo = controllerType.GetMethod("GetDecisionTypeByIdAsync");
             Type attributeType = typeof(InvisibleApiAttribute);
 
             // When

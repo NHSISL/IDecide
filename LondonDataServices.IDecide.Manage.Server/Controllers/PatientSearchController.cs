@@ -14,7 +14,7 @@ using RESTFulSense.Controllers;
 
 namespace LondonDataServices.IDecide.Manage.Server.Controllers
 {
-    [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,LondonDataServices.IDecide.Manage.Server.Agents")]
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class PatientSearchController : RESTFulController
@@ -27,6 +27,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
         }
 
         [HttpPost("PatientSearch")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,LondonDataServices.IDecide.Manage.Server.Agents")]
         public async ValueTask<ActionResult<Patient>> PostPatientSearchAsync([FromBody] PatientLookup patientLookup)
         {
             try
@@ -55,6 +56,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
         }
 
         [HttpPost("RecordPatientInformation")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,LondonDataServices.IDecide.Manage.Server.Agents")]
         public async ValueTask<ActionResult> RecordPatientInformationAsync(
             [FromBody] RecordPatientInformationRequest recordPatientInformationRequest)
         {

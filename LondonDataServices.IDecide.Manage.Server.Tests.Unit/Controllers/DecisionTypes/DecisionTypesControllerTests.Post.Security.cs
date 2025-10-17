@@ -10,23 +10,22 @@ using FluentAssertions;
 using LondonDataServices.IDecide.Manage.Server.Controllers;
 using Microsoft.AspNetCore.Authorization;
 
-namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.ConsumerAdoptions
+namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.DecisionTypes
 {
-    public partial class ConsumerAdoptionsControllerTests
+    public partial class DecisionTypesControllerTests
     {
         [Fact]
-        public void PutShouldHaveRoleAttributeWithRoles()
+        public void PostShouldHaveRoleAttributeWithRoles()
         {
             // Given
-            var controllerType = typeof(ConsumerAdoptionsController);
-            var methodInfo = controllerType.GetMethod("PutConsumerAdoptionAsync");
+            var controllerType = typeof(DecisionTypesController);
+            var methodInfo = controllerType.GetMethod("PostDecisionTypeAsync");
             Type attributeType = typeof(AuthorizeAttribute);
             string attributeProperty = "Roles";
 
             List<string> expectedAttributeValues = new List<string>
             {
-                "LondonDataServices.IDecide.Manage.Server.Administrators",
-                "LondonDataServices.IDecide.Manage.Server.Consumers"
+                "LondonDataServices.IDecide.Manage.Server.Administrators"
             };
 
             // When
@@ -57,11 +56,11 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Consum
         }
 
         [Fact]
-        public void PutShouldNotHaveInvisibleApiAttribute()
+        public void PostShouldNotHaveInvisibleApiAttribute()
         {
             // Given
-            var controllerType = typeof(ConsumerAdoptionsController);
-            var methodInfo = controllerType.GetMethod("PutConsumerAdoptionAsync");
+            var controllerType = typeof(DecisionTypesController);
+            var methodInfo = controllerType.GetMethod("PostDecisionTypeAsync");
             Type attributeType = typeof(InvisibleApiAttribute);
 
             // When

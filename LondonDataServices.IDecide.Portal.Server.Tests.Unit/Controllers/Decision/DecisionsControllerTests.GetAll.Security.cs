@@ -10,23 +10,22 @@ using FluentAssertions;
 using LondonDataServices.IDecide.Portal.Server.Controllers;
 using Microsoft.AspNetCore.Authorization;
 
-namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Patients
+namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Decisions
 {
-    public partial class PatientsControllerTests
+    public partial class DecisionsControllerTests
     {
         [Fact]
-        public void PostShouldHaveRoleAttributeWithRoles()
+        public void GetAllShouldHaveRoleAttributeWithRoles()
         {
             // Given
-            var controllerType = typeof(PatientsController);
-            var methodInfo = controllerType.GetMethod("PostPatientAsync");
+            var controllerType = typeof(DecisionsController);
+            var methodInfo = controllerType.GetMethod("Get");
             Type attributeType = typeof(AuthorizeAttribute);
             string attributeProperty = "Roles";
 
             List<string> expectedAttributeValues = new List<string>
             {
-                "LondonDataServices.IDecide.Portal.Server.Administrators",
-                "Patients.Create"
+                "LondonDataServices.IDecide.Portal.Server.Administrators"
             };
 
             // When
@@ -57,11 +56,11 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Patien
         }
 
         [Fact]
-        public void PostShouldHaveInvisibleApiAttribute()
+        public void GetAllShouldHaveInvisibleApiAttribute()
         {
             // Given
-            var controllerType = typeof(PatientsController);
-            var methodInfo = controllerType.GetMethod("PostPatientAsync");
+            var controllerType = typeof(DecisionsController);
+            var methodInfo = controllerType.GetMethod("Get");
             Type attributeType = typeof(InvisibleApiAttribute);
 
             // When

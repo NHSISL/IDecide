@@ -1,4 +1,4 @@
-// ---------------------------------------------------------
+﻿// ---------------------------------------------------------
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
@@ -10,16 +10,16 @@ using FluentAssertions;
 using LondonDataServices.IDecide.Manage.Server.Controllers;
 using Microsoft.AspNetCore.Authorization;
 
-namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Patients
+namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.PatientCodes
 {
-    public partial class PatientsControllerTests
+    public partial class PatientCodeControllerTests
     {
         [Fact]
-        public void DeleteShouldHaveRoleAttributeWithRoles()
+        public void PostShouldHaveRoleAttributeWithRoles()
         {
             // Given
-            var controllerType = typeof(PatientsController);
-            var methodInfo = controllerType.GetMethod("DeletePatientByIdAsync");
+            var controllerType = typeof(PatientCodeController);
+            var methodInfo = controllerType.GetMethod("PostPatientGenerationRequestAsync");
             Type attributeType = typeof(AuthorizeAttribute);
             string attributeProperty = "Roles";
 
@@ -57,11 +57,11 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Patien
         }
 
         [Fact]
-        public void DeleteShouldNotHaveInvisibleApiAttribute()
+        public void PostShouldNotHaveInvisibleApiAttribute()
         {
             // Given
-            var controllerType = typeof(PatientsController);
-            var methodInfo = controllerType.GetMethod("DeletePatientByIdAsync");
+            var controllerType = typeof(PatientCodeController);
+            var methodInfo = controllerType.GetMethod("PostPatientGenerationRequestAsync");
             Type attributeType = typeof(InvisibleApiAttribute);
 
             // When

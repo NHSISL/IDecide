@@ -10,23 +10,22 @@ using FluentAssertions;
 using LondonDataServices.IDecide.Manage.Server.Controllers;
 using Microsoft.AspNetCore.Authorization;
 
-namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.ConsumerAdoptions
+namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Patients
 {
-    public partial class ConsumerAdoptionsControllerTests
+    public partial class PatientsControllerTests
     {
         [Fact]
         public void PutShouldHaveRoleAttributeWithRoles()
         {
             // Given
-            var controllerType = typeof(ConsumerAdoptionsController);
-            var methodInfo = controllerType.GetMethod("PutConsumerAdoptionAsync");
+            var controllerType = typeof(PatientsController);
+            var methodInfo = controllerType.GetMethod("PutPatientAsync");
             Type attributeType = typeof(AuthorizeAttribute);
             string attributeProperty = "Roles";
 
             List<string> expectedAttributeValues = new List<string>
             {
-                "LondonDataServices.IDecide.Manage.Server.Administrators",
-                "LondonDataServices.IDecide.Manage.Server.Consumers"
+                "LondonDataServices.IDecide.Manage.Server.Administrators"
             };
 
             // When
@@ -60,8 +59,8 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Consum
         public void PutShouldNotHaveInvisibleApiAttribute()
         {
             // Given
-            var controllerType = typeof(ConsumerAdoptionsController);
-            var methodInfo = controllerType.GetMethod("PutConsumerAdoptionAsync");
+            var controllerType = typeof(PatientsController);
+            var methodInfo = controllerType.GetMethod("PutPatientAsync");
             Type attributeType = typeof(InvisibleApiAttribute);
 
             // When
