@@ -27,7 +27,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
 
         [HttpPost]
         [InvisibleApi]
-        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators,Patients.Create")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators")]
         public async ValueTask<ActionResult<Patient>> PostPatientAsync([FromBody] Patient patient)
         {
             try
@@ -68,7 +68,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
         [EnableQuery(PageSize = 5000)]
 #endif
         [InvisibleApi]
-        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators,Patients.Read")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators")]
         public async ValueTask<ActionResult<IQueryable<Patient>>> Get()
         {
             try
@@ -90,7 +90,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
 
         [HttpGet("{patientId}")]
         [InvisibleApi]
-        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators,Patients.Read")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators")]
         public async ValueTask<ActionResult<Patient>> GetPatientByIdAsync(Guid patientId)
         {
             try
@@ -124,7 +124,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
 
         [HttpPut]
         [InvisibleApi]
-        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators,Patients.Update")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators")]
         public async ValueTask<ActionResult<Patient>> PutPatientAsync([FromBody] Patient patient)
         {
             try
@@ -164,7 +164,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
 
         [HttpDelete("{patientId}")]
         [InvisibleApi]
-        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators,Patients.Delete")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators")]
         public async ValueTask<ActionResult<Patient>> DeletePatientByIdAsync(Guid patientId)
         {
             try

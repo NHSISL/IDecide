@@ -27,7 +27,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
 
         [HttpPost]
         [InvisibleApi]
-        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators,DecisionTypes.Create")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators")]
         public async ValueTask<ActionResult<DecisionType>> PostDecisionTypeAsync([FromBody] DecisionType decisionType)
         {
             try
@@ -68,7 +68,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
         [EnableQuery(PageSize = 5000)]
 #endif
         [InvisibleApi]
-        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators,DecisionTypes.Read")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators")]
         public async ValueTask<ActionResult<IQueryable<DecisionType>>> Get()
         {
             try
@@ -90,7 +90,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
 
         [HttpGet("{decisionTypeId}")]
         [InvisibleApi]
-        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators,DecisionTypes.Read")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators")]
         public async ValueTask<ActionResult<DecisionType>> GetDecisionTypeByIdAsync(Guid decisionTypeId)
         {
             try
@@ -124,7 +124,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
 
         [HttpPut]
         [InvisibleApi]
-        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators,DecisionTypes.Update")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators")]
         public async ValueTask<ActionResult<DecisionType>> PutDecisionTypeAsync([FromBody] DecisionType decisionType)
         {
             try
@@ -164,7 +164,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
 
         [HttpDelete("{decisionTypeId}")]
         [InvisibleApi]
-        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators,DecisionTypes.Delete")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators")]
         public async ValueTask<ActionResult<DecisionType>> DeleteDecisionTypeByIdAsync(Guid decisionTypeId)
         {
             try
