@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import { Alert, Col, Row } from "react-bootstrap";
 import { useStep } from "../../hooks/useStep";
 import { decisionViewService } from "../../services/views/decisionViewService";
@@ -43,29 +43,6 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
         configuration
     });
 
-    // Only one method can be selected at a time
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name } = e.target;
-        setPrefs({
-            SMS: false,
-            Email: false,
-            Post: false,
-            [name]: true,
-        });
-    };
-
-    const selectedMethods = Object.entries(prefs)
-        .filter(([, value]) => value)
-        .map(([key]) => key);
-
-    const selectedMethod = selectedMethods[0];
-
-    const methodForHelper =
-        selectedMethod === "SMS" ? "Sms" :
-            selectedMethod === "Email" ? "Email" :
-                selectedMethod === "Post" ? "letter" :
-                    undefined;
-
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -82,8 +59,8 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
             patientId: createdPatient?.id,
             patient: {
                 nhsNumber: nhsNumber || "",
-                validationCode: createdPatient?.validationCode,
-                notificationPreference: mapValidationCodeToNumber(methodForHelper) ?? undefined
+                validationCode: createdPatient?.validationCode
+                //notificationPreference: mapValidationCodeToNumber(methodForHelper) ?? undefined
             },
             decisionChoice: selectedOption,
             decisionTypeId: configuration.decisionTypeId,
@@ -105,7 +82,7 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
                     },
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     onError: (error: any) => {
-                       
+
                         const status = error?.response?.status;
                         const errorData = error?.response?.data;
                         const errorTitle = errorData?.title;
@@ -158,23 +135,16 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
         <>
             <Row className="custom-col-spacing">
                 <Col xs={12} md={6} lg={6}>
-                    <Alert
-                        variant="info"
-                        className="d-flex align-items-center"
-                        style={{ marginBottom: "0.75rem", padding: "0.75rem" }}
-                        data-testid="confirmation-root"
-                    >
-                        <div className="me-2" style={{ fontSize: "1.5rem", color: "#6c757d" }}>
-                        </div>
+                   
 
-                        <div>
-                            <div style={{ fontSize: "1rem", marginBottom: "0.25rem", color: "#6c757d", fontWeight: 500 }}>
-                                {translate("ConfirmAndSave.yourDataSharingChoice")}
-                            </div>
-                            <dl className="mb-0" style={{ fontSize: "0.95rem", color: "#6c757d" }}>
-                                <div>
-                                    <dt style={{ display: "inline", fontWeight: 500 }}>{translate("ConfirmAndSave.decisionLabel")}</dt>
-                                    <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
+                    <div className="nhsuk-card nhsuk-card--summary">
+                        <div className="nhsuk-card__content">
+                            <h3 className="nhsuk-card__heading">Your Data Sharing Choice</h3>
+
+                            <dl className="nhsuk-summary-list">
+                                <div className="nhsuk-summary-list__row">
+                                    <dt className="nhsuk-summary-list__key" style={{ fontWeight: "lighter" }}>Decision</dt>
+                                    <dd className="nhsuk-summary-list__value">
                                         <strong data-testid="decision-value">
                                             {selectedOption === "optin"
                                                 ? translate("ConfirmAndSave.decisionOptIn")
@@ -184,48 +154,51 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
                                         </strong>
                                     </dd>
                                 </div>
-                                <div>
-                                    <dt style={{ display: "inline", fontWeight: 500 }}>{translate("ConfirmAndSave.nhsNumberLabel")}&nbsp;</dt>
-                                    <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
-                                        <strong data-testid="nhs-number-value">{nhsNumber || translate("ConfirmAndSave.nhsNumberNotProvided")}</strong>
-                                    </dd>
-                                </div>
-                                <div>
-                                    <dt style={{ display: "inline", fontWeight: 500 }}>{translate("ConfirmAndSave.notificationMethodLabel")}</dt>
-                                    <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
-                                        <strong data-testid="notification-method-value">
-                                            {selectedMethod
-                                                ? selectedMethod
-                                                : translate("ConfirmAndSave.notificationNoneSelected")}
+
+                                <div className="nhsuk-summary-list__row">
+                                    <dt className="nhsuk-summary-list__key" style={{ fontWeight: "lighter" }}>NHS Number</dt>
+                                    <dd className="nhsuk-summary-list__value">
+                                        <strong data-testid="nhs-number-value">
+                                            {nhsNumber || translate("ConfirmAndSave.nhsNumberNotProvided")}
                                         </strong>
                                     </dd>
                                 </div>
                             </dl>
+
                             {powerOfAttorney && (
                                 <>
-                                    <hr />
-                                    <div style={{ fontSize: "1rem", marginBottom: "0.25rem", color: "#6c757d", fontWeight: 500 }}>
+                                <hr />
+                                    <h3 className="nhsuk-card__heading nhsuk-u-margin-top-4">
                                         {translate("ConfirmAndSave.powerOfAttorneyDetails")}
-                                    </div>
-                                    <dl className="mb-0" style={{ fontSize: "0.95rem", color: "#6c757d" }}>
-                                        <div>
-                                            <dt style={{ display: "inline", fontWeight: 500 }}>{translate("ConfirmAndSave.powerOfAttorneyName")}</dt>
-                                            <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
+                                    </h3>
+                                    <dl className="nhsuk-summary-list">
+                                        <div className="nhsuk-summary-list__row">
+                                            <dt className="nhsuk-summary-list__key" style={{ fontWeight: "lighter" }}>
+                                                {translate("ConfirmAndSave.powerOfAttorneyName")}
+                                            </dt>
+                                            <dd className="nhsuk-summary-list__value">
                                                 <strong>{powerOfAttorney.firstName} {powerOfAttorney.surname}</strong>
                                             </dd>
                                         </div>
-                                        <div>
-                                            <dt style={{ display: "inline", fontWeight: 500 }}>{translate("ConfirmAndSave.powerOfAttorneyRelationship")}</dt>
-                                            <dd style={{ display: "inline", marginLeft: "0.5rem" }}>
+
+                                        <div className="nhsuk-summary-list__row">
+                                            <dt className="nhsuk-summary-list__key" style={{ fontWeight: "lighter" }}>
+                                                {translate("ConfirmAndSave.powerOfAttorneyRelationship")}
+                                            </dt>
+                                            <dd className="nhsuk-summary-list__value">
                                                 <strong>{powerOfAttorney.relationship}</strong>
                                             </dd>
                                         </div>
                                     </dl>
                                 </>
                             )}
+                            <hr />
+                            <p className="nhsuk-hint">
+                                <strong>You can change your choice at any time by returning to this site.</strong>
+                            </p>
                         </div>
-                        
-                    </Alert>
+                    </div>
+
 
                     {apiError && (
                         <Alert variant="danger" onClose={() => setApiError("")} dismissible data-testid="error-alert">
@@ -234,60 +207,12 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
                     )}
 
                     <form className="nhsuk-form-group" onSubmit={handleSubmit} data-testid="confirmation-form">
-                        <label className="nhsuk-label" style={{ marginBottom: "1rem" }}>
-                            {translate("ConfirmAndSave.howToBeNotifiedLabel")}
-                        </label>
-                        <div className="nhsuk-checkboxes nhsuk-checkboxes--vertical" style={{ marginBottom: "1.5rem" }}>
-                            <div className="nhsuk-checkboxes__item">
-                                <input
-                                    className="nhsuk-checkboxes__input"
-                                    id="sms"
-                                    name="SMS"
-                                    type="checkbox"
-                                    checked={prefs.SMS}
-                                    onChange={handleChange}
-                                    data-testid="checkbox-sms"
-                                />
-                                <label className="nhsuk-label nhsuk-checkboxes__label" htmlFor="SMS" data-testid="label-sms">
-                                    {translate("ConfirmAndSave.sms")}
-                                </label>
-                            </div>
-                            <div className="nhsuk-checkboxes__item">
-                                <input
-                                    className="nhsuk-checkboxes__input"
-                                    id="email"
-                                    name="Email"
-                                    type="checkbox"
-                                    checked={prefs.Email}
-                                    onChange={handleChange}
-                                    data-testid="checkbox-email"
-                                />
-                                <label className="nhsuk-label nhsuk-checkboxes__label" htmlFor="Email" data-testid="label-email">
-                                    {translate("ConfirmAndSave.email")}
-                                </label>
-                            </div>
-                            <div className="nhsuk-checkboxes__item">
-                                <input
-                                    className="nhsuk-checkboxes__input"
-                                    id="post"
-                                    name="Post"
-                                    type="checkbox"
-                                    checked={prefs.Post}
-                                    onChange={handleChange}
-                                    data-testid="checkbox-post"
-                                />
-                                <label className="nhsuk-label nhsuk-checkboxes__label" htmlFor="Post" data-testid="label-post">
-                                    {translate("ConfirmAndSave.post")}
-                                </label>
-                            </div>
-                        </div>
-
                         <button
                             className="nhsuk-button"
                             type="submit"
                             style={{ width: "100%" }}
                             data-testid="save-preferences-btn"
-                            disabled={isSubmitting || !selectedOption || !selectedMethod}
+                            disabled={isSubmitting || !selectedOption}
                             aria-busy={isSubmitting}
                         >
                             {isSubmitting ? translate("ConfirmAndSave.submitting") : translate("ConfirmAndSave.savePreferences")}
@@ -310,14 +235,6 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
                         <p>
                             {translate("ConfirmAndSave.aboutThisStepDesc1")}
                         </p>
-                        <p>
-                            {translate("ConfirmAndSave.aboutThisStepDesc2")}
-                        </p>
-                        <ul>
-                            <li><strong>{translate("ConfirmAndSave.helpSms")}</strong></li>
-                            <li><strong>{translate("ConfirmAndSave.helpEmail")}</strong></li>
-                            <li><strong>{translate("ConfirmAndSave.helpLetter")}</strong></li>
-                        </ul>
                         <p>
                             {translate("ConfirmAndSave.helpChangePrefs")}
                         </p>
