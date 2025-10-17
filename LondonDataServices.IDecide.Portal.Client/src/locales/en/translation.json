@@ -44,7 +44,7 @@
       "details": "Confirm Your Details",
       "confirm": "Positive Confirmation",
       "choice": "Make Your Choice",
-      "notify": "Receive Notifications",
+      "notify": "Confirm Choices",
       "thanks": "Complete"
     },
     "content": {
@@ -52,7 +52,7 @@
       "details": "Make sure your name and date of birth are correct before proceeding.",
       "confirm": "Confirmation means you've reviewed and validated the information provided.",
       "choice": "Please indicate your preference regarding the opt-out.",
-      "notify": "Choose how you would like to receive updates about your preferences.",
+      "notify": "Please Confirm your selection and save.",
       "thanks": "Process Complete"
     }
   },
@@ -255,7 +255,7 @@
     "email": "Email",
     "post": "Post",
     "submitting": "Submitting",
-    "savePreferences": "Save Preferences",
+    "savePreferences": "Confirm Choice",
     "helpGuidanceTitle": "Help & Guidance",
     "aboutThisStepTitle": "About this step",
     "aboutThisStepDesc1": "You are about to save your opt-out preference. This means you are choosing how your data will be shared for secondary uses within The London Data Service.",
