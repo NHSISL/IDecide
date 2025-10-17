@@ -35,9 +35,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                 EmailCodeTemplateId = GetRandomString(),
                 SmsCodeTemplateId = GetRandomString(),
                 LetterCodeTemplateId = GetRandomString(),
-                EmailSubmissionSuccessTemplateId = GetRandomString(),
-                SmsSubmissionSuccessTemplateId = GetRandomString(),
-                LetterSubmissionSuccessTemplateId = GetRandomString(),
                 EmailSubscriberUsageTemplateId = GetRandomString(),
                 SmsSubscriberUsageTemplateId = GetRandomString(),
                 LetterSubscriberUsageTemplateId = GetRandomString()

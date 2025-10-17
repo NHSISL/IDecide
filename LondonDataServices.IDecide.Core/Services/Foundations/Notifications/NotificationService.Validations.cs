@@ -66,66 +66,6 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
                     Parameter: nameof(NotificationInfo.Patient.NotificationPreference)));
         }
 
-        private async ValueTask ValidateOnSendSubmissionSuccessNotificationAsync(NotificationInfo notificationInfo)
-        {
-            ValidateNotificationInfoIsNotNull(notificationInfo);
-
-            Validate<InvalidArgumentsNotificationException>(
-                message: "Invalid notification arguments. Please correct the errors and try again.",
-
-                (Rule: IsInvalid(
-                    notificationInfo.Patient.NhsNumber),
-                    Parameter: nameof(NotificationInfo.Patient.NhsNumber)),
-
-                (Rule: IsInvalid(notificationInfo.Patient.Title), Parameter: nameof(NotificationInfo.Patient.Title)),
-
-                (Rule: IsInvalid(
-                    notificationInfo.Patient.GivenName),
-                    Parameter: nameof(NotificationInfo.Patient.GivenName)),
-
-                (Rule: IsInvalid(
-                    notificationInfo.Patient.Surname),
-                    Parameter: nameof(NotificationInfo.Patient.Surname)),
-
-                (Rule: IsInvalid(
-                    notificationInfo.Patient.DateOfBirth),
-                    Parameter: nameof(NotificationInfo.Patient.DateOfBirth)),
-
-                (Rule: IsInvalid(notificationInfo.Patient.Gender), Parameter: nameof(NotificationInfo.Patient.Gender)),
-
-                 (Rule: IsInvalidContact(
-                    NotificationPreference.Email, notificationInfo.Patient, notificationInfo.Patient.Email),
-                    Parameter: nameof(NotificationInfo.Patient.Email)),
-
-                (Rule: IsInvalidContact(
-                    NotificationPreference.Sms, notificationInfo.Patient, notificationInfo.Patient.Phone),
-                    Parameter: nameof(NotificationInfo.Patient.Phone)),
-
-                (Rule: IsInvalidContactAddress(
-                    NotificationPreference.Letter, notificationInfo.Patient, notificationInfo.Patient.PostalAddress),
-                    Parameter: nameof(NotificationInfo.Patient.PostalAddress)),
-
-                (Rule: IsInvalid(
-                    notificationInfo.Patient.ValidationCode),
-                    Parameter: nameof(NotificationInfo.Patient.ValidationCode)),
-
-                (Rule: IsInvalid(
-                    notificationInfo.Patient.ValidationCodeExpiresOn),
-                    Parameter: nameof(NotificationInfo.Patient.ValidationCodeExpiresOn)),
-
-                (Rule: IsInvalid(
-                    notificationInfo.Patient.NotificationPreference),
-                    Parameter: nameof(NotificationInfo.Patient.NotificationPreference)),
-
-                (Rule: IsInvalid(
-                    notificationInfo.Decision?.DecisionChoice),
-                    Parameter: nameof(NotificationInfo.Decision.DecisionChoice)),
-
-                (Rule: IsInvalid(
-                    notificationInfo.Decision?.DecisionType.Name),
-                    Parameter: nameof(NotificationInfo.Decision.DecisionType.Name)));
-        }
-
         private async ValueTask ValidateOnSendSubscriberUsageNotificationAsync(NotificationInfo notificationInfo)
         {
             ValidateNotificationInfoIsNotNull(notificationInfo);
@@ -220,47 +160,6 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
 
                 (Rule: IsInvalid(letterCodeTemplateId),
                     Parameter: nameof(NotificationConfig.LetterCodeTemplateId)),
-
-                (Rule: IsInvalid(personalisation), Parameter: nameof(personalisation)));
-        }
-
-        private async ValueTask ValidateSendEmailInputsOnSendSubmissionSuccess(
-            string emailSubmissionSuccessTemplateId,
-            string email,
-            Dictionary<string, dynamic> personalisation)
-        {
-            Validate<InvalidArgumentsNotificationException>(
-                message: "Invalid notification arguments. Please correct the errors and try again.",
-                (Rule: IsInvalid(email), Parameter: nameof(email)),
-
-                (Rule: IsInvalid(emailSubmissionSuccessTemplateId),
-                    Parameter: nameof(NotificationConfig.EmailSubmissionSuccessTemplateId)),
-
-                (Rule: IsInvalid(personalisation), Parameter: nameof(personalisation)));
-        }
-
-        private async ValueTask ValidateSendSmsInputsOnSendSubmissionSuccess(
-            string smsSubmissionSuccessTemplateId,
-            Dictionary<string, dynamic> personalisation)
-        {
-            Validate<InvalidArgumentsNotificationException>(
-                message: "Invalid notification arguments. Please correct the errors and try again.",
-
-                (Rule: IsInvalid(smsSubmissionSuccessTemplateId),
-                    Parameter: nameof(NotificationConfig.SmsSubmissionSuccessTemplateId)),
-
-                (Rule: IsInvalid(personalisation), Parameter: nameof(personalisation)));
-        }
-
-        private async ValueTask ValidateSendLetterInputsOnSendSubmissionSuccess(
-            string letterSubmissionSuccessTemplateId,
-            Dictionary<string, dynamic> personalisation)
-        {
-            Validate<InvalidArgumentsNotificationException>(
-                message: "Invalid notification arguments. Please correct the errors and try again.",
-
-                (Rule: IsInvalid(letterSubmissionSuccessTemplateId),
-                    Parameter: nameof(NotificationConfig.LetterSubmissionSuccessTemplateId)),
 
                 (Rule: IsInvalid(personalisation), Parameter: nameof(personalisation)));
         }
