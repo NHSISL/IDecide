@@ -26,7 +26,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
             this.patientService = patientService;
 
         [HttpPost]
-        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,LondonDataServices.IDecide.Manage.Server.Agents")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators")]
         public async ValueTask<ActionResult<Patient>> PostPatientAsync([FromBody] Patient patient)
         {
             try
@@ -120,7 +120,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
         }
 
         [HttpPut]
-        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,LondonDataServices.IDecide.Manage.Server.Agents")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators")]
         public async ValueTask<ActionResult<Patient>> PutPatientAsync([FromBody] Patient patient)
         {
             try
@@ -159,7 +159,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
         }
 
         [HttpDelete("{patientId}")]
-        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,LondonDataServices.IDecide.Manage.Server.Agents")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators")]
         public async ValueTask<ActionResult<Patient>> DeletePatientByIdAsync(Guid patientId)
         {
             try

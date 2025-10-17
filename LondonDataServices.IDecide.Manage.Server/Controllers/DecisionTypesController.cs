@@ -26,7 +26,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
             this.decisionTypeService = decisionTypeService;
 
         [HttpPost]
-        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,LondonDataServices.IDecide.Manage.Server.Agents")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators")]
         public async ValueTask<ActionResult<DecisionType>> PostDecisionTypeAsync([FromBody] DecisionType decisionType)
         {
             try
@@ -120,7 +120,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
         }
 
         [HttpPut]
-        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,LondonDataServices.IDecide.Manage.Server.Agents")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators")]
         public async ValueTask<ActionResult<DecisionType>> PutDecisionTypeAsync([FromBody] DecisionType decisionType)
         {
             try
@@ -159,7 +159,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
         }
 
         [HttpDelete("{decisionTypeId}")]
-        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,LondonDataServices.IDecide.Manage.Server.Agents")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators")]
         public async ValueTask<ActionResult<DecisionType>> DeleteDecisionTypeByIdAsync(Guid decisionTypeId)
         {
             try
