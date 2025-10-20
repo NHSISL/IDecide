@@ -25,7 +25,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.Consume
             List<Decision> randomDecisions = await PostRandomDecisionsAsync(randomPatient, randomDecisionType);
             List<Decision> inputDecisions = randomDecisions;
             List<Consumer> randomConsumers = await PostRandomConsumersAsync();
-            string userId = "65b5ccfb-b501-4ad5-8dd7-2a33ff64eaa3";
+            string userId = TestAuthHandler.TestUserId;
             DateTimeOffset now = DateTimeOffset.Now;
 
             Consumer randomConsumerWithMatchingEntraId =
