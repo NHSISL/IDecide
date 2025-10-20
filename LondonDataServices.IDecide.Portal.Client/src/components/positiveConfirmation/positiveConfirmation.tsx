@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useStep } from "../../hooks/useStep";
 import { patientViewService } from "../../services/views/patientViewService";
 import { PatientCodeRequest } from "../../models/patients/patientCodeRequest";
@@ -10,6 +10,7 @@ import { NotificationPreference } from "../../helpers/notificationPreference";
 import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
 import { useApiErrorHandlerChecks } from "../../hooks/useApiErrorHandlerChecks";
 import { useTimer } from "../../hooks/useTimer";
+
 interface PositiveConfirmationProps {
     goToConfirmCode: (createdPatient: PatientCodeRequest) => void;
 }
@@ -29,13 +30,35 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
     const updatePatient = patientViewService.useAddPatientAndGenerateCode();
     const [apiError, setApiError] = useState<string | JSX.Element>("");
     const [info, setInfo] = useState<string | JSX.Element>("");
-    const [hideButtons, setHideButtons] = useState(false);
     const [resend, setResend] = useState(false);
     const [showAreYouSure, setShowAreYouSure] = useState(false);
-
     const [timerActive, setTimerActive] = useState(false);
     const [timerKey, setTimerKey] = useState(0);
-    const { remainingSeconds, timerExpired } = useTimer(timerActive ? configuration.notificationRequestCountdown : 0, timerKey);
+
+    // UI state for button visibility
+    const [showNotificationButtons, setShowNotificationButtons] = useState(false);
+    const [showEnterCodeButton, setShowEnterCodeButton] = useState(true);
+
+    const { remainingSeconds, timerExpired } = useTimer(
+        timerActive ? configuration.notificationRequestCountdown : 0,
+        timerKey
+    );
+
+    const expiresOnDate = createdPatient?.validationCodeExpiresOn
+        ? new Date(createdPatient.validationCodeExpiresOn)
+        : null;
+    const isCodeExpired = !expiresOnDate || expiresOnDate >= new Date();
+
+    // Set initial button visibility based on expiry
+    useEffect(() => {
+        if (isCodeExpired) {
+            setShowNotificationButtons(true);
+            setShowEnterCodeButton(false);
+        } else {
+            setShowNotificationButtons(false);
+            setShowEnterCodeButton(true);
+        }
+    }, [isCodeExpired, createdPatient?.validationCodeExpiresOn]);
 
     const handleApiError = useApiErrorHandlerChecks({
         setApiError,
@@ -115,31 +138,50 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
 
     const handleRequestNewCodeClick = () => {
         setShowAreYouSure(true);
-        setHideButtons(true);
+        setShowEnterCodeButton(false);
     };
 
     const handleAreYouSureNo = () => {
         setShowAreYouSure(false);
-        setHideButtons(false);
+        setShowEnterCodeButton(true);
     };
 
     const handleAreYouSureYes = () => {
         setShowAreYouSure(false);
-        setHideButtons(false);
+        setShowNotificationButtons(true);
+        setShowEnterCodeButton(false);
         setResend(true);
         setTimerActive(true);
         setTimerKey(prev => prev + 1);
     };
 
+    const handleGoToCodeClick = () => {
+        setApiError("");
+        setInfo("");
+        let notificationPreference: "Email" | "Sms" | "Letter" = "Email";
+        if (createdPatient.email) {
+            notificationPreference = "Email";
+        } else if (createdPatient.phone) {
+            notificationPreference = "Sms";
+        } else if (createdPatient.address) {
+            notificationPreference = "Letter";
+        }
+        const patientToUpdate = new PatientCodeRequest({
+            nhsNumber: createdPatient.nhsNumber!,
+            verificationCode: createdPatient.validationCode!,
+            notificationPreference,
+            generateNewCode: false
+        });
+        goToConfirmCode(patientToUpdate);
+    };
+
     return (
         <Row className="custom-col-spacing">
             <Col xs={12} md={7} lg={7}>
-                <div className="mt-4">
-
+                <div>
                     {powerOfAttorney && (
                         <Alert variant="info" className="d-flex align-items-center" style={{ marginBottom: "0.75rem", padding: "0.75rem" }}>
-                            <div className="me-2" style={{ fontSize: "1.5rem", color: "#6c757d" }}>
-                            </div>
+                            <div className="me-2" style={{ fontSize: "1.5rem", color: "#6c757d" }}></div>
                             <div>
                                 <div style={{ fontSize: "1rem", marginBottom: "0.25rem", color: "#6c757d", fontWeight: 500 }}>
                                     {translate("PositiveConfirmation.poaDetailsTitle")}
@@ -167,7 +209,7 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                     <dl className="nhsuk-summary-list" style={{ marginBottom: "2rem" }}>
                         <div className="nhsuk-summary-list__row">
                             <dt className="nhsuk-summary-list__key">{translate("PositiveConfirmation.summaryName")}</dt>
-                            <dd className="nhsuk-summary-list__value">{createdPatient.surname}</dd>
+                            <dd className="nhsuk-summary-list__value">{createdPatient.givenName} {createdPatient.surname}</dd>
                         </div>
                         <div className="nhsuk-summary-list__row">
                             <dt className="nhsuk-summary-list__key">{translate("PositiveConfirmation.summaryEmail")}</dt>
@@ -183,10 +225,6 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                         </div>
                     </dl>
 
-                    <p style={{ fontWeight: 500, marginBottom: "1rem" }}>
-                        {translate("PositiveConfirmation.chooseMethod")}
-                    </p>
-
                     {apiError && (
                         <Alert variant="danger">
                             <div id="code-error">{apiError}</div>
@@ -199,49 +237,71 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                         </Alert>
                     )}
 
-                    {!hideButtons && (
+                    {!showAreYouSure && (
                         <>
-                            <div style={{
-                                display: "flex",
-                                gap: "1rem",
-                                flexWrap: "wrap"
-                            }}>
+                            <Alert variant="info">
+                                You already have an active code. If you have your code, please click{" "}
                                 <button
                                     type="button"
-                                    className="nhsuk-button"
-                                    style={{ flex: 1, minWidth: 120 }}
-                                    onClick={() => handleSubmit("Email", resend)}
-                                    disabled={!createdPatient.email}
+                                    className="nhsuk-link"
+                                    style={{ background: "none", border: "none", padding: 0, color: "#005eb8", textDecoration: "underline", cursor: "pointer" }}
+                                    onClick={handleGoToCodeClick}
                                 >
-                                    {translate("PositiveConfirmation.methodEmail")}
+                                    here
                                 </button>
-                                <button
-                                    type="button"
-                                    className="nhsuk-button"
-                                    style={{ flex: 1, minWidth: 120 }}
-                                    onClick={() => handleSubmit("Sms", resend)}
-                                    disabled={!createdPatient.phone}
-                                >
-                                    {translate("PositiveConfirmation.methodSMS")}
-                                </button>
-                                <button
-                                    type="button"
-                                    className="nhsuk-button"
-                                    style={{ flex: 1, minWidth: 120 }}
-                                    onClick={() => handleSubmit("Letter", resend)}
-                                    disabled={!createdPatient.address}
-                                >
-                                    {translate("PositiveConfirmation.methodLetter")}
-                                </button>
-                            </div>
-                            <Alert variant="warning">
+                                {" "}to enter it.
+                            </Alert>
+
+                            {showNotificationButtons && (
+                                <>
+                                    <p style={{ fontWeight: 500, marginBottom: "1rem" }}>
+                                        {translate("PositiveConfirmation.chooseMethod")}
+                                    </p>
+                                    <div style={{
+                                        display: "flex",
+                                        gap: "1rem",
+                                        flexWrap: "wrap"
+                                    }}>
+                                        <button
+                                            type="button"
+                                            className="nhsuk-button"
+                                            style={{ flex: 1, minWidth: 120 }}
+                                            onClick={() => { handleSubmit("Email", resend); setResend(false); }}
+                                            disabled={!createdPatient.email}
+                                        >
+                                            {translate("PositiveConfirmation.methodEmail")}
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="nhsuk-button"
+                                            style={{ flex: 1, minWidth: 120 }}
+                                            onClick={() => { handleSubmit("Sms", resend); setResend(false); }}
+                                            disabled={!createdPatient.phone}
+                                        >
+                                            {translate("PositiveConfirmation.methodSMS")}
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="nhsuk-button"
+                                            style={{ flex: 1, minWidth: 120 }}
+                                            onClick={() => { handleSubmit("Letter", resend); setResend(false); }}
+                                            disabled={!createdPatient.address}
+                                        >
+                                            {translate("PositiveConfirmation.methodLetter")}
+                                        </button>
+                                    </div>
+                                </>
+                            )}
+
+                            <Alert variant="success">
                                 <p>
-                                    {translate("PositiveConfirmation.resendInfo") ||
-                                        "If you have already requested a code but haven't received it, please click here to resend yourself a code."}
+                                    If you didn't receive a code, click here to request a new code.
+                                    {/*{translate("PositiveConfirmation.resendInfo") ||*/}
+                                    {/*    "If you didn't receive a code, click here to request a new code."}*/}
                                 </p>
                                 <button
                                     type="button"
-                                    className="nhsuk-button nhsuk-button--reverse"
+                                    className="nhsuk-button nhsuk-button--success"
                                     style={{ flex: 1, minWidth: 225 }}
                                     onClick={handleRequestNewCodeClick}
                                     disabled={timerActive && !timerExpired}
@@ -259,7 +319,7 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
 
                     {showAreYouSure && (
                         <div style={{ marginTop: "1.5rem" }}>
-                            <Alert variant="warning">
+                            <Alert variant="success">
                                 <div style={{ marginBottom: "1rem" }}>
                                     {translate("PositiveConfirmation.confirmNewCodeMessage") ||
                                         "Are you sure you want to generate a new code? This will invalidate your previous code."}
