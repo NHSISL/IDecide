@@ -167,7 +167,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.Consume
 
         private static Consumer CreateRandomConsumerWithMatchingEntraIdEntry(string userId)
         {
-            Consumer consumer = CreateConsumerFiller().Create();
+            Consumer consumer = CreateRandomConsumerFiller().Create();
             consumer.EntraId = userId;
 
             return consumer;
@@ -193,7 +193,6 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.Consume
 
             return createdConsumer;
         }
-
 
         private async ValueTask<Consumer> PostRandomConsumerWithMatchingEntraIdEntryAsync(string userId)
         {
@@ -221,22 +220,6 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.Consume
                 .OnProperty(consumer => consumer.CreatedBy).Use(user)
                 .OnProperty(consumer => consumer.UpdatedDate).Use(now)
                 .OnProperty(consumer => consumer.UpdatedBy).Use(user);
-
-            return filler;
-        }
-
-        private static Filler<Consumer> CreateConsumerFiller()
-        {
-            string userId = Guid.NewGuid().ToString();
-            DateTimeOffset dateTimeOffset = DateTimeOffset.UtcNow;
-            var filler = new Filler<Consumer>();
-
-            filler.Setup()
-                .OnType<DateTimeOffset>().Use(dateTimeOffset)
-                .OnProperty(consumer => consumer.EntraId).Use(GetRandomStringWithLengthOf(255))
-                .OnProperty(consumer => consumer.Name).Use(GetRandomStringWithLengthOf(255))
-                .OnProperty(consumer => consumer.CreatedBy).Use(userId)
-                .OnProperty(consumer => consumer.UpdatedBy).Use(userId);
 
             return filler;
         }

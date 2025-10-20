@@ -119,7 +119,6 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions
                         .Select(consumerAdoption => new { consumerAdoption.DecisionId, consumerAdoption.ConsumerId })
                         .ToList();
 
-                    // Materialize the query before using .Any() with a local collection
                     var allConsumerAdoptions = (await this.storageBroker.SelectAllConsumerAdoptionsAsync()).ToList();
 
                     var storageBatchConsumerAdoptions = allConsumerAdoptions

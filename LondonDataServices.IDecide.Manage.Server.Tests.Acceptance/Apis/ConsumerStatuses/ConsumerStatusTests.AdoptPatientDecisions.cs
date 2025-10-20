@@ -43,10 +43,6 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.Consume
                 consumerAdoption.ConsumerId.Should().Be(randomConsumerWithMatchingEntraId.Id);
                 randomDecisions.Should().ContainSingle(decision => decision.Id == consumerAdoption.DecisionId);
                 consumerAdoption.AdoptionDate.Should().BeAfter(now);
-            }
-
-            foreach (var consumerAdoption in consumerAdoptions)
-            {
                 await this.apiBroker.DeleteConsumerAdoptionByIdAsync(consumerAdoption.Id);
             }
 
