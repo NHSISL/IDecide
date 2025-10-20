@@ -22,6 +22,9 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance
         private static string email = "TestEmail@test.com";
         private static string jobTitle = "TestJobTitle";
 
+        public static string TestUserId =>
+            securityOid.ToString();
+
         private static List<Claim> claims = new List<Claim>
         {
             new Claim("oid", securityOid.ToString()),

@@ -38,8 +38,8 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
             ICaptchaAbstractionProvider captchaAbstractionProvider)
         {
             claimsPrincipal = httpContextAccessor.HttpContext?.User ?? new ClaimsPrincipal();
-            remoteIpAddress = httpContextAccessor.HttpContext.Connection.RemoteIpAddress?.ToString();
-            httpContextAccessor.HttpContext.Request.Headers.TryGetValue("X-Recaptcha-Token", out captchaToken);
+            remoteIpAddress = httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString();
+            httpContextAccessor.HttpContext?.Request.Headers.TryGetValue("X-Recaptcha-Token", out captchaToken);
             this.headers = httpContextAccessor.HttpContext?.Request?.Headers ?? new HeaderDictionary();
             this.securityClient = new SecurityClient();
             this.captchaAbstractionProvider = captchaAbstractionProvider;

@@ -6,12 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using LondonDataServices.IDecide.Core.Brokers.Securities;
 using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Brokers;
 using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.Consumers;
 using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.DecisionTypes;
 using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.Patients;
-using Microsoft.Extensions.DependencyInjection;
 using Tynamix.ObjectFiller;
 using DecisionEntity = LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.Decisions.Decision;
 using PatientDecision = LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.PatientDecisions.Decision;
@@ -22,15 +20,11 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.Patient
     public partial class PatientDecisionTests
     {
         private readonly ApiBroker apiBroker;
-        private readonly ISecurityBroker securityBroker;
 
         public PatientDecisionTests(ApiBroker apiBroker)
         {
             this.apiBroker = apiBroker;
-            this.securityBroker = apiBroker.webApplicationFactory.Services
-                .GetRequiredService<ISecurityBroker>();
         }
-
 
         private static string GetRandomStringWithLengthOf(int length)
         {
