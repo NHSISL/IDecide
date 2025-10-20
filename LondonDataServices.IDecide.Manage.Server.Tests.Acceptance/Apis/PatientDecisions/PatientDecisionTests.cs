@@ -3,12 +3,16 @@
 // ---------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Brokers;
+using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.Consumers;
 using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.DecisionTypes;
-using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.PatientDecisions;
 using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.Patients;
 using Tynamix.ObjectFiller;
+using DecisionEntity = LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.Decisions.Decision;
+using PatientDecision = LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.PatientDecisions.Decision;
 
 namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.PatientDecisions
 {
@@ -17,8 +21,10 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.Patient
     {
         private readonly ApiBroker apiBroker;
 
-        public PatientDecisionTests(ApiBroker apiBroker) =>
+        public PatientDecisionTests(ApiBroker apiBroker)
+        {
             this.apiBroker = apiBroker;
+        }
 
         private static string GetRandomStringWithLengthOf(int length)
         {
@@ -26,6 +32,9 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.Patient
 
             return result.Length > length ? result.Substring(0, length) : result;
         }
+
+        private static int GetRandomNumber() =>
+            new IntRange(max: 15, min: 2).GetValue();
 
         private static string GenerateRandom10DigitNumber()
         {
@@ -47,20 +56,46 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.Patient
             return randomNumber;
         }
 
-        private static Decision CreateRandomDecision(Patient patient, Guid decisionTypeId) =>
-            CreateRandomDecisionFiller(patient, decisionTypeId).Create();
+        private async ValueTask<List<PatientDecision>> PostRandomDecisionsAsync(
+            Patient patient,
+            DecisionType decisionType)
+        {
+            List<PatientDecision> randomDecisions = CreateRandomDecisions(patient, decisionType);
+            List<PatientDecision> createdDecisions = new List<PatientDecision>();
 
-        private static Filler<Decision> CreateRandomDecisionFiller(Patient patient, Guid decisionTypeId)
+            foreach (PatientDecision decision in randomDecisions)
+            {
+                DecisionEntity decisionEntity = ToDecisionEntity(decision);
+                DecisionEntity createdDecision = await apiBroker.PostDecisionAsync(decisionEntity);
+                PatientDecision patientDecision = ToPatientDecision(createdDecision);
+                createdDecisions.Add(patientDecision);
+            }
+
+            return createdDecisions;
+        }
+
+        private static List<PatientDecision> CreateRandomDecisions(Patient patient, DecisionType decisionType)
+        {
+            return CreateRandomDecisionFiller(patient, decisionType)
+                .Create(count: GetRandomNumber())
+                .ToList();
+        }
+
+        private static PatientDecision CreateRandomDecision(Patient patient, DecisionType decisionType) =>
+            CreateRandomDecisionFiller(patient, decisionType).Create();
+
+        private static Filler<PatientDecision> CreateRandomDecisionFiller(Patient patient, DecisionType decisionType)
         {
             string user = Guid.NewGuid().ToString();
             DateTime now = DateTime.UtcNow;
-            var filler = new Filler<Decision>();
+            var filler = new Filler<PatientDecision>();
 
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(now)
                 .OnProperty(decision => decision.Patient).Use(patient)
                 .OnProperty(decision => decision.PatientId).Use(patient.Id)
-                .OnProperty(decision => decision.DecisionTypeId).Use(decisionTypeId)
+                .OnProperty(decision => decision.DecisionType).Use(decisionType)
+                .OnProperty(decision => decision.DecisionTypeId).Use(decisionType.Id)
                 .OnProperty(decision => decision.DecisionChoice).Use(GetRandomStringWithLengthOf(255))
                 .OnProperty(decision => decision.CreatedDate).Use(now)
                 .OnProperty(decision => decision.CreatedBy).Use(user)
@@ -69,6 +104,38 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.Patient
 
             return filler;
         }
+
+        private static DecisionEntity ToDecisionEntity(PatientDecision patientDecision) =>
+            new()
+            {
+                Id = patientDecision.Id,
+                PatientId = patientDecision.PatientId,
+                DecisionTypeId = patientDecision.DecisionTypeId,
+                DecisionChoice = patientDecision.DecisionChoice,
+                CreatedBy = patientDecision.CreatedBy,
+                CreatedDate = patientDecision.CreatedDate,
+                UpdatedBy = patientDecision.UpdatedBy,
+                UpdatedDate = patientDecision.UpdatedDate,
+                ResponsiblePersonGivenName = patientDecision.ResponsiblePersonGivenName,
+                ResponsiblePersonSurname = patientDecision.ResponsiblePersonSurname,
+                ResponsiblePersonRelationship = patientDecision.ResponsiblePersonRelationship
+            };
+
+        private static PatientDecision ToPatientDecision(DecisionEntity decisionEntity) =>
+            new()
+            {
+                Id = decisionEntity.Id,
+                PatientId = decisionEntity.PatientId,
+                DecisionTypeId = decisionEntity.DecisionTypeId,
+                DecisionChoice = decisionEntity.DecisionChoice,
+                CreatedBy = decisionEntity.CreatedBy,
+                CreatedDate = decisionEntity.CreatedDate,
+                UpdatedBy = decisionEntity.UpdatedBy,
+                UpdatedDate = decisionEntity.UpdatedDate,
+                ResponsiblePersonGivenName = decisionEntity.ResponsiblePersonGivenName,
+                ResponsiblePersonSurname = decisionEntity.ResponsiblePersonSurname,
+                ResponsiblePersonRelationship = decisionEntity.ResponsiblePersonRelationship
+            };
 
         private async ValueTask<Patient> PostRandomPatientAsync()
         {
@@ -131,6 +198,38 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.Patient
                 .OnProperty(decisionType => decisionType.CreatedBy).Use(user)
                 .OnProperty(decisionType => decisionType.UpdatedDate).Use(now)
                 .OnProperty(decisionType => decisionType.UpdatedBy).Use(user);
+
+            return filler;
+        }
+
+        private static Consumer CreateRandomConsumerWithMatchingEntraIdEntry(string userId)
+        {
+            Consumer consumer = CreateConsumerFiller().Create();
+            consumer.EntraId = userId;
+
+            return consumer;
+        }
+
+        private async ValueTask<Consumer> PostRandomConsumerWithMatchingEntraIdEntryAsync(string userId)
+        {
+            Consumer randomConsumer = CreateRandomConsumerWithMatchingEntraIdEntry(userId);
+            Consumer createdConsumer = await this.apiBroker.PostConsumerAsync(randomConsumer);
+
+            return createdConsumer;
+        }
+
+        private static Filler<Consumer> CreateConsumerFiller()
+        {
+            string userId = Guid.NewGuid().ToString();
+            DateTimeOffset dateTimeOffset = DateTimeOffset.UtcNow;
+            var filler = new Filler<Consumer>();
+
+            filler.Setup()
+                .OnType<DateTimeOffset>().Use(dateTimeOffset)
+                .OnProperty(consumer => consumer.EntraId).Use(GetRandomStringWithLengthOf(255))
+                .OnProperty(consumer => consumer.Name).Use(GetRandomStringWithLengthOf(255))
+                .OnProperty(consumer => consumer.CreatedBy).Use(userId)
+                .OnProperty(consumer => consumer.UpdatedBy).Use(userId);
 
             return filler;
         }
