@@ -3,20 +3,19 @@
 // ---------------------------------------------------------
 
 using System.Net.Http;
-using Microsoft.AspNetCore.Mvc.Testing;
 using RESTFulSense.Clients;
 
 namespace LondonDataServices.IDecide.Portal.Server.Tests.Integration.Brokers
 {
     public partial class ApiBroker
     {
-        private readonly WebApplicationFactory<Program> webApplicationFactory;
+        private readonly TestWebApplicationFactory<Program> webApplicationFactory;
         private readonly HttpClient httpClient;
         private readonly IRESTFulApiFactoryClient apiFactoryClient;
 
         public ApiBroker()
         {
-            webApplicationFactory = new WebApplicationFactory<Program>();
+            webApplicationFactory = new TestWebApplicationFactory<Program>();
             httpClient = webApplicationFactory.CreateClient();
             apiFactoryClient = new RESTFulApiFactoryClient(httpClient);
         }
