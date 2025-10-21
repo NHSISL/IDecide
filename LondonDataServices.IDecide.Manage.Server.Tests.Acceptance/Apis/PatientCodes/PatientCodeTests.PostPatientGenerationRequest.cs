@@ -24,7 +24,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.Patient
             await this.apiBroker.PostPatientGenerationRequestAsync(inputPatientCodeRequest);
 
             // then
-            List<Patient> patients = await apiBroker.GetAllPatientsAsync();
+            List<Patient> patients = await this.apiBroker.GetAllPatientsAsync();
 
             Patient addedPatient = patients
                 .FirstOrDefault(patient => patient.NhsNumber == inputPatientCodeRequest.NhsNumber);
