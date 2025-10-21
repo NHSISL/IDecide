@@ -4,7 +4,6 @@
 
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
-using LondonDataServices.IDecide.Portal.Server.Models;
 using LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Models.Patients;
 
 namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Brokers
@@ -18,11 +17,5 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Brokers
             return await this.apiFactoryClient.PostContentAsync<PatientLookup, Patient>(
                 $"{PatientSearchesRelativeUrl}/PatientSearch", patientLookup);
         }
-
-        public async ValueTask RecordPatientInformationAsync(
-            RecordPatientInformationRequest recordPatientInformationRequest) =>
-            await this.apiFactoryClient.PostContentAsync(
-                $"{PatientSearchesRelativeUrl}/RecordPatientInformation",
-                recordPatientInformationRequest);
     }
 }
