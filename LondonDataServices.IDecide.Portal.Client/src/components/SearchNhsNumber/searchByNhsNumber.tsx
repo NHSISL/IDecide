@@ -12,6 +12,7 @@ import { PatientLookup } from "../../models/patients/patientLookup";
 import { Patient } from "../../models/patients/patient";
 import { SearchCriteria } from "../../models/searchCriterias/searchCriteria";
 import { useApiErrorHandlerChecks } from "../../hooks/useApiErrorHandlerChecks";
+import { useNhsNumberValidator } from "../../hooks/useNhsNumberValidator";
 
 export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
     onIDontKnow: (powerOfAttorney: boolean) => void;
@@ -38,10 +39,12 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
     const [loading, setLoading] = useState(false);
     const [recaptchaReady, setRecaptchaReady] = useState(false);
     const [recaptchaSiteKey, setRecaptchaSiteKey] = useState<string | undefined>(undefined);
+    const [nhsValid, setNhsValid] = useState(false);
     const { configuration } = useFrontendConfiguration();
     const RECAPTCHA_ACTION_SUBMIT = "submit";
     const { nextStep, setCreatedPatient } = useStep();
     const addPatient = patientViewService.usePostPatientSearch();
+    const { validate } = useNhsNumberValidator();
 
     const handleApiError = useApiErrorHandlerChecks({
         setApiError,
@@ -81,6 +84,18 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
         const value = e.target.value.replace(/\D/g, "").slice(0, 10);
         setNhsNumberInput(value);
         if (error) setError("");
+
+        if (value.length === 10) {
+            if (!validate(value)) {
+                setNhsValid(false);
+                setError("NHS Number not valid");
+            } else {
+                setNhsValid(true);
+                setError("");
+            }
+        } else {
+            setNhsValid(false);
+        }
     };
 
     // PoA field handlers
@@ -328,7 +343,7 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
                                         !poaSurname.trim() ||
                                         !poaRelationship ||
                                         poaNhsNumberInput.length !== 10
-                                        : nhsNumberInput.length !== 10)
+                                        : nhsNumberInput.length !== 10 || !nhsValid)
                                 }
                             >
                                 {loading ? translate("SearchByNHSNumber.submittingButton") : translate("SearchByNHSNumber.submitButton")}
