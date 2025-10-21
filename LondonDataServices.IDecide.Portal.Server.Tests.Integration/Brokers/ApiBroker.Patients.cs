@@ -14,18 +14,18 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Integration.Brokers
         private const string patientsRelativeUrl = "api/patients";
 
         public async ValueTask<Patient> PostPatientAsync(Patient patient) =>
-            await this.apiFactoryClient.PostContentAsync(patientsRelativeUrl, patient);
+            await this.authenticatedApiFactoryClient.PostContentAsync(patientsRelativeUrl, patient);
 
         public async ValueTask<List<Patient>> GetAllPatientsAsync() =>
-            await this.apiFactoryClient.GetContentAsync<List<Patient>>(patientsRelativeUrl);
+            await this.authenticatedApiFactoryClient.GetContentAsync<List<Patient>>(patientsRelativeUrl);
 
         public async ValueTask<Patient> GetPatientByIdAsync(Guid patientId) =>
-            await this.apiFactoryClient.GetContentAsync<Patient>($"{patientsRelativeUrl}/{patientId}");
+            await this.authenticatedApiFactoryClient.GetContentAsync<Patient>($"{patientsRelativeUrl}/{patientId}");
 
         public async ValueTask<Patient> PutPatientAsync(Patient patient) =>
-            await this.apiFactoryClient.PutContentAsync(patientsRelativeUrl, patient);
+            await this.authenticatedApiFactoryClient.PutContentAsync(patientsRelativeUrl, patient);
 
         public async ValueTask<Patient> DeletePatientByIdAsync(Guid patientId) =>
-            await this.apiFactoryClient.DeleteContentAsync<Patient>($"{patientsRelativeUrl}/{patientId}");
+            await this.authenticatedApiFactoryClient.DeleteContentAsync<Patient>($"{patientsRelativeUrl}/{patientId}");
     }
 }

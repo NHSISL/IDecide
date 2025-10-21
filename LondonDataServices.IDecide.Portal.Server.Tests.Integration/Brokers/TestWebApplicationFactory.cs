@@ -17,6 +17,13 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Integration.Brokers
 {
     public class TestWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup> where TStartup : class
     {
+        private readonly bool requireAuthentication;
+
+        public TestWebApplicationFactory(bool requireAuthentication)
+        {
+            this.requireAuthentication = requireAuthentication;
+        }
+
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             builder.ConfigureAppConfiguration((context, config) =>
@@ -29,8 +36,14 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Integration.Brokers
 
             builder.ConfigureServices((context, services) =>
             {
-                OverrideSecurityForTesting(services);
-                OverrideCaptchaForTesting(services);
+                if (this.requireAuthentication)
+                {
+                    OverrideSecurityForTesting(services);
+                }
+                else
+                {
+                    OverrideCaptchaForTesting(services);
+                }
             });
         }
 

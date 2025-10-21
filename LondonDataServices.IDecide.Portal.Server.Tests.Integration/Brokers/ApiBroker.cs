@@ -11,21 +11,28 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Integration.Brokers
 {
     public partial class ApiBroker
     {
-        private readonly TestWebApplicationFactory<Program> webApplicationFactory;
-        private readonly HttpClient httpClient;
-        private readonly IRESTFulApiFactoryClient apiFactoryClient;
+        private readonly TestWebApplicationFactory<Program> authenticatedWebApplicationFactory;
+        private readonly HttpClient authenticatedHttpClient;
+        private readonly IRESTFulApiFactoryClient authenticatedApiFactoryClient;
         internal readonly InvisibleApiKey invisibleApiKey;
+        private readonly TestWebApplicationFactory<Program> anonymousWebApplicationFactory;
+        private readonly HttpClient anonymousHttpClient;
+        private readonly IRESTFulApiFactoryClient anonymousApiFactoryClient;
 
         public ApiBroker()
         {
-            webApplicationFactory = new TestWebApplicationFactory<Program>();
-            invisibleApiKey = this.webApplicationFactory.Services.GetService<InvisibleApiKey>();
-            httpClient = webApplicationFactory.CreateClient();
+            authenticatedWebApplicationFactory = new TestWebApplicationFactory<Program>(true);
+            invisibleApiKey = this.authenticatedWebApplicationFactory.Services.GetService<InvisibleApiKey>();
+            authenticatedHttpClient = authenticatedWebApplicationFactory.CreateClient();
 
-            this.httpClient.DefaultRequestHeaders
+            this.authenticatedHttpClient.DefaultRequestHeaders
                 .Add(this.invisibleApiKey.Key, this.invisibleApiKey.Value);
 
-            apiFactoryClient = new RESTFulApiFactoryClient(httpClient);
+            authenticatedApiFactoryClient = new RESTFulApiFactoryClient(authenticatedHttpClient);
+
+            anonymousWebApplicationFactory = new TestWebApplicationFactory<Program>(false);
+            anonymousHttpClient = anonymousWebApplicationFactory.CreateClient();
+            anonymousApiFactoryClient = new RESTFulApiFactoryClient(anonymousHttpClient);
         }
     }
 }

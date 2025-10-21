@@ -14,7 +14,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Integration.Brokers
 
         public async ValueTask<Patient> PostPatientSearchAsync(PatientLookup patientLookup)
         {
-            return await this.apiFactoryClient.PostContentAsync<PatientLookup, Patient>(
+            return await this.anonymousApiFactoryClient.PostContentAsync<PatientLookup, Patient>(
                 $"{PatientSearchesRelativeUrl}/PatientSearch", patientLookup);
         }
     }
