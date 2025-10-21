@@ -32,8 +32,6 @@ using LondonDataServices.IDecide.Core.Brokers.Storages.Sql;
 using LondonDataServices.IDecide.Core.Clients.Audits;
 using LondonDataServices.IDecide.Core.Models.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Models.Foundations.Audits;
-using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerAdoptions;
-using LondonDataServices.IDecide.Core.Models.Foundations.Consumers;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
@@ -148,10 +146,12 @@ namespace LondonDataServices.IDecide.Portal.Server
             builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
             JsonNamingPolicy jsonNamingPolicy = JsonNamingPolicy.CamelCase;
 
+            int defaultPageSize = builder.Configuration.GetValue<int>("OData:PageSize", 50);
+
             builder.Services.AddControllers()
                 .AddOData(options =>
                 {
-                    options.AddRouteComponents("odata", GetEdmModel());
+                    options.AddRouteComponents("odata", GetEdmModel(defaultPageSize));
                     options.Select().Filter().Expand().OrderBy().Count().SetMaxTop(100);
                 })
                 .AddJsonOptions(options =>
@@ -192,17 +192,18 @@ namespace LondonDataServices.IDecide.Portal.Server
             app.MapFallbackToFile("/index.html");
         }
 
-        private static IEdmModel GetEdmModel()
+        private static IEdmModel GetEdmModel(int pageSize)
         {
             ODataConventionModelBuilder builder =
                new ODataConventionModelBuilder();
 
-            builder.EntitySet<Consumer>("Consumers");
-            builder.EntitySet<ConsumerAdoption>("ConsumerAdoptions");
-            builder.EntitySet<DecisionType>("DecisionTypes");
-            builder.EntitySet<Decision>("Decisions");
-            builder.EntitySet<Patient>("Patients");
-            builder.EntitySet<Audit>("Audits");
+            builder.EntitySet<Audit>("Audits").EntityType.Page(maxTopValue: pageSize, pageSizeValue: pageSize);
+            builder.EntitySet<Decision>("Decisions").EntityType.Page(maxTopValue: pageSize, pageSizeValue: pageSize);
+            builder.EntitySet<Patient>("Patients").EntityType.Page(maxTopValue: pageSize, pageSizeValue: pageSize);
+
+            builder.EntitySet<DecisionType>("DecisionTypes")
+                .EntityType.Page(maxTopValue: pageSize, pageSizeValue: pageSize);
+
             builder.EnableLowerCamelCase();
 
             return builder.GetEdmModel();

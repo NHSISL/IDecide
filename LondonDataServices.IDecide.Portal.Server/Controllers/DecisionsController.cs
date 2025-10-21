@@ -61,12 +61,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
         }
 
         [HttpGet]
-#if !DEBUG
-        [EnableQuery(PageSize = 50)]
-#endif
-#if DEBUG
-        [EnableQuery(PageSize = 5000)]
-#endif
+        [EnableQuery]
         [InvisibleApi]
         [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators")]
         public async ValueTask<ActionResult<IQueryable<Decision>>> Get()
