@@ -14,18 +14,18 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Integration.Brokers
         private const string decisionTypesRelativeUrl = "api/decisiontypes";
 
         public async ValueTask<DecisionType> PostDecisionTypeAsync(DecisionType decisionType) =>
-            await this.apiFactoryClient.PostContentAsync(decisionTypesRelativeUrl, decisionType);
+            await this.authenticatedApiFactoryClient.PostContentAsync(decisionTypesRelativeUrl, decisionType);
 
         public async ValueTask<List<DecisionType>> GetAllDecisionTypesAsync() =>
-            await this.apiFactoryClient.GetContentAsync<List<DecisionType>>(decisionTypesRelativeUrl);
+            await this.authenticatedApiFactoryClient.GetContentAsync<List<DecisionType>>(decisionTypesRelativeUrl);
 
         public async ValueTask<DecisionType> GetDecisionTypeByIdAsync(Guid decisionTypeId) =>
-            await this.apiFactoryClient.GetContentAsync<DecisionType>($"{decisionTypesRelativeUrl}/{decisionTypeId}");
+            await this.authenticatedApiFactoryClient.GetContentAsync<DecisionType>($"{decisionTypesRelativeUrl}/{decisionTypeId}");
 
         public async ValueTask<DecisionType> PutDecisionTypeAsync(DecisionType decisionType) =>
-            await this.apiFactoryClient.PutContentAsync(decisionTypesRelativeUrl, decisionType);
+            await this.authenticatedApiFactoryClient.PutContentAsync(decisionTypesRelativeUrl, decisionType);
 
         public async ValueTask<DecisionType> DeleteDecisionTypeByIdAsync(Guid decisionTypeId) =>
-            await this.apiFactoryClient.DeleteContentAsync<DecisionType>($"{decisionTypesRelativeUrl}/{decisionTypeId}");
+            await this.authenticatedApiFactoryClient.DeleteContentAsync<DecisionType>($"{decisionTypesRelativeUrl}/{decisionTypeId}");
     }
 }
