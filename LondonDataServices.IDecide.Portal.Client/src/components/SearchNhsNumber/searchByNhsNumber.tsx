@@ -88,7 +88,7 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
         if (value.length === 10) {
             if (!validate(value)) {
                 setNhsValid(false);
-                setError("Invalid NHS number - The check digit doesn't match or the format is incorrect.");
+                setError(translate("errors.InValidNhsNumber"));
             } else {
                 setNhsValid(true);
                 setError("");
