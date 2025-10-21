@@ -11,6 +11,12 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Brokers
     {
         private const string patientCodeRelativeUrl = "api/patientcode";
 
+        public async ValueTask PostPatientGenerationRequestAsync(PatientCodeRequest patientCodeRequest)
+        {
+            await this.apiFactoryClient.PostContentAsync<PatientCodeRequest>(
+                $"{patientCodeRelativeUrl}/PatientGenerationRequest", patientCodeRequest);
+        }
+
         public async ValueTask VerifyPatientCodeAsync(PatientCodeRequest patientCodeRequest)
         {
             await this.apiFactoryClient.PostContentAsync<PatientCodeRequest>(

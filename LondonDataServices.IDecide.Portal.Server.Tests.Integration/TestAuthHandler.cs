@@ -1,4 +1,4 @@
-// ---------------------------------------------------------
+﻿// ---------------------------------------------------------
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance
+namespace LondonDataServices.IDecide.Portal.Server.Tests.Integration
 {
     public class TestAuthHandler : AuthenticationHandler<CustomAuthenticationSchemeOptions>
     {
@@ -22,9 +22,6 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance
         private static string email = "TestEmail@test.com";
         private static string jobTitle = "TestJobTitle";
 
-        public static string TestUserId =>
-            securityOid.ToString();
-
         private static List<Claim> claims = new List<Claim>
         {
             new Claim("oid", securityOid.ToString()),
@@ -34,8 +31,8 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance
             new Claim(ClaimTypes.Email, email),
             new Claim("jobTitle", jobTitle),
             new Claim(ClaimTypes.Name, "TestUser"),
-            new Claim(ClaimTypes.Role, "LondonDataServices.IDecide.Manage.Server.Administrators"),
-            new Claim(ClaimTypes.Role, "LondonDataServices.IDecide.Manage.Server.Users")
+            new Claim(ClaimTypes.Role, "Administrator"),
+            new Claim(ClaimTypes.Role, "LondonDataServices.IDecide.Portal.Server.Administrators")
         };
 
         public TestAuthHandler(
@@ -47,6 +44,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
             var invisibleApiKey = Options.InvisibleApiKey;
+
             if (invisibleApiKey != null && !string.IsNullOrWhiteSpace(invisibleApiKey.Key))
             {
                 claims.Add(new Claim(ClaimTypes.Role, invisibleApiKey.Key));

@@ -25,7 +25,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Integration.Apis.Consum
             Decision randomDecision =
                 await PostRandomDecisionAsync(patientId: randomPatient.Id, decisionTypeId: randomDecisionType.Id);
 
-            ConsumerAdoption randomConsumerAdoption = await PostRandomConsumerAdoptionAsync(
+            ConsumerAdoption randomConsumerAdoption = CreateRandomConsumerAdoption(
                 consumerId: randomConsumer.Id,
                 decisionId: randomDecision.Id);
 
