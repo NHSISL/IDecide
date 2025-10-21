@@ -70,7 +70,7 @@ export function useApiErrorHandler({
         } else if (error?.response?.status === 404) {
             setError(translate("errors.404"));
         } else {
-            setError(translate("SearchBySHSNumber.errorCreatePatient"));
+            setError(translate("SearchByNHSNumber.errorCreatePatient"));
         }
         setLoading(false);
     }, [setError, setApiError, setLoading, translate, configuration]);
