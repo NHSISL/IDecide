@@ -146,12 +146,10 @@ namespace LondonDataServices.IDecide.Portal.Server
             builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
             JsonNamingPolicy jsonNamingPolicy = JsonNamingPolicy.CamelCase;
 
-            int defaultPageSize = builder.Configuration.GetValue<int>("OData:PageSize", 50);
-
             builder.Services.AddControllers()
                 .AddOData(options =>
                 {
-                    options.AddRouteComponents("odata", GetEdmModel(defaultPageSize));
+                    options.AddRouteComponents("odata", GetEdmModel());
                     options.Select().Filter().Expand().OrderBy().Count().SetMaxTop(100);
                 })
                 .AddJsonOptions(options =>
@@ -192,17 +190,15 @@ namespace LondonDataServices.IDecide.Portal.Server
             app.MapFallbackToFile("/index.html");
         }
 
-        private static IEdmModel GetEdmModel(int pageSize)
+        private static IEdmModel GetEdmModel()
         {
             ODataConventionModelBuilder builder =
                new ODataConventionModelBuilder();
 
-            builder.EntitySet<Audit>("Audits").EntityType.Page(maxTopValue: pageSize, pageSizeValue: pageSize);
-            builder.EntitySet<Decision>("Decisions").EntityType.Page(maxTopValue: pageSize, pageSizeValue: pageSize);
-            builder.EntitySet<Patient>("Patients").EntityType.Page(maxTopValue: pageSize, pageSizeValue: pageSize);
-
-            builder.EntitySet<DecisionType>("DecisionTypes")
-                .EntityType.Page(maxTopValue: pageSize, pageSizeValue: pageSize);
+            builder.EntitySet<Audit>("Audits");
+            builder.EntitySet<Decision>("Decisions");
+            builder.EntitySet<Patient>("Patients");
+            builder.EntitySet<DecisionType>("DecisionTypes");
 
             builder.EnableLowerCamelCase();
 
