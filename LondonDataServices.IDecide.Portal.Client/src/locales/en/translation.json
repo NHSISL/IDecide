@@ -151,7 +151,7 @@
     "address": "Address",
     "yes": "Yes",
     "no": "No",
-    "useExistingCode": "We have already been sent a code. Would you like to use that code to continue?",
+    "useExistingCode": "You have already requested an authorisation code, would you like to use this to continue",
     "helpGuidance": "Help & Guidance",
     "checkingYourDetails": "Checking Your Details",
     "reviewDetails": "Please review the details shown on this page. Some information, such as your mobile number, may be partially hidden for your privacy.",
