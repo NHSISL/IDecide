@@ -20,8 +20,8 @@ using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions.Exceptions;
 using LondonDataServices.IDecide.Core.Services.Foundations.Consumers;
 using LondonDataServices.IDecide.Core.Services.Foundations.Decisions;
-using LondonDataServices.IDecide.Core.Services.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
+using Microsoft.EntityFrameworkCore;
 
 namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
 {
@@ -34,7 +34,6 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
         private readonly IIdentifierBroker identifierBroker;
         private readonly IPatientService patientService;
         private readonly IDecisionService decisionService;
-        private readonly INotificationService notificationService;
         private readonly IConsumerService consumerService;
         private readonly DecisionConfigurations decisionConfigurations;
         private readonly SecurityBrokerConfigurations securityBrokerConfigurations;
@@ -47,7 +46,6 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
             IIdentifierBroker identifierBroker,
             IPatientService patientService,
             IDecisionService decisionService,
-            INotificationService notificationService,
             IConsumerService consumerService,
             DecisionConfigurations decisionConfigurations,
             SecurityBrokerConfigurations securityBrokerConfigurations)
@@ -59,7 +57,6 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
             this.identifierBroker = identifierBroker;
             this.patientService = patientService;
             this.decisionService = decisionService;
-            this.notificationService = notificationService;
             this.consumerService = consumerService;
             this.decisionConfigurations = decisionConfigurations;
             this.securityBrokerConfigurations = securityBrokerConfigurations;
@@ -175,6 +172,10 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
 
                 Guid consumerId = maybeConsumer.Id;
                 IQueryable<Decision> decisions = await this.decisionService.RetrieveAllDecisionsAsync();
+
+                decisions = decisions
+                    .Include(decision => decision.Patient)
+                    .Include(decision => decision.DecisionType);
 
                 if (changesSinceDate != default)
                 {
