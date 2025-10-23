@@ -118,7 +118,9 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.Patient
                 UpdatedDate = patientDecision.UpdatedDate,
                 ResponsiblePersonGivenName = patientDecision.ResponsiblePersonGivenName,
                 ResponsiblePersonSurname = patientDecision.ResponsiblePersonSurname,
-                ResponsiblePersonRelationship = patientDecision.ResponsiblePersonRelationship
+                ResponsiblePersonRelationship = patientDecision.ResponsiblePersonRelationship,
+                DecisionType = patientDecision.DecisionType,
+                Patient = patientDecision.Patient
             };
 
         private static PatientDecision ToPatientDecision(DecisionEntity decisionEntity) =>
@@ -134,7 +136,9 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.Patient
                 UpdatedDate = decisionEntity.UpdatedDate,
                 ResponsiblePersonGivenName = decisionEntity.ResponsiblePersonGivenName,
                 ResponsiblePersonSurname = decisionEntity.ResponsiblePersonSurname,
-                ResponsiblePersonRelationship = decisionEntity.ResponsiblePersonRelationship
+                ResponsiblePersonRelationship = decisionEntity.ResponsiblePersonRelationship,
+                DecisionType = decisionEntity.DecisionType,
+                Patient = decisionEntity.Patient
             };
 
         private async ValueTask<Patient> PostRandomPatientAsync()

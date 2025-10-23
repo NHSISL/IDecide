@@ -26,7 +26,6 @@ using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Securities;
 using LondonDataServices.IDecide.Core.Services.Foundations.Consumers;
 using LondonDataServices.IDecide.Core.Services.Foundations.Decisions;
-using LondonDataServices.IDecide.Core.Services.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions;
 using Moq;
@@ -43,7 +42,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
         private readonly Mock<IAuditBroker> auditBrokerMock = new Mock<IAuditBroker>();
         private readonly Mock<IIdentifierBroker> identifierBrokerMock = new Mock<IIdentifierBroker>();
         private readonly Mock<IPatientService> patientServiceMock = new Mock<IPatientService>();
-        private readonly Mock<INotificationService> notificationServiceMock = new Mock<INotificationService>();
         private readonly Mock<IDecisionService> decisionServiceMock = new Mock<IDecisionService>();
         private readonly Mock<IConsumerService> consumerServiceMock = new Mock<IConsumerService>();
         private readonly DecisionConfigurations decisionConfigurations;
@@ -64,7 +62,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             this.auditBrokerMock = new Mock<IAuditBroker>();
             this.identifierBrokerMock = new Mock<IIdentifierBroker>();
             this.patientServiceMock = new Mock<IPatientService>();
-            this.notificationServiceMock = new Mock<INotificationService>();
             this.decisionServiceMock = new Mock<IDecisionService>();
             this.consumerServiceMock = new Mock<IConsumerService>();
             this.compareLogic = new CompareLogic();
@@ -90,7 +87,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 auditBroker: this.auditBrokerMock.Object,
                 identifierBroker: this.identifierBrokerMock.Object,
                 patientService: this.patientServiceMock.Object,
-                notificationService: this.notificationServiceMock.Object,
                 decisionService: this.decisionServiceMock.Object,
                 consumerService: this.consumerServiceMock.Object,
                 decisionConfigurations: this.decisionConfigurations,
