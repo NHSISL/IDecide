@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Patient } from "../../models/patients/patient";
 import { patientViewService } from "../../services/views/patientViewService";
-import { Row, Col, Alert } from "react-bootstrap";
+import { Row, Col, Alert, Form } from "react-bootstrap";
 import { PatientCodeRequest } from "../../models/patients/patientCodeRequest";
 import { useStep } from "../../hooks/useStep";
 import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
@@ -282,6 +282,8 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
                         <label className="nhsuk-label" htmlFor="code">
                             {translate("ConfirmCode.enterCodeLabel")}
                         </label>
+
+                        
                         <input
                             className="nhsuk-input"
                             id="code"
@@ -294,7 +296,12 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
                             style={{ width: "100%", maxWidth: "200px" }}
                             aria-describedby={error ? "code-error" : undefined}
                             aria-invalid={!!error}
-                        />
+                        /> <br />
+
+                        <small style={{ fontSize: "12px" }}>
+                            <strong style={{ fontSize: "12px" }}>Note</strong>: this is case sensitive.
+                        </small>
+
                         {/* Info message section */}
                         {info && (
                             <Alert
