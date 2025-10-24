@@ -4,6 +4,7 @@
 
 using System;
 using System.Threading.Tasks;
+using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 using LondonDataServices.IDecide.Portal.Server.Models;
 using LondonDataServices.IDecide.Portal.Server.Tests.Integration.Brokers;
 using LondonDataServices.IDecide.Portal.Server.Tests.Integration.Models.Patients;
@@ -34,13 +35,21 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Integration.Apis.Patien
             return randomNumber;
         }
 
-        private static PatientCodeRequest CreateRandomPatientCodeRequest(Patient patient)
+        private static NotificationPreference GetRandomNotificationPreference()
+        {
+            NotificationPreference[] notificationPreferences = Enum.GetValues<NotificationPreference>();
+            int randomIndex = new Random().Next(notificationPreferences.Length);
+
+            return notificationPreferences[randomIndex];
+        }
+
+        private static PatientCodeRequest CreateRandomPatientCodeRequest(string nhsNumber)
         {
             PatientCodeRequest patientCodeRequest = new PatientCodeRequest
             {
-                NhsNumber = patient.NhsNumber,
-                VerificationCode = patient.ValidationCode,
-                NotificationPreference = patient.NotificationPreference.ToString(),
+                NhsNumber = nhsNumber,
+                VerificationCode = GetRandomStringWithLengthOf(5),
+                NotificationPreference = GetRandomNotificationPreference().ToString(),
                 GenerateNewCode = false
             };
 

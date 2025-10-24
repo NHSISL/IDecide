@@ -18,8 +18,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Integration.Apis.Patien
         {
             // given
             string nhsNumber = "9449304424";
-            Patient randomPatient = await PostRandomPatientAsync(nhsNumber);
-            PatientCodeRequest randomPatientCodeRequest = CreateRandomPatientCodeRequest(randomPatient);
+            PatientCodeRequest randomPatientCodeRequest = CreateRandomPatientCodeRequest(nhsNumber);
             PatientCodeRequest inputPatientCodeRequest = randomPatientCodeRequest.DeepClone();
 
             // when
