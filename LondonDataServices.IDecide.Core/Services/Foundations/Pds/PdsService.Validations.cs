@@ -41,6 +41,9 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
         private static void ValidatePatientLookupByNhsNumberArguments(string nhsNumber)
         {
             Validate(
+                createException: () => new InvalidPdsArgumentException(
+                    message: "Invalid PDS argument. Please correct the errors and try again."),
+                    
                 (Rule: IsInvalidIdentifier(nhsNumber),
                 Parameter: nameof(nhsNumber)));
         }
@@ -58,11 +61,11 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
             return result;
         }
 
-        private static void Validate(params (dynamic Rule, string Parameter)[] validations)
+        private static void Validate(
+            Func<InvalidPdsArgumentException> createException,
+            params (dynamic Rule, string Parameter)[] validations)
         {
-            var invalidPdsException =
-                new InvalidPdsArgumentException(
-                    message: "Invalid PDS argument. Please correct the errors and try again.");
+            InvalidPdsArgumentException invalidPdsException = createException();
 
             foreach ((dynamic rule, string parameter) in validations)
             {

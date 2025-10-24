@@ -17,8 +17,10 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes
             ValidateDecisionTypeIsNotNull(decisionType);
             string currentUserId = await this.securityAuditBroker.GetCurrentUserIdAsync();
 
-            Validate<InvalidDecisionTypeException>(
-                message: "Invalid decisionType. Please correct the errors and try again.",
+            Validate(
+                createException: () => new InvalidDecisionTypeException(
+                    message: "Invalid decisionType. Please correct the errors and try again."),
+
                 (Rule: IsInvalid(decisionType.Id), Parameter: nameof(DecisionType.Id)),
                 (Rule: IsInvalid(decisionType.Name), Parameter: nameof(DecisionType.Name)),
                 (Rule: IsInvalid(decisionType.CreatedDate), Parameter: nameof(DecisionType.CreatedDate)),
@@ -54,8 +56,10 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes
             ValidateDecisionTypeIsNotNull(decisionType);
             string currentUserId = await this.securityAuditBroker.GetCurrentUserIdAsync();
 
-            Validate<InvalidDecisionTypeException>(
-                message: "Invalid decisionType. Please correct the errors and try again.",
+            Validate(
+                createException: () => new InvalidDecisionTypeException(
+                    message: "Invalid decisionType. Please correct the errors and try again."),
+
                 (Rule: IsInvalid(decisionType.Id), Parameter: nameof(DecisionType.Id)),
                 (Rule: IsInvalid(decisionType.Name), Parameter: nameof(DecisionType.Name)),
                 (Rule: IsInvalid(decisionType.CreatedDate), Parameter: nameof(DecisionType.CreatedDate)),
@@ -81,8 +85,10 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes
         }
 
         public void ValidateDecisionTypeId(Guid decisionTypeId) =>
-            Validate<InvalidDecisionTypeException>(
-                message: "Invalid decisionType. Please correct the errors and try again.",
+            Validate(
+                createException: () => new InvalidDecisionTypeException(
+                    message: "Invalid decisionType. Please correct the errors and try again."),
+
                 validations: (Rule: IsInvalid(decisionTypeId), Parameter: nameof(DecisionType.Id)));
 
         private static void ValidateStorageDecisionType(DecisionType maybeDecisionType, Guid decisionTypeId)
@@ -106,8 +112,10 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes
             DecisionType inputDecisionType,
             DecisionType storageDecisionType)
         {
-            Validate<InvalidDecisionTypeException>(
-                message: "Invalid decisionType. Please correct the errors and try again.",
+            Validate(
+                createException: () => new InvalidDecisionTypeException(
+                    message: "Invalid decisionType. Please correct the errors and try again."),
+                    
                 (Rule: IsNotSame(
                     firstDate: inputDecisionType.CreatedDate,
                     secondDate: storageDecisionType.CreatedDate,
@@ -228,10 +236,12 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes
             return (isNotRecent, startDate, endDate);
         }
 
-        private static void Validate<T>(string message, params (dynamic Rule, string Parameter)[] validations)
+        private static void Validate<T>(
+            Func<T> createException,
+            params (dynamic Rule, string Parameter)[] validations)
             where T : Xeption
         {
-            var invalidDataException = (T)Activator.CreateInstance(typeof(T), message);
+            T invalidDataException = createException();
 
             foreach ((dynamic rule, string parameter) in validations)
             {

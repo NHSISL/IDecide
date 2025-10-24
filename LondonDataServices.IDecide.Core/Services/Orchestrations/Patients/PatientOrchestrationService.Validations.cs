@@ -35,6 +35,9 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
         private static void ValidatePatientLookupByNhsNumberArguments(string nhsNumber)
         {
             Validate(
+                createException: () => new InvalidPatientOrchestrationArgumentException(
+                    message: "Invalid patient orchestration argument. Please correct the errors and try again."),
+
                 (Rule: IsInvalidIdentifier(nhsNumber), Parameter: nameof(nhsNumber)));
         }
 
@@ -43,6 +46,9 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             string notificationPreference)
         {
             Validate(
+                createException: () => new InvalidPatientOrchestrationArgumentException(
+                    message: "Invalid patient orchestration argument. Please correct the errors and try again."),
+
                 (Rule: IsInvalidIdentifier(nhsNumber), Parameter: nameof(nhsNumber)),
 
                 (Rule: IsInvalidNotificationPreference(notificationPreference),
@@ -54,6 +60,9 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             string verificationCode)
         {
             Validate(
+                createException: () => new InvalidPatientOrchestrationArgumentException(
+                    message: "Invalid patient orchestration argument. Please correct the errors and try again."),
+                    
                 (Rule: IsInvalidIdentifier(nhsNumber), Parameter: nameof(nhsNumber)),
                 (Rule: IsInvalidValidationCode(verificationCode), Parameter: nameof(verificationCode)));
         }
@@ -116,11 +125,11 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             return result;
         }
 
-        private static void Validate(params (dynamic Rule, string Parameter)[] validations)
+        private static void Validate(
+            Func<InvalidPatientOrchestrationArgumentException> createException,
+            params (dynamic Rule, string Parameter)[] validations)
         {
-            var invalidPdsException =
-                new InvalidPatientOrchestrationArgumentException(
-                    message: "Invalid patient orchestration argument. Please correct the errors and try again.");
+            InvalidPatientOrchestrationArgumentException invalidPdsException = createException();
 
             foreach ((dynamic rule, string parameter) in validations)
             {
