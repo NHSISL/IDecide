@@ -35,7 +35,11 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Integration.Apis.Decisi
                     .Excluding(decision => decision.CreatedBy)
                     .Excluding(decision => decision.CreatedDate)
                     .Excluding(decision => decision.UpdatedBy)
-                    .Excluding(decision => decision.UpdatedDate));
+                    .Excluding(decision => decision.UpdatedDate)
+                    .Excluding(property => property.DecisionType)
+                    .Excluding(property => property.DecisionTypeName)
+                    .Excluding(property => property.Patient)
+                    .Excluding(property => property.PatientNhsNumber));
 
             await this.apiBroker.DeleteDecisionByIdAsync(actualDecision.Id);
             await this.apiBroker.DeletePatientByIdAsync(randomPatient.Id);

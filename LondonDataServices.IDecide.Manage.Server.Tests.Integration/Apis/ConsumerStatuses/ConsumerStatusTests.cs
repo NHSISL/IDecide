@@ -8,11 +8,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Manage.Server.Tests.Integration.Brokers;
 using LondonDataServices.IDecide.Manage.Server.Tests.Integration.Models.Consumers;
+using LondonDataServices.IDecide.Manage.Server.Tests.Integration.Models.Decisions;
 using LondonDataServices.IDecide.Manage.Server.Tests.Integration.Models.DecisionTypes;
 using LondonDataServices.IDecide.Manage.Server.Tests.Integration.Models.Patients;
 using Tynamix.ObjectFiller;
-using Decision = LondonDataServices.IDecide.Manage.Server.Tests.Integration.Models.ConsumerStatuses.Decision;
-using DecisionEntity = LondonDataServices.IDecide.Manage.Server.Tests.Integration.Models.Decisions.Decision;
 
 namespace LondonDataServices.IDecide.Manage.Server.Tests.Integration.Apis.ConsumerStatuses
 {
@@ -136,10 +135,8 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Integration.Apis.Consum
 
             foreach (Decision decision in randomDecisions)
             {
-                DecisionEntity decisionEntity = ToDecisionEntity(decision);
-                DecisionEntity createdDecision = await apiBroker.PostDecisionAsync(decisionEntity);
-                Decision mappedCreatedDecision = ToDecision(createdDecision, patient, decisionType);
-                createdDecisions.Add(mappedCreatedDecision);
+                Decision createdDecision = await apiBroker.PostDecisionAsync(decision);
+                createdDecisions.Add(createdDecision);
             }
 
             return createdDecisions;
@@ -196,42 +193,5 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Integration.Apis.Consum
 
             return filler;
         }
-
-        private static DecisionEntity ToDecisionEntity(Decision decision) =>
-            new()
-            {
-                Id = decision.Id,
-                PatientId = decision.PatientId,
-                DecisionTypeId = decision.DecisionTypeId,
-                DecisionChoice = decision.DecisionChoice,
-                CreatedBy = decision.CreatedBy,
-                CreatedDate = decision.CreatedDate,
-                UpdatedBy = decision.UpdatedBy,
-                UpdatedDate = decision.UpdatedDate,
-                ResponsiblePersonGivenName = decision.ResponsiblePersonGivenName,
-                ResponsiblePersonSurname = decision.ResponsiblePersonSurname,
-                ResponsiblePersonRelationship = decision.ResponsiblePersonRelationship,
-            };
-
-        private static Decision ToDecision(
-            DecisionEntity decisionEntity,
-            Patient patient,
-            DecisionType decisionType) =>
-            new()
-            {
-                Id = decisionEntity.Id,
-                PatientId = decisionEntity.PatientId,
-                DecisionTypeId = decisionEntity.DecisionTypeId,
-                DecisionChoice = decisionEntity.DecisionChoice,
-                CreatedBy = decisionEntity.CreatedBy,
-                CreatedDate = decisionEntity.CreatedDate,
-                UpdatedBy = decisionEntity.UpdatedBy,
-                UpdatedDate = decisionEntity.UpdatedDate,
-                ResponsiblePersonGivenName = decisionEntity.ResponsiblePersonGivenName,
-                ResponsiblePersonSurname = decisionEntity.ResponsiblePersonSurname,
-                ResponsiblePersonRelationship = decisionEntity.ResponsiblePersonRelationship,
-                Patient = patient,
-                DecisionType = decisionType
-            };
     }
 }

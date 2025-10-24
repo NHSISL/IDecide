@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.ConsumerAdoptions;
 using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.Consumers;
-using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.ConsumerStatuses;
+using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.Decisions;
 using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.DecisionTypes;
 using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.Patients;
 
