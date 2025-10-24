@@ -21,6 +21,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Patients
             Validate(
                 createException: () => new InvalidPatientException(
                     message: "Invalid patient. Please correct the errors and try again."),
+
                 (Rule: IsInvalid(patient.Id), Parameter: nameof(Patient.Id)),
                 (Rule: IsInvalid(patient.NhsNumber), Parameter: nameof(Patient.NhsNumber)),
                 (Rule: IsInvalid(patient.GivenName), Parameter: nameof(Patient.GivenName)),
@@ -72,6 +73,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Patients
             Validate(
                 createException: () => new InvalidPatientException(
                     message: "Invalid patient. Please correct the errors and try again."),
+
                 (Rule: IsInvalid(patient.Id), Parameter: nameof(Patient.Id)),
                 (Rule: IsInvalid(patient.NhsNumber), Parameter: nameof(Patient.NhsNumber)),
                 (Rule: IsInvalid(patient.GivenName), Parameter: nameof(Patient.GivenName)),
@@ -113,6 +115,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Patients
             Validate(
                 createException: () => new InvalidPatientException(
                     message: "Invalid patient. Please correct the errors and try again."),
+
                 validations: (Rule: IsInvalid(patientId), Parameter: nameof(Patient.Id)));
 
         private static void ValidateStoragePatient(Patient maybePatient, Guid patientId)
@@ -139,6 +142,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Patients
             Validate(
                 createException: () => new InvalidPatientException(
                     message: "Invalid patient. Please correct the errors and try again."),
+                    
                 (Rule: IsNotSame(
                     firstDate: inputPatient.CreatedDate,
                     secondDate: storagePatient.CreatedDate,

@@ -20,6 +20,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Audits
             Validate(
                 createException: () => new InvalidAuditException(
                     message: "Invalid audit. Please correct the errors and try again."),
+
                 (Rule: IsInvalid(audit.Id), Parameter: nameof(Audit.Id)),
                 (Rule: IsInvalid(audit.AuditType), Parameter: nameof(Audit.AuditType)),
                 (Rule: IsInvalid(audit.Title), Parameter: nameof(Audit.Title)),
@@ -64,6 +65,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Audits
             Validate(
                 createException: () => new InvalidAuditException(
                     message: "Invalid audit. Please correct the errors and try again."),
+
                 (Rule: IsInvalid(audit.Id), Parameter: nameof(Audit.Id)),
                 (Rule: IsInvalid(audit.AuditType), Parameter: nameof(Audit.AuditType)),
                 (Rule: IsInvalid(audit.Title), Parameter: nameof(Audit.Title)),
@@ -127,6 +129,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Audits
             Validate(
                 createException: () => new InvalidAuditException(
                     message: "Invalid audit. Please correct the errors and try again."),
+                    
                 (Rule: IsInvalid(auditId), Parameter: nameof(Audit.Id)));
 
         private static void ValidateStorageAudit(Audit maybeAudit, Guid auditId)

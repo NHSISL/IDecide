@@ -31,6 +31,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
             Validate(
                 createException: () => new InvalidDecisionOrchestrationArgumentException(
                     message: "Invalid decision orchestration argument. Please correct the errors and try again."),
+                    
                 (Rule: IsPatientNull(decision.Patient),
                 Parameter: nameof(Decision.Patient)),
 

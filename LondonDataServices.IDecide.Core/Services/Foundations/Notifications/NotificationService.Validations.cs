@@ -136,6 +136,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
             Validate(
                 createException: () => new InvalidArgumentsNotificationException(
                     message: "Invalid notification arguments. Please correct the errors and try again."),
+
                 (Rule: IsInvalid(emailCodeTemplateId), Parameter: nameof(NotificationConfig.EmailCodeTemplateId)),
                 (Rule: IsInvalid(email), Parameter: nameof(email)),
                 (Rule: IsInvalid(personalisation), Parameter: nameof(personalisation)));
@@ -177,6 +178,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
             Validate(
                 createException: () => new InvalidArgumentsNotificationException(
                     message: "Invalid notification arguments. Please correct the errors and try again."),
+                    
                 (Rule: IsInvalid(email), Parameter: nameof(email)),
 
                 (Rule: IsInvalid(emailSubscriberUsageTemplateId),

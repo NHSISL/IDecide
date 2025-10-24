@@ -21,6 +21,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions
             Validate(
                 createException: () => new InvalidConsumerAdoptionException(
                     message: "Invalid consumerAdoption. Please correct the errors and try again."),
+
                 (Rule: IsInvalid(consumerAdoption.Id), Parameter: nameof(ConsumerAdoption.Id)),
                 (Rule: IsInvalid(consumerAdoption.AdoptionDate), Parameter: nameof(ConsumerAdoption.AdoptionDate)),
                 (Rule: IsInvalid(consumerAdoption.CreatedDate), Parameter: nameof(ConsumerAdoption.CreatedDate)),
@@ -59,6 +60,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions
             Validate(
                 createException: () => new InvalidConsumerAdoptionException(
                     message: "Invalid consumerAdoption. Please correct the errors and try again."),
+
                 (Rule: IsInvalid(consumerAdoption.Id), Parameter: nameof(ConsumerAdoption.Id)),
                 (Rule: IsInvalid(consumerAdoption.AdoptionDate), Parameter: nameof(ConsumerAdoption.AdoptionDate)),
                 (Rule: IsInvalid(consumerAdoption.CreatedDate), Parameter: nameof(ConsumerAdoption.CreatedDate)),
@@ -91,6 +93,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions
             Validate(
                 createException: () => new InvalidConsumerAdoptionException(
                     message: "Invalid consumerAdoption. Please correct the errors and try again."),
+
                 validations: (Rule: IsInvalid(consumerAdoptionId), Parameter: nameof(ConsumerAdoption.Id)));
 
         private static void ValidateStorageConsumerAdoption(
@@ -109,6 +112,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions
             Validate(
                 createException: () => new InvalidConsumerAdoptionException(
                     message: "Invalid consumerAdoption. Please correct the errors and try again."),
+                    
                 validations: (Rule: IsInvalid(consumerAdoptions), Parameter: nameof(consumerAdoptions)));
         }
 

@@ -20,6 +20,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Decisions
             Validate(
                 createException: () => new InvalidDecisionException(
                     message: "Invalid decision. Please correct the errors and try again."),
+
                 (Rule: IsInvalid(decision.Id), Parameter: nameof(Decision.Id)),
                 (Rule: IsInvalid(decision.DecisionChoice), Parameter: nameof(Decision.DecisionChoice)),
                 (Rule: IsInvalid(decision.CreatedDate), Parameter: nameof(Decision.CreatedDate)),
@@ -67,6 +68,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Decisions
             Validate(
                 createException: () => new InvalidDecisionException(
                     message: "Invalid decision. Please correct the errors and try again."),
+
                 (Rule: IsInvalid(decision.Id), Parameter: nameof(Decision.Id)),
                 (Rule: IsInvalid(decision.DecisionChoice), Parameter: nameof(Decision.DecisionChoice)),
                 (Rule: IsInvalid(decision.CreatedDate), Parameter: nameof(Decision.CreatedDate)),
@@ -103,6 +105,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Decisions
             Validate(
                 createException: () => new InvalidDecisionException(
                     message: "Invalid decision. Please correct the errors and try again."),
+                    
                 validations: (Rule: IsInvalid(decisionId), Parameter: nameof(Decision.Id)));
 
         private static void ValidateStorageDecision(Decision maybeDecision, Guid decisionId)

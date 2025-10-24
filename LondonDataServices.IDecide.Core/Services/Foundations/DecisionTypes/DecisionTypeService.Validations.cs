@@ -20,6 +20,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes
             Validate(
                 createException: () => new InvalidDecisionTypeException(
                     message: "Invalid decisionType. Please correct the errors and try again."),
+
                 (Rule: IsInvalid(decisionType.Id), Parameter: nameof(DecisionType.Id)),
                 (Rule: IsInvalid(decisionType.Name), Parameter: nameof(DecisionType.Name)),
                 (Rule: IsInvalid(decisionType.CreatedDate), Parameter: nameof(DecisionType.CreatedDate)),
@@ -58,6 +59,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes
             Validate(
                 createException: () => new InvalidDecisionTypeException(
                     message: "Invalid decisionType. Please correct the errors and try again."),
+
                 (Rule: IsInvalid(decisionType.Id), Parameter: nameof(DecisionType.Id)),
                 (Rule: IsInvalid(decisionType.Name), Parameter: nameof(DecisionType.Name)),
                 (Rule: IsInvalid(decisionType.CreatedDate), Parameter: nameof(DecisionType.CreatedDate)),
@@ -86,6 +88,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes
             Validate(
                 createException: () => new InvalidDecisionTypeException(
                     message: "Invalid decisionType. Please correct the errors and try again."),
+
                 validations: (Rule: IsInvalid(decisionTypeId), Parameter: nameof(DecisionType.Id)));
 
         private static void ValidateStorageDecisionType(DecisionType maybeDecisionType, Guid decisionTypeId)
@@ -112,6 +115,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes
             Validate(
                 createException: () => new InvalidDecisionTypeException(
                     message: "Invalid decisionType. Please correct the errors and try again."),
+                    
                 (Rule: IsNotSame(
                     firstDate: inputDecisionType.CreatedDate,
                     secondDate: storageDecisionType.CreatedDate,

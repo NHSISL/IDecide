@@ -20,6 +20,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Consumers
             Validate(
                 createException: () => new InvalidConsumerException(
                     message: "Invalid consumer. Please correct the errors and try again."),
+
                 (Rule: IsInvalid(consumer.Id), Parameter: nameof(Consumer.Id)),
                 (Rule: IsInvalid(consumer.EntraId), Parameter: nameof(Consumer.EntraId)),
                 (Rule: IsInvalid(consumer.Name), Parameter: nameof(Consumer.Name)),
@@ -60,6 +61,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Consumers
             Validate(
                 createException: () => new InvalidConsumerException(
                     message: "Invalid consumer. Please correct the errors and try again."),
+
                 (Rule: IsInvalid(consumer.Id), Parameter: nameof(Consumer.Id)),
                 (Rule: IsInvalid(consumer.EntraId), Parameter: nameof(Consumer.EntraId)),
                 (Rule: IsInvalid(consumer.Name), Parameter: nameof(Consumer.Name)),
@@ -90,6 +92,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Consumers
             Validate(
                 createException: () => new InvalidConsumerException(
                     message: "Invalid consumer. Please correct the errors and try again."),
+
                 validations: (Rule: IsInvalid(consumerId), Parameter: nameof(Consumer.Id)));
 
         private static void ValidateStorageConsumer(Consumer maybeConsumer, Guid consumerId)
@@ -115,6 +118,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Consumers
             Validate(
                 createException: () => new InvalidConsumerException(
                     message: "Invalid consumer. Please correct the errors and try again."),
+                    
                 (Rule: IsNotSame(
                         firstDate: inputConsumer.CreatedDate,
                         secondDate: storageConsumer.CreatedDate,
