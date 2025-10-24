@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useStep } from "../../hooks/useStep";
 import { patientViewService } from "../../services/views/patientViewService";
 import { PatientCodeRequest } from "../../models/patients/patientCodeRequest";
