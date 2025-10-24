@@ -29,7 +29,7 @@ export const ConfirmDetails: React.FC<ConfirmDetailsProps> = ({ goToConfirmCode 
     return (
         <Row className="custom-col-spacing">
             <Col xs={12} md={6} lg={6}>
-                <div className="mt-4">
+                <div>
                     {powerOfAttorney && (
                         <Alert variant="info" className="d-flex align-items-center" style={{ marginBottom: "0.75rem", padding: "0.75rem" }}>
                             <div className="me-2" style={{ fontSize: "1.5rem", color: "#6c757d" }}>
@@ -55,7 +55,7 @@ export const ConfirmDetails: React.FC<ConfirmDetailsProps> = ({ goToConfirmCode 
                             </div>
                         </Alert>
                     )}
-                    <h4 style={{ fontWeight: 700, fontSize: "1.5rem", margin: "1.5rem 0 1rem 0", color: "#212529" }}>{translate("ConfirmDetails.isThisYou")}</h4>
+                    <h4 style={{ fontWeight: 700, fontSize: "1.5rem", margin: "0 0 1rem 0", color: "#212529" }}>{translate("ConfirmDetails.isThisYou")}</h4>
                     <form className="nhsuk-form-group">
                         <dl className="nhsuk-summary-list" style={{ marginBottom: "2rem" }}>
                             <div className="nhsuk-summary-list__row">

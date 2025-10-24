@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useStep } from "../../hooks/useStep";
 import { patientViewService } from "../../services/views/patientViewService";
 import { PatientCodeRequest } from "../../models/patients/patientCodeRequest";
@@ -134,7 +134,7 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
     return (
         <Row className="custom-col-spacing">
             <Col xs={12} md={7} lg={7}>
-                <div className="mt-4">
+                <div>
 
                     {powerOfAttorney && (
                         <Alert variant="info" className="d-flex align-items-center" style={{ marginBottom: "0.75rem", padding: "0.75rem" }}>
@@ -183,9 +183,11 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                         </div>
                     </dl>
 
+
                     <p style={{ fontWeight: 500, marginBottom: "1rem" }}>
                         {translate("PositiveConfirmation.chooseMethod")}
                     </p>
+
 
                     {apiError && (
                         <Alert variant="danger">
@@ -234,26 +236,32 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                                     {translate("PositiveConfirmation.methodLetter")}
                                 </button>
                             </div>
-                            <Alert variant="warning">
-                                <p>
-                                    {translate("PositiveConfirmation.resendInfo") ||
-                                        "If you have already requested a code but haven't received it, please click here to resend yourself a code."}
-                                </p>
-                                <button
-                                    type="button"
-                                    className="nhsuk-button nhsuk-button--reverse"
-                                    style={{ flex: 1, minWidth: 225 }}
-                                    onClick={handleRequestNewCodeClick}
-                                    disabled={timerActive && !timerExpired}
-                                >
-                                    {translate("PositiveConfirmation.requestNewCode") || "Request New Code"}
-                                </button>
-                                {timerActive && !timerExpired && (
+
+                            {timerExpired && (
+                                <Alert variant="warning">
+                                    <p>
+                                        {translate("PositiveConfirmation.resendInfo") ||
+                                            "If you have already requested a code but haven't received it, please click here to resend yourself a code."}
+                                    </p>
+                                    <button
+                                        type="button"
+                                        className="nhsuk-button nhsuk-button--reverse"
+                                        style={{ flex: 1, minWidth: 225 }}
+                                        onClick={handleRequestNewCodeClick}
+                                        disabled={timerActive && !timerExpired}
+                                    >
+                                        {translate("PositiveConfirmation.requestNewCode") || "Request New Code"}
+                                    </button>
+                                </Alert>
+                            )}
+
+                            {timerActive && !timerExpired && (
+                                <Alert variant="info">
                                     <div>
-                                        <small>Code can be resent in: {remainingSeconds} seconds</small>
+                                        <small>Cannot request a new code for: {remainingSeconds} seconds</small>
                                     </div>
-                                )}
-                            </Alert>
+                                </Alert>
+                            )}
                         </>
                     )}
 
