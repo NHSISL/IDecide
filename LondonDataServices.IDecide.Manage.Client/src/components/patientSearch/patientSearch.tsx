@@ -12,7 +12,6 @@ export const PatientSearch = () => {
     const [nhsNumber, setNhsNumber] = useState("");
     const [submittedNhsNumber, setSubmittedNhsNumber] = useState<string | undefined>(undefined);
     const [details, setDetails] = useState({ surname: "", postcode: "", dobDay: "", dobMonth: "", dobYear: "" });
-    //const [selectedDecisionId, setSelectedDecisionId] = useState<string | undefined>(undefined);
 
     const [submittedDetails, setSubmittedDetails] = useState<{
         surname: string;
@@ -319,20 +318,10 @@ export const PatientSearch = () => {
                                                                     .join(", ")
                                                                 : ""}
                                                         </td>
-                                                        {/*<td>*/}
-                                                        {/*    <Button*/}
-                                                        {/*    variant="link"*/}
-                                                        {/*    onClick={() => setSelectedDecisionId(decision.id)}*/}
-                                                        {/*    style={{ padding: 0 }}*/}
-                                                        {/*>*/}
-                                                        {/*    Click*/}
-                                                        {/*    </Button>*/}
-                                                        {/*</td>*/}
                                                     </tr>
                                                 ))}
                                             </tbody>
                                         </Table>
-                                            {/*<ConsumerAdoptionTable decisionId={selectedDecisionId} />*/}
                                     </Card.Body>
                                 </Card>
                             ) : (

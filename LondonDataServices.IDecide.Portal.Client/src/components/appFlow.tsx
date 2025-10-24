@@ -22,7 +22,6 @@ export const AppFlow: React.FC<AppFlowProps> = ({ powerOfAttorney }) => {
         setCurrentStepIndex(0);
     }, [setCurrentStepIndex]);
 
-    // Steps array moved inside so it can use the prop
     const steps = [
         {
             key: "nhsNumber",

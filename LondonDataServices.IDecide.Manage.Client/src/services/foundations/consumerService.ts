@@ -25,15 +25,15 @@ export const consumerService = {
     },
 
     useRetrieveAllConsumerPages: (query: string) => {
-        const decisionBroker = new ConsumerBroker();
+        const consumerBroker = new ConsumerBroker();
 
         return useInfiniteQuery({
             queryKey: ["ConsumerGetAll", { query: query }],
             queryFn: ({ pageParam }: { pageParam?: string }) => {
                 if (!pageParam) {
-                    return decisionBroker.GetConsumerFirstPagesAsync(query)
+                    return consumerBroker.GetConsumerFirstPagesAsync(query)
                 }
-                return decisionBroker.GetConsumerSubsequentPagesAsync(pageParam)
+                return consumerBroker.GetConsumerSubsequentPagesAsync(pageParam)
             },
             staleTime: Infinity,
             initialPageParam: "",

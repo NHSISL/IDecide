@@ -18,9 +18,6 @@ export function useNhsNumberValidator() {
 
         if (expected === 10 || expected !== checkDigit) return false;
 
-        // Exclude test numbers (start with 9 fpr PROD)
-        //if (clean.startsWith("9")) return false;
-
         return true;
     }, []);
 
