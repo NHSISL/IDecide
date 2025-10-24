@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Patient } from "../../models/patients/patient";
 import { patientViewService } from "../../services/views/patientViewService";
-import { Row, Col, Alert, Form } from "react-bootstrap";
+import { Row, Col, Alert } from "react-bootstrap";
 import { PatientCodeRequest } from "../../models/patients/patientCodeRequest";
 import { useStep } from "../../hooks/useStep";
 import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
