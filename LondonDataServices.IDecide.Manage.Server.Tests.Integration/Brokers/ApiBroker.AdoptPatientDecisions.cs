@@ -4,7 +4,7 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using LondonDataServices.IDecide.Manage.Server.Tests.Integration.Models.ConsumerStatuses;
+using LondonDataServices.IDecide.Manage.Server.Tests.Integration.Models.Decisions;
 
 namespace LondonDataServices.IDecide.Manage.Server.Tests.Integration.Brokers
 {

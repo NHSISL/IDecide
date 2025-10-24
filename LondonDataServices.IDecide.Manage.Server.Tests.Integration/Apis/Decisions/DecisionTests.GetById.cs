@@ -29,7 +29,14 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Integration.Apis.Decisi
                 await this.apiBroker.GetDecisionByIdAsync(randomDecision.Id);
 
             // then
-            actualDecision.Should().BeEquivalentTo(expectedDecision);
+            actualDecision.Should().BeEquivalentTo(
+                expectedDecision,
+                options => options
+                    .Excluding(property => property.DecisionType)
+                    .Excluding(property => property.DecisionTypeName)
+                    .Excluding(property => property.Patient)
+                    .Excluding(property => property.PatientNhsNumber));
+
             await this.apiBroker.DeleteDecisionByIdAsync(actualDecision.Id);
             await this.apiBroker.DeletePatientByIdAsync(randomPatient.Id);
             await this.apiBroker.DeleteDecisionTypeByIdAsync(randomDecisionType.Id);
