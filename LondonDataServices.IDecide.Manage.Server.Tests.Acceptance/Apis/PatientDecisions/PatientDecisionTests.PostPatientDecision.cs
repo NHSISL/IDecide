@@ -4,8 +4,8 @@
 
 using System.Threading.Tasks;
 using FluentAssertions;
+using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.Decisions;
 using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.DecisionTypes;
-using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.PatientDecisions;
 using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.Patients;
 
 namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.PatientDecisions
@@ -38,7 +38,9 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.Patient
                 .Excluding(property => property.UpdatedBy)
                 .Excluding(property => property.UpdatedDate)
                 .Excluding(property => property.Patient)
-                .Excluding(property => property.DecisionType));
+                .Excluding(property => property.PatientNhsNumber)
+                .Excluding(property => property.DecisionType)
+                .Excluding(property => property.DecisionTypeName));
 
             await this.apiBroker.DeleteDecisionByIdAsync(actualDecision.Id);
             await this.apiBroker.DeletePatientByIdAsync(randomPatient.Id);

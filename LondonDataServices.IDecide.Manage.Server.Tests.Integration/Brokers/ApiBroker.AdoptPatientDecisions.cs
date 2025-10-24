@@ -4,16 +4,16 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.Decisions;
+using LondonDataServices.IDecide.Manage.Server.Tests.Integration.Models.Decisions;
 
-namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Brokers
+namespace LondonDataServices.IDecide.Manage.Server.Tests.Integration.Brokers
 {
     public partial class ApiBroker
     {
-        private const string consumerStatusesRelativeUrl = "api/consumerstatus";
+        private const string ConsumerStatusesRelativeUrl = "api/consumerstatus";
 
         public async ValueTask AdoptPatientDecisionsAsync(List<Decision> decisions) =>
             await this.apiFactoryClient.PostContentAsync(
-                $"{consumerStatusesRelativeUrl}/AdoptPatientDecisions", decisions);
+                $"{ConsumerStatusesRelativeUrl}/AdoptPatientDecisions", decisions);
     }
 }

@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerAdoptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
@@ -24,6 +25,14 @@ namespace LondonDataServices.IDecide.Core.Models.Foundations.Decisions
         public string ResponsiblePersonGivenName { get; set; }
         public string ResponsiblePersonSurname { get; set; }
         public string ResponsiblePersonRelationship { get; set; }
+
+        [BindNever]
+        [NotMapped]
+        public string DecisionTypeName => this.DecisionType?.Name ?? string.Empty;
+
+        [BindNever]
+        [NotMapped]
+        public string PatientNhsNumber => this.Patient?.NhsNumber ?? string.Empty;
 
         [BindNever]
         public DecisionType DecisionType { get; set; } = null!;

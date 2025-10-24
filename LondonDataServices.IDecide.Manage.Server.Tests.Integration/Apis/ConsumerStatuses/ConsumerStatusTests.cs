@@ -6,14 +6,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Brokers;
-using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.Consumers;
-using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.Decisions;
-using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.DecisionTypes;
-using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.Patients;
+using LondonDataServices.IDecide.Manage.Server.Tests.Integration.Brokers;
+using LondonDataServices.IDecide.Manage.Server.Tests.Integration.Models.Consumers;
+using LondonDataServices.IDecide.Manage.Server.Tests.Integration.Models.Decisions;
+using LondonDataServices.IDecide.Manage.Server.Tests.Integration.Models.DecisionTypes;
+using LondonDataServices.IDecide.Manage.Server.Tests.Integration.Models.Patients;
 using Tynamix.ObjectFiller;
 
-namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.ConsumerStatuses
+namespace LondonDataServices.IDecide.Manage.Server.Tests.Integration.Apis.ConsumerStatuses
 {
     [Collection(nameof(ApiTestCollection))]
     public partial class ConsumerStatusTests
@@ -164,31 +164,10 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.Consume
 
         private static Consumer CreateRandomConsumerWithMatchingEntraIdEntry(string userId)
         {
-            Consumer consumer = CreateRandomConsumerFiller().Create();
+            Consumer consumer = CreateConsumerFiller().Create();
             consumer.EntraId = userId;
 
             return consumer;
-        }
-
-        private async ValueTask<List<Consumer>> PostRandomConsumersAsync()
-        {
-            int randomNumber = GetRandomNumber();
-            var randomConsumers = new List<Consumer>();
-
-            for (int i = 0; i < randomNumber; i++)
-            {
-                randomConsumers.Add(await PostRandomConsumerAsync());
-            }
-
-            return randomConsumers;
-        }
-
-        private async ValueTask<Consumer> PostRandomConsumerAsync()
-        {
-            Consumer randomConsumer = CreateRandomConsumer();
-            Consumer createdConsumer = await this.apiBroker.PostConsumerAsync(randomConsumer);
-
-            return createdConsumer;
         }
 
         private async ValueTask<Consumer> PostRandomConsumerWithMatchingEntraIdEntryAsync(string userId)
@@ -199,24 +178,18 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.Consume
             return createdConsumer;
         }
 
-        private static Consumer CreateRandomConsumer() =>
-            CreateRandomConsumerFiller().Create();
-
-        private static Filler<Consumer> CreateRandomConsumerFiller()
+        private static Filler<Consumer> CreateConsumerFiller()
         {
-            string user = Guid.NewGuid().ToString();
-            DateTime now = DateTime.UtcNow;
+            string userId = Guid.NewGuid().ToString();
+            DateTimeOffset dateTimeOffset = DateTimeOffset.UtcNow;
             var filler = new Filler<Consumer>();
 
             filler.Setup()
-                .OnType<DateTimeOffset>().Use(now)
-                .OnType<DateTimeOffset?>().Use(now)
+                .OnType<DateTimeOffset>().Use(dateTimeOffset)
                 .OnProperty(consumer => consumer.EntraId).Use(GetRandomStringWithLengthOf(255))
                 .OnProperty(consumer => consumer.Name).Use(GetRandomStringWithLengthOf(255))
-                .OnProperty(consumer => consumer.CreatedDate).Use(now)
-                .OnProperty(consumer => consumer.CreatedBy).Use(user)
-                .OnProperty(consumer => consumer.UpdatedDate).Use(now)
-                .OnProperty(consumer => consumer.UpdatedBy).Use(user);
+                .OnProperty(consumer => consumer.CreatedBy).Use(userId)
+                .OnProperty(consumer => consumer.UpdatedBy).Use(userId);
 
             return filler;
         }
