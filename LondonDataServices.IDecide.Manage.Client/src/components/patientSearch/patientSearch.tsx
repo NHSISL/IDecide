@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { Container, Row, Col, Form, Button, Alert, Table, Spinner, Card } from "react-bootstrap";
 import { patientViewService } from "../../services/views/patientViewService";
+import ConsumerAdoptionTable from "../consumerAdoptions/consumerAdoptionTable";
 import { decisionViewService } from "../../services/views/decisionViewService";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
+import { ConsumerAdoption } from "../../models/consumerAdoptions/consumerAdoption";
 
 export const PatientSearch = () => {
     const navigate = useNavigate();
@@ -11,6 +13,7 @@ export const PatientSearch = () => {
     const [nhsNumber, setNhsNumber] = useState("");
     const [submittedNhsNumber, setSubmittedNhsNumber] = useState<string | undefined>(undefined);
     const [details, setDetails] = useState({ surname: "", postcode: "", dobDay: "", dobMonth: "", dobYear: "" });
+    const [selectedDecisionId, setSelectedDecisionId] = useState<string | undefined>(undefined);
 
     const [submittedDetails, setSubmittedDetails] = useState<{
         surname: string;
@@ -102,6 +105,8 @@ export const PatientSearch = () => {
     return (
         <Container fluid>
             <Row>
+
+
                 <Col xs={12} md={12} lg={12}>
                     <Form onSubmit={handleSubmit}>
                         <Form.Group>
@@ -275,6 +280,7 @@ export const PatientSearch = () => {
                             )
                         )}
 
+
                         {isLoadingDecision ? (
                             <Spinner animation="border" />
                         ) : (
@@ -289,8 +295,9 @@ export const PatientSearch = () => {
                                                     <th>Choice</th>
                                                     <th>Created</th>
                                                     <th>Updated</th>
-                                                    <th>Responsible Person Name</th>
-                                                    <th>Responsible Person Relationship</th>
+                                                    <th>Resp Person Name</th>
+                                                    <th>Resp Person Relationship</th>
+                                                    <th>Adoption Date</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -302,10 +309,32 @@ export const PatientSearch = () => {
                                                         <td>{decision.updatedDate ? moment(decision.updatedDate.toString()).format("Do-MMM-yyyy HH:mm") : ""}</td>
                                                         <td>{decision.responsiblePersonGivenName} {decision.responsiblePersonSurname}</td>
                                                         <td>{decision.responsiblePersonRelationship}</td>
+                                                        <td>
+                                                            {Array.isArray(decision.consumerAdoptions)
+                                                                ? decision.consumerAdoptions
+                                                                    .map((adoption: ConsumerAdoption) =>
+                                                                        adoption.adoptionDate
+                                                                            ? moment(adoption.adoptionDate).format("DD-MM-YYYY HH:mm")
+                                                                            : ""
+                                                                    )
+                                                                    .join(", ")
+                                                                : ""}
+                                                        </td>
+                                                        {/*<td>*/}
+                                                        {/*    <Button*/}
+                                                        {/*    variant="link"*/}
+                                                        {/*    onClick={() => setSelectedDecisionId(decision.id)}*/}
+                                                        {/*    style={{ padding: 0 }}*/}
+                                                        {/*>*/}
+                                                        {/*    Click*/}
+                                                        {/*    </Button>*/}
+                                                        {/*</td>*/}
                                                     </tr>
                                                 ))}
                                             </tbody>
                                         </Table>
+
+                                            <ConsumerAdoptionTable decisionId={selectedDecisionId} />
                                     </Card.Body>
                                 </Card>
                             ) : (
@@ -317,8 +346,12 @@ export const PatientSearch = () => {
                                 </>
                             )
                         )}
+
+
                     </Col>
                 </Row>
+
+
             ) : null}
         </Container>
     );

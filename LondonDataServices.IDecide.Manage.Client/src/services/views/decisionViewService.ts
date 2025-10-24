@@ -41,7 +41,7 @@ export const decisionViewService = {
     },
 
     useGetAllDecisions: (patientId: string): DecisionViewServiceResponse => {
-        let query = `?$orderby=createdDate desc&$expand=decisionType`;
+        let query = `?$orderby=createdDate desc&$expand=decisionType,ConsumerAdoptions`;
 
 
         if (patientId && patientId.trim() !== "") {

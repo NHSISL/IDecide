@@ -1,6 +1,4 @@
 import { Card, Container, Table, Button } from "react-bootstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDatabase } from "@fortawesome/free-solid-svg-icons/faDatabase";
 import { Consumer } from "../../models/consumers/consumer";
 import { useEffect, useMemo, useState } from "react";
 import { consumerViewService } from "../../services/views/consumerViewService";
