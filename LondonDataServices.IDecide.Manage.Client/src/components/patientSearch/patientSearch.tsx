@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Container, Row, Col, Form, Button, Alert, Table, Spinner, Card } from "react-bootstrap";
 import { patientViewService } from "../../services/views/patientViewService";
-import ConsumerAdoptionTable from "../consumerAdoptions/consumerAdoptionTable";
 import { decisionViewService } from "../../services/views/decisionViewService";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
@@ -13,7 +12,7 @@ export const PatientSearch = () => {
     const [nhsNumber, setNhsNumber] = useState("");
     const [submittedNhsNumber, setSubmittedNhsNumber] = useState<string | undefined>(undefined);
     const [details, setDetails] = useState({ surname: "", postcode: "", dobDay: "", dobMonth: "", dobYear: "" });
-    const [selectedDecisionId, setSelectedDecisionId] = useState<string | undefined>(undefined);
+    //const [selectedDecisionId, setSelectedDecisionId] = useState<string | undefined>(undefined);
 
     const [submittedDetails, setSubmittedDetails] = useState<{
         surname: string;
@@ -334,7 +333,7 @@ export const PatientSearch = () => {
                                             </tbody>
                                         </Table>
 
-                                            <ConsumerAdoptionTable decisionId={selectedDecisionId} />
+                                            {/*<ConsumerAdoptionTable decisionId={selectedDecisionId} />*/}
                                     </Card.Body>
                                 </Card>
                             ) : (
