@@ -18,8 +18,9 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Patients
             ValidatePatientIsNotNull(patient);
             string userId = await this.securityAuditBroker.GetCurrentUserIdAsync();
 
-            Validate<InvalidPatientException>(
-                message: "Invalid patient. Please correct the errors and try again.",
+            Validate(
+                createException: () => new InvalidPatientException(
+                    message: "Invalid patient. Please correct the errors and try again."),
                 (Rule: IsInvalid(patient.Id), Parameter: nameof(Patient.Id)),
                 (Rule: IsInvalid(patient.NhsNumber), Parameter: nameof(Patient.NhsNumber)),
                 (Rule: IsInvalid(patient.GivenName), Parameter: nameof(Patient.GivenName)),
@@ -68,8 +69,9 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Patients
             ValidatePatientIsNotNull(patient);
             string userId = await this.securityAuditBroker.GetCurrentUserIdAsync();
 
-            Validate<InvalidPatientException>(
-                message: "Invalid patient. Please correct the errors and try again.",
+            Validate(
+                createException: () => new InvalidPatientException(
+                    message: "Invalid patient. Please correct the errors and try again."),
                 (Rule: IsInvalid(patient.Id), Parameter: nameof(Patient.Id)),
                 (Rule: IsInvalid(patient.NhsNumber), Parameter: nameof(Patient.NhsNumber)),
                 (Rule: IsInvalid(patient.GivenName), Parameter: nameof(Patient.GivenName)),
@@ -108,8 +110,9 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Patients
         }
 
         public void ValidatePatientId(Guid patientId) =>
-            Validate<InvalidPatientException>(
-                message: "Invalid patient. Please correct the errors and try again.",
+            Validate(
+                createException: () => new InvalidPatientException(
+                    message: "Invalid patient. Please correct the errors and try again."),
                 validations: (Rule: IsInvalid(patientId), Parameter: nameof(Patient.Id)));
 
         private static void ValidateStoragePatient(Patient maybePatient, Guid patientId)
@@ -133,8 +136,9 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Patients
             Patient inputPatient,
             Patient storagePatient)
         {
-            Validate<InvalidPatientException>(
-                message: "Invalid patient. Please correct the errors and try again.",
+            Validate(
+                createException: () => new InvalidPatientException(
+                    message: "Invalid patient. Please correct the errors and try again."),
                 (Rule: IsNotSame(
                     firstDate: inputPatient.CreatedDate,
                     secondDate: storagePatient.CreatedDate,
@@ -255,10 +259,12 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Patients
             return (isNotRecent, startDate, endDate);
         }
 
-        private static void Validate<T>(string message, params (dynamic Rule, string Parameter)[] validations)
+        private static void Validate<T>(
+            Func<T> createException,
+            params (dynamic Rule, string Parameter)[] validations)
             where T : Xeption
         {
-            var invalidDataException = (T)Activator.CreateInstance(typeof(T), message);
+            T invalidDataException = createException();
 
             foreach ((dynamic rule, string parameter) in validations)
             {

@@ -18,8 +18,9 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions
             ValidateConsumerAdoptionIsNotNull(consumerAdoption);
             string currentUserId = await this.securityAuditBroker.GetCurrentUserIdAsync();
 
-            Validate<InvalidConsumerAdoptionException>(
-                message: "Invalid consumerAdoption. Please correct the errors and try again.",
+            Validate(
+                createException: () => new InvalidConsumerAdoptionException(
+                    message: "Invalid consumerAdoption. Please correct the errors and try again."),
                 (Rule: IsInvalid(consumerAdoption.Id), Parameter: nameof(ConsumerAdoption.Id)),
                 (Rule: IsInvalid(consumerAdoption.AdoptionDate), Parameter: nameof(ConsumerAdoption.AdoptionDate)),
                 (Rule: IsInvalid(consumerAdoption.CreatedDate), Parameter: nameof(ConsumerAdoption.CreatedDate)),
@@ -55,8 +56,9 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions
             ValidateConsumerAdoptionIsNotNull(consumerAdoption);
             string currentUserId = await this.securityAuditBroker.GetCurrentUserIdAsync();
 
-            Validate<InvalidConsumerAdoptionException>(
-                message: "Invalid consumerAdoption. Please correct the errors and try again.",
+            Validate(
+                createException: () => new InvalidConsumerAdoptionException(
+                    message: "Invalid consumerAdoption. Please correct the errors and try again."),
                 (Rule: IsInvalid(consumerAdoption.Id), Parameter: nameof(ConsumerAdoption.Id)),
                 (Rule: IsInvalid(consumerAdoption.AdoptionDate), Parameter: nameof(ConsumerAdoption.AdoptionDate)),
                 (Rule: IsInvalid(consumerAdoption.CreatedDate), Parameter: nameof(ConsumerAdoption.CreatedDate)),
@@ -86,8 +88,9 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions
         }
 
         private static void ValidateConsumerAdoptionId(Guid consumerAdoptionId) =>
-            Validate<InvalidConsumerAdoptionException>(
-                message: "Invalid consumerAdoption. Please correct the errors and try again.",
+            Validate(
+                createException: () => new InvalidConsumerAdoptionException(
+                    message: "Invalid consumerAdoption. Please correct the errors and try again."),
                 validations: (Rule: IsInvalid(consumerAdoptionId), Parameter: nameof(ConsumerAdoption.Id)));
 
         private static void ValidateStorageConsumerAdoption(
@@ -103,8 +106,9 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions
 
         private static void ValidateOnBulkAddOrModifyConsumerAdoptions(List<ConsumerAdoption> consumerAdoptions)
         {
-            Validate<InvalidConsumerAdoptionException>(
-                message: "Invalid consumerAdoption. Please correct the errors and try again.",
+            Validate(
+                createException: () => new InvalidConsumerAdoptionException(
+                    message: "Invalid consumerAdoption. Please correct the errors and try again."),
                 validations: (Rule: IsInvalid(consumerAdoptions), Parameter: nameof(consumerAdoptions)));
         }
 
@@ -120,8 +124,10 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions
             ConsumerAdoption inputConsumerAdoption,
             ConsumerAdoption storageConsumerAdoption)
         {
-            Validate<InvalidConsumerAdoptionException>(
-                message: "Invalid consumerAdoption. Please correct the errors and try again.",
+            Validate(
+                createException: () => new InvalidConsumerAdoptionException(
+                    message: "Invalid consumerAdoption. Please correct the errors and try again."),
+
                 (Rule: IsNotSame(
                         firstDate: inputConsumerAdoption.CreatedDate,
                         secondDate: storageConsumerAdoption.CreatedDate,
@@ -286,10 +292,12 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions
             return (isNotRecent, startDate, endDate);
         }
 
-        private static void Validate<T>(string message, params (dynamic Rule, string Parameter)[] validations)
+        private static void Validate<T>(
+            Func<T> createException,
+            params (dynamic Rule, string Parameter)[] validations)
             where T : Xeption
         {
-            var invalidDataException = (T)Activator.CreateInstance(typeof(T), message);
+            T invalidDataException = createException();
 
             foreach ((dynamic rule, string parameter) in validations)
             {

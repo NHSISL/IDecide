@@ -17,8 +17,9 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Decisions
             ValidateDecisionIsNotNull(decision);
             string currentUserId = await this.securityAuditBroker.GetCurrentUserIdAsync();
 
-            Validate<InvalidDecisionException>(
-                message: "Invalid decision. Please correct the errors and try again.",
+            Validate(
+                createException: () => new InvalidDecisionException(
+                    message: "Invalid decision. Please correct the errors and try again."),
                 (Rule: IsInvalid(decision.Id), Parameter: nameof(Decision.Id)),
                 (Rule: IsInvalid(decision.DecisionChoice), Parameter: nameof(Decision.DecisionChoice)),
                 (Rule: IsInvalid(decision.CreatedDate), Parameter: nameof(Decision.CreatedDate)),
@@ -63,8 +64,9 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Decisions
             ValidateDecisionIsNotNull(decision);
             string currentUserId = await this.securityAuditBroker.GetCurrentUserIdAsync();
 
-            Validate<InvalidDecisionException>(
-                message: "Invalid decision. Please correct the errors and try again.",
+            Validate(
+                createException: () => new InvalidDecisionException(
+                    message: "Invalid decision. Please correct the errors and try again."),
                 (Rule: IsInvalid(decision.Id), Parameter: nameof(Decision.Id)),
                 (Rule: IsInvalid(decision.DecisionChoice), Parameter: nameof(Decision.DecisionChoice)),
                 (Rule: IsInvalid(decision.CreatedDate), Parameter: nameof(Decision.CreatedDate)),
@@ -98,8 +100,9 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Decisions
         }
 
         public void ValidateDecisionId(Guid decisionId) =>
-            Validate<InvalidDecisionException>(
-                message: "Invalid decision. Please correct the errors and try again.",
+            Validate(
+                createException: () => new InvalidDecisionException(
+                    message: "Invalid decision. Please correct the errors and try again."),
                 validations: (Rule: IsInvalid(decisionId), Parameter: nameof(Decision.Id)));
 
         private static void ValidateStorageDecision(Decision maybeDecision, Guid decisionId)
@@ -123,8 +126,10 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Decisions
             Decision inputDecision,
             Decision storageDecision)
         {
-            Validate<InvalidDecisionException>(
-                message: "Invalid decision. Please correct the errors and try again.",
+            Validate(
+                createException: () => new InvalidDecisionException(
+                    message: "Invalid decision. Please correct the errors and try again."),
+
                 (Rule: IsNotSame(
                     firstDate: inputDecision.CreatedDate,
                     secondDate: storageDecision.CreatedDate,
@@ -245,10 +250,12 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Decisions
             return (isNotRecent, startDate, endDate);
         }
 
-        private static void Validate<T>(string message, params (dynamic Rule, string Parameter)[] validations)
+        private static void Validate<T>(
+            Func<T> createException,
+            params (dynamic Rule, string Parameter)[] validations)
             where T : Xeption
         {
-            var invalidDataException = (T)Activator.CreateInstance(typeof(T), message);
+            T invalidDataException = createException();
 
             foreach ((dynamic rule, string parameter) in validations)
             {

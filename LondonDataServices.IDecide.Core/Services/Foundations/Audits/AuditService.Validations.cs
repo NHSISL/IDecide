@@ -18,6 +18,8 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Audits
             string currentUserId = await this.securityAuditBroker.GetCurrentUserIdAsync();
 
             Validate(
+                createException: () => new InvalidAuditException(
+                    message: "Invalid audit. Please correct the errors and try again."),
                 (Rule: IsInvalid(audit.Id), Parameter: nameof(Audit.Id)),
                 (Rule: IsInvalid(audit.AuditType), Parameter: nameof(Audit.AuditType)),
                 (Rule: IsInvalid(audit.Title), Parameter: nameof(Audit.Title)),
@@ -60,6 +62,8 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Audits
             string currentUserId = await this.securityAuditBroker.GetCurrentUserIdAsync();
 
             Validate(
+                createException: () => new InvalidAuditException(
+                    message: "Invalid audit. Please correct the errors and try again."),
                 (Rule: IsInvalid(audit.Id), Parameter: nameof(Audit.Id)),
                 (Rule: IsInvalid(audit.AuditType), Parameter: nameof(Audit.AuditType)),
                 (Rule: IsInvalid(audit.Title), Parameter: nameof(Audit.Title)),
@@ -90,6 +94,9 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Audits
             string currentUserId = await this.securityAuditBroker.GetCurrentUserIdAsync();
 
             Validate(
+                createException: () => new InvalidAuditException(
+                    message: "Invalid audit. Please correct the errors and try again."),
+
                 (Rule: IsNotSame(
                     audit.CreatedDate,
                     maybeAudit.CreatedDate,
@@ -117,7 +124,10 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Audits
         }
 
         public void ValidateAuditId(Guid auditId) =>
-            Validate((Rule: IsInvalid(auditId), Parameter: nameof(Audit.Id)));
+            Validate(
+                createException: () => new InvalidAuditException(
+                    message: "Invalid audit. Please correct the errors and try again."),
+                (Rule: IsInvalid(auditId), Parameter: nameof(Audit.Id)));
 
         private static void ValidateStorageAudit(Audit maybeAudit, Guid auditId)
         {
@@ -138,6 +148,9 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Audits
         private static void ValidateAgainstStorageAuditOnModify(Audit inputAudit, Audit storageAudit)
         {
             Validate(
+                createException: () => new InvalidAuditException(
+                    message: "Invalid audit. Please correct the errors and try again."),
+
                 (Rule: IsNotSame(
                     firstDate: inputAudit.CreatedDate,
                     secondDate: storageAudit.CreatedDate,
@@ -242,11 +255,11 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Audits
             return timeDifference.Duration() > oneMinute;
         }
 
-        private static void Validate(params (dynamic Rule, string Parameter)[] validations)
+        private static void Validate(
+            Func<InvalidAuditException> createException,
+            params (dynamic Rule, string Parameter)[] validations)
         {
-            var invalidAuditException =
-                new InvalidAuditException(
-                    message: "Invalid audit. Please correct the errors and try again.");
+            InvalidAuditException invalidAuditException = createException();
 
             foreach ((dynamic rule, string parameter) in validations)
             {

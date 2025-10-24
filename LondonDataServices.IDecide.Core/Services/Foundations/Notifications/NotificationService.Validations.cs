@@ -18,8 +18,9 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
         {
             ValidateNotificationInfoIsNotNull(notificationInfo);
 
-            Validate<InvalidArgumentsNotificationException>(
-                message: "Invalid notification arguments. Please correct the errors and try again.",
+            Validate(
+                createException: () => new InvalidArgumentsNotificationException(
+                    message: "Invalid notification arguments. Please correct the errors and try again."),
 
                 (Rule: IsInvalid(
                     notificationInfo.Patient.NhsNumber),
@@ -70,8 +71,9 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
         {
             ValidateNotificationInfoIsNotNull(notificationInfo);
 
-            Validate<InvalidArgumentsNotificationException>(
-                message: "Invalid notification arguments. Please correct the errors and try again.",
+            Validate(
+                createException: () => new InvalidArgumentsNotificationException(
+                    message: "Invalid notification arguments. Please correct the errors and try again."),
 
                 (Rule: IsInvalid(
                     notificationInfo.Patient.NhsNumber),
@@ -131,8 +133,9 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
             string email,
             Dictionary<string, dynamic> personalisation)
         {
-            Validate<InvalidArgumentsNotificationException>(
-                message: "Invalid notification arguments. Please correct the errors and try again.",
+            Validate(
+                createException: () => new InvalidArgumentsNotificationException(
+                    message: "Invalid notification arguments. Please correct the errors and try again."),
                 (Rule: IsInvalid(emailCodeTemplateId), Parameter: nameof(NotificationConfig.EmailCodeTemplateId)),
                 (Rule: IsInvalid(email), Parameter: nameof(email)),
                 (Rule: IsInvalid(personalisation), Parameter: nameof(personalisation)));
@@ -142,8 +145,9 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
             string smsCodeTemplateId,
             Dictionary<string, dynamic> personalisation)
         {
-            Validate<InvalidArgumentsNotificationException>(
-                message: "Invalid notification arguments. Please correct the errors and try again.",
+            Validate(
+                createException: () => new InvalidArgumentsNotificationException(
+                    message: "Invalid notification arguments. Please correct the errors and try again."),
 
                 (Rule: IsInvalid(smsCodeTemplateId),
                     Parameter: nameof(NotificationConfig.SmsCodeTemplateId)),
@@ -155,8 +159,9 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
             string letterCodeTemplateId,
             Dictionary<string, dynamic> personalisation)
         {
-            Validate<InvalidArgumentsNotificationException>(
-                message: "Invalid notification arguments. Please correct the errors and try again.",
+            Validate(
+                createException: () => new InvalidArgumentsNotificationException(
+                    message: "Invalid notification arguments. Please correct the errors and try again."),
 
                 (Rule: IsInvalid(letterCodeTemplateId),
                     Parameter: nameof(NotificationConfig.LetterCodeTemplateId)),
@@ -169,8 +174,9 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
             string email,
             Dictionary<string, dynamic> personalisation)
         {
-            Validate<InvalidArgumentsNotificationException>(
-                message: "Invalid notification arguments. Please correct the errors and try again.",
+            Validate(
+                createException: () => new InvalidArgumentsNotificationException(
+                    message: "Invalid notification arguments. Please correct the errors and try again."),
                 (Rule: IsInvalid(email), Parameter: nameof(email)),
 
                 (Rule: IsInvalid(emailSubscriberUsageTemplateId),
@@ -183,8 +189,9 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
             string smsSubscriberUsageTemplateId,
             Dictionary<string, dynamic> personalisation)
         {
-            Validate<InvalidArgumentsNotificationException>(
-                message: "Invalid notification arguments. Please correct the errors and try again.",
+            Validate(
+                createException: () => new InvalidArgumentsNotificationException(
+                    message: "Invalid notification arguments. Please correct the errors and try again."),
 
                 (Rule: IsInvalid(smsSubscriberUsageTemplateId),
                     Parameter: nameof(NotificationConfig.SmsSubscriberUsageTemplateId)),
@@ -196,8 +203,9 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
             string letterSubscriberUsageTemplateId,
             Dictionary<string, dynamic> personalisation)
         {
-            Validate<InvalidArgumentsNotificationException>(
-                message: "Invalid notification arguments. Please correct the errors and try again.",
+            Validate(
+                createException: () => new InvalidArgumentsNotificationException(
+                    message: "Invalid notification arguments. Please correct the errors and try again."),
 
                 (Rule: IsInvalid(letterSubscriberUsageTemplateId),
                     Parameter: nameof(NotificationConfig.LetterSubscriberUsageTemplateId)),
@@ -274,10 +282,12 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Notifications
             Message = "Dictionary is invalid"
         };
 
-        private static void Validate<T>(string message, params (dynamic Rule, string Parameter)[] validations)
+        private static void Validate<T>(
+            Func<T> createException,
+            params (dynamic Rule, string Parameter)[] validations)
             where T : Xeption
         {
-            var invalidDataException = (T)Activator.CreateInstance(typeof(T), message);
+            T invalidDataException = createException();
 
             foreach ((dynamic rule, string parameter) in validations)
             {
