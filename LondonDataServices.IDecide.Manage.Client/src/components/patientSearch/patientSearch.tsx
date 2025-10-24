@@ -4,6 +4,7 @@ import { patientViewService } from "../../services/views/patientViewService";
 import { decisionViewService } from "../../services/views/decisionViewService";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
+import { ConsumerAdoption } from "../../models/consumerAdoptions/consumerAdoption";
 
 export const PatientSearch = () => {
     const navigate = useNavigate();
@@ -102,6 +103,8 @@ export const PatientSearch = () => {
     return (
         <Container fluid>
             <Row>
+
+
                 <Col xs={12} md={12} lg={12}>
                     <Form onSubmit={handleSubmit}>
                         <Form.Group>
@@ -275,6 +278,7 @@ export const PatientSearch = () => {
                             )
                         )}
 
+
                         {isLoadingDecision ? (
                             <Spinner animation="border" />
                         ) : (
@@ -289,8 +293,9 @@ export const PatientSearch = () => {
                                                     <th>Choice</th>
                                                     <th>Created</th>
                                                     <th>Updated</th>
-                                                    <th>Responsible Person Name</th>
-                                                    <th>Responsible Person Relationship</th>
+                                                    <th>Resp Person Name</th>
+                                                    <th>Resp Person Relationship</th>
+                                                    <th>Adoption Date</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -302,6 +307,17 @@ export const PatientSearch = () => {
                                                         <td>{decision.updatedDate ? moment(decision.updatedDate.toString()).format("Do-MMM-yyyy HH:mm") : ""}</td>
                                                         <td>{decision.responsiblePersonGivenName} {decision.responsiblePersonSurname}</td>
                                                         <td>{decision.responsiblePersonRelationship}</td>
+                                                        <td>
+                                                            {Array.isArray(decision.consumerAdoptions)
+                                                                ? decision.consumerAdoptions
+                                                                    .map((adoption: ConsumerAdoption) =>
+                                                                        adoption.adoptionDate
+                                                                            ? moment(adoption.adoptionDate).format("DD-MM-YYYY HH:mm")
+                                                                            : ""
+                                                                    )
+                                                                    .join(", ")
+                                                                : ""}
+                                                        </td>
                                                     </tr>
                                                 ))}
                                             </tbody>

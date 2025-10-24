@@ -177,6 +177,11 @@ export const ConfirmCode = ({ createdPatient, powerOfAttorney }: ConfirmDetailsP
                             aria-describedby={error ? "code-error" : undefined}
                             aria-invalid={!!error}
                         />
+                        <br/>
+                        <small style={{ fontSize: "12px" }}>
+                            <strong style={{ fontSize: "12px" }}>Note</strong>: this is case sensitive.
+                        </small>
+
                         {error && (
                             <div
                                 id="code-error"

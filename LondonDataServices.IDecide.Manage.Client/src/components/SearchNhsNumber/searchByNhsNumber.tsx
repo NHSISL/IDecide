@@ -9,6 +9,7 @@ import { PatientLookup } from "../../models/patients/patientLookup";
 import { Patient } from "../../models/patients/patient";
 import { SearchCriteria } from "../../models/searchCriterias/searchCriteria";
 import { useNavigate } from "react-router-dom";
+import { useNhsNumberValidator } from "../../hooks/useNhsNumberValidator";
 
 export const SearchByNhsNumber = () => {
     const { t: translate } = useTranslation();
@@ -24,6 +25,7 @@ export const SearchByNhsNumber = () => {
     const [poaSurname, setPoaSurname] = useState("");
     const [poaRelationship, setPoaRelationship] = useState("");
     const [error, setError] = useState("");
+    const [nhsValid, setNhsValid] = useState(false);
     const [poaNhsNumberError, setPoaNhsNumberError] = useState("");
     const [poaFirstnameError, setPoaFirstnameError] = useState("");
     const [poaSurnameError, setPoaSurnameError] = useState("");
@@ -32,11 +34,24 @@ export const SearchByNhsNumber = () => {
     const [isPowerOfAttorney, setIsPowerOfAttorney] = useState(false);
     const navigate = useNavigate();
     const addPatient = patientViewService.usePostPatientSearch();
+    const { validate } = useNhsNumberValidator();
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value.replace(/\D/g, "").slice(0, 10);
         setNhsNumberInput(value);
         if (error) setError("");
+
+        if (value.length === 10) {
+            if (!validate(value)) {
+                setNhsValid(false);
+                setError(translate("errors.InValidNhsNumber"));
+            } else {
+                setNhsValid(true);
+                setError("");
+            }
+        } else {
+            setNhsValid(false);
+        }
     };
 
     const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -273,7 +288,7 @@ export const SearchByNhsNumber = () => {
                                         !poaSurname.trim() ||
                                         !poaRelationship ||
                                         poaNhsNumberInput.length !== 10
-                                        : nhsNumberInput.length !== 10)
+                                        : nhsNumberInput.length !== 10 || !nhsValid)
                                 }
                             >
                                 {loading ? translate("SearchByNHSNumber.submittingButton") : translate("SearchByNHSNumber.submitButton")}

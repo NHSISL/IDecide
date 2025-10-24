@@ -134,7 +134,7 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
     return (
         <Row className="custom-col-spacing">
             <Col xs={12} md={7} lg={7}>
-                <div className="mt-4">
+                <div>
 
                     {powerOfAttorney && (
                         <Alert variant="info" className="d-flex align-items-center" style={{ marginBottom: "0.75rem", padding: "0.75rem" }}>
@@ -167,7 +167,7 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                     <dl className="nhsuk-summary-list" style={{ marginBottom: "2rem" }}>
                         <div className="nhsuk-summary-list__row">
                             <dt className="nhsuk-summary-list__key">{translate("PositiveConfirmation.summaryName")}</dt>
-                            <dd className="nhsuk-summary-list__value">{createdPatient.surname}</dd>
+                            <dd className="nhsuk-summary-list__value">{createdPatient.givenName + ', ' + createdPatient.surname}</dd>
                         </div>
                         <div className="nhsuk-summary-list__row">
                             <dt className="nhsuk-summary-list__key">{translate("PositiveConfirmation.summaryEmail")}</dt>
@@ -186,6 +186,7 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                     <p style={{ fontWeight: 500, marginBottom: "1rem" }}>
                         {translate("PositiveConfirmation.chooseMethod")}
                     </p>
+
 
                     {apiError && (
                         <Alert variant="danger">
@@ -234,26 +235,32 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                                     {translate("PositiveConfirmation.methodLetter")}
                                 </button>
                             </div>
-                            <Alert variant="warning">
-                                <p>
-                                    {translate("PositiveConfirmation.resendInfo") ||
-                                        "If you have already requested a code but haven't received it, please click here to resend yourself a code."}
-                                </p>
-                                <button
-                                    type="button"
-                                    className="nhsuk-button nhsuk-button--reverse"
-                                    style={{ flex: 1, minWidth: 225 }}
-                                    onClick={handleRequestNewCodeClick}
-                                    disabled={timerActive && !timerExpired}
-                                >
-                                    {translate("PositiveConfirmation.requestNewCode") || "Request New Code"}
-                                </button>
-                                {timerActive && !timerExpired && (
+
+                            {timerExpired && (
+                                <Alert variant="warning">
+                                    <p>
+                                        {translate("PositiveConfirmation.resendInfo") ||
+                                            "If you have already requested a code but haven't received it, please click here to resend yourself a code."}
+                                    </p>
+                                    <button
+                                        type="button"
+                                        className="nhsuk-button nhsuk-button--reverse"
+                                        style={{ flex: 1, minWidth: 225 }}
+                                        onClick={handleRequestNewCodeClick}
+                                        disabled={timerActive && !timerExpired}
+                                    >
+                                        {translate("PositiveConfirmation.requestNewCode") || "Request New Code"}
+                                    </button>
+                                </Alert>
+                            )}
+
+                            {timerActive && !timerExpired && (
+                                <Alert variant="info">
                                     <div>
-                                        <small>Code can be resent in: {remainingSeconds} seconds</small>
+                                        <small>Cannot request a new code for: {remainingSeconds} seconds</small>
                                     </div>
-                                )}
-                            </Alert>
+                                </Alert>
+                            )}
                         </>
                     )}
 
@@ -308,6 +315,20 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                     </p>
                     <p>
                         {translate("PositiveConfirmation.helpReceivingCodeDescription3")}
+                        &nbsp;
+                        <a
+                            href={`tel:${configuration.helpdeskContactNumber}`}
+                            style={{ textDecoration: "underline" }}
+                        >
+                            {configuration.helpdeskContactNumber}
+                        </a> or email us at&nbsp;
+
+                        <a
+                            href={`mailto:${configuration.helpdeskContactEmail}`}
+                            style={{ textDecoration: "underline" }}
+                        >
+                            {configuration.helpdeskContactEmail}
+                        </a>.
                     </p>
                     <p>
                         {translate("PositiveConfirmation.helpReceivingCodeDescription4")}

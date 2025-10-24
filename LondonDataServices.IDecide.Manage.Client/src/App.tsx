@@ -20,6 +20,7 @@ import { ConfirmationPage } from './pages/confirmationPage';
 import { StepProvider } from './components/context/stepContext';
 import { PatientDetailsSearchPage } from './pages/patientDetailsSearchPage';
 import { ThankyouPage } from './pages/thankyouPage';
+import { ConsumersPage } from './pages/ConsumersPage';
 
 function App({ instance }: any) {
 
@@ -72,6 +73,10 @@ function App({ instance }: any) {
                 {
                     path: "thankyou",
                     element: <ThankyouPage />
+                },
+                {
+                    path: "consumers",
+                    element: <ConsumersPage />
                 },
                 {
                     index: true,

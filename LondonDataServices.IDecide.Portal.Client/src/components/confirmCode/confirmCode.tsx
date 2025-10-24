@@ -282,6 +282,8 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
                         <label className="nhsuk-label" htmlFor="code">
                             {translate("ConfirmCode.enterCodeLabel")}
                         </label>
+
+                        
                         <input
                             className="nhsuk-input"
                             id="code"
@@ -294,7 +296,12 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
                             style={{ width: "100%", maxWidth: "200px" }}
                             aria-describedby={error ? "code-error" : undefined}
                             aria-invalid={!!error}
-                        />
+                        /> <br />
+
+                        <small style={{ fontSize: "12px" }}>
+                            <strong style={{ fontSize: "12px" }}>Note</strong>: this is case sensitive.
+                        </small>
+
                         {/* Info message section */}
                         {info && (
                             <Alert
@@ -353,7 +360,7 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
                         </button>
                         <Alert>
                             <div style={{ fontSize: "0.95rem", color: "#333" }}>
-                                I have not received a code{" "}
+                                If you have not received a code{" "}
                                 <span
                                     onClick={resendPending || (timerActive && !timerExpired) ? undefined : handleResendCode}
                                     style={{
@@ -384,7 +391,7 @@ export const ConfirmCode: React.FC<ConfirmCodeProps> = ({ createdPatient }) => {
                                         (You can resend in {remainingSeconds} seconds)
                                     </span>
                                 )}
-                                &nbsp; alternatively, please call the helpdesk on&nbsp;
+                                &nbsp; alternatively, <strong>please leave a voicemail with a contact name & phone number</strong> on&nbsp;
                                 <a
                                     href={`tel:${configuration.helpdeskContactNumber}`}
                                     style={{ textDecoration: "underline" }}
