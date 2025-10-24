@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using System.Text.Json.Serialization;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
@@ -25,6 +26,32 @@ namespace LondonDataServices.IDecide.Core.Models.Foundations.Patients
         public string Phone { get; set; }
         public string Address { get; set; }
         public string PostCode { get; set; }
+
+        [NotMapped]
+        public Address PostalAddress
+        {
+            get
+            {
+                var addressLines = (Address ?? string.Empty).Split(',');
+                var addressLine1 = addressLines.ElementAtOrDefault(0) ?? string.Empty;
+                var addressLine2 = addressLines.ElementAtOrDefault(1) ?? string.Empty;
+                var addressLine3 = addressLines.ElementAtOrDefault(2) ?? string.Empty;
+                var addressLine4 = addressLines.ElementAtOrDefault(3) ?? string.Empty;
+                var addressLine5 = addressLines.ElementAtOrDefault(4) ?? string.Empty;
+
+                return new Address
+                {
+                    RecipientName = $"{Title} {GivenName} {Surname}",
+                    AddressLine1 = addressLine1,
+                    AddressLine2 = addressLine2,
+                    AddressLine3 = addressLine3,
+                    AddressLine4 = addressLine4,
+                    AddressLine5 = addressLine5,
+                    PostCode = PostCode
+                };
+            }
+        }
+
         public string ValidationCode { get; set; }
         public DateTimeOffset ValidationCodeExpiresOn { get; set; }
         public DateTimeOffset? ValidationCodeMatchedOn { get; set; }

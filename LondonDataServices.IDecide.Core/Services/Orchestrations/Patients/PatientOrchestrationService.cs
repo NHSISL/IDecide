@@ -165,6 +165,24 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                     return;
                 }
 
+                DateTimeOffset generateNewCodeAllowedTime = maybeMatchingPatient.UpdatedDate
+                    .AddSeconds(decisionConfigurations.NotificationRequestCountdownSeconds);
+
+                if (generateNewCode is true && now < generateNewCodeAllowedTime)
+                {
+                    await this.auditBroker.LogInformationAsync(
+                        auditType: "Patient",
+                        title: "Patient Recording Failed",
+                        message:
+                            $"Failed to record patient with NHS Number {nhsNumber} as a new code was requested too soon.",
+                        fileName: null,
+                        correlationId: correlationId.ToString());
+
+                    throw new ValidationCodeRateLimitException(message:
+                        $"Please wait {decisionConfigurations.NotificationRequestCountdownSeconds} seconds " +
+                            $"before requesting a new validation code.");
+                }
+
                 if (codeIsExpired is false
                     && maybeMatchingPatient.ValidationCodeMatchedOn is null
                     && generateNewCode is false)

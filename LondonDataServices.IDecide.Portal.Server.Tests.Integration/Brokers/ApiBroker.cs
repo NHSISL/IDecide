@@ -3,22 +3,36 @@
 // ---------------------------------------------------------
 
 using System.Net.Http;
-using Microsoft.AspNetCore.Mvc.Testing;
+using Attrify.InvisibleApi.Models;
+using Microsoft.Extensions.DependencyInjection;
 using RESTFulSense.Clients;
 
 namespace LondonDataServices.IDecide.Portal.Server.Tests.Integration.Brokers
 {
     public partial class ApiBroker
     {
-        private readonly WebApplicationFactory<Program> webApplicationFactory;
-        private readonly HttpClient httpClient;
-        private readonly IRESTFulApiFactoryClient apiFactoryClient;
+        private readonly TestWebApplicationFactory<Program> authenticatedWebApplicationFactory;
+        private readonly HttpClient authenticatedHttpClient;
+        private readonly IRESTFulApiFactoryClient authenticatedApiFactoryClient;
+        internal readonly InvisibleApiKey invisibleApiKey;
+        private readonly TestWebApplicationFactory<Program> anonymousWebApplicationFactory;
+        private readonly HttpClient anonymousHttpClient;
+        private readonly IRESTFulApiFactoryClient anonymousApiFactoryClient;
 
         public ApiBroker()
         {
-            webApplicationFactory = new WebApplicationFactory<Program>();
-            httpClient = webApplicationFactory.CreateClient();
-            apiFactoryClient = new RESTFulApiFactoryClient(httpClient);
+            authenticatedWebApplicationFactory = new TestWebApplicationFactory<Program>(true);
+            invisibleApiKey = this.authenticatedWebApplicationFactory.Services.GetService<InvisibleApiKey>();
+            authenticatedHttpClient = authenticatedWebApplicationFactory.CreateClient();
+
+            this.authenticatedHttpClient.DefaultRequestHeaders
+                .Add(this.invisibleApiKey.Key, this.invisibleApiKey.Value);
+
+            authenticatedApiFactoryClient = new RESTFulApiFactoryClient(authenticatedHttpClient);
+
+            anonymousWebApplicationFactory = new TestWebApplicationFactory<Program>(false);
+            anonymousHttpClient = anonymousWebApplicationFactory.CreateClient();
+            anonymousApiFactoryClient = new RESTFulApiFactoryClient(anonymousHttpClient);
         }
     }
 }

@@ -79,7 +79,7 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttorn
                     waitForGrecaptcha();
                 })
                 .catch(() => {
-                    if (isMounted) setErrors({ submit: translate("SearchBySHSNumber.errorRecaptchaLoad") });
+                    if (isMounted) setErrors({ submit: translate("SearchByNHSNumber.errorRecaptchaLoad") });
                 });
         }
         return () => { isMounted = false; };
@@ -187,7 +187,7 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttorn
             }
 
             if (!recaptchaReady || typeof grecaptcha === "undefined" || !recaptchaSiteKey) {
-                setErrors({ submit: translate("SearchBySHSNumber.errorRecaptchaNotReady") });
+                setErrors({ submit: translate("SearchByNHSNumber.errorRecaptchaNotReady") });
                 setLoading(false);
                 return;
             }
@@ -207,6 +207,12 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttorn
                             const status = error?.response?.status;
                             const errorData = error?.response?.data;
                             const errorTitle = errorData?.title;
+
+                            if (errorTitle === "Patient not found.") {
+                                setError(translate("errors.PatientNotFound"));
+                                setLoading(false);
+                                return;
+                            }
 
                             if (handleApiError(errorTitle)) {
                                 setLoading(false);
@@ -242,7 +248,7 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttorn
                     }
                 );
             }).catch(() => {
-                setErrors({ submit: translate("SearchBySHSNumber.errorRecaptchaFailed") });
+                setErrors({ submit: translate("SearchByNHSNumber.errorRecaptchaFailed") });
                 setLoading(false);
             });
         }

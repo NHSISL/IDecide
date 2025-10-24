@@ -17,10 +17,13 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance
     {
         private static Guid securityOid = Guid.Parse("65b5ccfb-b501-4ad5-8dd7-2a33ff64eaa3");
         private static string givenName = "TestGivenName";
-        private static string surname = "TesSurname";
+        private static string surname = "TestSurname";
         private static string displayName = "TestDisplayName";
         private static string email = "TestEmail@test.com";
         private static string jobTitle = "TestJobTitle";
+
+        public static string TestUserId =>
+            securityOid.ToString();
 
         private static List<Claim> claims = new List<Claim>
         {

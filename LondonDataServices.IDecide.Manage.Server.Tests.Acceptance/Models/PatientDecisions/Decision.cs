@@ -3,6 +3,7 @@
 // ---------------------------------------------------------
 
 using System;
+using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.DecisionTypes;
 using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.Patients;
 
 namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.PatientDecisions
@@ -21,5 +22,6 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.Patie
         public string ResponsiblePersonSurname { get; set; }
         public string ResponsiblePersonRelationship { get; set; }
         public Patient Patient { get; set; }
+        public DecisionType DecisionType { get; set; }
     }
 }

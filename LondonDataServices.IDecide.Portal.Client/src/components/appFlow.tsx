@@ -79,7 +79,7 @@ export const AppFlow: React.FC<AppFlowProps> = ({ powerOfAttorney }) => {
         },
         {
             key: "confirmation",
-            label: "Receive Notifications",
+            label: "Confirm Choices",
             render: () => <ConfirmationPage />,
         },
         {

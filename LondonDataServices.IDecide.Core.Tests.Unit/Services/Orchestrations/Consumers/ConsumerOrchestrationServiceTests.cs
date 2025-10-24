@@ -77,10 +77,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
             return result.Length > length ? result.Substring(0, length) : result;
         }
 
-        private static List<Guid> CreateRandomDecisionIds() =>
-            Enumerable.Range(start: 1, count: GetRandomNumber())
-                .Select(_ => Guid.NewGuid()).ToList();
-
         private static List<Claim> CreateRandomClaims()
         {
             string randomString = GetRandomString();

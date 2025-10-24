@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Force.DeepCloner;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
-using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Securities;
@@ -38,12 +37,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             randomDecision.PatientId = randomPatient.Id;
             Decision inputDecision = randomDecision.DeepClone();
             Decision outputDecision = inputDecision.DeepClone();
-
-            NotificationInfo inputNotificationInfo = new NotificationInfo
-            {
-                Patient = randomPatient,
-                Decision = outputDecision
-            };
 
             var decisionOrchestrationServiceMock = new Mock<DecisionOrchestrationService>(
                 this.loggingBrokerMock.Object,
@@ -131,10 +124,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 service.AddDecisionAsync(It.Is(SameDecisionAs(inputDecision))),
                     Times.Once);
 
-            this.notificationServiceMock.Verify(service =>
-                service.SendSubmissionSuccessNotificationAsync(It.Is(SameNotificationInfoAs(inputNotificationInfo))),
-                    Times.Once);
-
             this.auditBrokerMock.Verify(broker =>
                 broker.LogInformationAsync(
                     "Decision",
@@ -175,12 +164,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             randomDecision.PatientId = randomPatient.Id;
             Decision inputDecision = randomDecision.DeepClone();
             Decision outputDecision = inputDecision.DeepClone();
-
-            NotificationInfo inputNotificationInfo = new NotificationInfo
-            {
-                Patient = randomPatient,
-                Decision = outputDecision
-            };
 
             var decisionOrchestrationServiceMock = new Mock<DecisionOrchestrationService>(
                 this.loggingBrokerMock.Object,
@@ -266,10 +249,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
 
             this.decisionServiceMock.Verify(service =>
                 service.AddDecisionAsync(It.Is(SameDecisionAs(inputDecision))),
-                    Times.Once);
-
-            this.notificationServiceMock.Verify(service =>
-                service.SendSubmissionSuccessNotificationAsync(It.Is(SameNotificationInfoAs(inputNotificationInfo))),
                     Times.Once);
 
             this.auditBrokerMock.Verify(broker =>

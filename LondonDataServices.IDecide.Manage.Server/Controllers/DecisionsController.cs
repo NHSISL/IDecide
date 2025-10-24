@@ -15,6 +15,7 @@ using RESTFulSense.Controllers;
 
 namespace LondonDataServices.IDecide.Manage.Server.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class DecisionsController : RESTFulController
@@ -25,7 +26,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
             this.decisionService = decisionService;
 
         [HttpPost]
-        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,LondonDataServices.IDecide.Manage.Server.Agents")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators")]
         public async ValueTask<ActionResult<Decision>> PostDecisionAsync([FromBody] Decision decision)
         {
             try
@@ -119,7 +120,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
         }
 
         [HttpPut]
-        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,LondonDataServices.IDecide.Manage.Server.Agents")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators")]
         public async ValueTask<ActionResult<Decision>> PutDecisionAsync([FromBody] Decision decision)
         {
             try
@@ -158,7 +159,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
         }
 
         [HttpDelete("{decisionId}")]
-        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,LondonDataServices.IDecide.Manage.Server.Agents")]
+        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators")]
         public async ValueTask<ActionResult<Decision>> DeleteDecisionByIdAsync(Guid decisionId)
         {
             try

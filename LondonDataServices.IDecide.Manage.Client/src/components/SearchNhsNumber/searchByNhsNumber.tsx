@@ -2,25 +2,13 @@ import React, { useState, useEffect, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { PowerOfAttourney } from "../../models/powerOfAttourneys/powerOfAttourney";
 import { patientViewService } from "../../services/views/patientViewService";
-import { TextInput, Button, Select, Card } from "nhsuk-react-components";
+import { TextInput, Button, Select } from "nhsuk-react-components";
 import { Container, Row, Col } from "react-bootstrap";
 import { StepContext } from "../context/stepContext";
 import { PatientLookup } from "../../models/patients/patientLookup";
 import { Patient } from "../../models/patients/patient";
 import { SearchCriteria } from "../../models/searchCriterias/searchCriteria";
 import { useNavigate } from "react-router-dom";
-
-interface ErrorWithResponse {
-    response?: {
-        status?: number;
-        statusText?: string;
-        data?: {
-            title?: string;
-            message?: string;
-        };
-    };
-    message?: string;
-}
 
 export const SearchByNhsNumber = () => {
     const { t: translate } = useTranslation();
@@ -77,19 +65,19 @@ export const SearchByNhsNumber = () => {
     const validatePoaFields = () => {
         let valid = true;
         if (poaNhsNumberInput.length !== 10) {
-            setPoaNhsNumberError(translate("SearchBySHSNumber.errorNhsNumber"));
+            setPoaNhsNumberError(translate("SearchByNHSNumber.errorNhsNumber"));
             valid = false;
         }
         if (!poaFirstname.trim()) {
-            setPoaFirstnameError(translate("SearchBySHSNumber.errorFirstname"));
+            setPoaFirstnameError(translate("SearchByNHSNumber.errorFirstname"));
             valid = false;
         }
         if (!poaSurname.trim()) {
-            setPoaSurnameError(translate("SearchBySHSNumber.errorSurname"));
+            setPoaSurnameError(translate("SearchByNHSNumber.errorSurname"));
             valid = false;
         }
         if (!poaRelationship) {
-            setPoaRelationshipError(translate("SearchBySHSNumber.errorRelationship"));
+            setPoaRelationshipError(translate("SearchByNHSNumber.errorRelationship"));
             valid = false;
         }
         return valid;
@@ -107,7 +95,7 @@ export const SearchByNhsNumber = () => {
             if (!validatePoaFields()) return;
         } else {
             if (nhsNumberInput.length !== 10) {
-                setError(translate("SearchBySHSNumber.errorNhsNumber"));
+                setError(translate("SearchByNHSNumber.errorNhsNumber"));
                 return;
             }
         }
@@ -132,38 +120,39 @@ export const SearchByNhsNumber = () => {
                     navigate("/confirmDetails", { state: { createdPatient, poaModel } });
                     setLoading(false);
                 },
-                onError: (error: unknown) => {
-                    if (
-                        typeof error === "object" &&
-                        error !== null &&
-                        "response" in error &&
-                        typeof (error as ErrorWithResponse).response === "object"
-                    ) {
-                        const response = (error as ErrorWithResponse).response;
-                        if (response?.status === 403) {
-                            setError(translate("SearchBySHSNumber.errorNoAccess"));
-                        } else {
-                            const apiTitle =
-                                response?.data?.title ||
-                                response?.data?.message ||
-                                response?.statusText ||
-                                translate("SearchBySHSNumber.unknownApiError");
-                            setError(apiTitle);
-                        }
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                onError: (error: any) => {
+                    const status = error?.response?.status;
+                    const errorData = error?.response?.data;
+                    const errorTitle = errorData?.title;
+
+                    if (errorTitle === "Patient not found.") {
+                        setError(translate("errors.PatientNotFound"));
                         setLoading(false);
                         return;
                     }
-                    if (
-                        error &&
-                        typeof error === "object" &&
-                        "message" in error &&
-                        typeof (error as { message?: unknown }).message === "string"
-                    ) {
-                        setError((error as { message: string }).message);
-                        setLoading(false);
-                        return;
+
+                    switch (status) {
+                        case 400:
+                            setError(translate("errors.400"));
+                            break;
+                        case 404:
+                            setError(translate("errors.404"));
+                            break;
+                        case 401:
+                            setError(translate("errors.401"));
+                            break;
+                        case 500:
+                            setError(translate("errors.500")
+                            );
+                            break;
+                        default:
+                            setError(
+                                errorTitle ||
+                                translate("errors.CatchAll")
+                            );
+                            break;
                     }
-                    setError(translate("SearchBySHSNumber.unexpectedError"));
                     setLoading(false);
                 }
             }
@@ -192,8 +181,8 @@ export const SearchByNhsNumber = () => {
 
                         {!isPowerOfAttorney && (
                             <TextInput
-                                label={translate("SearchBySHSNumber.nhsNumberLabel")}
-                                hint={translate("SearchBySHSNumber.nhsNumberHint")}
+                                label={translate("SearchByNHSNumber.nhsNumberLabel")}
+                                hint={translate("SearchByNHSNumber.nhsNumberHint")}
                                 id="nhs-number"
                                 name="nhs-number"
                                 inputMode="numeric"
@@ -209,77 +198,67 @@ export const SearchByNhsNumber = () => {
 
                         {isPowerOfAttorney && (
                             <div style={{ marginBottom: "1.5rem" }}>
-                                <Card cardType="feature">
-                                    <Card.Content>
-                                        <Card.Heading style={{ fontSize: "16px" }}>{translate("SearchBySHSNumber.poaNhsNumberLabel")}</Card.Heading>
-                                        <TextInput
-                                            label={translate("SearchBySHSNumber.nhsNumberLabel")}
-                                            id="poa-nhs-number"
-                                            name="poa-nhs-number"
-                                            inputMode="numeric"
-                                            pattern="\d*"
-                                            maxLength={10}
-                                            autoComplete="off"
-                                            value={poaNhsNumberInput}
-                                            onChange={handlePoaNhsNumberChange}
-                                            error={poaNhsNumberError || undefined}
-                                            style={{ maxWidth: "300px", marginBottom: "1rem" }}
-                                        />
-                                    </Card.Content>
-                                </Card>
+                                <TextInput
+                                    label={translate("SearchByNHSNumber.nhsNumberLabel")}
+                                    id="poa-nhs-number"
+                                    name="poa-nhs-number"
+                                    inputMode="numeric"
+                                    pattern="\d*"
+                                    maxLength={10}
+                                    autoComplete="off"
+                                    value={poaNhsNumberInput}
+                                    onChange={handlePoaNhsNumberChange}
+                                    error={poaNhsNumberError || undefined}
+                                    style={{ maxWidth: "300px" }}
+                                />
+                                <TextInput
+                                    label={translate("SearchByNHSNumber.poaFirstnameLabel")}
+                                    id="poa-firstname"
+                                    name="poa-firstname"
+                                    autoComplete="off"
+                                    value={poaFirstname}
+                                    onChange={handlePoaFirstnameChange}
+                                    error={poaFirstnameError || undefined}
+                                    style={{ maxWidth: "400px" }}
+                                />
+                                <TextInput
+                                    label={translate("SearchByNHSNumber.poaSurnameLabel")}
+                                    id="poa-surname"
+                                    name="poa-surname"
+                                    autoComplete="off"
+                                    value={poaSurname}
+                                    onChange={handlePoaSurnameChange}
+                                    error={poaSurnameError || undefined}
+                                    style={{ maxWidth: "400px" }}
+                                />
+                                <div style={{ marginBottom: "1rem" }}>
+                                    <Select
+                                        label={translate("SearchByNHSNumber.poaRelationshipLabel")}
+                                        id="poa-relationship"
+                                        name="poa-relationship"
+                                        aria-label={translate("SearchByNHSNumber.poaRelationshipLabel")}
+                                        aria-required="true"
+                                        required
+                                        value={poaRelationship}
+                                        onChange={handlePoaRelationshipChange}
+                                        error={poaRelationshipError || undefined}
+                                        style={{ maxWidth: "400px", marginBottom: "1rem" }}
+                                    >
+                                        <option value="" disabled>
+                                            {translate("SearchByNHSNumber.poaRelationshipSelect")}
+                                        </option>
+                                        <option value={translate("SearchByNHSNumber.poaRelationshipOptions.parent")}>
+                                            {translate("SearchByNHSNumber.poaRelationshipOptions.parent")}
+                                        </option>
+                                        <option value={translate("SearchByNHSNumber.poaRelationshipOptions.guardian")}>
+                                            {translate("SearchByNHSNumber.poaRelationshipOptions.guardian")}
+                                        </option>
+                                        <option value={translate("SearchByNHSNumber.poaRelationshipOptions.attorney")}>
+                                            {translate("SearchByNHSNumber.poaRelationshipOptions.attorney")}
+                                        </option>
+                                    </Select>
+                                </div>
 
-                                <Card cardType="feature">
-                                    <Card.Content>
-                                        <Card.Heading style={{ fontSize: "16px" }}>{translate("SearchBySHSNumber.poaMyDetailsHeading")}</Card.Heading>
-                                        <TextInput
-                                            label={translate("SearchBySHSNumber.poaFirstnameLabel")}
-                                            id="poa-firstname"
-                                            name="poa-firstname"
-                                            autoComplete="off"
-                                            value={poaFirstname}
-                                            onChange={handlePoaFirstnameChange}
-                                            error={poaFirstnameError || undefined}
-                                            style={{ maxWidth: "400px", marginBottom: "1rem" }}
-                                        />
-                                        <TextInput
-                                            label={translate("SearchBySHSNumber.poaSurnameLabel")}
-                                            id="poa-surname"
-                                            name="poa-surname"
-                                            autoComplete="off"
-                                            value={poaSurname}
-                                            onChange={handlePoaSurnameChange}
-                                            error={poaSurnameError || undefined}
-                                            style={{ maxWidth: "400px", marginBottom: "1rem" }}
-                                        />
-                                        <div style={{ marginBottom: "1rem" }}>
-                                            <Select
-                                                label={translate("SearchBySHSNumber.poaRelationshipLabel")}
-                                                id="poa-relationship"
-                                                name="poa-relationship"
-                                                aria-label={translate("SearchBySHSNumber.poaRelationshipLabel")}
-                                                aria-required="true"
-                                                required
-                                                value={poaRelationship}
-                                                onChange={handlePoaRelationshipChange}
-                                                error={poaRelationshipError || undefined}
-                                                style={{ maxWidth: "400px", marginBottom: "1rem" }}
-                                            >
-                                                <option value="" disabled>
-                                                    {translate("SearchBySHSNumber.poaRelationshipSelect")}
-                                                </option>
-                                                <option value={translate("SearchBySHSNumber.poaRelationshipOptions.parent")}>
-                                                    {translate("SearchBySHSNumber.poaRelationshipOptions.parent")}
-                                                </option>
-                                                <option value={translate("SearchBySHSNumber.poaRelationshipOptions.guardian")}>
-                                                    {translate("SearchBySHSNumber.poaRelationshipOptions.guardian")}
-                                                </option>
-                                                <option value={translate("SearchBySHSNumber.poaRelationshipOptions.attorney")}>
-                                                    {translate("SearchBySHSNumber.poaRelationshipOptions.attorney")}
-                                                </option>
-                                            </Select>
-                                        </div>
-                                    </Card.Content>
-                                </Card>
                             </div>
                         )}
 
@@ -297,7 +276,7 @@ export const SearchByNhsNumber = () => {
                                         : nhsNumberInput.length !== 10)
                                 }
                             >
-                                {loading ? translate("SearchBySHSNumber.submittingButton") : translate("SearchBySHSNumber.submitButton")}
+                                {loading ? translate("SearchByNHSNumber.submittingButton") : translate("SearchByNHSNumber.submitButton")}
                             </Button>
                             <Button
                                 type="button"
@@ -305,7 +284,7 @@ export const SearchByNhsNumber = () => {
                                 onClick={() => navigate("/patientDetailsSearch")}
                                 disabled={loading}
                             >
-                                {translate("SearchBySHSNumber.idontknowButton")}
+                                {translate("SearchByNHSNumber.idontknowButton")}
                             </Button>
                         </div>
                     </form>
@@ -321,14 +300,14 @@ export const SearchByNhsNumber = () => {
                                 boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
                             }}
                         >
-                            <h2 className="mb-3" style={{ color: "#005eb8" }}>{translate("SearchBySHSNumber.helpGuidanceTitle")}</h2>
+                            <h2 className="mb-3" style={{ color: "#005eb8" }}>{translate("SearchByNHSNumber.helpGuidanceTitle")}</h2>
                             <h3 className="mb-3" style={{ color: "#005eb8" }}>
-                                {translate("SearchBySHSNumber.helpGuidanceNhsNumberHeading")}
+                                {translate("SearchByNHSNumber.helpGuidanceNhsNumberHeading")}
                             </h3>
-                            <p>{translate("SearchBySHSNumber.helpGuidanceNhsNumberText1")}</p>
-                            <p>{translate("SearchBySHSNumber.helpGuidanceNhsNumberText2")}</p>
-                            <p>{translate("SearchBySHSNumber.helpGuidanceNhsNumberText3")}</p>
-                            <p>{translate("SearchBySHSNumber.helpGuidanceNhsNumberText4")}</p>
+                            <p>{translate("SearchByNHSNumber.helpGuidanceNhsNumberText1")}</p>
+                            <p>{translate("SearchByNHSNumber.helpGuidanceNhsNumberText2")}</p>
+                            <p>{translate("SearchByNHSNumber.helpGuidanceNhsNumberText3")}</p>
+                            <p>{translate("SearchByNHSNumber.helpGuidanceNhsNumberText4")}</p>
                         </div>
                     )}
                     {isPowerOfAttorney && (
@@ -341,23 +320,23 @@ export const SearchByNhsNumber = () => {
                                 boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
                             }}
                         >
-                            <h2 className="mb-3" style={{ color: "#005eb8" }}>{translate("SearchBySHSNumber.helpGuidanceTitle")}</h2>
+                            <h2 className="mb-3" style={{ color: "#005eb8" }}>{translate("SearchByNHSNumber.helpGuidanceTitle")}</h2>
 
                             <div style={{ marginBottom: "1.5rem" }}>
-                                <h3 style={{ color: "#005eb8" }}>{translate("SearchBySHSNumber.helpGuidanceEligibilityHeading")}</h3>
+                                <h3 style={{ color: "#005eb8" }}>{translate("SearchByNHSNumber.helpGuidanceEligibilityHeading")}</h3>
                                 <ul>
-                                    <li>{translate("SearchBySHSNumber.helpGuidanceEligibilityList.parent")}</li>
-                                    <li>{translate("SearchBySHSNumber.helpGuidanceEligibilityList.guardian")}</li>
-                                    <li>{translate("SearchBySHSNumber.helpGuidanceEligibilityList.attorney")}</li>
+                                    <li>{translate("SearchByNHSNumber.helpGuidanceEligibilityList.parent")}</li>
+                                    <li>{translate("SearchByNHSNumber.helpGuidanceEligibilityList.guardian")}</li>
+                                    <li>{translate("SearchByNHSNumber.helpGuidanceEligibilityList.attorney")}</li>
                                 </ul>
-                                <p>{translate("SearchBySHSNumber.helpGuidanceEligibilityText")}</p>
+                                <p>{translate("SearchByNHSNumber.helpGuidanceEligibilityText")}</p>
                             </div>
 
                             <div>
-                                <h3 style={{ color: "#005eb8" }}>{translate("SearchBySHSNumber.helpGuidancePoaNhsNumberHeading")}</h3>
-                                <p>{translate("SearchBySHSNumber.helpGuidancePoaNhsNumberText1")}</p>
-                                <p>{translate("SearchBySHSNumber.helpGuidancePoaNhsNumberText2")}</p>
-                                <p>{translate("SearchBySHSNumber.helpGuidancePoaNhsNumberText3")}</p>
+                                <h3 style={{ color: "#005eb8" }}>{translate("SearchByNHSNumber.helpGuidancePoaNhsNumberHeading")}</h3>
+                                <p>{translate("SearchByNHSNumber.helpGuidancePoaNhsNumberText1")}</p>
+                                <p>{translate("SearchByNHSNumber.helpGuidancePoaNhsNumberText2")}</p>
+                                <p>{translate("SearchByNHSNumber.helpGuidancePoaNhsNumberText3")}</p>
                             </div>
                         </div>
                     )}

@@ -26,7 +26,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Consum
             List<string> expectedAttributeValues = new List<string>
             {
                 "LondonDataServices.IDecide.Manage.Server.Administrators",
-                "ConsumerAdoptions.Update"
+                "LondonDataServices.IDecide.Manage.Server.Consumers"
             };
 
             // When
@@ -78,28 +78,5 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Consum
             // Then
             attribute.Should().BeNull();
         }
-
-        //[Fact]
-        //public void PutShouldHaveInvisibleApiAttribute()
-        //{
-        //    // Given
-        //    var controllerType = typeof(ConsumerAdoptionsController);
-        //    var methodInfo = controllerType.GetMethod("PutConsumerAdoptionAsync");
-        //    Type attributeType = typeof(InvisibleApiAttribute);
-        //
-        //    // When
-        //    var methodAttribute = methodInfo?
-        //        .GetCustomAttributes(attributeType, inherit: true)
-        //        .FirstOrDefault();
-        //
-        //    var controllerAttribute = controllerType
-        //        .GetCustomAttributes(attributeType, inherit: true)
-        //        .FirstOrDefault();
-        //
-        //    var attribute = methodAttribute ?? controllerAttribute;
-        //
-        //    // Then
-        //    attribute.Should().NotBeNull();
-        //}
     }
 }
