@@ -1,7 +1,6 @@
-import { ConsumerAdoption } from '../consumerAdoptions/consumerAdoption';
-
-export class Consumer {
-    public id: string;
+import { ConsumerAdoption } from "../consumerAdoptions/consumerAdoption";
+export class ConsumerView {
+    public id?: string;
     public entraId?: string;
     public name?: string;
     public contactPerson?: string;
@@ -13,7 +12,7 @@ export class Consumer {
     public updatedDate?: Date;
     public consumerAdoptions?: ConsumerAdoption[];
 
-    constructor(consumer?: Partial<Consumer>) {
+    constructor(consumer?: Partial<ConsumerView>) {
         this.id = consumer?.id || '';
         this.entraId = consumer?.entraId || '';
         this.name = consumer?.name || '';

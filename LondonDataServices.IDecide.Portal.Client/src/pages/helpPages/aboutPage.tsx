@@ -38,7 +38,7 @@ const AboutPage = () => {
                                 Through NHS England funding from the Sub-National Secure Data Environment Network programme, and building on existing initiatives in the Capital, OneLondon are developing a world leading resource for health and care improvement known as the London SDE (Secure Data Environment).
                             </p>
                             <p>
-                                Londoners are centre stage of this work to ensure the London SDE meets public expectations and builds trust and confidence. You can read more about our work with Londoners, including the OneLondon Citizens’ Advisory Group, <a href="https://www.onelondon.online/citizens-advisory-group/" target="_blank" rel="noopener noreferrer">here</a>.
+                                Londoners are centre stage of this work to ensure the London SDE meets public expectations and builds trust and confidence. You can read more about our work with Londoners, including the OneLondon Citizens’ Advisory Group, <a href="https://www.onelondon.online/old-citizens-advisory-group/" target="_blank" rel="noopener noreferrer">here</a>.
                             </p>
                             <p>
                                 The London SDE has two key elements:

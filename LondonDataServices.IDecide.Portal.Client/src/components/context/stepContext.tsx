@@ -45,7 +45,6 @@ export const StepProvider = ({ children }: StepProviderProps) => {
         patient?: Patient,
         poa?: PowerOfAttorney
     ) => {
-        console.log("nextStep called with:", { option, nhs, patient, poa });
         if (option) setSelectedOption(option);
         if (nhs) setNhsNumber(nhs);
         if (patient) setCreatedPatient(patient);
@@ -59,7 +58,6 @@ export const StepProvider = ({ children }: StepProviderProps) => {
         patient?: Patient,
         poa?: PowerOfAttorney
     ) => {
-        console.log("previousStep called with:", { option, nhs, patient, poa });
         if (option) setSelectedOption(option);
         if (nhs) setNhsNumber(nhs);
         if (patient) setCreatedPatient(patient);
