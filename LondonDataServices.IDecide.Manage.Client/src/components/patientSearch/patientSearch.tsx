@@ -332,7 +332,6 @@ export const PatientSearch = () => {
                                                 ))}
                                             </tbody>
                                         </Table>
-
                                             {/*<ConsumerAdoptionTable decisionId={selectedDecisionId} />*/}
                                     </Card.Body>
                                 </Card>
@@ -345,12 +344,8 @@ export const PatientSearch = () => {
                                 </>
                             )
                         )}
-
-
                     </Col>
                 </Row>
-
-
             ) : null}
         </Container>
     );

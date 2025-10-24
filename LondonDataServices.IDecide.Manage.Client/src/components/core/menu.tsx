@@ -35,7 +35,6 @@ const MenuComponent: React.FC = () => {
                 <FontAwesomeIcon icon={faUser} className="me-2 fa-icon" />
                 Audit Search
             </ListGroup.Item>
-
             <ListGroup.Item className="bg-dark text-white fw-bold mt-4" disabled>
                 Configuration
             </ListGroup.Item>

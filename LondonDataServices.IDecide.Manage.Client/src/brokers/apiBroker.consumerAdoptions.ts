@@ -36,7 +36,7 @@ class ConsumerAdoptionBroker {
 
     async GetConsumerAdoptionSubsequentPagesAsync(absoluteUri: string) {
         return this.processOdataResult(await this.apiBroker.GetAsyncAbsolute(absoluteUri));
-    } 
+    }
 }
 
 export default ConsumerAdoptionBroker;

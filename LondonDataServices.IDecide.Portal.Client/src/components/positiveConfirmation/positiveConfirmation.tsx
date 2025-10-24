@@ -167,7 +167,7 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                     <dl className="nhsuk-summary-list" style={{ marginBottom: "2rem" }}>
                         <div className="nhsuk-summary-list__row">
                             <dt className="nhsuk-summary-list__key">{translate("PositiveConfirmation.summaryName")}</dt>
-                            <dd className="nhsuk-summary-list__value">{createdPatient.givenName + ',' + createdPatient.surname}</dd>
+                            <dd className="nhsuk-summary-list__value">{createdPatient.givenName + ', ' + createdPatient.surname}</dd>
                         </div>
                         <div className="nhsuk-summary-list__row">
                             <dt className="nhsuk-summary-list__key">{translate("PositiveConfirmation.summaryEmail")}</dt>
@@ -182,7 +182,6 @@ const PositiveConfirmation: React.FC<PositiveConfirmationProps> = ({ goToConfirm
                             <dd className="nhsuk-summary-list__value">{createdPatient.address}</dd>
                         </div>
                     </dl>
-
 
                     <p style={{ fontWeight: 500, marginBottom: "1rem" }}>
                         {translate("PositiveConfirmation.chooseMethod")}

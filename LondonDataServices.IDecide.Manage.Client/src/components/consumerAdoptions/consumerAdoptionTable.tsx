@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, Container, Table } from "react-bootstrap";
 import { ConsumerAdoption } from "../../models/consumerAdoptions/consumerAdoption";
 import InfiniteScroll from "../bases/pagers/InfiniteScroll";
@@ -62,8 +62,8 @@ const ConsumerAdoptionTable = ({ decisionId }: ConsumerAdoptionTableProps) => {
                             <thead>
                                 <tr>
                                     <th className="text-center">Consumer</th>
-                                    <th className="text-center">Decison</th>
-                                    <th className="text-center">Decison Datetime</th>
+                                    <th className="text-center">Decision</th>
+                                    <th className="text-center">Decision Datetime</th>
                                     <th className="text-center">Adoption DateTime</th>
                                 </tr>
                             </thead>
