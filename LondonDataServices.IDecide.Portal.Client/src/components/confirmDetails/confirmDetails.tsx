@@ -101,7 +101,8 @@ export const ConfirmDetails: React.FC<ConfirmDetailsProps> = ({ goToConfirmCode 
                             style={{ width: "100%", marginBottom: 0, borderBottom: "none" }}
                             onClick={goToConfirmCode}
                         >
-                            {translate("ConfirmDetails.useExistingCode")}
+                            {translate("ConfirmDetails.useExistingCode")} <br />
+                            {translate("ConfirmDetails.useExistingCodeClick")}
                         </button>
                     </form>
                 </div>
