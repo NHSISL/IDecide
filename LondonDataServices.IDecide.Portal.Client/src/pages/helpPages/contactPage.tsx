@@ -21,7 +21,8 @@ const ContactPage = () => {
                 <div style={{ marginTop: 24 }}>
                     <h1>Contact Us</h1>
                     <p>
-                        The team that operate this website and the Opt-out service are based in Stratford, North East London. In order to contact us you can:
+                        The team that operate this website and the Opt-out service are based in Stratford, North East London.
+                        In order to contact us you can:
                     </p>
                     <ul>
                         <li>
@@ -37,11 +38,10 @@ const ContactPage = () => {
                             <strong>Write to us:</strong>
                             <address style={{ marginTop: 8, marginBottom: 0 }}>
                                 OneLondon Service Desk<br />
-                                NEL ICB<br />
-                                Unex Tower<br />
-                                5 Station Street<br />
+                                North East London ICB<br />
+                                10 Vicarage Lane<br />
                                 London<br />
-                                E15 1DA
+                                E15 4ES
                             </address>
                         </li>
                     </ul>

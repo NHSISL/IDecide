@@ -151,7 +151,8 @@
     "address": "Address",
     "yes": "Yes",
     "no": "No",
-    "useExistingCode": "We have already been sent a code. Would you like to use that code to continue?",
+    "useExistingCode": "If you have already been sent a code to verify your identity",
+    "useExistingCodeClick": "Click here to continue",
     "helpGuidance": "Help & Guidance",
     "checkingYourDetails": "Checking Your Details",
     "reviewDetails": "Please review the details shown on this page. Some information, such as your mobile number, may be partially hidden for your privacy.",
@@ -180,7 +181,7 @@
     "helpReceivingCodeTitle": "Receiving Your Confirmation Code",
     "helpReceivingCodeDescription1": "To keep your information secure, we need to send you a one-time code. This code helps us confirm your identity before you continue.",
     "helpReceivingCodeDescription2": "Please choose how you would like to receive your code: by Email, SMS, or Post (letter). Select the option that is most convenient and accessible for you.",
-    "helpReceivingCodeDescription3": "If you cannot access any of these methods, please contact one of our agents on ........",
+    "helpReceivingCodeDescription3": "If you cannot access any of these methods, please contact one of our agents by leaving a voicemail with your contact name & phone number on",
     "helpReceivingCodeDescription4": "Your details are only used for identification and will not be shared outside the NHS.",
     "noCodeRecieved": "I haven't received my code, please can I request a new code?. Click",
     "requestNewCode": "Request New Code",
@@ -283,7 +284,8 @@
     "404": "Page not found.",
     "401": "You are not authorized to perform this action.",
     "500": "A server error occurred. Please try again later.",
-    "PatientNotFound": "Patient not found. Please check what you have entered and try again.",
-    "CatchAll": "An unexpected error occurred. Please try again later."
+    "PatientNotFound": "Patient not found. Please try again.",
+    "CatchAll": "An unexpected error occurred. Please try again later.",
+    "InValidNhsNumber": "Please enter a valid 10-digit NHS number."
   }
   }

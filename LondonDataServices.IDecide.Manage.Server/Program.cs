@@ -30,6 +30,8 @@ using LondonDataServices.IDecide.Core.Brokers.Storages.Sql;
 using LondonDataServices.IDecide.Core.Clients.Audits;
 using LondonDataServices.IDecide.Core.Models.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Models.Foundations.Audits;
+using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerAdoptions;
+using LondonDataServices.IDecide.Core.Models.Foundations.Consumers;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
@@ -186,6 +188,8 @@ namespace LondonDataServices.IDecide.Manage.Server
             builder.EntitySet<Audit>("Audits");
             builder.EntitySet<Patient>("Patients");
             builder.EntitySet<Decision>("Decisions");
+            builder.EntitySet<Consumer>("Consumers");
+            builder.EntitySet<ConsumerAdoption>("ConsumerAdoptions");
             builder.EnableLowerCamelCase();
 
             return builder.GetEdmModel();
