@@ -29,6 +29,9 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
         private static void ValidateDecisionProperties(Decision decision)
         {
             Validate(
+                createException: () => new InvalidDecisionOrchestrationArgumentException(
+                    message: "Invalid decision orchestration argument. Please correct the errors and try again."),
+                    
                 (Rule: IsPatientNull(decision.Patient),
                 Parameter: nameof(Decision.Patient)),
 
@@ -79,11 +82,11 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
             return result;
         }
 
-        private static void Validate(params (dynamic Rule, string Parameter)[] validations)
+        private static void Validate(
+            Func<InvalidDecisionOrchestrationArgumentException> createException,
+            params (dynamic Rule, string Parameter)[] validations)
         {
-            var invalidPdsException =
-                new InvalidDecisionOrchestrationArgumentException(
-                    message: "Invalid decision orchestration argument. Please correct the errors and try again.");
+            InvalidDecisionOrchestrationArgumentException invalidPdsException = createException();
 
             foreach ((dynamic rule, string parameter) in validations)
             {
