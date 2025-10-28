@@ -21,10 +21,17 @@ test.describe('Search by NHS Number Page', () => {
     });
 
     test('should enable Search button when NHS number is 10 digits', async ({ page }) => {
-        await page.locator('#nhs-number').fill('1234567890');
+        await page.locator('#nhs-number').fill('0000000000');
         await page.locator('#nhs-number').blur();
         const searchButton = page.getByRole('button', { name: /^search$/i });
         await expect(searchButton).toBeEnabled({ timeout: 5000 });
+    });
+
+    test('should NOT enable Search button when NHS number doesnt have a check digit', async ({ page }) => {
+        await page.locator('#nhs-number').fill('0000000001');
+        await page.locator('#nhs-number').blur();
+        const searchButton = page.getByRole('button', { name: /^search$/i });
+        await expect(searchButton).toBeDisabled({ timeout: 5000 });
     });
 
     test("should show the 'I Don't know my NHS Number' button", async ({ page }) => {
@@ -38,7 +45,7 @@ test.describe('Search by NHS Number Page', () => {
     });
 
     test('should show loading state when submitting', async ({ page }) => {
-        await page.locator('#nhs-number').fill('1234567890');
+        await page.locator('#nhs-number').fill('0000000000');
         await page.locator('#nhs-number').blur();
         const searchButton = page.getByRole('button', { name: /^search$/i });
         await page.route('**/api/patients/GetPatientByNhsNumber', async route => {
@@ -72,7 +79,7 @@ test.describe('Search by NHS Number Page', () => {
         });
 
         test('should enable Search button when all PoA fields are valid', async ({ page }) => {
-            await page.locator('#poa-nhs-number').fill('1234567890');
+            await page.locator('#poa-nhs-number').fill('0000000000');
             await page.locator('#poa-firstname').fill('John');
             await page.locator('#poa-surname').fill('Doe');
             await page.locator('#poa-relationship').selectOption('The patient is under 13 and you are their parent');
