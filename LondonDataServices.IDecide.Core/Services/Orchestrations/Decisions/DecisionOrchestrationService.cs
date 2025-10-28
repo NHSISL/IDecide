@@ -175,7 +175,6 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
                 Guid consumerId = maybeConsumer.Id;
                 IQueryable<Decision> decisions = await this.decisionService.RetrieveAllDecisionsAsync();
 
-
                 if (changesSinceDate != default)
                 {
                     decisions = decisions.Where(d => d.CreatedDate > changesSinceDate);

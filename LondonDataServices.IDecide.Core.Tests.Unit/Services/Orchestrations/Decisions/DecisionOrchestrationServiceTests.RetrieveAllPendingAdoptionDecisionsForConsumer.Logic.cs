@@ -337,7 +337,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             {
                 decision.Patient.Should().NotBeNull();
                 decision.Patient.NhsNumber.Should().NotBeNullOrEmpty();
-
                 decision.Patient.Id.Should().Be(Guid.Empty);
                 decision.Patient.Title.Should().BeNull();
                 decision.Patient.GivenName.Should().BeNull();
@@ -349,10 +348,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 decision.Patient.ValidationCode.Should().BeNull();
                 decision.Patient.CreatedBy.Should().BeNull();
                 decision.Patient.UpdatedBy.Should().BeNull();
-
                 decision.DecisionType.Should().NotBeNull();
                 decision.DecisionType.Name.Should().NotBeNullOrEmpty();
-
                 decision.DecisionType.Id.Should().Be(Guid.Empty);
                 decision.DecisionType.CreatedBy.Should().BeNull();
                 decision.DecisionType.UpdatedBy.Should().BeNull();
