@@ -14,7 +14,9 @@ using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Models.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Models.Foundations.Consumers;
+using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerAdoptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
+using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions.Exceptions;
@@ -173,9 +175,6 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
                 Guid consumerId = maybeConsumer.Id;
                 IQueryable<Decision> decisions = await this.decisionService.RetrieveAllDecisionsAsync();
 
-                decisions = decisions
-                    .Include(decision => decision.Patient)
-                    .Include(decision => decision.DecisionType);
 
                 if (changesSinceDate != default)
                 {
@@ -200,6 +199,23 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
                                 .Max(consumerAdoption => consumerAdoption.CreatedDate) < decision.CreatedDate
                         )
                     )
+                    .Select(d => new Decision
+                    {
+                        Id = d.Id,
+                        PatientId = d.PatientId,
+                        DecisionTypeId = d.DecisionTypeId,
+                        DecisionChoice = d.DecisionChoice,
+                        CreatedBy = d.CreatedBy,
+                        CreatedDate = d.CreatedDate,
+                        UpdatedBy = d.UpdatedBy,
+                        UpdatedDate = d.UpdatedDate,
+                        ResponsiblePersonGivenName = d.ResponsiblePersonGivenName,
+                        ResponsiblePersonSurname = d.ResponsiblePersonSurname,
+                        ResponsiblePersonRelationship = d.ResponsiblePersonRelationship,
+                        ConsumerAdoptions = d.ConsumerAdoptions,
+                        Patient = new Patient { NhsNumber = d.Patient.NhsNumber },
+                        DecisionType = new DecisionType { Name = d.DecisionType.Name }
+                    })
                     .ToList();
 
                 return pendingAdoptionDecisions;
