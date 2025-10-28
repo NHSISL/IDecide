@@ -33,6 +33,7 @@ using LondonDataServices.IDecide.Core.Models.Foundations.Audits;
 using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerAdoptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Consumers;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
+using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions;
@@ -186,10 +187,11 @@ namespace LondonDataServices.IDecide.Manage.Server
                new ODataConventionModelBuilder();
 
             builder.EntitySet<Audit>("Audits");
-            builder.EntitySet<Patient>("Patients");
-            builder.EntitySet<Decision>("Decisions");
             builder.EntitySet<Consumer>("Consumers");
+            builder.EntitySet<Decision>("Decisions");
+            builder.EntitySet<Patient>("Patients");
             builder.EntitySet<ConsumerAdoption>("ConsumerAdoptions");
+            builder.EntitySet<DecisionType>("DecisionTypes");
             builder.EnableLowerCamelCase();
 
             return builder.GetEdmModel();
