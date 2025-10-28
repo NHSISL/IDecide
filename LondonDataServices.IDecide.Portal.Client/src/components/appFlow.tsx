@@ -22,7 +22,6 @@ export const AppFlow: React.FC<AppFlowProps> = ({ powerOfAttorney }) => {
         setCurrentStepIndex(0);
     }, [setCurrentStepIndex]);
 
-    // Steps array moved inside so it can use the prop
     const steps = [
         {
             key: "nhsNumber",
@@ -140,7 +139,7 @@ export const AppFlow: React.FC<AppFlowProps> = ({ powerOfAttorney }) => {
 
     return (
         <div className="appflow-wrapper">
-            <h2 className="step-label">{label}</h2>
+            <h2 className="step-label" style={{ display: "none" }}>{label}</h2>
             <div>{content}</div>
             {/* Show Next button only on steps that support it */}
             {/*{currentStepIndex === 3 && currentStepIndex < steps.length - 1 && (

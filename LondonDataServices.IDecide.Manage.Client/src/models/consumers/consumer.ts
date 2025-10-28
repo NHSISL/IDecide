@@ -1,7 +1,7 @@
 import { ConsumerAdoption } from '../consumerAdoptions/consumerAdoption';
 
 export class Consumer {
-    public id?: string;
+    public id: string;
     public entraId?: string;
     public name?: string;
     public contactPerson?: string;
