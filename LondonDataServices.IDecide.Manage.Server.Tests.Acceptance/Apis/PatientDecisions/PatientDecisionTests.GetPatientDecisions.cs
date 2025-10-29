@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Force.DeepCloner;
 using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.Consumers;
+using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.Decisions;
 using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.DecisionTypes;
 using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.Patients;
-using PatientDecision = LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.PatientDecisions.Decision;
 
 namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.PatientDecisions
 {
@@ -22,8 +22,8 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.Patient
             // given
             Patient randomPatient = await PostRandomPatientAsync();
             DecisionType randomDecisionType = await PostRandomDecisionTypeAsync();
-            List<PatientDecision> randomDecisions = await PostRandomDecisionsAsync(randomPatient, randomDecisionType);
-            List<PatientDecision> expectedDecisions = randomDecisions.DeepClone();
+            List<Decision> randomDecisions = await PostRandomDecisionsAsync(randomPatient, randomDecisionType);
+            List<Decision> expectedDecisions = randomDecisions.DeepClone();
             string userId = TestAuthHandler.TestUserId;
 
             Consumer randomConsumerWithMatchingEntraId =
@@ -33,12 +33,12 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.Patient
             string decisionType = randomDecisionType.Name;
 
             // when
-            List<PatientDecision> actualDecisions = await this.apiBroker.GetPatientDecisionsAsync(from, decisionType);
+            List<Decision> actualDecisions = await this.apiBroker.GetPatientDecisionsAsync(from, decisionType);
 
             // then
-            foreach (PatientDecision expectedDecision in expectedDecisions)
+            foreach (Decision expectedDecision in expectedDecisions)
             {
-                PatientDecision actualDecision =
+                Decision actualDecision =
                     actualDecisions.Find(decision => decision.Id == expectedDecision.Id);
 
                 actualDecision.Should().BeEquivalentTo(expectedDecision, options => options

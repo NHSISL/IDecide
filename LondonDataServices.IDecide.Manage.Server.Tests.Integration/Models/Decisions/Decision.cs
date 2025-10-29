@@ -3,6 +3,9 @@
 // ---------------------------------------------------------
 
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
+using LondonDataServices.IDecide.Manage.Server.Tests.Integration.Models.DecisionTypes;
+using LondonDataServices.IDecide.Manage.Server.Tests.Integration.Models.Patients;
 
 namespace LondonDataServices.IDecide.Manage.Server.Tests.Integration.Models.Decisions
 {
@@ -19,5 +22,14 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Integration.Models.Deci
         public string ResponsiblePersonGivenName { get; set; }
         public string ResponsiblePersonSurname { get; set; }
         public string ResponsiblePersonRelationship { get; set; }
+
+        [NotMapped]
+        public string DecisionTypeName => this.DecisionType?.Name ?? string.Empty;
+
+        [NotMapped]
+        public string PatientNhsNumber => this.Patient?.NhsNumber ?? string.Empty;
+
+        public Patient Patient { get; set; }
+        public DecisionType DecisionType { get; set; }
     }
 }

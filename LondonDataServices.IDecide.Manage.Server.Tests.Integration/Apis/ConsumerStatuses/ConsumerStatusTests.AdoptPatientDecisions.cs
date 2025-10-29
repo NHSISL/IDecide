@@ -6,13 +6,13 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
-using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.ConsumerAdoptions;
-using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.Consumers;
-using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.Decisions;
-using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.DecisionTypes;
-using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.Patients;
+using LondonDataServices.IDecide.Manage.Server.Tests.Integration.Models.ConsumerAdoptions;
+using LondonDataServices.IDecide.Manage.Server.Tests.Integration.Models.Consumers;
+using LondonDataServices.IDecide.Manage.Server.Tests.Integration.Models.Decisions;
+using LondonDataServices.IDecide.Manage.Server.Tests.Integration.Models.DecisionTypes;
+using LondonDataServices.IDecide.Manage.Server.Tests.Integration.Models.Patients;
 
-namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.ConsumerStatuses
+namespace LondonDataServices.IDecide.Manage.Server.Tests.Integration.Apis.ConsumerStatuses
 {
     public partial class ConsumerStatusTests
     {
@@ -24,7 +24,6 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.Consume
             DecisionType randomDecisionType = await PostRandomDecisionTypeAsync();
             List<Decision> randomDecisions = await PostRandomDecisionsAsync(randomPatient, randomDecisionType);
             List<Decision> inputDecisions = randomDecisions;
-            List<Consumer> randomConsumers = await PostRandomConsumersAsync();
             string userId = TestAuthHandler.TestUserId;
             DateTimeOffset now = DateTimeOffset.Now;
 
@@ -48,18 +47,10 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.Consume
 
             await this.apiBroker.DeleteConsumerByIdAsync(randomConsumerWithMatchingEntraId.Id);
 
-            foreach (var consumer in randomConsumers)
-            {
-                await this.apiBroker.DeleteConsumerByIdAsync(consumer.Id);
-            }
-
             foreach (var decision in randomDecisions)
             {
                 await this.apiBroker.DeleteDecisionByIdAsync(decision.Id);
             }
-
-            await this.apiBroker.DeleteDecisionTypeByIdAsync(randomDecisionType.Id);
-            await this.apiBroker.DeletePatientByIdAsync(randomPatient.Id);
         }
     }
 }

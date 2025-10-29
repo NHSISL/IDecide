@@ -14,14 +14,16 @@ using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Models.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Models.Foundations.Consumers;
+using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerAdoptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
+using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions.Exceptions;
 using LondonDataServices.IDecide.Core.Services.Foundations.Consumers;
 using LondonDataServices.IDecide.Core.Services.Foundations.Decisions;
-using LondonDataServices.IDecide.Core.Services.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
+using Microsoft.EntityFrameworkCore;
 
 namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
 {
@@ -34,7 +36,6 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
         private readonly IIdentifierBroker identifierBroker;
         private readonly IPatientService patientService;
         private readonly IDecisionService decisionService;
-        private readonly INotificationService notificationService;
         private readonly IConsumerService consumerService;
         private readonly DecisionConfigurations decisionConfigurations;
         private readonly SecurityBrokerConfigurations securityBrokerConfigurations;
@@ -47,7 +48,6 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
             IIdentifierBroker identifierBroker,
             IPatientService patientService,
             IDecisionService decisionService,
-            INotificationService notificationService,
             IConsumerService consumerService,
             DecisionConfigurations decisionConfigurations,
             SecurityBrokerConfigurations securityBrokerConfigurations)
@@ -59,7 +59,6 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
             this.identifierBroker = identifierBroker;
             this.patientService = patientService;
             this.decisionService = decisionService;
-            this.notificationService = notificationService;
             this.consumerService = consumerService;
             this.decisionConfigurations = decisionConfigurations;
             this.securityBrokerConfigurations = securityBrokerConfigurations;
@@ -199,6 +198,23 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
                                 .Max(consumerAdoption => consumerAdoption.CreatedDate) < decision.CreatedDate
                         )
                     )
+                    .Select(d => new Decision
+                    {
+                        Id = d.Id,
+                        PatientId = d.PatientId,
+                        DecisionTypeId = d.DecisionTypeId,
+                        DecisionChoice = d.DecisionChoice,
+                        CreatedBy = d.CreatedBy,
+                        CreatedDate = d.CreatedDate,
+                        UpdatedBy = d.UpdatedBy,
+                        UpdatedDate = d.UpdatedDate,
+                        ResponsiblePersonGivenName = d.ResponsiblePersonGivenName,
+                        ResponsiblePersonSurname = d.ResponsiblePersonSurname,
+                        ResponsiblePersonRelationship = d.ResponsiblePersonRelationship,
+                        ConsumerAdoptions = d.ConsumerAdoptions,
+                        Patient = new Patient { NhsNumber = d.Patient.NhsNumber },
+                        DecisionType = new DecisionType { Name = d.DecisionType.Name }
+                    })
                     .ToList();
 
                 return pendingAdoptionDecisions;

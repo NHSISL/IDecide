@@ -5,6 +5,7 @@
 using System;
 using System.IO;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Attrify.Extensions;
 using Attrify.InvisibleApi.Models;
 using ISL.Providers.Captcha.Abstractions;
@@ -160,6 +161,7 @@ namespace LondonDataServices.IDecide.Portal.Server
                     options.JsonSerializerOptions.DictionaryKeyPolicy = jsonNamingPolicy;
                     options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
                     options.JsonSerializerOptions.WriteIndented = true;
+                    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
                 });
         }
 

@@ -43,7 +43,11 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Integration.Apis.Decisi
                         .Excluding(property => property.CreatedBy)
                         .Excluding(property => property.CreatedDate)
                         .Excluding(property => property.UpdatedBy)
-                        .Excluding(property => property.UpdatedDate));
+                        .Excluding(property => property.UpdatedDate)
+                        .Excluding(property => property.DecisionType)
+                        .Excluding(property => property.DecisionTypeName)
+                        .Excluding(property => property.Patient)
+                        .Excluding(property => property.PatientNhsNumber));
             }
 
             // cleanup

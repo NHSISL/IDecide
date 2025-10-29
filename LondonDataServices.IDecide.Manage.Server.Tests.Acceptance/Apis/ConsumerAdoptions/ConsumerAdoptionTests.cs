@@ -119,6 +119,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.Consume
 
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(now)
+                .OnType<DateTimeOffset?>().Use(now)
                 .OnProperty(decision => decision.PatientId).Use(patientId)
                 .OnProperty(decision => decision.DecisionTypeId).Use(decisionTypeId)
                 .OnProperty(decision => decision.DecisionChoice).Use(GetRandomStringWithLengthOf(255))
