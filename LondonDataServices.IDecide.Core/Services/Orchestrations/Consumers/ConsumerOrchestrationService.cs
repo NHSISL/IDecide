@@ -16,6 +16,7 @@ using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions;
 using LondonDataServices.IDecide.Core.Services.Foundations.Consumers;
+using LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes;
 using LondonDataServices.IDecide.Core.Services.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
 
@@ -29,6 +30,8 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Consumers
         private readonly IIdentifierBroker identifierBroker;
         private readonly IConsumerService consumerService;
         private readonly IConsumerAdoptionService consumerAdoptionService;
+        private readonly IDecisionTypeService decisionTypeService;
+
         private readonly IPatientService patientService;
         private readonly INotificationService notificationService;
         public ConsumerOrchestrationService(
@@ -38,6 +41,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Consumers
             IIdentifierBroker identifierBroker,
             IConsumerService consumerService,
             IConsumerAdoptionService consumerAdoptionService,
+            IDecisionTypeService decisionTypeService,
             IPatientService patientService,
             INotificationService notificationService)
         {
@@ -47,6 +51,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Consumers
             this.identifierBroker = identifierBroker;
             this.consumerService = consumerService;
             this.consumerAdoptionService = consumerAdoptionService;
+            this.decisionTypeService = decisionTypeService;
             this.patientService = patientService;
             this.notificationService = notificationService;
         }
@@ -87,8 +92,13 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Consumers
                 {
                     try
                     {
-                        var patient =
-                            decision.Patient ?? await this.patientService.RetrievePatientByIdAsync(decision.PatientId);
+                        var patient = decision.Patient ??
+                            await this.patientService.RetrievePatientByIdAsync(decision.PatientId);
+
+                        var decisionType = decision.DecisionType ??
+                            await this.decisionTypeService.RetrieveDecisionTypeByIdAsync(decision.DecisionTypeId);
+
+                        decision.DecisionType = decisionType;
 
                         var notificationInfo = new NotificationInfo
                         {

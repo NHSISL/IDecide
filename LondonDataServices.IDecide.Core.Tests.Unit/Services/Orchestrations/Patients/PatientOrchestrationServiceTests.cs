@@ -48,7 +48,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         private static readonly int expireAfterMinutes = 1440;
         private static readonly int validatedCodeValidForMinutes = 1440;
         private static readonly int retryCount = 3;
-        private static readonly int notificationRequestCountdownSeconds = 120;
         private static readonly List<string> decisionWorkflowRoles = new List<string> { "Administrator" };
         private readonly ICompareLogic compareLogic;
 

@@ -42,10 +42,19 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
 
             for (int i = 0; i < totalRecords; i += batchSize)
             {
-                var batch = inputConsumerAdoptions.Skip(i).Take(batchSize).ToList();
+                var batch = inputConsumerAdoptions
+                    .Skip(i)
+                    .Take(batchSize)
+                    .ToList();
 
-                var batchKeys = batch
-                    .Select(consumerAdoption => new { consumerAdoption.DecisionId, consumerAdoption.ConsumerId })
+                var batchDecisionIds = batch
+                    .Select(ca => ca.DecisionId)
+                    .Distinct()
+                    .ToList();
+
+                var batchConsumerIds = batch
+                    .Select(ca => ca.ConsumerId)
+                    .Distinct()
                     .ToList();
 
                 var storageKeys = randomExistingConsumerAdoptions
@@ -53,9 +62,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                     .ToList();
 
                 var existingKeys = storageKeys
-                    .Where(storageKey => batchKeys.Any(batchKey =>
-                        batchKey.DecisionId == storageKey.DecisionId &&
-                            batchKey.ConsumerId == storageKey.ConsumerId))
+                      .Where(ca => batchDecisionIds.Contains(ca.DecisionId) &&
+                         batchConsumerIds.Contains(ca.ConsumerId))
                     .ToList();
 
                 var newConsumerAdoptions = batch
