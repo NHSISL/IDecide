@@ -62,8 +62,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                     .ToList();
 
                 var existingKeys = storageKeys
-                      .Where(ca => batchDecisionIds.Contains(ca.DecisionId) &&
-                         batchConsumerIds.Contains(ca.ConsumerId))
+                    .Where(ca => batchDecisionIds.Contains(ca.DecisionId) &&
+                        batchConsumerIds.Contains(ca.ConsumerId))
                     .ToList();
 
                 var newConsumerAdoptions = batch

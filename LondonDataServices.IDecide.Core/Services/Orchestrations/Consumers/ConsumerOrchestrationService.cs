@@ -31,9 +31,9 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Consumers
         private readonly IConsumerService consumerService;
         private readonly IConsumerAdoptionService consumerAdoptionService;
         private readonly IDecisionTypeService decisionTypeService;
-
         private readonly IPatientService patientService;
         private readonly INotificationService notificationService;
+
         public ConsumerOrchestrationService(
             ILoggingBroker loggingBroker,
             IDateTimeBroker dateTimeBroker,

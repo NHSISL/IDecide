@@ -133,7 +133,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions
 
                     IQueryable<ConsumerAdoption> storageBatchConsumerAdoptions = allConsumerAdoptions
                         .Where(ca => batchDecisionIds.Contains(ca.DecisionId) &&
-                         batchConsumerIds.Contains(ca.ConsumerId));
+                            batchConsumerIds.Contains(ca.ConsumerId));
 
                     var existingCompositeKeys = storageBatchConsumerAdoptions
                         .Select(consumerAdoption => new { consumerAdoption.DecisionId, consumerAdoption.ConsumerId })
