@@ -48,12 +48,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                     .ToList();
 
                 var batchDecisionIds = batch
-                    .Select(ca => ca.DecisionId)
+                    .Select(consumerAdoption => consumerAdoption.DecisionId)
                     .Distinct()
                     .ToList();
 
                 var batchConsumerIds = batch
-                    .Select(ca => ca.ConsumerId)
+                    .Select(consumerAdoption => consumerAdoption.ConsumerId)
                     .Distinct()
                     .ToList();
 
@@ -62,8 +62,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                     .ToList();
 
                 var existingKeys = storageKeys
-                    .Where(ca => batchDecisionIds.Contains(ca.DecisionId) &&
-                        batchConsumerIds.Contains(ca.ConsumerId))
+                    .Where(consumerAdoption => batchDecisionIds.Contains(consumerAdoption.DecisionId) &&
+                        batchConsumerIds.Contains(consumerAdoption.ConsumerId))
                     .ToList();
 
                 var newConsumerAdoptions = batch
