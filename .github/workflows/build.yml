@@ -29,7 +29,7 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
     - name: Install EF Tools
-      run: dotnet tool install --global dotnet-ef
+      run: dotnet tool install --global dotnet-ef --version 9
     - name: Deploy Database
       run: dotnet ef database update --project LondonDataServices.IDecide.Core/LondonDataServices.IDecide.Core.csproj --startup-project LondonDataServices.IDecide.Core/LondonDataServices.IDecide.Core.csproj
     - name: Run Unit Tests

@@ -21,6 +21,7 @@ using LondonDataServices.IDecide.Core.Models.Foundations.Patients.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Securities;
 using LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions;
 using LondonDataServices.IDecide.Core.Services.Foundations.Consumers;
+using LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes;
 using LondonDataServices.IDecide.Core.Services.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Consumers;
@@ -37,6 +38,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
         private readonly Mock<ISecurityBroker> securityBrokerMock = new Mock<ISecurityBroker>();
         private readonly Mock<IIdentifierBroker> identifierBrokerMock = new Mock<IIdentifierBroker>();
         private readonly Mock<IConsumerService> consumerServiceMock = new Mock<IConsumerService>();
+        private readonly Mock<IDecisionTypeService> decisionTypeServiceMock = new Mock<IDecisionTypeService>();
 
         private readonly Mock<IConsumerAdoptionService> consumerAdoptionServiceMock =
             new Mock<IConsumerAdoptionService>();
@@ -54,6 +56,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
                 identifierBroker: this.identifierBrokerMock.Object,
                 consumerService: this.consumerServiceMock.Object,
                 consumerAdoptionService: this.consumerAdoptionServiceMock.Object,
+                decisionTypeService: this.decisionTypeServiceMock.Object,
                 patientService: this.patientServiceMock.Object,
                 notificationService: this.notificationServiceMock.Object);
         }

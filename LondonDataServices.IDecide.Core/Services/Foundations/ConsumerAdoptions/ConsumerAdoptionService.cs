@@ -113,19 +113,27 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions
             {
                 try
                 {
-                    List<ConsumerAdoption> batch = consumerAdoptions.Skip(i).Take(batchSize).ToList();
+                    List<ConsumerAdoption> batch = consumerAdoptions
+                        .Skip(i)
+                        .Take(batchSize)
+                        .ToList();
 
-                    var batchCompositeKeys = batch
-                        .Select(consumerAdoption => new { consumerAdoption.DecisionId, consumerAdoption.ConsumerId })
+                    var batchDecisionIds = batch
+                        .Select(consumerAdoption => consumerAdoption.DecisionId)
+                        .Distinct()
+                        .ToList();
+
+                    var batchConsumerIds = batch
+                        .Select(consumerAdoption => consumerAdoption.ConsumerId)
+                        .Distinct()
                         .ToList();
 
                     IQueryable<ConsumerAdoption> allConsumerAdoptions =
                         await this.storageBroker.SelectAllConsumerAdoptionsAsync();
 
                     IQueryable<ConsumerAdoption> storageBatchConsumerAdoptions = allConsumerAdoptions
-                        .Where(consumerAdoption => batchCompositeKeys.Any(
-                            key => key.DecisionId == consumerAdoption.DecisionId &&
-                                key.ConsumerId == consumerAdoption.ConsumerId));
+                        .Where(consumerAdoption => batchDecisionIds.Contains(consumerAdoption.DecisionId) &&
+                            batchConsumerIds.Contains(consumerAdoption.ConsumerId));
 
                     var existingCompositeKeys = storageBatchConsumerAdoptions
                         .Select(consumerAdoption => new { consumerAdoption.DecisionId, consumerAdoption.ConsumerId })
