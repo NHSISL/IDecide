@@ -3,9 +3,15 @@
 // ---------------------------------------------------------
 
 using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.IO;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 using Attrify.Extensions;
 using Attrify.InvisibleApi.Models;
 using ISL.Providers.Captcha.Abstractions;
@@ -51,14 +57,18 @@ using LondonDataServices.IDecide.Core.Services.Foundations.Pds;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Consumers;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Identity.Web;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OData.Edm;
 using Microsoft.OData.ModelBuilder;
 
@@ -103,10 +113,8 @@ namespace LondonDataServices.IDecide.Portal.Server
                 .AddEnvironmentVariables();
 
             // Add services to the container.
-            var azureAdOptions = builder.Configuration.GetSection("AzureAd");
-
-            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddMicrosoftIdentityWebApi(azureAdOptions);
+            
+            AddAuthenticationProvider(builder.Services, builder.Configuration);
 
             var instance = builder.Configuration["AzureAd:Instance"];
             var tenantId = builder.Configuration["AzureAd:TenantId"];
@@ -165,6 +173,91 @@ namespace LondonDataServices.IDecide.Portal.Server
                 });
         }
 
+        public static void AddAuthenticationProvider(IServiceCollection services, IConfiguration configuration)
+        {
+            var azureAdOptions = configuration.GetSection("AzureAd");
+            var NhsLoginOIDCConfig = configuration.GetSection("NHSLoginOIDC");
+            var privateKeyB64Text = NhsLoginOIDCConfig.GetValue("privateKeyb64", "");
+            var privateKeyText = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(privateKeyB64Text));
+
+            var rsa = RSA.Create();
+            rsa.ImportFromPem(privateKeyText.ToCharArray());
+            var rsaKey = new RsaSecurityKey(rsa);
+
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = "bff";
+                options.DefaultChallengeScheme = "oidc";
+            }).AddCookie("bff", options =>
+            {
+                options.Cookie.Name = "__Host-bff";
+                options.Cookie.HttpOnly = true;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                options.Cookie.SameSite = SameSiteMode.Strict;
+            })
+            .AddOpenIdConnect("oidc", options =>
+            {
+                options.Authority = NhsLoginOIDCConfig.GetValue("authority", "");
+                options.ClientId = NhsLoginOIDCConfig.GetValue("clientId", "");
+                options.ResponseType = "code";
+                options.UsePkce = true;
+
+
+                options.Scope.Clear();
+
+                foreach (var scope in NhsLoginOIDCConfig.GetValue("scopes", "").Split(" "))
+                {
+                    options.Scope.Add(scope);
+                }
+
+
+                options.SaveTokens = true;
+                options.GetClaimsFromUserInfoEndpoint = true;
+
+                options.CallbackPath = "/signin-oidc";
+                options.SignedOutCallbackPath = "/signout-callback-oidc";
+
+                options.TokenValidationParameters = new()
+                {
+                    NameClaimType = "name",
+                    RoleClaimType = "role"
+                };
+
+                options.Events = new OpenIdConnectEvents
+                {
+                    OnAuthorizationCodeReceived = ctx =>
+                    {
+                        // Create JWT client_assertion
+                        var now = DateTime.UtcNow;
+                        var tokenHandler = new JwtSecurityTokenHandler();
+
+                        var token = tokenHandler.CreateJwtSecurityToken(
+                            issuer: options.ClientId, // client_id
+                            subject: new ClaimsIdentity(new[] {
+                                 new Claim(JwtRegisteredClaimNames.Sub, options.ClientId),
+                                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                            }),
+                            audience: $"{options.Authority}/token", // token endpoint
+                            notBefore: now,
+                            issuedAt: now,
+                            expires: now.AddMinutes(5),
+                            signingCredentials: new SigningCredentials(rsaKey, SecurityAlgorithms.RsaSha512)
+                        );
+
+                        var clientAssertion = tokenHandler.WriteToken(token);
+
+                        ctx.TokenEndpointRequest.ClientAssertion = clientAssertion;
+                        ctx.TokenEndpointRequest.ClientAssertionType =
+                            "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
+
+                        return Task.CompletedTask;
+                    }
+                };
+
+            }).AddMicrosoftIdentityWebApi(azureAdOptions); 
+        }
+
         public static void ConfigurePipeline(WebApplication app, InvisibleApiKey invisibleApiKey)
         {
             app.UseDefaultFiles();
@@ -186,12 +279,57 @@ namespace LondonDataServices.IDecide.Portal.Server
                 });
             }
 
+
+            UseAthenticationEndpoints(app);
+
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseInvisibleApiMiddleware(invisibleApiKey);
             app.MapControllers().WithOpenApi();
             app.MapFallbackToFile("/index.html");
+        }
+
+        private static void UseAthenticationEndpoints(WebApplication app)
+        {
+            app.MapGet("/login", (HttpContext ctx) =>
+            {
+                return Results.Challenge(
+                    new AuthenticationProperties
+                    {
+                        RedirectUri = "/nhs-optOut"
+                    },
+                    new[] { "oidc" }
+                );
+            });
+
+            app.MapPost("/logout", async (HttpContext ctx) =>
+            {
+                await ctx.SignOutAsync("bff");
+                return Results.Ok();
+            });
+
+            app.MapGet("/patientInfo", async (HttpContext context) =>
+            {
+                var accessToken = await context.GetTokenAsync("access_token");
+
+                if (string.IsNullOrEmpty(accessToken))
+                    return Results.Unauthorized();
+
+                using var http = new HttpClient();
+
+                http.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", accessToken);
+
+                var response = await http.GetAsync(
+                    app.Configuration["NHSLoginOIDC:authority"] + "/userinfo"
+                );
+
+                var content = await response.Content.ReadAsStringAsync();
+
+                return Results.Content(content, "application/json");
+            })
+            .RequireAuthorization();
         }
 
         private static IEdmModel GetEdmModel()

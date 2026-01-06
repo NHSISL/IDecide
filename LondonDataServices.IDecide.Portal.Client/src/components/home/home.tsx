@@ -112,7 +112,7 @@ export const Home = () => {
                     <strong>{translate("homepage.intro4")}</strong>
                 </p>
                 <Button
-                    onClick={() => navigate("/optOut")}
+                    onClick={() => window.location.href = "/login" }
                     style={{ margin: "0 0 1rem 1rem", width: 260, fontWeight: 600, minHeight: 75 }}>
                     {translate("homepage.startButton")}
                 </Button>
