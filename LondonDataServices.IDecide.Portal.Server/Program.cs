@@ -14,6 +14,7 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Attrify.Extensions;
 using Attrify.InvisibleApi.Models;
+using Hl7.Fhir.Model.CdsHooks;
 using ISL.Providers.Captcha.Abstractions;
 using ISL.Providers.Captcha.FakeCaptcha.Providers.FakeCaptcha;
 using ISL.Providers.Captcha.GoogleReCaptcha.Models.Brokers.GoogleReCaptcha;
@@ -68,6 +69,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Identity.Web;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OData.Edm;
 using Microsoft.OData.ModelBuilder;
@@ -250,6 +252,26 @@ namespace LondonDataServices.IDecide.Portal.Server
                         ctx.TokenEndpointRequest.ClientAssertion = clientAssertion;
                         ctx.TokenEndpointRequest.ClientAssertionType =
                             "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
+
+                        return Task.CompletedTask;
+                    },
+                    OnRemoteFailure = ctx =>
+                    {
+                        ctx.HandleResponse();
+
+                        var message = ctx.Failure?.Message;
+
+                        var error = ctx.Request.Query["error"].ToString();
+                        if (error == "access_denied")
+                        {
+                            // User explicitly denied consent
+                            ctx.Response.Redirect("/consent-denied");
+                        }
+                        else
+                        {
+                            // Generic auth failure
+                            ctx.Response.Redirect("/auth-error");
+                        }
 
                         return Task.CompletedTask;
                     }

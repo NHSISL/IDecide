@@ -21,6 +21,14 @@ function App() {
 
     const router = createBrowserRouter([
         {
+            path: "consent-denied",
+            element: <div>TODO</div>
+        },
+        {
+            path: "auth-error",
+            element: <ErrorPage />
+        },
+        {
             path: "/",
             element: (
                 <StepProvider>
@@ -76,7 +84,7 @@ function App() {
                 {
                     path: "nhs-optOut",
                     element: <NhsLoginOptOutPage />
-                }
+                },
 
             ]
         },
