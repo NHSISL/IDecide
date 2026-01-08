@@ -260,6 +260,51 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                         correlationId: correlationId.ToString());
             });
 
+        public ValueTask RecordPatientInformationNhsLoginAsync(Patient patient) =>
+          TryCatch(async () =>
+          {
+              ValidateRecordPatientInformationArguments(
+                  nhsNumber: patient.NhsNumber,
+                  notificationPreference: patient.NotificationPreference.ToString());
+
+              IQueryable<Patient> patients = await this.patientService.RetrieveAllPatientsAsync();
+              Patient maybeMatchingPatient = patients.FirstOrDefault(p => p.NhsNumber == patient.NhsNumber);
+              Patient patientToRecord = null;
+              DateTimeOffset now = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
+              Guid correlationId = await this.identifierBroker.GetIdentifierAsync();
+
+              await this.auditBroker.LogInformationAsync(
+                  auditType: "Patient",
+                  title: "Recording Patient Information",
+                  message: $"Recording a patient with NHS Number {patient.NhsNumber}.",
+                  fileName: null,
+                  correlationId: correlationId.ToString());
+
+              if (maybeMatchingPatient is null)
+              {
+                  patientToRecord = await CreateNewPatientNoPdsAsync(patient, now);
+
+                  await this.auditBroker.LogInformationAsync(
+                      auditType: "Patient",
+                      title: "Patient Recorded",
+                      message: $"A new patient was created with NHS Number {patient.NhsNumber} this was through NHS Login.",
+                      fileName: null,
+                      correlationId: correlationId.ToString());
+
+                  return;
+              }
+
+              patientToRecord = await UpdatePatientAsync(
+                  maybeMatchingPatient, patient.NotificationPreference, now);
+
+              await this.auditBroker.LogInformationAsync(
+                      auditType: "Patient",
+                      title: "Patient Recorded",
+                      message: $"Patient with NHS Number {patient.NhsNumber} was updated and new validation code was sent.",
+                      fileName: null,
+                      correlationId: correlationId.ToString());
+          });
+
         public ValueTask VerifyPatientCodeAsync(string nhsNumber, string verificationCode) =>
             TryCatch(async () =>
             {
@@ -385,6 +430,25 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             return recordedPatient;
         }
 
+        virtual internal async ValueTask<Patient> CreateNewPatientNoPdsAsync(
+            Patient patient,
+            DateTimeOffset now)
+        {
+            DateTimeOffset expirationDate =
+                now.AddMinutes(decisionConfigurations.PatientValidationCodeExpireAfterMinutes);
+
+            Patient patientToRecord = patient;
+            patientToRecord.Id = await this.identifierBroker.GetIdentifierAsync();
+            patientToRecord.ValidationCode = "XXXXX";
+            patientToRecord.ValidationCodeExpiresOn = expirationDate;
+            patientToRecord.ValidationCodeMatchedOn = null;
+            patientToRecord.NotificationPreference = NotificationPreference.Unknown;
+            patientToRecord.Gender = "Unknown";
+            Patient recordedPatient = await this.patientService.AddPatientAsync(patientToRecord);
+
+            return recordedPatient;
+        }
+
         virtual internal async ValueTask<Patient> UpdatePatientAsync(
             Patient currentPatient,
             NotificationPreference notificationPreference,
@@ -481,5 +545,6 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
 
             await this.notificationService.SendCodeNotificationAsync(notificationInfo);
         }
+
     }
 }

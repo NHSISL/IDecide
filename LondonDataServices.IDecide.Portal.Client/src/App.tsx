@@ -15,7 +15,7 @@ import ContactPage from './pages/helpPages/contactPage';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClientGlobalOptions } from './brokers/apiBroker.globals';
 import SearchByNhsNumber from './components/SearchNhsNumber/searchByNhsNumber';
-import { NhsLoginOptOutPage } from './pages/nhsLoginOptOut';
+import { AppFlowNhsLogin } from './components/appFlowNhsLogin';
 
 function App() {
 
@@ -75,7 +75,7 @@ function App() {
                 },
                 {
                     path: "nhs-optOut",
-                    element: <NhsLoginOptOutPage />
+                    element: <AppFlowNhsLogin />
                 }
 
             ]
