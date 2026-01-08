@@ -11,7 +11,6 @@ using LondonDataServices.IDecide.Core.Models.Foundations.Patients.Exceptions;
 using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.OData.Query;
 using RESTFulSense.Controllers;
 
 namespace LondonDataServices.IDecide.Portal.Server.Controllers
@@ -61,12 +60,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
         }
 
         [HttpGet]
-#if !DEBUG
-        [EnableQuery(PageSize = 50)]
-#endif
-#if DEBUG
-        [EnableQuery(PageSize = 5000)]
-#endif
+        [ConfigurableEnableQuery]
         [InvisibleApi]
         [Authorize(Roles = "LondonDataServices.IDecide.Portal.Server.Administrators")]
         public async ValueTask<ActionResult<IQueryable<Patient>>> Get()

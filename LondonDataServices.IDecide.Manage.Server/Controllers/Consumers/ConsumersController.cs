@@ -10,7 +10,6 @@ using LondonDataServices.IDecide.Core.Models.Foundations.Consumers.Exceptions;
 using LondonDataServices.IDecide.Core.Services.Foundations.Consumers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.OData.Query;
 using RESTFulSense.Controllers;
 
 namespace LondonDataServices.IDecide.Manage.Server.Controllers
@@ -60,12 +59,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
         }
 
         [HttpGet]
-#if !DEBUG
-        [EnableQuery(PageSize = 50)]
-#endif
-#if DEBUG
-        [EnableQuery(PageSize = 20)]
-#endif
+        [ConfigurableEnableQuery]
         [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators")]
         public async ValueTask<ActionResult<IQueryable<Consumer>>> Get()
         {
