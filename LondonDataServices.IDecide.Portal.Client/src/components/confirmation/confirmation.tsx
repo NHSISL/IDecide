@@ -155,10 +155,10 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
                                 </div>
 
                                 <div className="nhsuk-summary-list__row">
-                                    <dt className="nhsuk-summary-list__key" style={{ fontWeight: "lighter" }}>NHS Number</dt>
+                                    <dt className="nhsuk-summary-list__key" style={{ fontWeight: "lighter" }}>Name</dt>
                                     <dd className="nhsuk-summary-list__value">
                                         <strong data-testid="nhs-number-value">
-                                            {nhsNumber || translate("ConfirmAndSave.nhsNumberNotProvided")}
+                                            {createdPatient?.givenName}, {createdPatient?.surname}
                                         </strong>
                                     </dd>
                                 </div>

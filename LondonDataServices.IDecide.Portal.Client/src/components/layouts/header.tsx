@@ -52,7 +52,12 @@ const HeaderComponent: React.FC = () => {
             >
                 <Header style={{ backgroundColor: configuration?.bannerColour || undefined }}>
                     <Header.Container>
-                        <Header.Logo href="/home" />
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                            <Header.Logo href="/home" />
+                            <span style={{ marginLeft: "20px", fontSize: "1.25rem", fontWeight: 500, color: "#fff" }}>
+                                OneLondon Data Portal
+                            </span>
+                        </div>
                         <Header.Content>
                             {location.pathname === "/nhs-optOut" && (
                                 <Button

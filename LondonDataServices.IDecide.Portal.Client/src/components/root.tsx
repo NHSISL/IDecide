@@ -27,9 +27,9 @@ export default function Root() {
 
     return (
         <div className="root-layout">
-            {!doNotShowLeftPanel && (
+           
                 <HeaderComponent />
-            )}
+           
 
             <div className="root-content">
                 <Container fluid>

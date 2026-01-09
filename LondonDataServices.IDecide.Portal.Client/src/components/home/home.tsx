@@ -98,7 +98,7 @@ export const Home = () => {
 
     return (
         <div className="home-content" style={{ padding: "1.5rem 0.5rem" }}>
-            <div className="home-box" style={{ maxWidth: 1700, margin: "0 auto", borderRadius: 8, boxShadow: "0 2px 8px #e0e0e0", padding: "2rem 1.5rem", background: "rgba(255, 255, 255, 0.70)" }}>
+            <div className="home-box" style={{ maxWidth: 1700, margin: "0 auto" }}>
 
                 <div style={{ position: "absolute", top: 5, right: 5, display: "none" }}>
                     <LanguageSelector />
@@ -118,7 +118,13 @@ export const Home = () => {
                 </Button>
 
                 <Button
-                    onClick={() => navigate("/optOut", { state: { powerOfAttorney: true } })}
+                    onClick={() => {
+                        fetch('/logout', { method: 'POST' }).then(d => {
+                            if (d.ok) {
+                                navigate("/optOut", { state: { powerOfAttorney: true } });
+                            }
+                        });
+                    }}
                     style={{ margin: "0 0 1rem 1rem", width: 260, fontWeight: 600, minHeight: 75 }}>
                     {translate("homepage.startButtonOther")}
                 </Button>

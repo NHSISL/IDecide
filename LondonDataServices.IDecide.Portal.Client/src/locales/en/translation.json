@@ -4,7 +4,7 @@
     "intro1": "OneLondon have developed a world leading resource for health and care improvement known as the London SDE (Secure Data Environment). This is comprised of the LDS (London Data Service) and the LAP (London Analytics Platform).",
     "intro2": "The data collected from healthcare systems across London by these services can be used for many things all ensuring patient information is shared for improved provision of care.",
     "intro3": "This portal is where you can tell us if you don't want your data used by LDS or LAP for anything other than your personal healthcare. By clicking the start button below you will be taken through a process to exercise your right to request that we do not use your data for anything other than care provided to you by healthcare professionals. If you ever want to change that decision in the future you can go through the same process to tell us we can use your data.",
-    "intro4": "Click on the Start button below to tell us your data preference",
+    "intro4": "Click below to tell us your data preference",
     "startButton": "Continue to NHS Login",
     "startButtonOther": "Requesting an Opt-out on someone else's behalf",
     "beforeYouStartTitle": "Before you start",
