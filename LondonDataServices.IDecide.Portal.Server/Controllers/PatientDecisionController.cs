@@ -2,10 +2,12 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System.Linq;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions.Exceptions;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
 
@@ -26,6 +28,39 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
             try
             {
                 await this.decisionOrchestrationService.VerifyAndRecordDecisionAsync(decision);
+
+                return Ok();
+            }
+            catch (DecisionOrchestrationValidationException decisionOrchestrationValidationException)
+            {
+                return BadRequest(decisionOrchestrationValidationException.InnerException);
+            }
+            catch (DecisionOrchestrationDependencyValidationException
+                decisionOrchestrationDependencyValidationException)
+            {
+                return BadRequest(decisionOrchestrationDependencyValidationException.InnerException);
+            }
+            catch (DecisionOrchestrationDependencyException decisionOrchestrationDependencyException)
+            {
+                return InternalServerError(decisionOrchestrationDependencyException);
+            }
+            catch (DecisionOrchestrationServiceException decisionOrchestrationServiceException)
+            {
+                return InternalServerError(decisionOrchestrationServiceException);
+            }
+        }
+
+        [Authorize]
+        [HttpPost("PatientDecisionNhsLogin")]
+        public async ValueTask<ActionResult> PostPatientDecisionNhsLoginAsync([FromBody] Decision decision)
+        {
+            try
+            {
+                var nhsnumber = HttpContext.User.Claims
+                   .FirstOrDefault(x => x.Type == "nhs_number")?.Value;
+
+                decision.Patient.NhsNumber = nhsnumber;
+                await this.decisionOrchestrationService.VerifyAndRecordDecisionNhsLoginAsync(decision);
 
                 return Ok();
             }

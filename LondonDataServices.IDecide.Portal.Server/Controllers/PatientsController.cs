@@ -4,6 +4,11 @@
 
 using System;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Attrify.Attributes;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
@@ -12,9 +17,11 @@ using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
 using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
 using LondonDataServices.IDecide.Portal.Server.Models;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
+using Microsoft.Extensions.Configuration;
 using RESTFulSense.Controllers;
 
 namespace LondonDataServices.IDecide.Portal.Server.Controllers
@@ -25,14 +32,54 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
     {
         private readonly IPatientService patientService;
         private readonly IPatientOrchestrationService patientOrchestrationService;
+        private readonly IConfiguration configuration;
 
-        public PatientsController(IPatientService patientService, IPatientOrchestrationService patientOrchestrationService)
+        public PatientsController(
+            IPatientService patientService,
+            IPatientOrchestrationService patientOrchestrationService,
+            IConfiguration configuration)
         {
             this.patientService = patientService;
             this.patientOrchestrationService = patientOrchestrationService;
+            this.configuration = configuration;
         }
 
+        [Authorize]
+        [HttpGet("patientInfo")]
+        public async Task<IActionResult> GetPatientInfo()
+        {
+            var accessToken = await HttpContext.GetTokenAsync("access_token");
 
+            if (string.IsNullOrEmpty(accessToken))
+            {
+                return Unauthorized();
+            }
+
+            using var http = new HttpClient();
+
+            http.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", accessToken);
+
+            var response = await http.GetAsync(
+                configuration["NHSLoginOIDC:authority"] + "/userinfo"
+            );
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return StatusCode((int)response.StatusCode);
+            }
+
+            var userInfo = await response.Content.ReadFromJsonAsync<NhsLoginUserInfo>(
+                new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                }
+            );
+
+            return new JsonResult(userInfo);
+        }
+
+        [Authorize]
         [HttpPost("PatientGenerationNhsLoginRequest")]
         public async ValueTask<ActionResult> PostPatientGenerationNhsLoginRequestAsync(string phoneNumber)
         {
@@ -40,6 +87,12 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
             {
                 var nhsnumber = HttpContext.User.Claims
                     .FirstOrDefault(x => x.Type == "nhs_number")?.Value;
+
+                if (string.IsNullOrWhiteSpace(nhsnumber))
+                {
+                    return BadRequest("NHS number is required but was not provided.");
+                }
+
                 var firstName = HttpContext.User.Claims
                     .FirstOrDefault(x => x.Type == "given_name")?.Value;
                 var lastName = HttpContext.User.Claims
@@ -47,7 +100,8 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
                 var email = HttpContext.User.Claims
                     .FirstOrDefault(x => x.Type == "email")?.Value;
                 var dobString = HttpContext.User.Claims
-                    .FirstOrDefault(x => x.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/dateofbirth")?.Value;
+                    .FirstOrDefault(
+                        x => x.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/dateofbirth")?.Value;
 
                 DateTimeOffset.TryParse(dobString, out DateTimeOffset dob);
 

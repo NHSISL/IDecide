@@ -12,6 +12,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
     public interface IDecisionOrchestrationService
     {
         ValueTask VerifyAndRecordDecisionAsync(Decision decision);
+        ValueTask VerifyAndRecordDecisionNhsLoginAsync(Decision decision);
 
         ValueTask<List<Decision>> RetrieveAllPendingAdoptionDecisionsForConsumer(
             DateTimeOffset changesSinceDate, string decisionType);

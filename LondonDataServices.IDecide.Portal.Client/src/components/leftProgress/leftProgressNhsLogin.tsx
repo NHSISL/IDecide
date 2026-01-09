@@ -117,11 +117,10 @@ const LeftProgressNhsLogin: React.FC<LeftProgressNhsLoginProps> = ({ currentStep
                                                 style={{
                                                     display: "flex",
                                                     alignItems: "center",
-                                                    cursor: isPreviousStep(idx) ? "pointer" : "default",
+                                                    cursor: "default",
                                                     marginBottom: 8,
                                                     color: "black",
                                                 }}
-                                                onClick={() => isPreviousStep(idx) && setCurrentStepIndex(idx)}
                                             >
                                                 <FontAwesomeIcon
                                                     icon={faCheckCircle}
@@ -137,7 +136,6 @@ const LeftProgressNhsLogin: React.FC<LeftProgressNhsLoginProps> = ({ currentStep
                                                 value={step}
                                                 disabled={true}
                                                 checked={isCurrentStep(idx)}
-                                                onChange={() => { }}
                                                 style={{ marginBottom: 8 }}
                                             >
                                                 <span className="radio-label">{stepLabels[step]}</span>

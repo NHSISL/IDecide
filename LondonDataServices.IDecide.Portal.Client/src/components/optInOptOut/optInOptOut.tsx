@@ -67,6 +67,10 @@ export const OptInOptOut: React.FC<OptInOptOutProps> = ({ createdPatient }) => {
                         </Alert>
                     )}
 
+                    <h4 style={{ fontWeight: 700, fontSize: "1.5rem", margin: "0 0 1rem 0", color: "#212529" }}>
+                        {translate("ConfirmDetails.confirmDetails", "Make your choice")}
+                    </h4>
+
                     <form onSubmit={handleSubmit}>
                         {/* Opt-Out Card */}
                         <div
@@ -145,6 +149,7 @@ export const OptInOptOut: React.FC<OptInOptOutProps> = ({ createdPatient }) => {
                             type="submit"
                             className="nhsuk-button"
                             style={{ width: "100%", marginTop: "0.2rem" }}
+                            disabled={!selectedOption}
                         >
                             {translate("OptOut.nextButton")}
                         </button>

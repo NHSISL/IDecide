@@ -1,12 +1,14 @@
 import React, { useEffect } from "react";
-import { Header } from "nhsuk-react-components";
+import { Header, Button } from "nhsuk-react-components";
 import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
 import AccessibilityBox from "../accessibilitys/accessibility";
 import { useTranslation } from "react-i18next";
+import { useLocation } from "react-router-dom";
 
 const HeaderComponent: React.FC = () => {
     const { configuration } = useFrontendConfiguration();
     const { t: translate } = useTranslation();
+    const location = useLocation();
 
     useEffect(() => {
         if (configuration?.bannerColour) {
@@ -52,10 +54,27 @@ const HeaderComponent: React.FC = () => {
                     <Header.Container>
                         <Header.Logo href="/home" />
                         <Header.Content>
+                            {location.pathname === "/nhs-optOut" && (
+                                <Button
+                                reverse
+                                    className="nhsuk-button--small"
+                                    onClick={() => {
+                                        fetch('/logout', { method: 'POST' }).then(d => {
+                                            if (d.ok) {
+                                                window.location.href = '/';
+                                            }
+                                        });
+                                    }}
+                                >
+                                    Logout
+                                </Button>
+                            )}
+
                             <span className="me-4 text-white">
                                 {configuration?.environment}
                             </span>
                             <AccessibilityBox />
+                            
                         </Header.Content>
                     </Header.Container>
                 </Header>

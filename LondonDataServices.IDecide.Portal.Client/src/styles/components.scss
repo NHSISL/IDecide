@@ -93,7 +93,14 @@
     border-radius: 2px;
     overflow: hidden;
 }
-
+.nhsuk-button--small {
+    font-size: 0.875rem;
+    padding: 0.25em 1em;
+    min-width: unset;
+    min-height: 2rem;
+    margin:0;
+    margin-right:10px;
+}
 
 
 /* Remove display: flex and flex-wrap from .custom-col-spacing */
@@ -121,6 +128,24 @@
 .custom-col-spacing {
     padding-left: 10px !important;
 
+}
+
+/* Add this to your CSS file if the NHSUK CSS is not being applied */
+.nhsuk-button-blue {
+    background-color: #005eb8;
+    color: #fff;
+    border: none;
+}
+
+.nhsuk-button-blue:hover,
+.nhsuk-button-blue:focus {
+    background-color: #003087;
+    color: #fff;
+}
+
+.nhsuk-button-blue:active {
+    background-color: #002d72;
+    color: #fff;
 }
 
 

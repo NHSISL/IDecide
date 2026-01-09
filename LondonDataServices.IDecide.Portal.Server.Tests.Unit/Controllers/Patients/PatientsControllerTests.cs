@@ -7,7 +7,9 @@ using System.Linq;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients.Exceptions;
 using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
+using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
 using LondonDataServices.IDecide.Portal.Server.Controllers;
+using Microsoft.Extensions.Configuration;
 using Moq;
 using RESTFulSense.Controllers;
 using Tynamix.ObjectFiller;
@@ -19,12 +21,21 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Patien
     {
 
         private readonly Mock<IPatientService> patientServiceMock;
+        private readonly Mock<IPatientOrchestrationService> patientOrchestrationServiceMock;
+        private readonly Mock<IConfiguration> configurationMock;
+        
         private readonly PatientsController patientsController;
 
         public PatientsControllerTests()
         {
             patientServiceMock = new Mock<IPatientService>();
-            patientsController = new PatientsController(patientServiceMock.Object);
+            patientOrchestrationServiceMock = new Mock<IPatientOrchestrationService>();
+            configurationMock = new Mock<IConfiguration>();
+
+            patientsController = new PatientsController(
+                patientServiceMock.Object,
+                patientOrchestrationServiceMock.Object,
+                configurationMock.Object);
         }
 
         public static TheoryData<Xeption> ValidationExceptions()

@@ -14,27 +14,34 @@ interface ConfirmationNhsLoginProps {
     selectedOption: "optout" | "optin" | null;
     nhsNumber: string | null;
     createdPatient?: Patient | null;
-    }
+}
 
 export const ConfirmationNhsLogin: React.FC<ConfirmationNhsLoginProps> = ({
     selectedOption,
     nhsNumber,
-    createdPatient    
+    createdPatient
 }) => {
 
     const { nextStep, previousStep } = useStep();
-    const createDecisionMutation = decisionViewService.useCreatePatientDecision();
+    const createDecisionMutation = decisionViewService.useCreatePatientDecisionNhsLogin();
     const [apiError, setApiError] = useState<string | JSX.Element>("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { t: translate } = useTranslation();
     const { configuration } = useFrontendConfiguration();
     const RECAPTCHA_SITE_KEY = configuration.recaptchaSiteKey;
     const RECAPTCHA_ACTION_SUBMIT = "submit";
+    const [notificationPreference, setNotificationPreference] = useState<"SMS" | "Email" | "">("");
 
     const handleApiError = useApiErrorHandlerChecks({
         setApiError,
         configuration
     });
+
+    const handleNotificationChange = (value: "SMS" | "Email") => {
+        setNotificationPreference(prev =>
+            prev === value ? "" : value
+        );
+    };
 
     const handleBack = () => {
         previousStep();
@@ -43,8 +50,8 @@ export const ConfirmationNhsLogin: React.FC<ConfirmationNhsLoginProps> = ({
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!nhsNumber || !selectedOption) {
-            setApiError(translate("ConfirmAndSave.errorMissingNhsOrOption"));
+        if (!notificationPreference) {
+            setApiError("Please select how you would like to be notified.");
             return;
         }
 
@@ -53,20 +60,26 @@ export const ConfirmationNhsLogin: React.FC<ConfirmationNhsLoginProps> = ({
 
         const decision = new PatientDecision({
             id: crypto.randomUUID(),
-            patientId: createdPatient?.id,
+            //patientId: createdPatient?.id,
+            patientId: '00000000-0000-0000-0000-000000000000',
             patient: {
                 nhsNumber: nhsNumber || "",
-                validationCode: createdPatient?.validationCode
+                validationCode: "LOGIN",
+                notificationPreference: notificationPreference === "Email"
+                    ? 0
+                    : notificationPreference === "SMS"
+                        ? 2
+                        : undefined
             },
-            decisionChoice: selectedOption,
-            decisionTypeId: configuration.decisionTypeId,
-            //responsiblePersonGivenName: powerOfAttorney?.firstName,
-            //responsiblePersonRelationship: powerOfAttorney?.relationship,
-            //responsiblePersonSurname: powerOfAttorney?.surname
+            decisionChoice: selectedOption!,
+            decisionTypeId: configuration.decisionTypeId
         });
 
         try {
-            const token = await grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: RECAPTCHA_ACTION_SUBMIT });
+            const token = await window.grecaptcha!.execute(
+                RECAPTCHA_SITE_KEY,
+                { action: RECAPTCHA_ACTION_SUBMIT }
+            );
 
             createDecisionMutation.mutate(
                 decision,
@@ -127,17 +140,23 @@ export const ConfirmationNhsLogin: React.FC<ConfirmationNhsLoginProps> = ({
         }
     };
 
+    const getNotificationPreferenceLabel = () => {
+        if (notificationPreference === "SMS") return "SMS";
+        if (notificationPreference === "Email") return "Email";
+        return <span style={{ color: "#888" }}>Not selected</span>;
+    };
+
     return (
         <>
             <Row className="custom-col-spacing">
                 <Col xs={12} md={6} lg={6}>
 
-
                     <div className="nhsuk-card nhsuk-card--summary">
+
                         <div className="nhsuk-card__content">
                             <h3 className="nhsuk-card__heading">Your Data Sharing Choice</h3>
 
-                            <dl className="nhsuk-summary-list">
+                            <dl className="nhsuk-summary-list mb-2">
                                 <div className="nhsuk-summary-list__row">
                                     <dt className="nhsuk-summary-list__key" style={{ fontWeight: "lighter" }}>Decision</dt>
                                     <dd className="nhsuk-summary-list__value">
@@ -152,42 +171,64 @@ export const ConfirmationNhsLogin: React.FC<ConfirmationNhsLoginProps> = ({
                                 </div>
 
                                 <div className="nhsuk-summary-list__row">
-                                    <dt className="nhsuk-summary-list__key" style={{ fontWeight: "lighter" }}>NHS Number</dt>
+                                    <dt className="nhsuk-summary-list__key" style={{ fontWeight: "lighter" }}>Name</dt>
                                     <dd className="nhsuk-summary-list__value">
                                         <strong data-testid="nhs-number-value">
-                                            {nhsNumber || translate("ConfirmAndSave.nhsNumberNotProvided")}
+                                            {createdPatient?.givenName},{createdPatient?.surname}
+                                        </strong>
+                                    </dd>
+                                </div>
+
+                                <div className="nhsuk-summary-list__row">
+                                    <dt className="nhsuk-summary-list__key" style={{ fontWeight: "lighter" }}>
+                                        Notification Preference
+                                    </dt>
+                                    <dd className="nhsuk-summary-list__value">
+                                        <strong data-testid="notification-preference-value">
+                                            {getNotificationPreferenceLabel()}
                                         </strong>
                                     </dd>
                                 </div>
                             </dl>
 
-                            {/*{powerOfAttorney && (*/}
-                            {/*    <>*/}
-                            {/*        <hr />*/}
-                            {/*        <h3 className="nhsuk-card__heading nhsuk-u-margin-top-4">*/}
-                            {/*            {translate("ConfirmAndSave.powerOfAttorneyDetails")}*/}
-                            {/*        </h3>*/}
-                            {/*        <dl className="nhsuk-summary-list">*/}
-                            {/*            <div className="nhsuk-summary-list__row">*/}
-                            {/*                <dt className="nhsuk-summary-list__key" style={{ fontWeight: "lighter" }}>*/}
-                            {/*                    {translate("ConfirmAndSave.powerOfAttorneyName")}*/}
-                            {/*                </dt>*/}
-                            {/*                <dd className="nhsuk-summary-list__value">*/}
-                            {/*                    <strong>{powerOfAttorney.firstName} {powerOfAttorney.surname}</strong>*/}
-                            {/*                </dd>*/}
-                            {/*            </div>*/}
-
-                            {/*            <div className="nhsuk-summary-list__row">*/}
-                            {/*                <dt className="nhsuk-summary-list__key" style={{ fontWeight: "lighter" }}>*/}
-                            {/*                    {translate("ConfirmAndSave.powerOfAttorneyRelationship")}*/}
-                            {/*                </dt>*/}
-                            {/*                <dd className="nhsuk-summary-list__value">*/}
-                            {/*                    <strong>{powerOfAttorney.relationship}</strong>*/}
-                            {/*                </dd>*/}
-                            {/*            </div>*/}
-                            {/*        </dl>*/}
-                            {/*    </>*/}
-                            {/*)}*/}
+                            <Alert>
+                            {/* Notification Preference Selection */}
+                            <div className="nhsuk-form-group" style={{ marginBottom: "1.5rem" }}>
+                                <fieldset className="nhsuk-fieldset">
+                                    <legend className="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">
+                                        How would you like to be notified when your data flows into the London Data Service?
+                                    </legend>
+                                    <div className="nhsuk-checkboxes">
+                                        <div className="nhsuk-checkboxes__item">
+                                            <input
+                                                className="nhsuk-checkboxes__input"
+                                                id="notify-text"
+                                                name="notificationPreferenceText"
+                                                type="checkbox"
+                                                checked={notificationPreference === "SMS"}
+                                                onChange={() => handleNotificationChange("SMS")}
+                                            />
+                                            <label className="nhsuk-label nhsuk-checkboxes__label" htmlFor="notify-text">
+                                                SMS
+                                            </label>
+                                        </div>
+                                        <div className="nhsuk-checkboxes__item">
+                                            <input
+                                                className="nhsuk-checkboxes__input"
+                                                id="notify-email"
+                                                name="notificationPreferenceEmail"
+                                                type="checkbox"
+                                                checked={notificationPreference === "Email"}
+                                                onChange={() => handleNotificationChange("Email")}
+                                            />
+                                            <label className="nhsuk-label nhsuk-checkboxes__label" htmlFor="notify-email">
+                                                Email
+                                            </label>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                </div>
+                            </Alert>
 
                             <hr />
                             <form className="nhsuk-form-group" onSubmit={handleSubmit} data-testid="confirmation-form" >
@@ -196,7 +237,7 @@ export const ConfirmationNhsLogin: React.FC<ConfirmationNhsLoginProps> = ({
                                     type="submit"
                                     style={{ width: "100%", marginBottom: "5px" }}
                                     data-testid="save-preferences-btn"
-                                    disabled={isSubmitting || !selectedOption}
+                                    disabled={isSubmitting || !selectedOption || !notificationPreference}
                                     aria-busy={isSubmitting}
                                 >
                                     {isSubmitting ? translate("ConfirmAndSave.submitting") : translate("ConfirmAndSave.savePreferences")}
@@ -206,7 +247,7 @@ export const ConfirmationNhsLogin: React.FC<ConfirmationNhsLoginProps> = ({
                             <hr />
 
                             <p className="nhsuk-hint" style={{ marginBottom: "1rem" }}>
-                                    If you have changed your mind and want to update your choice, click below to go back.
+                                If you have changed your mind and want to update your choice, click below to go back.
                             </p>
                             <button
                                 className="nhsuk-button nhsuk-button--secondary"
@@ -218,11 +259,10 @@ export const ConfirmationNhsLogin: React.FC<ConfirmationNhsLoginProps> = ({
                                 <FontAwesomeIcon icon={faArrowLeftLong} /> Go Back
                             </button>
                             <p className="nhsuk-hint" style={{ marginBottom: "1.5rem" }}>
-                                <strong>You can change your mind at any time by returning to this site.</strong>
+                                <strong>You can also change your mind at any time by returning to this site.</strong>
                             </p>
                         </div>
                     </div>
-
 
                     {apiError && (
                         <Alert variant="danger" onClose={() => setApiError("")} dismissible data-testid="error-alert">

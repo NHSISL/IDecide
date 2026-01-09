@@ -294,7 +294,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                   return;
               }
 
-              patientToRecord = await UpdatePatientAsync(
+              patientToRecord = await UpdatePatientNoPdsAsync(
                   maybeMatchingPatient, patient.NotificationPreference, now);
 
               await this.auditBroker.LogInformationAsync(
@@ -439,7 +439,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
 
             Patient patientToRecord = patient;
             patientToRecord.Id = await this.identifierBroker.GetIdentifierAsync();
-            patientToRecord.ValidationCode = "XXXXX";
+            patientToRecord.ValidationCode = "LOGIN";
             patientToRecord.ValidationCodeExpiresOn = expirationDate;
             patientToRecord.ValidationCodeMatchedOn = null;
             patientToRecord.NotificationPreference = NotificationPreference.Unknown;
@@ -474,6 +474,32 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                 now.AddMinutes(decisionConfigurations.PatientValidationCodeExpireAfterMinutes);
 
             patientToUpdate.ValidationCode = validationCode;
+            patientToUpdate.ValidationCodeMatchedOn = null;
+            patientToUpdate.ValidationCodeExpiresOn = expirationDate;
+
+            if (resetRetryCount)
+            {
+                patientToUpdate.RetryCount = 0;
+            }
+
+            Patient modifiedPatient = await this.patientService.ModifyPatientAsync(patientToUpdate);
+
+            return modifiedPatient;
+        }
+
+        virtual internal async ValueTask<Patient> UpdatePatientNoPdsAsync(
+           Patient currentPatient,
+           NotificationPreference notificationPreference,
+           DateTimeOffset now,
+           bool resetRetryCount = false)
+        {
+            Patient pdsPatient = await this.pdsService.PatientLookupByNhsNumberAsync(currentPatient.NhsNumber);
+            Patient patientToUpdate = currentPatient;
+           
+            DateTimeOffset expirationDate =
+                now.AddMinutes(decisionConfigurations.PatientValidationCodeExpireAfterMinutes);
+
+            patientToUpdate.ValidationCode = "LOGIN";
             patientToUpdate.ValidationCodeMatchedOn = null;
             patientToUpdate.ValidationCodeExpiresOn = expirationDate;
 

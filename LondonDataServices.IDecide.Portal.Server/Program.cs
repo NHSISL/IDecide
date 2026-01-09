@@ -7,6 +7,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text.Json;
@@ -115,7 +116,7 @@ namespace LondonDataServices.IDecide.Portal.Server
                 .AddEnvironmentVariables();
 
             // Add services to the container.
-            
+
             AddAuthenticationProvider(builder.Services, builder.Configuration);
 
             var instance = builder.Configuration["AzureAd:Instance"];
@@ -277,7 +278,7 @@ namespace LondonDataServices.IDecide.Portal.Server
                     }
                 };
 
-            }).AddMicrosoftIdentityWebApi(azureAdOptions); 
+            }).AddMicrosoftIdentityWebApi(azureAdOptions);
         }
 
         public static void ConfigurePipeline(WebApplication app, InvisibleApiKey invisibleApiKey)
@@ -312,6 +313,20 @@ namespace LondonDataServices.IDecide.Portal.Server
             app.MapFallbackToFile("/index.html");
         }
 
+        public class NhsLoginUserInfo
+        {
+            [JsonPropertyName("birthdate")]
+            public DateTime Birthdate { get; set; }
+            [JsonPropertyName("family_name")]
+            public string FamilyName { get; set; }
+            [JsonPropertyName("email")]
+            public string Email { get; set; }
+            [JsonPropertyName("phone_number")]
+            public string PhoneNumber { get; set; }
+            [JsonPropertyName("given_name")]
+            public string GivenName { get; set; }
+        }
+
         private static void UseAthenticationEndpoints(WebApplication app)
         {
             app.MapGet("/login", (HttpContext ctx) =>
@@ -331,6 +346,7 @@ namespace LondonDataServices.IDecide.Portal.Server
                 return Results.Ok();
             });
 
+            //move to Controller
             app.MapGet("/patientInfo", async (HttpContext context) =>
             {
                 var accessToken = await context.GetTokenAsync("access_token");
@@ -347,10 +363,15 @@ namespace LondonDataServices.IDecide.Portal.Server
                     app.Configuration["NHSLoginOIDC:authority"] + "/userinfo"
                 );
 
-                var content = await response.Content.ReadAsStringAsync();
-
-                return Results.Content(content, "application/json");
+                NhsLoginUserInfo userInfo = await response.Content.ReadFromJsonAsync<NhsLoginUserInfo>(
+                    new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    }
+                );
+                return Results.Json(userInfo);
             })
+
             .RequireAuthorization();
         }
 

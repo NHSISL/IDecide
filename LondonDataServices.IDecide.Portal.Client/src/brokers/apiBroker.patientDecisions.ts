@@ -11,6 +11,13 @@ class PatientDecisionBroker {
             return await this.apiBroker.PostAsync(url, decision, headers)
                 .then(() => undefined);
     }
+
+    async PostPatientDecisionNhsLoginAsync(decision: PatientDecision, headers?: Record<string, string>) {
+        const url = `${this.relativeDecisionsUrl}/PatientDecisionNhsLogin`;
+
+        return await this.apiBroker.PostAsync(url, decision, headers)
+            .then(() => undefined);
+    }
 }
 
 export default PatientDecisionBroker;

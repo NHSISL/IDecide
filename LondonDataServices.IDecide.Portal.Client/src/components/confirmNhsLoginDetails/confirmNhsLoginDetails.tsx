@@ -3,18 +3,18 @@ import { useStep } from "../../hooks/useStep";
 import { Row, Col, Alert } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 import { Patient } from "../../models/patients/patient";
-import { PatientCodeRequest } from "../../models/patients/patientCodeRequest";
 import { useFrontendConfiguration } from "../../hooks/useFrontendConfiguration";
 import { loadRecaptchaScript } from "../../helpers/recaptureLoad";
 import { isApiErrorResponse } from "../../helpers/isApiErrorResponse";
 import { useApiErrorHandlerChecks } from "../../hooks/useApiErrorHandlerChecks";
 import { patientViewService } from "../../services/views/patientViewService";
+import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-interface ConfirmNhsLoginDetailsProps { }
 
-export const ConfirmNhsLoginDetails: React.FC<ConfirmNhsLoginDetailsProps> = () => {
+export const ConfirmNhsLoginDetails: React.FC = () => {
     const { t: translate } = useTranslation();
-    const { setCurrentStepIndex, nextStep, createdPatient, setCreatedPatient, powerOfAttorney } = useStep();
+    const { nextStep, createdPatient, setCreatedPatient, powerOfAttorney } = useStep();
     const { configuration } = useFrontendConfiguration();
     const RECAPTCHA_SITE_KEY = configuration.recaptchaSiteKey;
     const RECAPTCHA_ACTION_SUBMIT = "submit";
@@ -42,10 +42,6 @@ export const ConfirmNhsLoginDetails: React.FC<ConfirmNhsLoginDetailsProps> = () 
             });
     }, [setCreatedPatient]);
 
-    const handleNoClick = () => {
-        setCurrentStepIndex(0);
-    };
-
     const handleSubmit = async () => {
         setApiError("");
         setInfo("");
@@ -55,12 +51,12 @@ export const ConfirmNhsLoginDetails: React.FC<ConfirmNhsLoginDetailsProps> = () 
         try {
             await loadRecaptchaScript(RECAPTCHA_SITE_KEY);
 
-            if (!(window as any).grecaptcha || !(window as any).grecaptcha.execute) {
+            if (!window.grecaptcha || !window.grecaptcha.execute) {
                 setApiError("reCAPTCHA failed to load. Please try again later.");
                 return;
             }
 
-            const token = await (window as any).grecaptcha.execute(
+            const token = await window.grecaptcha!.execute(
                 RECAPTCHA_SITE_KEY,
                 { action: RECAPTCHA_ACTION_SUBMIT }
             );
@@ -109,11 +105,7 @@ export const ConfirmNhsLoginDetails: React.FC<ConfirmNhsLoginDetailsProps> = () 
     };
 
     const handleYesClick = () => {
-
-        //NEED TO SAVE PATIENT
         handleSubmit()
-
-        //nextStep(undefined, undefined, createdPatient!, powerOfAttorney!);
     };
 
     if (!createdPatient) {
@@ -124,7 +116,9 @@ export const ConfirmNhsLoginDetails: React.FC<ConfirmNhsLoginDetailsProps> = () 
         <Row className="custom-col-spacing">
             <Col xs={12} md={6} lg={6}>
                 <div>
-                    <h4 style={{ fontWeight: 700, fontSize: "1.5rem", margin: "0 0 1rem 0", color: "#212529" }}>{translate("ConfirmDetails.isThisYou")}</h4>
+                    <h4 style={{ fontWeight: 700, fontSize: "1.5rem", margin: "0 0 1rem 0", color: "#212529" }}>
+                        {translate("ConfirmDetails.confirmDetails", "Confirm your details")}
+                    </h4>
                     <dl className="nhsuk-summary-list" style={{ marginBottom: "2rem" }}>
                         <div className="nhsuk-summary-list__row">
                             <dt className="nhsuk-summary-list__key">{translate("ConfirmDetails.name")}</dt>
@@ -139,35 +133,34 @@ export const ConfirmNhsLoginDetails: React.FC<ConfirmNhsLoginDetailsProps> = () 
                             <dd className="nhsuk-summary-list__value">{createdPatient.phone}</dd>
                         </div>
                     </dl>
-                    {/*<Button*/}
-                    {/*    onClick={() => {*/}
-                    {/*        fetch('/logout', { method: 'POST' }).then(d => {*/}
-                    {/*            if (d.ok) {*/}
-                    {/*                window.location.href = '/';*/}
-                    {/*            }*/}
-                    {/*        });*/}
-                    {/*    }}*/}
-                    {/*>*/}
-                    {/*    Logout*/}
-                    {/*</Button>*/}
-                    <div style={{ display: "flex", gap: "1rem", marginBottom: "0.2rem" }}>
+
+                    <div style={{ display: "flex", marginBottom: "0.2rem", width: "25%" }}>
                         <button
                             type="button"
                             className="nhsuk-button"
                             style={{ flex: 1 }}
                             onClick={handleYesClick}
                         >
-                            {translate("ConfirmDetails.yes")}
-                        </button>
-                        <button
-                            type="button"
-                            className="nhsuk-button nhsuk-button--secondary"
-                            style={{ flex: 1 }}
-                            onClick={handleNoClick}
-                        >
-                            {translate("ConfirmDetails.no")}
+                            {translate("ConfirmDetails.Continue", "Next")}
                         </button>
                     </div>
+                    <Alert variant="info" style={{ marginTop: "0.5rem" }}>
+                        <p>
+                            <span style={{ marginRight: "0.5rem" }}>
+                                <FontAwesomeIcon icon={faCircleInfo} style={{ color: "#005eb8" }} ></FontAwesomeIcon>
+                            </span>
+
+                            If these details are incorrect, you'll need to update your details at your GP practice. You can do this by contacting your GP directly.</p>
+                        <p>
+                            Once your details are updated, you'll be able to make your choice online.
+                        </p>
+
+                        <p>
+                            If you do not know your GP's contact details or are not registered with one,
+                            try using the <a href="https://www.nhs.uk/service-search/find-a-gp" target="_blank" rel="noopener noreferrer">
+                            find a GP</a> service.
+                        </p>
+                    </Alert>
                 </div>
 
                 {apiError && (
@@ -190,8 +183,8 @@ export const ConfirmNhsLoginDetails: React.FC<ConfirmNhsLoginDetailsProps> = () 
                         border: "1px solid #d1e3f0",
                         borderRadius: "8px",
                         boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
-                    }}
-                >
+                    }}>
+
                     <h2 className="mb-3" style={{ color: "#005eb8" }}>
                         {translate("ConfirmDetails.helpGuidance")}
                     </h2>

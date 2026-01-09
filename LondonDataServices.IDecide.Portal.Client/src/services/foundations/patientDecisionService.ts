@@ -12,6 +12,15 @@ export const patientDecisionService = {
         return await broker.PostPatientDecisionAsync(decision, headers);
     },
 
+    useCreatePatientDecisionNhsLogin: async (
+        decision: PatientDecision,
+        headers?: Record<string, string>
+    ) => {
+        const broker = new PatientDecisionBroker();
+
+        return await broker.PostPatientDecisionNhsLoginAsync(decision, headers);
+    },
+
     useModifyPatientDecision: () => {
         const broker = new PatientDecisionBroker();
         const queryClient = useQueryClient();

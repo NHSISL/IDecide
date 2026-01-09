@@ -5,9 +5,8 @@ import { useStep } from "../hooks/useStep";
 import NhsLoginOptOutPage from "../pages/nhsLoginOptOut";
 import ConfirmationNhsLoginPage from "../pages/confirmationNhsLoginPage";
 
-interface AppFlowNhsLoginProps {}
 
-export const AppFlowNhsLogin: React.FC<AppFlowNhsLoginProps> = () => {
+export const AppFlowNhsLogin: React.FC = () => {
     const { currentStepIndex, setCurrentStepIndex } = useStep();
 
     useEffect(() => {
@@ -52,6 +51,10 @@ export const AppFlowNhsLogin: React.FC<AppFlowNhsLoginProps> = () => {
         case 2:
             label = steps[2].label;
             content = steps[2].render();
+            break;
+        case 3:
+            label = steps[3].label;
+            content = steps[3].render();
             break;
         default:
             label = "";
