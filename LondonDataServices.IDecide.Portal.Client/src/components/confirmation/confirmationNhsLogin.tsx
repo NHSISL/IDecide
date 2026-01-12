@@ -31,7 +31,7 @@ export const ConfirmationNhsLogin: React.FC<ConfirmationNhsLoginProps> = ({
     const RECAPTCHA_SITE_KEY = configuration.recaptchaSiteKey;
     const RECAPTCHA_ACTION_SUBMIT = "submit";
     const [notificationPreference, setNotificationPreference] = useState<"SMS" | "Email" | "None" | "">("");
-
+    const EmptyGuid = "00000000-0000-0000-0000-000000000000"
     const handleApiError = useApiErrorHandlerChecks({
         setApiError,
         configuration
@@ -60,7 +60,7 @@ export const ConfirmationNhsLogin: React.FC<ConfirmationNhsLoginProps> = ({
 
         const decision = new PatientDecision({
             id: crypto.randomUUID(),
-            patientId: '00000000-0000-0000-0000-000000000000',
+            patientId: EmptyGuid,
             patient: {
                 nhsNumber: nhsNumber || "",
                 validationCode: "LOGIN",

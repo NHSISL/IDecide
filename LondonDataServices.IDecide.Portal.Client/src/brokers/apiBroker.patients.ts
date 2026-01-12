@@ -55,7 +55,7 @@ class PatientBroker {
     }
 
     async GetPatientInfoNhsLoginAsync() {
-        const response = await fetch('/patientinfo');
+        const response = await fetch('/api/Patients/patientInfo');
 
         const r = await response.json();
 

@@ -345,34 +345,6 @@ namespace LondonDataServices.IDecide.Portal.Server
                 await ctx.SignOutAsync("bff");
                 return Results.Ok();
             });
-
-            //move to Controller
-            app.MapGet("/patientInfo", async (HttpContext context) =>
-            {
-                var accessToken = await context.GetTokenAsync("access_token");
-
-                if (string.IsNullOrEmpty(accessToken))
-                    return Results.Unauthorized();
-
-                using var http = new HttpClient();
-
-                http.DefaultRequestHeaders.Authorization =
-                    new AuthenticationHeaderValue("Bearer", accessToken);
-
-                var response = await http.GetAsync(
-                    app.Configuration["NHSLoginOIDC:authority"] + "/userinfo"
-                );
-
-                NhsLoginUserInfo userInfo = await response.Content.ReadFromJsonAsync<NhsLoginUserInfo>(
-                    new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    }
-                );
-                return Results.Json(userInfo);
-            })
-
-            .RequireAuthorization();
         }
 
         private static IEdmModel GetEdmModel()
