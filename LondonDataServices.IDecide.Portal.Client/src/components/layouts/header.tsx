@@ -59,27 +59,34 @@ const HeaderComponent: React.FC = () => {
                             </span>
                         </div>
                         <Header.Content>
-                            {location.pathname === "/nhs-optOut" && (
-                                <Button
-                                reverse
-                                    className="nhsuk-button--small"
-                                    onClick={() => {
-                                        fetch('/logout', { method: 'POST' }).then(d => {
-                                            if (d.ok) {
-                                                window.location.href = '/';
-                                            }
-                                        });
-                                    }}
-                                >
-                                    Logout
-                                </Button>
-                            )}
+                            <div
+                                style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: "1.5rem"
+                                }}
+                            >
+                                {location.pathname === "/nhs-optOut" && (
+                                    <Button
+                                        reverse
+                                        className="nhsuk-button--small"
+                                        onClick={() => {
+                                            fetch('/logout', { method: 'POST' }).then(d => {
+                                                if (d.ok) {
+                                                    window.location.href = '/';
+                                                }
+                                            });
+                                        }}
+                                    >
+                                        Logout
+                                    </Button>
+                                )}
 
-                            <span className="me-4 text-white">
-                                {configuration?.environment}
-                            </span>
-                            <AccessibilityBox />
-                            
+                                <span style={{ color: "#fff", fontWeight: 500 }}>
+                                    {configuration?.environment}
+                                </span>
+                                <AccessibilityBox />
+                            </div>
                         </Header.Content>
                     </Header.Container>
                 </Header>

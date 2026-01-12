@@ -165,17 +165,44 @@ export const OptInOptOut: React.FC<OptInOptOutProps> = ({ createdPatient }) => {
                             boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
                         }}
                     >
-                        <h2 className="mb-3" style={{ color: "#005eb8" }}>{translate("OptOut.helpGuidanceTitle")}</h2>
+                        <h2 className="mb-3" style={{ color: "#005eb8" }}>
+                            {translate("OptOut.helpGuidanceTitle")}
+                        </h2>
                         <h3>{translate("OptOut.helpOptOutTitle")}</h3>
-                        <p>{translate("OptOut.helpOptOutDesc1")}</p>
+                        <p>
+                            Your confidential patient information can be used for improving health, care and services, including:
+                        </p>
                         <ul>
-                            <li>{translate("OptOut.helpOptOutList1")}</li>
-                            <li>{translate("OptOut.helpOptOutList2")}</li>
-                            <li>{translate("OptOut.helpOptOutList3")}</li>
-                            <li>{translate("OptOut.helpOptOutList4")}</li>
+                            <li>Planning to improve health and care services</li>
+                            <li>Research to find a cure for serious illnesses</li>
                         </ul>
                         <p>
-                            {translate("OptOut.helpOptOutDesc2")}
+                            Your decision will not affect your individual care and you can change your mind at any time.
+                        </p>
+                        <p>
+                            <strong>Why is this important?</strong>
+                            The NHS uses information from millions of patients to plan and improve services, and to support vital research. This helps ensure everyone receives the best possible care.
+                        </p>
+                        <p>
+                            <strong>Your rights:</strong>
+                            You are in control of your confidential patient information. You can choose whether your data is used for research and planning, and you can change your choice at any time without it affecting your care.
+                        </p>
+                        <p>
+                            <strong>Need more information?</strong>
+                            Visit the&nbsp;
+                            <a
+                                href="https://www.nhs.uk/your-nhs-data-matters/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{ color: "#005eb8", textDecoration: "underline" }}
+                            >
+                                NHS Your Data Matters
+                            </a>
+                            &nbsp;page to learn more about how your data is used and your choices.
+                        </p>
+                        <p>
+                            <strong>Security reminder:</strong>
+                            The NHS takes your privacy seriously. Your information is protected and will never be used for marketing or insurance purposes.
                         </p>
                     </div>
                 </Col>

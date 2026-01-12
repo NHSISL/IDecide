@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useStep } from "../../hooks/useStep";
-import { Row, Col, Alert } from "react-bootstrap";
+import { Row, Col, Alert, Button } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 import { Patient } from "../../models/patients/patient";
 import { useFrontendConfiguration } from "../../hooks/useFrontendConfiguration";
@@ -161,7 +161,26 @@ export const ConfirmNhsLoginDetails: React.FC = () => {
                         <p>
                             If you do not know your GP's contact details or are not registered with one,
                             try using the <a href="https://www.nhs.uk/service-search/find-a-gp" target="_blank" rel="noopener noreferrer">
-                            find a GP</a> service.
+                                find a GP</a> service.
+                        </p>
+
+                        <p>
+                            Click{' '}
+                            <a
+                                href="#"
+                                style={{ padding: 0, border: "none", background: "none", color: "#005eb8", textDecoration: "underline" }}
+                                onClick={e => {
+                                    e.preventDefault();
+                                    fetch('/logout', { method: 'POST' }).then(d => {
+                                        if (d.ok) {
+                                            window.location.href = '/';
+                                        }
+                                    });
+                                }}
+                            >
+                                here
+                            </a>{' '}
+                            to logout.
                         </p>
                     </Alert>
                 </div>
@@ -187,27 +206,26 @@ export const ConfirmNhsLoginDetails: React.FC = () => {
                         borderRadius: "8px",
                         boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
                     }}>
-
                     <h2 className="mb-3" style={{ color: "#005eb8" }}>
-                        {translate("ConfirmDetails.helpGuidance")}
+                        Help & Guidance
                     </h2>
-                    <h3 className="mb-3" style={{ color: "#005eb8" }}>
-                        {translate("ConfirmDetails.checkingYourDetails")}
-                    </h3>
                     <p>
-                        {translate("ConfirmDetails.reviewDetails")}
+                        Please review the details shown on this page. Some information, such as your mobile number, may be partially hidden for your privacy.
                     </p>
                     <p>
-                        {translate("ConfirmDetails.detailsCorrect")}
+                        If these details are correct and belong to you, click Next to continue.
                     </p>
                     <p>
-                        {translate("ConfirmDetails.detailsIncorrect")}
+                        <strong>Why check your details?</strong> This helps ensure your information is accurate and up to date, which is important for your care and for keeping your records secure.
                     </p>
                     <p>
-                        {translate("ConfirmDetails.alreadyReceivedCode")}
+                        <strong>If your details are incorrect:</strong> You will need to update them with your GP practice before continuing. This helps protect your privacy and ensures you receive important information.
                     </p>
                     <p>
-                        {translate("ConfirmDetails.securityInfo")}
+                        <strong>How your information is used:</strong> The details you confirm here will only be used to verify your identity and provide you with the right services..
+                    </p>
+                    <p>
+                        <strong>Security reminder:</strong> Never share your NHS login details or personal information with anyone. The NHS will never ask you for your password or security codes by email or phone.
                     </p>
                 </div>
             </Col>

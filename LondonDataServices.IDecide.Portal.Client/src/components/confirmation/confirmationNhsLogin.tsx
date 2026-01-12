@@ -303,11 +303,46 @@ export const ConfirmationNhsLogin: React.FC<ConfirmationNhsLoginProps> = ({
                             {translate("ConfirmAndSave.aboutThisStepDesc1")}
                         </p>
                         <p>
-                            {translate("ConfirmAndSave.helpChangePrefs")}
+                            <strong>What to expect:</strong><br />
+                            - If you chose to be notified, you will receive updates when your data is used by the London Data Service.<br />
+                            - If you opted out of notifications, you will not receive updates, but your choice is still recorded and respected.
                         </p>
-                        <h3 data-testid="need-help-heading">{translate("ConfirmAndSave.needHelpTitle")}</h3>
                         <p>
+                            <strong>Your rights and privacy:</strong><br />
+                            You are in control of your confidential patient information. The NHS takes your privacy seriously and your information will never be used for marketing or insurance purposes. You can change your data sharing choice at any time.
+                        </p>
+                        <p>
+                            <strong>Need more information?</strong><br />
+                            Visit the&nbsp;
+                            <a
+                                href="https://www.nhs.uk/your-nhs-data-matters/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{ color: "#005eb8", textDecoration: "underline" }}
+                            >
+                                NHS Your Data Matters
+                            </a>
+                            &nbsp;page to learn more about how your data is used and your choices.
+                        </p>
+                        <p>
+                            <strong>{translate("ConfirmAndSave.needHelpTitle")}</strong><br />
+
                             {translate("ConfirmAndSave.needHelpDesc")}
+
+                            on &nbsp;
+                            <a
+                                href={`tel:${configuration.helpdeskContactNumber}`}
+                                style={{ textDecoration: "underline" }}
+                            >
+                                {configuration.helpdeskContactNumber}
+                            </a> or email us at&nbsp;
+
+                            <a
+                                href={`mailto:${configuration.helpdeskContactEmail}`}
+                                style={{ textDecoration: "underline" }}
+                            >
+                                {configuration.helpdeskContactEmail}
+                            </a>.
                         </p>
                     </div>
                 </Col>
