@@ -3,6 +3,7 @@ import { GenerateCodeRequest } from "../models/patients/generateCodeRequest";
 import { PatientLookup } from "../models/patients/patientLookup";
 import ApiBroker from "./apiBroker";
 import { AxiosResponse } from "axios";
+import { PatientNhsLogin } from "../models/patients/patientNhsLogin";
 
 class PatientBroker {
     relativePatientsUrl = '/api/Patient';
@@ -53,7 +54,24 @@ class PatientBroker {
             .then(() => undefined); // No response body expected
     }
 
-   
+    async GetPatientInfoNhsLoginAsync() {
+        const response = await fetch('/patientinfo');
+
+        const r = await response.json();
+
+        if (!r) {
+            return undefined;
+        }
+
+        return new PatientNhsLogin({
+            nhsNumber: r.nhs_number,
+            givenName: r.given_name,
+            surname: r.family_name,
+            dateOfBirth: r.birthdate ? new Date(r.birthdate) : undefined,
+            email: r.email,
+            phone: r.phone_number
+        });
+    }
 }
 
 export default PatientBroker;

@@ -74,5 +74,13 @@ export const patientService = {
         });
     },
 
-    
+    useRetrievePatientInfoNhsLogin: () => {
+        const broker = new PatientBroker();
+
+        return useQuery({
+            queryKey: ["PatientGetInfoNhsLogin"],
+            queryFn: () => broker.GetPatientInfoNhsLoginAsync(),
+            staleTime: Infinity
+        });
+    }
 };

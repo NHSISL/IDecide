@@ -9,6 +9,6 @@ namespace LondonDataServices.IDecide.Core.Models.Foundations.Notifications
         Email,
         Letter,
         Sms,
-        Unknown
+        None
     }
 }

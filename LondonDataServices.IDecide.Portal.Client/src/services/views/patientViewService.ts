@@ -108,4 +108,7 @@ export const patientViewService = {
             }
         };
     },
+    useRetrievePatientInfoNhsLogin: () => {
+        return patientService.useRetrievePatientInfoNhsLogin();
+    },
 };

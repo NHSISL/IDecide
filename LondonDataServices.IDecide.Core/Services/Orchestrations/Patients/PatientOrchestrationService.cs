@@ -442,7 +442,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             patientToRecord.ValidationCode = "LOGIN";
             patientToRecord.ValidationCodeExpiresOn = expirationDate;
             patientToRecord.ValidationCodeMatchedOn = null;
-            patientToRecord.NotificationPreference = NotificationPreference.Unknown;
+            patientToRecord.NotificationPreference = NotificationPreference.None;
             patientToRecord.Gender = "Unknown";
             Patient recordedPatient = await this.patientService.AddPatientAsync(patientToRecord);
 

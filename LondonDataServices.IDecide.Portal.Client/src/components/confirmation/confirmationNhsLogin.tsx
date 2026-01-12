@@ -30,14 +30,14 @@ export const ConfirmationNhsLogin: React.FC<ConfirmationNhsLoginProps> = ({
     const { configuration } = useFrontendConfiguration();
     const RECAPTCHA_SITE_KEY = configuration.recaptchaSiteKey;
     const RECAPTCHA_ACTION_SUBMIT = "submit";
-    const [notificationPreference, setNotificationPreference] = useState<"SMS" | "Email" | "">("");
+    const [notificationPreference, setNotificationPreference] = useState<"SMS" | "Email" | "None" | "">("");
 
     const handleApiError = useApiErrorHandlerChecks({
         setApiError,
         configuration
     });
 
-    const handleNotificationChange = (value: "SMS" | "Email") => {
+    const handleNotificationChange = (value: "SMS" | "Email" | "None") => {
         setNotificationPreference(prev =>
             prev === value ? "" : value
         );
@@ -60,7 +60,6 @@ export const ConfirmationNhsLogin: React.FC<ConfirmationNhsLoginProps> = ({
 
         const decision = new PatientDecision({
             id: crypto.randomUUID(),
-            //patientId: createdPatient?.id,
             patientId: '00000000-0000-0000-0000-000000000000',
             patient: {
                 nhsNumber: nhsNumber || "",
@@ -69,7 +68,9 @@ export const ConfirmationNhsLogin: React.FC<ConfirmationNhsLoginProps> = ({
                     ? 0
                     : notificationPreference === "SMS"
                         ? 2
-                        : undefined
+                        : notificationPreference === "None"
+                            ? 3
+                            : undefined
             },
             decisionChoice: selectedOption!,
             decisionTypeId: configuration.decisionTypeId
@@ -143,6 +144,7 @@ export const ConfirmationNhsLogin: React.FC<ConfirmationNhsLoginProps> = ({
     const getNotificationPreferenceLabel = () => {
         if (notificationPreference === "SMS") return "SMS";
         if (notificationPreference === "Email") return "Email";
+        if (notificationPreference === "None") return "None";
         return <span style={{ color: "#888" }}>Not selected</span>;
     };
 
@@ -192,41 +194,54 @@ export const ConfirmationNhsLogin: React.FC<ConfirmationNhsLoginProps> = ({
                             </dl>
 
                             <Alert>
-                            {/* Notification Preference Selection */}
-                            <div className="nhsuk-form-group" style={{ marginBottom: "1.5rem" }}>
-                                <fieldset className="nhsuk-fieldset">
-                                    <legend className="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">
-                                        How would you like to be notified when your data flows into the London Data Service?
-                                    </legend>
-                                    <div className="nhsuk-checkboxes">
-                                        <div className="nhsuk-checkboxes__item">
-                                            <input
-                                                className="nhsuk-checkboxes__input"
-                                                id="notify-text"
-                                                name="notificationPreferenceText"
-                                                type="checkbox"
-                                                checked={notificationPreference === "SMS"}
-                                                onChange={() => handleNotificationChange("SMS")}
-                                            />
-                                            <label className="nhsuk-label nhsuk-checkboxes__label" htmlFor="notify-text">
-                                                SMS
-                                            </label>
+                                {/* Notification Preference Selection */}
+                                <div className="nhsuk-form-group" style={{ marginBottom: "1.5rem" }}>
+                                    <fieldset className="nhsuk-fieldset">
+                                        <legend className="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">
+                                            How would you like to be notified when your data flows into the London Data Service?
+                                        </legend>
+                                        <div className="nhsuk-checkboxes">
+                                            <div className="nhsuk-checkboxes__item">
+                                                <input
+                                                    className="nhsuk-checkboxes__input"
+                                                    id="notify-text"
+                                                    name="notificationPreferenceText"
+                                                    type="checkbox"
+                                                    checked={notificationPreference === "SMS"}
+                                                    onChange={() => handleNotificationChange("SMS")}
+                                                />
+                                                <label className="nhsuk-label nhsuk-checkboxes__label" htmlFor="notify-text">
+                                                    SMS
+                                                </label>
+                                            </div>
+                                            <div className="nhsuk-checkboxes__item">
+                                                <input
+                                                    className="nhsuk-checkboxes__input"
+                                                    id="notify-email"
+                                                    name="notificationPreferenceEmail"
+                                                    type="checkbox"
+                                                    checked={notificationPreference === "Email"}
+                                                    onChange={() => handleNotificationChange("Email")}
+                                                />
+                                                <label className="nhsuk-label nhsuk-checkboxes__label" htmlFor="notify-email">
+                                                    Email
+                                                </label>
+                                            </div>
+                                            <div className="nhsuk-checkboxes__item">
+                                                <input
+                                                    className="nhsuk-checkboxes__input"
+                                                    id="notify-none"
+                                                    name="notificationPreferenceNone"
+                                                    type="checkbox"
+                                                    checked={notificationPreference === "None"}
+                                                    onChange={() => handleNotificationChange("None")}
+                                                />
+                                                <label className="nhsuk-label nhsuk-checkboxes__label" htmlFor="notify-none">
+                                                    I dont want to be notified.
+                                                </label>
+                                            </div>
                                         </div>
-                                        <div className="nhsuk-checkboxes__item">
-                                            <input
-                                                className="nhsuk-checkboxes__input"
-                                                id="notify-email"
-                                                name="notificationPreferenceEmail"
-                                                type="checkbox"
-                                                checked={notificationPreference === "Email"}
-                                                onChange={() => handleNotificationChange("Email")}
-                                            />
-                                            <label className="nhsuk-label nhsuk-checkboxes__label" htmlFor="notify-email">
-                                                Email
-                                            </label>
-                                        </div>
-                                    </div>
-                                </fieldset>
+                                    </fieldset>
                                 </div>
                             </Alert>
 

@@ -21,6 +21,7 @@ export const ConfirmNhsLoginDetails: React.FC = () => {
     const updatePatient = patientViewService.useAddPatientNhsLogin();
     const [apiError, setApiError] = useState<string | JSX.Element>("");
     const [info, setInfo] = useState<string | JSX.Element>("");
+    const { data: nhsLoginPatient, isSuccess } = patientViewService.useRetrievePatientInfoNhsLogin();
 
     const handleApiError = useApiErrorHandlerChecks({
         setApiError,
@@ -28,19 +29,21 @@ export const ConfirmNhsLoginDetails: React.FC = () => {
     });
 
     useEffect(() => {
-        fetch('/patientinfo')
-            .then(d => d.json())
-            .then(r => {
-                setCreatedPatient(new Patient({
-                    nhsNumber: r.nhs_number,
-                    givenName: r.given_name,
-                    surname: r.family_name,
-                    dateOfBirth: r.birthdate ? new Date(r.birthdate) : undefined,
-                    email: r.email,
-                    phone: r.phone_number
-                }));
-            });
-    }, [setCreatedPatient]);
+        if (isSuccess && nhsLoginPatient) {
+            setCreatedPatient(
+                new Patient({
+                    nhsNumber: nhsLoginPatient.nhsNumber,
+                    givenName: nhsLoginPatient.givenName,
+                    surname: nhsLoginPatient.surname,
+                    dateOfBirth: nhsLoginPatient.dateOfBirth
+                        ? new Date(nhsLoginPatient.dateOfBirth)
+                        : undefined,
+                    email: nhsLoginPatient.email,
+                    phone: nhsLoginPatient.phone
+                })
+            );
+        }
+    }, [isSuccess, nhsLoginPatient, setCreatedPatient]);
 
     const handleSubmit = async () => {
         setApiError("");
