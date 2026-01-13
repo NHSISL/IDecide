@@ -303,7 +303,7 @@ namespace LondonDataServices.IDecide.Portal.Server
             }
 
 
-            UseAthenticationEndpoints(app);
+            UseAuthenticationEndpoints(app);
 
             app.UseHttpsRedirection();
             app.UseAuthentication();
@@ -327,7 +327,7 @@ namespace LondonDataServices.IDecide.Portal.Server
             public string GivenName { get; set; }
         }
 
-        private static void UseAthenticationEndpoints(WebApplication app)
+        private static void UseAuthenticationEndpoints(WebApplication app)
         {
             app.MapGet("/login", (HttpContext ctx) =>
             {

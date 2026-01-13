@@ -4,7 +4,6 @@ import { Row, Col, Alert } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 import { Patient } from "../../models/patients/patient";
 import { useFrontendConfiguration } from "../../hooks/useFrontendConfiguration";
-import { loadRecaptchaScript } from "../../helpers/recaptureLoad";
 import { isApiErrorResponse } from "../../helpers/isApiErrorResponse";
 import { useApiErrorHandlerChecks } from "../../hooks/useApiErrorHandlerChecks";
 import { patientViewService } from "../../services/views/patientViewService";
@@ -16,8 +15,6 @@ export const ConfirmNhsLoginDetails: React.FC = () => {
     const { t: translate } = useTranslation();
     const { nextStep, createdPatient, setCreatedPatient, powerOfAttorney } = useStep();
     const { configuration } = useFrontendConfiguration();
-    const RECAPTCHA_SITE_KEY = configuration.recaptchaSiteKey;
-    const RECAPTCHA_ACTION_SUBMIT = "submit";
     const updatePatient = patientViewService.useAddPatientNhsLogin();
     const [apiError, setApiError] = useState<string | JSX.Element>("");
     const [info, setInfo] = useState<string | JSX.Element>("");
@@ -52,22 +49,9 @@ export const ConfirmNhsLoginDetails: React.FC = () => {
         const phoneNumber = createdPatient!.phone;
 
         try {
-            await loadRecaptchaScript(RECAPTCHA_SITE_KEY);
-
-            if (!window.grecaptcha || !window.grecaptcha.execute) {
-                setApiError("reCAPTCHA failed to load. Please try again later.");
-                return;
-            }
-
-            const token = await window.grecaptcha!.execute(
-                RECAPTCHA_SITE_KEY,
-                { action: RECAPTCHA_ACTION_SUBMIT }
-            );
-
             updatePatient.mutate(
                 phoneNumber!,
                 {
-                    headers: { "X-Recaptcha-Token": token },
                     onSuccess: () => {
                         setApiError("");
                         setInfo("");
@@ -125,7 +109,7 @@ export const ConfirmNhsLoginDetails: React.FC = () => {
                     <dl className="nhsuk-summary-list" style={{ marginBottom: "2rem" }}>
                         <div className="nhsuk-summary-list__row">
                             <dt className="nhsuk-summary-list__key">{translate("ConfirmDetails.name")}</dt>
-                            <dd className="nhsuk-summary-list__value">{createdPatient.givenName + ',' + createdPatient.surname}</dd>
+                            <dd className="nhsuk-summary-list__value">{createdPatient.givenName + ', ' + createdPatient.surname}</dd>
                         </div>
                         <div className="nhsuk-summary-list__row">
                             <dt className="nhsuk-summary-list__key">{translate("ConfirmDetails.email")}</dt>

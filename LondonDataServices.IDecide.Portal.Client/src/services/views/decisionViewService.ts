@@ -27,14 +27,13 @@ export const decisionViewService = {
             mutate: async (
                 decision: PatientDecision,
                 options?: {
-                    headers?: Record<string, string>,
                     onSuccess?: () => void,
                     onError?: (error: unknown) => void
                 }
             ) => {
                 try {
                     await patientDecisionService
-                        .useCreatePatientDecisionNhsLogin(decision, options?.headers);
+                        .useCreatePatientDecisionNhsLogin(decision);
                     options?.onSuccess?.();
                 } catch (error) {
                     options?.onError?.(error);

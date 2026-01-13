@@ -12,10 +12,10 @@ class PatientDecisionBroker {
                 .then(() => undefined);
     }
 
-    async PostPatientDecisionNhsLoginAsync(decision: PatientDecision, headers?: Record<string, string>) {
+    async PostPatientDecisionNhsLoginAsync(decision: PatientDecision) {
         const url = `${this.relativeDecisionsUrl}/PatientDecisionNhsLogin`;
 
-        return await this.apiBroker.PostAsync(url, decision, headers)
+        return await this.apiBroker.PostAsync(url, decision)
             .then(() => undefined);
     }
 }

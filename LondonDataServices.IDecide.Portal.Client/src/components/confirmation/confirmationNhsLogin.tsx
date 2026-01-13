@@ -28,8 +28,6 @@ export const ConfirmationNhsLogin: React.FC<ConfirmationNhsLoginProps> = ({
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { t: translate } = useTranslation();
     const { configuration } = useFrontendConfiguration();
-    const RECAPTCHA_SITE_KEY = configuration.recaptchaSiteKey;
-    const RECAPTCHA_ACTION_SUBMIT = "submit";
     const [notificationPreference, setNotificationPreference] = useState<"SMS" | "Email" | "None" | "">("");
     const EmptyGuid = "00000000-0000-0000-0000-000000000000"
     const handleApiError = useApiErrorHandlerChecks({
@@ -77,15 +75,9 @@ export const ConfirmationNhsLogin: React.FC<ConfirmationNhsLoginProps> = ({
         });
 
         try {
-            const token = await window.grecaptcha!.execute(
-                RECAPTCHA_SITE_KEY,
-                { action: RECAPTCHA_ACTION_SUBMIT }
-            );
-
             createDecisionMutation.mutate(
                 decision,
                 {
-                    headers: { "X-Recaptcha-Token": token },
                     onSuccess: () => {
                         setIsSubmitting(false);
                         nextStep();
@@ -176,7 +168,7 @@ export const ConfirmationNhsLogin: React.FC<ConfirmationNhsLoginProps> = ({
                                     <dt className="nhsuk-summary-list__key" style={{ fontWeight: "lighter" }}>Name</dt>
                                     <dd className="nhsuk-summary-list__value">
                                         <strong data-testid="nhs-number-value">
-                                            {createdPatient?.givenName},{createdPatient?.surname}
+                                            {createdPatient?.givenName}, {createdPatient?.surname}
                                         </strong>
                                     </dd>
                                 </div>

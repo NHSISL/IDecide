@@ -493,7 +493,6 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
            DateTimeOffset now,
            bool resetRetryCount = false)
         {
-            Patient pdsPatient = await this.pdsService.PatientLookupByNhsNumberAsync(currentPatient.NhsNumber);
             Patient patientToUpdate = currentPatient;
            
             DateTimeOffset expirationDate =
