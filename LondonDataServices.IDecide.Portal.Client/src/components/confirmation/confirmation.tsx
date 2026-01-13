@@ -69,7 +69,9 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
         });
 
         try {
-            const token = await grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: RECAPTCHA_ACTION_SUBMIT });
+            const token = await grecaptcha.execute(
+                RECAPTCHA_SITE_KEY,
+                { action: RECAPTCHA_ACTION_SUBMIT });
 
             createDecisionMutation.mutate(
                 decision,

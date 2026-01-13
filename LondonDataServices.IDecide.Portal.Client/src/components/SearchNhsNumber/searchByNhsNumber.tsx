@@ -156,13 +156,13 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
             }
         }
 
-        if (!recaptchaReady || typeof grecaptcha === "undefined" || !recaptchaSiteKey) {
+        if (!recaptchaReady || typeof window.grecaptcha === "undefined" || !recaptchaSiteKey) {
             setError(translate("SearchByNHSNumber.errorRecaptchaNotReady"));
             return;
         }
         setLoading(true);
         try {
-            grecaptcha.execute(recaptchaSiteKey, { action: RECAPTCHA_ACTION_SUBMIT }).then((token: string) => {
+            window.grecaptcha.execute(recaptchaSiteKey, { action: RECAPTCHA_ACTION_SUBMIT }).then((token: string) => {
                 const nhsNumberToUse = powerOfAttorney ? poaNhsNumberInput : nhsNumberInput;
                 const searchCriteria = new SearchCriteria({ nhsNumber: nhsNumberToUse });
                 const patientLookup = new PatientLookup(searchCriteria, []);
