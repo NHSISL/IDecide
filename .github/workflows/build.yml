@@ -16,43 +16,43 @@ jobs:
     name: Build
     runs-on: windows-latest
     steps:
-    - name: Enable long paths for Git
-      run: git config --system core.longpaths true
-    - name: Check out
-      uses: actions/checkout@v3
-    - name: Setup .Net
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 9.0.100
-    - name: Restore
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --no-restore
-    - name: Install EF Tools
-      run: dotnet tool install --global dotnet-ef --version 9
-    - name: Deploy Database
-      run: dotnet ef database update --project LondonDataServices.IDecide.Core/LondonDataServices.IDecide.Core.csproj --startup-project LondonDataServices.IDecide.Core/LondonDataServices.IDecide.Core.csproj
-    - name: Run Unit Tests
-      run: >-
-        $projects = Get-ChildItem -Path . -Filter "*Tests.Unit*.csproj" -Recurse
+      - name: Enable long paths for Git
+        run: git config --system core.longpaths true
+      - name: Check out
+        uses: actions/checkout@v3
+      - name: Setup .Net
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 9.0.100
+      - name: Restore
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --no-restore
+      - name: Install EF Tools
+        run: dotnet tool install --global dotnet-ef --version 9
+      - name: Deploy Database
+        run: dotnet ef database update --project LondonDataServices.IDecide.Core/LondonDataServices.IDecide.Core.csproj --startup-project LondonDataServices.IDecide.Core/LondonDataServices.IDecide.Core.csproj
+      - name: Run Unit Tests
+        run: >-
+          $projects = Get-ChildItem -Path . -Filter "*Tests.Unit*.csproj" -Recurse
 
-        foreach ($project in $projects) {
-          Write-Host "Running tests for: $($project.FullName)"
-          dotnet test $project.FullName --no-build --verbosity normal
-        }
-      shell: pwsh
-    - name: Run Acceptance Tests
-      run: >-
-        $projects = Get-ChildItem -Path . -Filter "*Tests.Acceptance*.csproj" -Recurse
+          foreach ($project in $projects) {
+            Write-Host "Running tests for: $($project.FullName)"
+            dotnet test $project.FullName --no-build --verbosity normal
+          }
+        shell: pwsh
+      - name: Run Acceptance Tests
+        run: >-
+          $projects = Get-ChildItem -Path . -Filter "*Tests.Acceptance*.csproj" -Recurse
 
-        foreach ($project in $projects) {
-          Write-Host "Running tests for: $($project.FullName)"
-          dotnet test $project.FullName --no-build --verbosity normal
-        }
-      shell: pwsh
-      env:
-        NHSLOGINOIDC__PRIVATEKEYB64: ${{ secrets.NHSLOGINOIDC__PRIVATEKEYB64 }}
-        NOTIFICATIONCONFIGURATIONS__APIKEY: ${{ secrets.NOTIFICATIONCONFIGURATIONS__APIKEY }}
+          foreach ($project in $projects) {
+            Write-Host "Running tests for: $($project.FullName)"
+            dotnet test $project.FullName --no-build --verbosity normal
+          }
+        shell: pwsh
+        env:
+          NHSLOGINOIDC__PRIVATEKEYB64: ${{ secrets.NHSLOGINOIDC__PRIVATEKEYB64 }}
+          NOTIFICATIONCONFIGURATIONS__APIKEY: ${{ secrets.NOTIFICATIONCONFIGURATIONS__APIKEY }}
   add_tag:
     name: Tag and Release
     runs-on: ubuntu-latest

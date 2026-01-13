@@ -186,11 +186,9 @@ namespace LondonDataServices.IDecide.Portal.Server
             Console.WriteLine($"Raw base64 from config: '{privateKeyB64Text}'");
             Console.WriteLine($"Decoded PEM:\n{privateKeyText}");
 
-
             var rsa = RSA.Create();
             rsa.ImportFromPem(privateKeyText.ToCharArray());
             var rsaKey = new RsaSecurityKey(rsa);
-
 
             services.AddAuthentication(options =>
             {
@@ -209,8 +207,6 @@ namespace LondonDataServices.IDecide.Portal.Server
                 options.ClientId = NhsLoginOIDCConfig.GetValue("clientId", "");
                 options.ResponseType = "code";
                 options.UsePkce = true;
-
-
                 options.Scope.Clear();
 
                 foreach (var scope in NhsLoginOIDCConfig.GetValue("scopes", "").Split(" "))
@@ -218,10 +214,8 @@ namespace LondonDataServices.IDecide.Portal.Server
                     options.Scope.Add(scope);
                 }
 
-
                 options.SaveTokens = true;
                 options.GetClaimsFromUserInfoEndpoint = true;
-
                 options.CallbackPath = "/signin-oidc";
                 options.SignedOutCallbackPath = "/signout-callback-oidc";
 
@@ -305,7 +299,6 @@ namespace LondonDataServices.IDecide.Portal.Server
                     configuration.OAuthScopes(app.Configuration["AzureAd:Scopes"]); // Add required scopes
                 });
             }
-
 
             UseAuthenticationEndpoints(app);
 
