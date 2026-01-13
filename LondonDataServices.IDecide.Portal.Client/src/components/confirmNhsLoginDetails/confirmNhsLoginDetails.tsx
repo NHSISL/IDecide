@@ -206,7 +206,7 @@ export const ConfirmNhsLoginDetails: React.FC = () => {
                         <strong>If your details are incorrect:</strong> You will need to update them with your GP practice before continuing. This helps protect your privacy and ensures you receive important information.
                     </p>
                     <p>
-                        <strong>How your information is used:</strong> The details you confirm here will only be used to verify your identity and provide you with the right services..
+                        <strong>How your information is used:</strong> The details you confirm here will only be used to verify your identity and provide you with the right services.
                     </p>
                     <p>
                         <strong>Security reminder:</strong> Never share your NHS login details or personal information with anyone. The NHS will never ask you for your password or security codes by email or phone.
