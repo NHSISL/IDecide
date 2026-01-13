@@ -183,6 +183,7 @@ namespace LondonDataServices.IDecide.Portal.Server
             var privateKeyText = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(privateKeyB64Text));
 
             // Add this for debugging (temporarily)
+            Console.WriteLine($"Raw base64 from config: '{privateKeyB64Text}'");
             Console.WriteLine($"Decoded PEM:\n{privateKeyText}");
 
 

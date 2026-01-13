@@ -229,7 +229,7 @@ export const ConfirmationNhsLogin: React.FC<ConfirmationNhsLoginProps> = ({
                                                     onChange={() => handleNotificationChange("None")}
                                                 />
                                                 <label className="nhsuk-label nhsuk-checkboxes__label" htmlFor="notify-none">
-                                                    I dont want to be notified.
+                                                    I don't want to be notified.
                                                 </label>
                                             </div>
                                         </div>
