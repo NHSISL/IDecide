@@ -116,7 +116,6 @@ namespace LondonDataServices.IDecide.Portal.Server
                 .AddEnvironmentVariables();
 
             // Add services to the container.
-
             AddAuthenticationProvider(builder.Services, builder.Configuration);
 
             var instance = builder.Configuration["AzureAd:Instance"];
