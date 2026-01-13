@@ -180,11 +180,14 @@ namespace LondonDataServices.IDecide.Portal.Server
             var azureAdOptions = configuration.GetSection("AzureAd");
             var NhsLoginOIDCConfig = configuration.GetSection("NHSLoginOIDC");
             var privateKeyB64Text = NhsLoginOIDCConfig.GetValue("privateKeyb64", "");
-            var privateKeyText = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(privateKeyB64Text));
 
-            // Add this for debugging (temporarily)
-            Console.WriteLine($"Raw base64 from config: '{privateKeyB64Text}'");
-            Console.WriteLine($"Decoded PEM:\n{privateKeyText}");
+            if (string.IsNullOrWhiteSpace(privateKeyB64Text))
+            {
+                throw new InvalidOperationException(
+                    "NHSLoginOIDC:privateKeyb64 configuration value is missing or empty.");
+            }
+
+            var privateKeyText = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(privateKeyB64Text));
 
             var rsa = RSA.Create();
             rsa.ImportFromPem(privateKeyText.ToCharArray());

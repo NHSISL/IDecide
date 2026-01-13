@@ -121,7 +121,6 @@ const LeftProgress: React.FC<LeftProgressProps> = ({ currentStepIndex, setCurren
                                                     marginBottom: 8,
                                                     color: "black",
                                                 }}
-                                                //onClick={() => isPreviousStep(idx) && setCurrentStepIndex(idx)}
                                             >
                                                 <FontAwesomeIcon
                                                     icon={faCheckCircle}
@@ -137,7 +136,6 @@ const LeftProgress: React.FC<LeftProgressProps> = ({ currentStepIndex, setCurren
                                                 value={step}
                                                 disabled={true}
                                                 checked={isCurrentStep(idx)}
-                                                //onChange={() => { }}
                                                 style={{ marginBottom: 8 }}
                                             >
                                                 <span className="radio-label">{stepLabels[step]}</span>

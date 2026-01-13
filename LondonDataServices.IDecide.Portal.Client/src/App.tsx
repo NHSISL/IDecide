@@ -16,13 +16,14 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClientGlobalOptions } from './brokers/apiBroker.globals';
 import SearchByNhsNumber from './components/SearchNhsNumber/searchByNhsNumber';
 import { AppFlowNhsLogin } from './components/appFlowNhsLogin';
+import ConsentDeniedPage from './pages/consentDeniedPage';
 
 function App() {
 
     const router = createBrowserRouter([
         {
             path: "consent-denied",
-            element: <div>TODO</div>
+            element: <ConsentDeniedPage />
         },
         {
             path: "auth-error",
