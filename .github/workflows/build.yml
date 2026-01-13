@@ -49,9 +49,10 @@ jobs:
           Write-Host "Running tests for: $($project.FullName)"
           dotnet test $project.FullName --no-build --verbosity normal
         }
-    env:
-      NOTIFICATIONCONFIGURATIONS__APIKEY: ${{ secrets.NOTIFICATIONCONFIGURATIONS__APIKEY }}
-      NHSLOGINOIDC__PRIVATEKEYB64: ${{ secrets.NHSLOGINOIDC__PRIVATEKEYB64 }}
+      shell: pwsh
+      env:
+        NHSLOGINOIDC__PRIVATEKEYB64: ${{ secrets.NHSLOGINOIDC__PRIVATEKEYB64 }}
+        NOTIFICATIONCONFIGURATIONS__APIKEY: ${{ secrets.NOTIFICATIONCONFIGURATIONS__APIKEY }}
   add_tag:
     name: Tag and Release
     runs-on: ubuntu-latest
