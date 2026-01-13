@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { Container } from "react-bootstrap";
 import ConfirmNhsLoginDetails from "../components/confirmNhsLoginDetails/confirmNhsLoginDetails";
 

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 let recaptchaPromise: Promise<void> | null = null;
 
 export function loadRecaptchaScript(siteKey: string): Promise<void> {

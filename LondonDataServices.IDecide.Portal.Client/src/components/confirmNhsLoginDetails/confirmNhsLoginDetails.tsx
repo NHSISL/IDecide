@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useStep } from "../../hooks/useStep";
-import { Row, Col, Alert, Button } from "react-bootstrap";
+import { Row, Col, Alert } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 import { Patient } from "../../models/patients/patient";
 import { useFrontendConfiguration } from "../../hooks/useFrontendConfiguration";
