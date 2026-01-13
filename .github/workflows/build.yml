@@ -51,7 +51,7 @@ jobs:
         }
     env:
       NOTIFICATIONCONFIGURATIONS__APIKEY: ${{ secrets.NOTIFICATIONCONFIGURATIONS__APIKEY }}
-      NHSLOGINOIDC__PRIVATEKEYB64: ${{ secrets.NHSLOGINOIDC__PRIVATEKEY64 }}
+      NHSLOGINOIDC__PRIVATEKEYB64: ${{ secrets.NHSLOGINOIDC__PRIVATEKEYB64 }}
   add_tag:
     name: Tag and Release
     runs-on: ubuntu-latest

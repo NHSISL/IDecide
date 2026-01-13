@@ -182,6 +182,10 @@ namespace LondonDataServices.IDecide.Portal.Server
             var privateKeyB64Text = NhsLoginOIDCConfig.GetValue("privateKeyb64", "");
             var privateKeyText = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(privateKeyB64Text));
 
+            // Add this for debugging (temporarily)
+            Console.WriteLine($"Decoded PEM:\n{privateKeyText}");
+
+
             var rsa = RSA.Create();
             rsa.ImportFromPem(privateKeyText.ToCharArray());
             var rsaKey = new RsaSecurityKey(rsa);
