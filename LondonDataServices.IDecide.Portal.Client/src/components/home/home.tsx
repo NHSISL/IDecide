@@ -174,7 +174,6 @@ export const Home = () => {
                     </ul>
                 </section>
 
-                {/* Call to Action */}
                 <section style={{ margin: "1.5rem 0" }}>
                     <p style={{ marginBottom: "0.7rem" }}>
                         <strong>{translate("homepage.intro4")}</strong>
@@ -211,7 +210,7 @@ export const Home = () => {
                 </section>
 
                 {/* Expandable Sections */}
-                <section style={{ marginTop: "2rem" }}>
+                <section>
                     {expandableHeaders.map((header, idx) => (
                         <ExpandableSection
                             key={header}
