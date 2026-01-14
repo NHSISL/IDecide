@@ -1,6 +1,5 @@
 ﻿import { Container, Card } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import HeaderComponent from "../../components/layouts/header";
 
 const CookiePage = () => {
     const navigate = useNavigate();

@@ -1,6 +1,5 @@
 ﻿import { Container } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import HeaderComponent from "../../components/layouts/header";
 
 const AccessibilityStatementPage = () => {
     const navigate = useNavigate();

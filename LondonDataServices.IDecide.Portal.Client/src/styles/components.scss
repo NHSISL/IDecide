@@ -80,6 +80,19 @@
     position: static;
 }
 
+.accessibility-img {
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s;
+    will-change: transform, box-shadow;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border-radius: 50%;
+}
+
+.accessibility-img-link:hover .accessibility-img,
+.accessibility-img-link:focus .accessibility-img {
+    transform: scale(1.2) rotate(-6deg);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.16);
+}
+
 .grecaptcha-badge {
     z-index: 1;
     width: 256px;

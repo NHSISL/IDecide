@@ -9,8 +9,6 @@ import { useApiErrorHandlerChecks } from "../../hooks/useApiErrorHandlerChecks";
 import { patientViewService } from "../../services/views/patientViewService";
 import { faArrowRight, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useNavigate } from "react-router-dom";
-
 
 export const ConfirmNhsLoginDetails: React.FC = () => {
     const { t: translate } = useTranslation();
@@ -20,7 +18,6 @@ export const ConfirmNhsLoginDetails: React.FC = () => {
     const [apiError, setApiError] = useState<string | JSX.Element>("");
     const [info, setInfo] = useState<string | JSX.Element>("");
     const { data: nhsLoginPatient, isSuccess } = patientViewService.useRetrievePatientInfoNhsLogin();
-    const navigate = useNavigate();
 
     const handleApiError = useApiErrorHandlerChecks({
         setApiError,

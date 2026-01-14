@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useStep } from "../../hooks/useStep";
 import { PowerOfAttorney } from "../../models/powerOfAttourneys/powerOfAttourney";
 import { patientViewService } from "../../services/views/patientViewService";
-import { TextInput, Button, Select, Card } from "nhsuk-react-components";
+import { TextInput, Button, Select } from "nhsuk-react-components";
 import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
 import { loadRecaptchaScript } from "../../helpers/recaptureLoad";
 import { Container, Row, Col, Alert } from "react-bootstrap";

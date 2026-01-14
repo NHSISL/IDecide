@@ -1,6 +1,5 @@
 ﻿import { Card, Col, Container, ListGroup, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import HeaderComponent from "../../components/layouts/header";
 
 const WebsitePrivacyNoticePage = () => {
     const navigate = useNavigate();

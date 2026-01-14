@@ -106,7 +106,6 @@ const AccessibilityBox: React.FC = () => {
                     fontSize: "1.5em",
                     textDecoration: "none",
                     fontWeight: 500,
-                    cursor: "pointer",
                     userSelect: "none",
                     outline: "none",
                 }}
@@ -116,6 +115,7 @@ const AccessibilityBox: React.FC = () => {
                 <img
                     src="/64px-Accessibility.svg.png"
                     alt="Accessibility"
+                    className="accessibility-img"
                     style={{
                         height: "2em",
                         verticalAlign: "middle",
