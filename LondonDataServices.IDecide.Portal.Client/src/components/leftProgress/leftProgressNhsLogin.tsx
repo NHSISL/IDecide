@@ -49,7 +49,7 @@ const LeftProgressNhsLogin: React.FC<LeftProgressNhsLoginProps> = ({ currentStep
                 <form style={{ padding: 20 }}>
                     <div className="leftProgressPadding">
                         <Fieldset.Legend>
-                            <h2>{translate("LeftProgress.legend")}</h2>
+                            {/*<h2>{translate("LeftProgress.legend")}</h2>*/}
                         </Fieldset.Legend>
 
                         {isMobile ? (

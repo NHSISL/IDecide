@@ -1,9 +1,10 @@
 import React, { useEffect } from "react";
-import { Header, Button } from "nhsuk-react-components";
+import { Header, } from "nhsuk-react-components";
 import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
 import AccessibilityBox from "../accessibilitys/accessibility";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
+import { Button } from "react-bootstrap";
 
 const HeaderComponent: React.FC = () => {
     const { configuration } = useFrontendConfiguration();
@@ -33,10 +34,10 @@ const HeaderComponent: React.FC = () => {
                         justifyContent: "center"
                     }}
                 >
-                    <div className="test-env-banner">
+                    <div className="test-env-banner" >
                         <small style={{ color: "#fff", fontWeight: 600, letterSpacing: "0.02em" }}>
-                            <strong style={{ color: "#fff", textDecoration: "underline" }}>
-                                {translate("DevEnvironmentWarning.bannerTitle")}
+                            <strong style={{ color: "#fff", textTransform: "uppercase" }}>
+                                {configuration?.environment}:
                             </strong>
                             &nbsp;{translate("DevEnvironmentWarning.bannerMessage")}
                         </small>
@@ -50,44 +51,40 @@ const HeaderComponent: React.FC = () => {
                         : undefined
                 }
             >
-                <Header style={{ backgroundColor: configuration?.bannerColour || undefined }}>
+                <Header>
                     <Header.Container>
-                        <div style={{ display: "flex", alignItems: "center" }}>
-                            <Header.Logo href="/home" />
-                            <span style={{ marginLeft: "20px", fontSize: "1.25rem", fontWeight: 500, color: "#fff" }}>
-                                OneLondon Data Portal
-                            </span>
-                        </div>
+                        <Header.Logo href="/home" />
+                        <Header.ServiceName href="/home">
+                            OneLondon Data Opt-Out Portal
+                        </Header.ServiceName>
                         <Header.Content>
-                            <div
-                                style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: "1.5rem"
-                                }}
-                            >
-                                {location.pathname === "/nhs-optOut" && (
-                                    <Button
-                                        reverse
-                                        className="nhsuk-button--small"
-                                        onClick={() => {
-                                            fetch('/logout', { method: 'POST' }).then(d => {
-                                                if (d.ok) {
-                                                    window.location.href = '/';
-                                                }
-                                            });
-                                        }}
-                                    >
-                                        Logout
-                                    </Button>
-                                )}
-
-                                <span style={{ color: "#fff", fontWeight: 500 }}>
-                                    {configuration?.environment}
-                                </span>
+                            <div style={{ display: "flex", alignItems: "center", gap: "1.5rem" }}>
                                 <AccessibilityBox />
                             </div>
                         </Header.Content>
+                        <div
+                            className="logout-header"
+                            style={{
+                                marginLeft: "auto",
+                                display: "flex",
+                                alignItems: "center"
+                            }}
+                        >
+                            {location.pathname === "/nhs-optOut" && (
+                                <Button
+                                    className="nhsuk-button--small"
+                                    onClick={() => {
+                                        fetch('/logout', { method: 'POST' }).then(d => {
+                                            if (d.ok) {
+                                                window.location.href = '/';
+                                            }
+                                        });
+                                    }}
+                                >
+                                    Log out
+                                </Button>
+                            )}
+                        </div>
                     </Header.Container>
                 </Header>
             </div>

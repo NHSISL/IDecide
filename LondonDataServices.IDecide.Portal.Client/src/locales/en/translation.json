@@ -277,7 +277,7 @@
   },
   "DevEnvironmentWarning": {
     "bannerTitle": "Test Environment:",
-    "bannerMessage": "This website is for demonstration and testing purposes only. Any information you enter here will not be saved to real patient records or used for clinical care. Please do not enter real patient data."
+    "bannerMessage": "This site is for testing ONLY. Do NOT enter real patient data."
   },
   "errors": {
     "400": "Please make sure all fields are filled in correctly.",
