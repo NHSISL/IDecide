@@ -7,8 +7,6 @@ const CookiePage = () => {
 
     return (
         <>
-            <HeaderComponent />
-
             <Container style={{ padding: 20, maxWidth: 900 }}>
                 <button
                     className="nhsuk-back-link mt-1"

@@ -3,6 +3,8 @@ import { useStep } from "../../hooks/useStep";
 import { Patient } from "../../models/patients/patient";
 import { Row, Col, Alert } from "react-bootstrap";
 import { useTranslation } from 'react-i18next';
+import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 interface OptInOptOutProps {
     createdPatient: Patient | null;
@@ -151,7 +153,8 @@ export const OptInOptOut: React.FC<OptInOptOutProps> = ({ createdPatient }) => {
                             style={{ width: "100%", marginTop: "0.2rem" }}
                             disabled={!selectedOption}
                         >
-                            {translate("OptOut.nextButton")}
+                            {translate("OptOut.nextButton")}&nbsp;&nbsp;
+                            <FontAwesomeIcon icon={faArrowRight} ></FontAwesomeIcon>
                         </button>
                     </form>
                 </Col>

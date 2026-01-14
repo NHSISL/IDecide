@@ -9,7 +9,6 @@ const CopyrightPage = () => {
 
     return (
         <>
-            <HeaderComponent />
             <Container className="py-4" style={{ maxWidth: 800 }}>
                 <button
                     className="nhsuk-back-link mt-4"

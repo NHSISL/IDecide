@@ -41,7 +41,7 @@
     optgroup,
     select,
     textarea {
-        font-size: 0.8rem !important;
+        font-size: var(--app-font-size, 16px) !important;
     }
 
     .nhsuk-button {
@@ -63,6 +63,8 @@
     }
 
     .custom-col-spacing{padding-left: 0px !important;}
+
+    .nhsuk-button{margin-left:0 !important;}
 }
 
 /* IPAD/TABLET: max-width: 900px, 768px, 767.98px */

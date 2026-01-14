@@ -7,7 +7,6 @@ const ContactPage = () => {
 
     return (
         <>
-            <HeaderComponent />
             <Container style={{ padding: 20, maxWidth: 800 }}>
                 <button
                     className="nhsuk-back-link mt-4"

@@ -7,8 +7,9 @@ import { useFrontendConfiguration } from "../../hooks/useFrontendConfiguration";
 import { isApiErrorResponse } from "../../helpers/isApiErrorResponse";
 import { useApiErrorHandlerChecks } from "../../hooks/useApiErrorHandlerChecks";
 import { patientViewService } from "../../services/views/patientViewService";
-import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useNavigate } from "react-router-dom";
 
 
 export const ConfirmNhsLoginDetails: React.FC = () => {
@@ -19,6 +20,7 @@ export const ConfirmNhsLoginDetails: React.FC = () => {
     const [apiError, setApiError] = useState<string | JSX.Element>("");
     const [info, setInfo] = useState<string | JSX.Element>("");
     const { data: nhsLoginPatient, isSuccess } = patientViewService.useRetrievePatientInfoNhsLogin();
+    const navigate = useNavigate();
 
     const handleApiError = useApiErrorHandlerChecks({
         setApiError,
@@ -86,8 +88,8 @@ export const ConfirmNhsLoginDetails: React.FC = () => {
                 }
             );
         } catch (err) {
-            setApiError("Error executing reCAPTCHA.");
-            console.error("Error executing reCAPTCHA:", err);
+            setApiError("Error Updating Patient Record.");
+            console.error("Error Updating Patient Record:", err);
         }
     };
 
@@ -102,7 +104,7 @@ export const ConfirmNhsLoginDetails: React.FC = () => {
     return (
         <Row className="custom-col-spacing">
             <Col xs={12} md={6} lg={6}>
-                <div>
+                <div id="userDetails">
                     <h4 style={{ fontWeight: 700, fontSize: "1.5rem", margin: "0 0 1rem 0", color: "#212529" }}>
                         {translate("ConfirmDetails.confirmDetails", "Confirm your details")}
                     </h4>
@@ -128,13 +130,16 @@ export const ConfirmNhsLoginDetails: React.FC = () => {
                             style={{ flex: 1 }}
                             onClick={handleYesClick}
                         >
-                            {translate("ConfirmDetails.Continue", "Next")}
+                            {translate("ConfirmDetails.Continue", "Next")}&nbsp;&nbsp;
+                            <FontAwesomeIcon icon={faArrowRight} ></FontAwesomeIcon>
                         </button>
+
+                        
                     </div>
                     <Alert variant="info" style={{ marginTop: "0.5rem" }}>
                         <p>
                             <span style={{ marginRight: "0.5rem" }}>
-                                <FontAwesomeIcon icon={faCircleInfo} style={{ color: "#005eb8" }} ></FontAwesomeIcon>
+                                <FontAwesomeIcon icon={faInfoCircle} ></FontAwesomeIcon>
                             </span>
 
                             If these details are incorrect, you'll need to update your details at your GP practice. You can do this by contacting your GP directly.</p>

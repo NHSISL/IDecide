@@ -14,6 +14,27 @@ const AccessibilityBox: React.FC = () => {
         document.documentElement.style.setProperty('--app-font-size', `${fontSize}px`);
     }, [fontSize]);
 
+    useEffect(() => {
+        if (!showAccessibilityBox) return;
+
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                dropdownRef.current &&
+                !dropdownRef.current.contains(event.target as Node) &&
+                linkRef.current &&
+                !linkRef.current.contains(event.target as Node)
+            ) {
+                setShowAccessibilityBox(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [showAccessibilityBox]);
+
     const increaseFontSize = (e: React.MouseEvent) => {
         e.preventDefault();
         setFontSize((size) => size + 2);

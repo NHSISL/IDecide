@@ -7,7 +7,6 @@ const AboutPage = () => {
 
     return (
         <>
-            <HeaderComponent />
             <Container style={{ padding: 20 }}>
                 <button
                     className="nhsuk-back-link mt-4"

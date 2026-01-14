@@ -27,10 +27,7 @@ export default function Root() {
 
     return (
         <div className="root-layout">
-           
                 <HeaderComponent />
-           
-
             <div className="root-content">
                 <Container fluid>
                     <Row>
