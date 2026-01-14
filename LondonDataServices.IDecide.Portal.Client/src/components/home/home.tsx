@@ -174,7 +174,7 @@ export const Home = () => {
                     </ul>
                 </section>
 
-                <section style={{ margin: "1.5rem 0" }}>
+                <section style={{ margin: "1rem 0 0 0rem" }}>
                     <p style={{ marginBottom: "0.7rem" }}>
                         <strong>{translate("homepage.intro4")}</strong>
                     </p>
