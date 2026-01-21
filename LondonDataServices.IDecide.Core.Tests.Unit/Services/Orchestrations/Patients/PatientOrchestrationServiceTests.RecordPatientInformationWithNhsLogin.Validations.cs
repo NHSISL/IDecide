@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Force.DeepCloner;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
+using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
 using Moq;
@@ -21,16 +22,16 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             string invalidNhsNumber)
         {
             // given
-            NotificationPreference randomNotificationPreference = NotificationPreference.Email;
-            NotificationPreference inputNotificationPreference = randomNotificationPreference.DeepClone();
-            string notificationPreferenceString = inputNotificationPreference.ToString();
+            Patient randomPatient = GetRandomPatient();
+            randomPatient.NhsNumber = invalidNhsNumber;
+            Patient inputPatient = randomPatient.DeepClone();
 
             var invalidPatientOrchestrationArgumentException =
                 new InvalidPatientOrchestrationArgumentException(
                     "Invalid patient orchestration argument. Please correct the errors and try again.");
 
             invalidPatientOrchestrationArgumentException.AddData(
-                key: "nhsNumber",
+                key: "NhsNumber",
                 values: "Text must be exactly 10 digits.");
 
             var expectedPatientOrchestrationValidationException =
@@ -57,10 +58,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             // when
             ValueTask recordPatientInformationTask =
-                patientOrchestrationServiceMock.Object.RecordPatientInformationAsync(
-                    invalidNhsNumber,
-                    notificationPreferenceString,
-                    false);
+                patientOrchestrationServiceMock.Object.RecordPatientInformationNhsLoginAsync(inputPatient);
 
             PatientOrchestrationValidationException actualException =
                 await Assert.ThrowsAsync<PatientOrchestrationValidationException>(
