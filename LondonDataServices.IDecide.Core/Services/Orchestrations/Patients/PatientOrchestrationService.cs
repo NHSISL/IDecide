@@ -264,7 +264,6 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             TryCatch(async () =>
             {
                 ValidateRecordPatientInformationArguments(nhsNumber: patient.NhsNumber);
-
                 IQueryable<Patient> patients = await this.patientService.RetrieveAllPatientsAsync();
                 Patient maybeMatchingPatient = patients.FirstOrDefault(p => p.NhsNumber == patient.NhsNumber);
                 Patient patientToRecord = null;
@@ -436,13 +435,18 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                 now.AddMinutes(decisionConfigurations.PatientValidationCodeExpireAfterMinutes);
 
             Patient patientToRecord = patient;
-            patientToRecord.Id = await this.identifierBroker.GetIdentifierAsync();
+
+            patientToRecord.Id =
+                await this.identifierBroker.GetIdentifierAsync();
+
             patientToRecord.ValidationCode = "LOGIN";
             patientToRecord.ValidationCodeExpiresOn = expirationDate;
             patientToRecord.ValidationCodeMatchedOn = null;
             patientToRecord.NotificationPreference = NotificationPreference.None;
             patientToRecord.Gender = "Unknown";
-            Patient recordedPatient = await this.patientService.AddPatientAsync(patientToRecord);
+
+            Patient recordedPatient =
+                await this.patientService.AddPatientAsync(patientToRecord);
 
             return recordedPatient;
         }
