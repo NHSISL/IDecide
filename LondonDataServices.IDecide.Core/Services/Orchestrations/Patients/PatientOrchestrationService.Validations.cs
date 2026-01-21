@@ -55,6 +55,15 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                 Parameter: nameof(notificationPreference)));
         }
 
+        private static void ValidateRecordPatientInformationWithNhsNumberArguments(Patient patient)
+        {
+            Validate(
+                createException: () => new InvalidPatientOrchestrationArgumentException(
+                    message: "Invalid patient orchestration argument. Please correct the errors and try again."),
+
+                (Rule: IsInvalidIdentifier(patient.NhsNumber), Parameter: nameof(patient.NhsNumber)));
+        }
+
         private static void ValidateVerifyPatientCodeArguments(
             string nhsNumber,
             string verificationCode)
