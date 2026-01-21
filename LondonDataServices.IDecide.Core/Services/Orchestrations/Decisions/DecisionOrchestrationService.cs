@@ -158,6 +158,50 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
                     correlationId: correlationId.ToString());
             });
 
+        public ValueTask VerifyAndRecordDecisionNhsLoginAsync(Decision decision) =>
+            TryCatch(async () =>
+            {
+                ValidateVerifyAndRecordDecisionArguments(decision);
+                string maybeNhsNumber = decision.Patient.NhsNumber;
+                IQueryable<Patient> patients = await this.patientService.RetrieveAllPatientsAsync();
+                Patient maybeMatchingPatient = patients.FirstOrDefault(patient => patient.NhsNumber == maybeNhsNumber);
+                ValidatePatientExists(maybeMatchingPatient);
+                decision.PatientId = maybeMatchingPatient.Id;
+                Guid correlationId = await this.identifierBroker.GetIdentifierAsync();
+                string verifyingDecisionAuditMessage;
+                string ipAddress = await this.securityBroker.GetIpAddressAsync();
+
+                verifyingDecisionAuditMessage = 
+                    $"Patient with IP address {ipAddress} is validating a code for " +
+                    $"patient Nhs Number: {maybeMatchingPatient.NhsNumber}, " +
+                    $"with PatientId {maybeMatchingPatient.Id}";
+
+                await this.auditBroker.LogInformationAsync(
+                    auditType: "Decision",
+                    title: "Verifying Decision",
+                    message: verifyingDecisionAuditMessage,
+                    fileName: null,
+                    correlationId: correlationId.ToString());
+
+                Patient updatedPatient = maybeMatchingPatient;
+                updatedPatient.NotificationPreference = decision.Patient.NotificationPreference;
+                Patient modifiedPatient = await this.patientService.ModifyPatientAsync(updatedPatient);
+                Decision addedDecision = await this.decisionService.AddDecisionAsync(decision);
+
+                await this.auditBroker.LogInformationAsync(
+                    auditType: "Decision",
+                    title: "Decision Submitted",
+
+                    message: 
+                        $"The patient's decision has been successfully submitted for " +
+                        $"decisionId {addedDecision.Id}, " +
+                        $"patient Nhs Number: {maybeMatchingPatient.NhsNumber}, with " +
+                        $"PatientId {maybeMatchingPatient.Id}",
+
+                    fileName: null,
+                    correlationId: correlationId.ToString());
+            });
+
         public ValueTask<List<Decision>> RetrieveAllPendingAdoptionDecisionsForConsumer(
             DateTimeOffset changesSinceDate, string decisionType) =>
             TryCatch(async () =>
