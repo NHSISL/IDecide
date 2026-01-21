@@ -171,7 +171,8 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
                 string verifyingDecisionAuditMessage;
                 string ipAddress = await this.securityBroker.GetIpAddressAsync();
 
-                verifyingDecisionAuditMessage = $"Patient with IP address {ipAddress} is validating a code for " +
+                verifyingDecisionAuditMessage = 
+                    $"Patient with IP address {ipAddress} is validating a code for " +
                     $"patient Nhs Number: {maybeMatchingPatient.NhsNumber}, " +
                     $"with PatientId {maybeMatchingPatient.Id}";
 
@@ -191,7 +192,8 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
                     auditType: "Decision",
                     title: "Decision Submitted",
 
-                    message: $"The patient's decision has been successfully submitted for " +
+                    message: 
+                        $"The patient's decision has been successfully submitted for " +
                         $"decisionId {addedDecision.Id}, " +
                         $"patient Nhs Number: {maybeMatchingPatient.NhsNumber}, with " +
                         $"PatientId {maybeMatchingPatient.Id}",
