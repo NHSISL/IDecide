@@ -56,8 +56,6 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
                 return Unauthorized();
             }
 
-            using var http = new HttpClient();
-
             httpClient.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", accessToken);
 
