@@ -4,14 +4,22 @@
 
 using System;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Attrify.Attributes;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients.Exceptions;
 using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
+using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
+using LondonDataServices.IDecide.Portal.Server.Models;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
+using Microsoft.Extensions.Configuration;
 using RESTFulSense.Controllers;
 
 namespace LondonDataServices.IDecide.Portal.Server.Controllers
@@ -21,9 +29,56 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
     public class PatientsController : RESTFulController
     {
         private readonly IPatientService patientService;
+        private readonly IPatientOrchestrationService patientOrchestrationService;
+        private readonly IConfiguration configuration;
+        private readonly HttpClient httpClient;
 
-        public PatientsController(IPatientService patientService) =>
+        public PatientsController(
+            IPatientService patientService,
+            IPatientOrchestrationService patientOrchestrationService,
+            IConfiguration configuration,
+            HttpClient httpClient)
+        {
             this.patientService = patientService;
+            this.patientOrchestrationService = patientOrchestrationService;
+            this.configuration = configuration;
+            this.httpClient = httpClient;
+        }
+
+        [Authorize]
+        [HttpGet("patientInfo")]
+        public async Task<IActionResult> GetPatientInfo()
+        {
+            var accessToken = await HttpContext.GetTokenAsync("access_token");
+
+            if (string.IsNullOrEmpty(accessToken))
+            {
+                return Unauthorized();
+            }
+
+            using var http = new HttpClient();
+
+            httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", accessToken);
+
+            var response = await httpClient.GetAsync(
+                configuration["NHSLoginOIDC:authority"] + "/userinfo"
+            );
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return StatusCode((int)response.StatusCode);
+            }
+
+            var userInfo = await response.Content.ReadFromJsonAsync<NhsLoginUserInfo>(
+                new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                }
+            );
+
+            return new JsonResult(userInfo);
+        }
 
         [HttpPost]
         [InvisibleApi]
