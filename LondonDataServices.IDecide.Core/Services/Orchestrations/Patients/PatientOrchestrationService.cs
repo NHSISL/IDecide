@@ -285,8 +285,9 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                          auditType: "Patient",
                          title: "Patient Recorded",
 
-                         message: $"A new patient was created with NHS Number {patient.NhsNumber} " +
-                         $"this was through NHS Login.",
+                         message: 
+                            $"A new patient was created with NHS Number {patient.NhsNumber} " +
+                            $"this was through NHS Login.",
 
                          fileName: null,
                          correlationId: correlationId.ToString());
@@ -301,8 +302,9 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                          auditType: "Patient",
                          title: "Patient Recorded",
 
-                         message: $"Patient with NHS Number {patient.NhsNumber} " +
-                         $"was updated and new validation code was sent.",
+                         message: 
+                            $"Patient with NHS Number {patient.NhsNumber} " +
+                            $"was updated and new validation code was sent.",
 
                          fileName: null,
                          correlationId: correlationId.ToString());
