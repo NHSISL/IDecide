@@ -148,6 +148,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         private static Patient GetRandomPatient(string inputSurname) =>
             CreatePatientFiller(inputSurname).Create();
 
+        private static Patient GetRandomPatient() =>
+            CreatePatientFiller().Create();
+
         private static List<Patient> GetRandomPatients() =>
             CreatePatientFiller().Create(GetRandomNumber()).ToList();
 
