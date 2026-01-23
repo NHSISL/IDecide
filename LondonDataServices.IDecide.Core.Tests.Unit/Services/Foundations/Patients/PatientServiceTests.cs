@@ -13,6 +13,7 @@ using LondonDataServices.IDecide.Core.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Brokers.Storages.Sql;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Securities;
+using LondonDataServices.IDecide.Core.Services.Foundations.NhsLogins;
 using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
 using Microsoft.Data.SqlClient;
 using Moq;

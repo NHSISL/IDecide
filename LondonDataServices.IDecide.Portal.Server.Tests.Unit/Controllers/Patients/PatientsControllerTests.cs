@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients.Exceptions;
+using LondonDataServices.IDecide.Core.Services.Foundations.NhsLogins;
 using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
 using LondonDataServices.IDecide.Portal.Server.Controllers;
@@ -25,6 +26,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Patien
     public partial class PatientsControllerTests : RESTFulController
     {
         private readonly Mock<IPatientService> patientServiceMock;
+        private readonly Mock<INhsLoginService> nhsLoginServiceMock;
         private readonly Mock<IPatientOrchestrationService> patientOrchestrationServiceMock;
         private readonly Mock<IConfiguration> configurationMock;
         private readonly Mock<HttpMessageHandler> httpMessageHandlerMock;
@@ -34,6 +36,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Patien
         public PatientsControllerTests()
         {
             patientServiceMock = new Mock<IPatientService>();
+            nhsLoginServiceMock = new Mock<INhsLoginService>();
             patientOrchestrationServiceMock = new Mock<IPatientOrchestrationService>();
             configurationMock = new Mock<IConfiguration>();
             httpMessageHandlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
@@ -41,9 +44,9 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Patien
 
             patientsController = new PatientsController(
                 patientServiceMock.Object,
+                nhsLoginServiceMock.Object,
                 patientOrchestrationServiceMock.Object,
-                configurationMock.Object,
-                httpClientMock);
+                configurationMock.Object);
         }
 
         public static TheoryData<Xeption> ValidationExceptions()

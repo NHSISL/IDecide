@@ -5,17 +5,14 @@
 using System;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Attrify.Attributes;
+using LondonDataServices.IDecide.Core.Models.Foundations.NhsLogins.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients.Exceptions;
+using LondonDataServices.IDecide.Core.Services.Foundations.NhsLogins;
 using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
-using LondonDataServices.IDecide.Portal.Server.Models;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
@@ -29,55 +26,41 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
     public class PatientsController : RESTFulController
     {
         private readonly IPatientService patientService;
+        private readonly INhsLoginService nhsLoginService;
         private readonly IPatientOrchestrationService patientOrchestrationService;
         private readonly IConfiguration configuration;
-        private readonly HttpClient httpClient;
 
         public PatientsController(
             IPatientService patientService,
+            INhsLoginService nhsLoginService,
             IPatientOrchestrationService patientOrchestrationService,
-            IConfiguration configuration,
-            HttpClient httpClient)
+            IConfiguration configuration)
         {
             this.patientService = patientService;
+            this.nhsLoginService = nhsLoginService;
             this.patientOrchestrationService = patientOrchestrationService;
             this.configuration = configuration;
-            this.httpClient = httpClient;
         }
 
         [Authorize]
         [HttpGet("patientInfo")]
         public async Task<IActionResult> GetPatientInfo()
         {
-            var accessToken = await HttpContext.GetTokenAsync("access_token");
-
-            if (string.IsNullOrEmpty(accessToken))
+            try
             {
-                return Unauthorized();
+                Core.Models.Foundations.NhsLogins.NhsLoginUserInfo nhsLoginUserInfo =
+                    await this.nhsLoginService.NhsLoginAsync();
+
+                return Ok(nhsLoginUserInfo);
             }
-
-            using var http = new HttpClient();
-
-            httpClient.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", accessToken);
-
-            var response = await httpClient.GetAsync(
-                configuration["NHSLoginOIDC:authority"] + "/userinfo"
-            );
-
-            if (!response.IsSuccessStatusCode)
+            catch (NhsLoginServiceDependencyException nhsLoginServiceDependencyException)
             {
-                return StatusCode((int)response.StatusCode);
+                return InternalServerError(nhsLoginServiceDependencyException);
             }
-
-            var userInfo = await response.Content.ReadFromJsonAsync<NhsLoginUserInfo>(
-                new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                }
-            );
-
-            return new JsonResult(userInfo);
+            catch (NhsLoginServiceServiceException nhsLoginServiceServiceException)
+            {
+                return InternalServerError(nhsLoginServiceServiceException);
+            }
         }
 
         [HttpPost]

@@ -187,10 +187,13 @@ namespace LondonDataServices.IDecide.Portal.Server
                     "NHSLoginOIDC:privateKeyb64 configuration value is missing or empty.");
             }
 
-            var privateKeyText = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(privateKeyB64Text));
+            var privateKeyText =
+                System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(privateKeyB64Text));
 
             var rsa = RSA.Create();
+
             rsa.ImportFromPem(privateKeyText.ToCharArray());
+
             var rsaKey = new RsaSecurityKey(rsa);
 
             services.AddAuthentication(options =>

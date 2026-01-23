@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Force.DeepCloner;
+using LondonDataServices.IDecide.Core.Services.Foundations.NhsLogins;
 using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
 using LondonDataServices.IDecide.Portal.Server.Controllers;
@@ -83,13 +84,14 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Patien
 
             // Mock other required dependencies
             var patientServiceMock = new Mock<IPatientService>();
+            var nhsLoginServiceMock = new Mock<INhsLoginService>();
             var patientOrchestrationServiceMock = new Mock<IPatientOrchestrationService>();
 
             var patientsController = new PatientsController(
                 patientServiceMock.Object,
+                nhsLoginServiceMock.Object,
                 patientOrchestrationServiceMock.Object,
-                configurationMock.Object,
-                httpClient);
+                configurationMock.Object);
 
             patientsController.ControllerContext = new ControllerContext
             {
