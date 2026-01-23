@@ -10,7 +10,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Patien
     public partial class PatientsControllerTests
     {
         [Fact]
-        public async Task ShouldReturnUserInfoOnGetPatientPOWInfoAsync()
+        public async Task ShouldReturnUserInfoOnGetPatientInfoAsync()
         {
             // given
             NhsLoginUserInfo loginUserInfo = CreateRandomNhsLoginUserInfo();
