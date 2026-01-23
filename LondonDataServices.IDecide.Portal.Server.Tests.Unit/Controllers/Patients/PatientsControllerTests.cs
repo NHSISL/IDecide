@@ -4,10 +4,15 @@
 
 using System;
 using System.Linq;
+using System.Net.Http;
+using LondonDataServices.IDecide.Core.Models.Foundations.NhsLogins;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients.Exceptions;
+using LondonDataServices.IDecide.Core.Services.Foundations.NhsLogins;
 using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
+using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
 using LondonDataServices.IDecide.Portal.Server.Controllers;
+using Microsoft.Extensions.Configuration;
 using Moq;
 using RESTFulSense.Controllers;
 using Tynamix.ObjectFiller;
@@ -17,14 +22,24 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Patien
 {
     public partial class PatientsControllerTests : RESTFulController
     {
-
         private readonly Mock<IPatientService> patientServiceMock;
+        private readonly Mock<INhsLoginService> nhsLoginServiceMock;
+        private readonly Mock<IPatientOrchestrationService> patientOrchestrationServiceMock;
+        private readonly Mock<IConfiguration> configurationMock;
         private readonly PatientsController patientsController;
 
         public PatientsControllerTests()
         {
             patientServiceMock = new Mock<IPatientService>();
-            patientsController = new PatientsController(patientServiceMock.Object);
+            nhsLoginServiceMock = new Mock<INhsLoginService>();
+            patientOrchestrationServiceMock = new Mock<IPatientOrchestrationService>();
+            configurationMock = new Mock<IConfiguration>();
+
+            patientsController = new PatientsController(
+                patientServiceMock.Object,
+                nhsLoginServiceMock.Object,
+                patientOrchestrationServiceMock.Object,
+                configurationMock.Object);
         }
 
         public static TheoryData<Xeption> ValidationExceptions()
@@ -66,7 +81,10 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Patien
 
         private static string GetRandomStringWithLengthOf(int length)
         {
-            string result = new MnemonicString(wordCount: 1, wordMinLength: length, wordMaxLength: length).GetValue();
+            string result = new MnemonicString(
+                wordCount: 1,
+                wordMinLength: length,
+                wordMaxLength: length).GetValue();
 
             return result.Length > length ? result.Substring(0, length) : result;
         }
@@ -80,11 +98,14 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Patien
         private static Patient CreateRandomPatient() =>
             CreatePatientFiller().Create();
 
+        private static NhsLoginUserInfo CreateRandomNhsLoginUserInfo() =>
+            CreateNhsLoginUserInfoFiller().Create();
+
         private static IQueryable<Patient> CreateRandomPatients()
         {
             return CreatePatientFiller()
                 .Create(count: GetRandomNumber())
-                    .AsQueryable();
+                .AsQueryable();
         }
 
         private static Filler<Patient> CreatePatientFiller()
@@ -109,6 +130,23 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Patien
                 .OnProperty(patient => patient.CreatedBy).Use(user)
                 .OnProperty(patient => patient.UpdatedDate).Use(dateTimeOffset)
                 .OnProperty(patient => patient.UpdatedBy).Use(user);
+
+            return filler;
+        }
+
+        private static Filler<NhsLoginUserInfo> CreateNhsLoginUserInfoFiller()
+        {
+            DateTimeOffset dateTimeOffset = DateTimeOffset.UtcNow;
+            string user = Guid.NewGuid().ToString();
+            var filler = new Filler<NhsLoginUserInfo>();
+
+            filler.Setup()
+                .OnType<DateTimeOffset>().Use(dateTimeOffset)
+                .OnType<DateTimeOffset?>().Use(dateTimeOffset)
+                .OnProperty(nhsLoginUserInfo => nhsLoginUserInfo.FamilyName).Use(GetRandomStringWithLengthOf(255))
+                .OnProperty(nhsLoginUserInfo => nhsLoginUserInfo.Email).Use(GetRandomStringWithLengthOf(255))
+                .OnProperty(nhsLoginUserInfo => nhsLoginUserInfo.PhoneNumber).Use(GetRandomStringWithLengthOf(255))
+                .OnProperty(nhsLoginUserInfo => nhsLoginUserInfo.GivenName).Use(GetRandomStringWithLengthOf(255));
 
             return filler;
         }

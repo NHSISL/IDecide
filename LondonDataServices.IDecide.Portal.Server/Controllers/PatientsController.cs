@@ -4,14 +4,20 @@
 
 using System;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Attrify.Attributes;
+using LondonDataServices.IDecide.Core.Models.Foundations.NhsLogins;
+using LondonDataServices.IDecide.Core.Models.Foundations.NhsLogins.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients.Exceptions;
+using LondonDataServices.IDecide.Core.Services.Foundations.NhsLogins;
 using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
+using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
+using Microsoft.Extensions.Configuration;
 using RESTFulSense.Controllers;
 
 namespace LondonDataServices.IDecide.Portal.Server.Controllers
@@ -21,9 +27,42 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
     public class PatientsController : RESTFulController
     {
         private readonly IPatientService patientService;
+        private readonly INhsLoginService nhsLoginService;
+        private readonly IPatientOrchestrationService patientOrchestrationService;
+        private readonly IConfiguration configuration;
 
-        public PatientsController(IPatientService patientService) =>
+        public PatientsController(
+            IPatientService patientService,
+            INhsLoginService nhsLoginService,
+            IPatientOrchestrationService patientOrchestrationService,
+            IConfiguration configuration)
+        {
             this.patientService = patientService;
+            this.nhsLoginService = nhsLoginService;
+            this.patientOrchestrationService = patientOrchestrationService;
+            this.configuration = configuration;
+        }
+
+        [Authorize]
+        [HttpGet("patientInfo")]
+        public async ValueTask<ActionResult<NhsLoginUserInfo>> GetPatientInfo()
+        {
+            try
+            {
+                NhsLoginUserInfo nhsLoginUserInfo =
+                    await this.nhsLoginService.NhsLoginAsync();
+
+                return Ok(nhsLoginUserInfo);
+            }
+            catch (NhsLoginServiceDependencyException nhsLoginServiceDependencyException)
+            {
+                return InternalServerError(nhsLoginServiceDependencyException);
+            }
+            catch (NhsLoginServiceServiceException nhsLoginServiceServiceException)
+            {
+                return InternalServerError(nhsLoginServiceServiceException);
+            }
+        }
 
         [HttpPost]
         [InvisibleApi]
