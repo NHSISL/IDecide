@@ -7,11 +7,9 @@ using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Brokers.DateTimes;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Brokers.Securities;
-using LondonDataServices.IDecide.Core.Brokers.Storages.Sql;
 using LondonDataServices.IDecide.Core.Models.Foundations.NhsLogins;
-using LondonDataServices.IDecide.Core.Services.Foundations.NhsLogins;
 
-namespace LondonDataServices.IDecide.Core.Services.Foundations.Patients
+namespace LondonDataServices.IDecide.Core.Services.Foundations.NhsLogins
 {
     public partial class NhsLoginService : INhsLoginService
     {

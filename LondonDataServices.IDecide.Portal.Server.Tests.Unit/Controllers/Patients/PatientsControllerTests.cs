@@ -5,8 +5,6 @@
 using System;
 using System.Linq;
 using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Models.Foundations.NhsLogins;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients.Exceptions;
@@ -16,7 +14,6 @@ using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
 using LondonDataServices.IDecide.Portal.Server.Controllers;
 using Microsoft.Extensions.Configuration;
 using Moq;
-using Moq.Protected;
 using RESTFulSense.Controllers;
 using Tynamix.ObjectFiller;
 using Xeptions;
@@ -29,8 +26,6 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Patien
         private readonly Mock<INhsLoginService> nhsLoginServiceMock;
         private readonly Mock<IPatientOrchestrationService> patientOrchestrationServiceMock;
         private readonly Mock<IConfiguration> configurationMock;
-        private readonly Mock<HttpMessageHandler> httpMessageHandlerMock;
-        private readonly HttpClient httpClientMock;
         private readonly PatientsController patientsController;
 
         public PatientsControllerTests()
@@ -39,8 +34,6 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Patien
             nhsLoginServiceMock = new Mock<INhsLoginService>();
             patientOrchestrationServiceMock = new Mock<IPatientOrchestrationService>();
             configurationMock = new Mock<IConfiguration>();
-            httpMessageHandlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
-            httpClientMock = new HttpClient(httpMessageHandlerMock.Object);
 
             patientsController = new PatientsController(
                 patientServiceMock.Object,
