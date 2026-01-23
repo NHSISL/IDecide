@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Attrify.Attributes;
+using LondonDataServices.IDecide.Core.Models.Foundations.NhsLogins;
 using LondonDataServices.IDecide.Core.Models.Foundations.NhsLogins.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients.Exceptions;
@@ -44,11 +45,11 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
 
         [Authorize]
         [HttpGet("patientInfo")]
-        public async Task<IActionResult> GetPatientInfo()
+        public async ValueTask<ActionResult<NhsLoginUserInfo>> GetPatientInfo()
         {
             try
             {
-                Core.Models.Foundations.NhsLogins.NhsLoginUserInfo nhsLoginUserInfo =
+                NhsLoginUserInfo nhsLoginUserInfo =
                     await this.nhsLoginService.NhsLoginAsync();
 
                 return Ok(nhsLoginUserInfo);
