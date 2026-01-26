@@ -118,6 +118,18 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
             return accessToken ?? string.Empty;
         }
 
+        /// <summary>
+        /// Retrieves NHS Login user information from the userinfo endpoint using the provided access token.
+        /// </summary>
+        /// <param name="accessToken">
+        /// The OAuth 2.0 access token to authorize the request to the NHS Login userinfo endpoint.
+        /// </param>
+        /// <returns>
+        /// A <see cref="NhsLoginUserInfo"/> object containing user details as returned by the NHS Login service.
+        /// </returns>
+        /// <exception cref="HttpRequestException">
+        /// Thrown if the HTTP response indicates a non-success status code.
+        /// </exception>
         public async ValueTask<NhsLoginUserInfo> GetNhsLoginUserInfoAsync(string accessToken)
         {
             using var httpClient = new HttpClient();
