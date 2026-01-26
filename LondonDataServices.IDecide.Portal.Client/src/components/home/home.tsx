@@ -123,6 +123,16 @@ export const Home = () => {
                     {translate("homepage.startButtonOther")}
                 </Button>
 
+                <Button
+                    className="nhsuk-button-blue"
+                    onClick={() => (window.location.href = "/login")}
+                    style={{
+                        width: 260,
+                        fontWeight: 600,
+                        minHeight: 75
+                    }}
+                >TEST</Button>
+
                 {expandableHeaders.map((header, idx) => (
                     <ExpandableSection
                         key={header}
