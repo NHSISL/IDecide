@@ -131,6 +131,8 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
             HttpResponseMessage response =
                 await httpClient.GetAsync(userInfoEndpoint);
 
+            response.EnsureSuccessStatusCode();
+
             NhsLoginUserInfo userInfo =
                 await response.Content.ReadFromJsonAsync<NhsLoginUserInfo>();
 

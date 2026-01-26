@@ -27,7 +27,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.NhsLogins
             TryCatch(async () =>
             {
                 var accessToken =
-                await this.securityBroker.GetNhsLoginAccessTokenAsync();
+                    await this.securityBroker.GetNhsLoginAccessTokenAsync();
 
                 ValidateAccessToken(accessToken);
 

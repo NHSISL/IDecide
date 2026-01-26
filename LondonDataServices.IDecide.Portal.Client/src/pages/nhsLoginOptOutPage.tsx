@@ -20,7 +20,7 @@ export const NhsLoginOptOutPage = () => {
                 setPhone(data.phone_number ?? "");
                 setNhsNo(data.nhs_number ?? "");
             })
-            .catch((error) => {
+            .catch(() => {
                 // Optionally handle error here
                 setFamilyName("");
                 setGivenName("");
