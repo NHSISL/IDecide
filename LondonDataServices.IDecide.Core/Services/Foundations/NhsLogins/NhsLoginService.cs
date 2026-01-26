@@ -11,7 +11,6 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.NhsLogins
 {
     public partial class NhsLoginService : INhsLoginService
     {
-        private readonly ISecurityAuditBroker securityAuditBroker;
         private readonly ISecurityBroker securityBroker;
         private readonly ILoggingBroker loggingBroker;
 
