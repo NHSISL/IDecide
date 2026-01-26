@@ -27,6 +27,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.NhsLog
             this.securityBrokerMock = new Mock<ISecurityBroker>();
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
 
+
             this.nhsLoginService = new NhsLoginService(
                 this.securityBrokerMock.Object,
                 this.loggingBrokerMock.Object);
