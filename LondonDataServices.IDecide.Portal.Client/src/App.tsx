@@ -86,7 +86,6 @@ function App() {
                     path: "nhs-optOut",
                     element: <AppFlowNhsLogin />
                 }
-
             ]
         },
     ]);
