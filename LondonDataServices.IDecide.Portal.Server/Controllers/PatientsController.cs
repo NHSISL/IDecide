@@ -11,6 +11,7 @@ using LondonDataServices.IDecide.Core.Models.Foundations.NhsLogins;
 using LondonDataServices.IDecide.Core.Models.Foundations.NhsLogins.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients.Exceptions;
+using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
 using LondonDataServices.IDecide.Core.Services.Foundations.NhsLogins;
 using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
@@ -62,35 +63,6 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
             {
                 return InternalServerError(nhsLoginServiceServiceException);
             }
-        }
-
-            if (string.IsNullOrEmpty(accessToken))
-            {
-                return Unauthorized();
-            }
-
-            using var http = new HttpClient();
-
-            http.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", accessToken);
-
-            var response = await http.GetAsync(
-                configuration["NHSLoginOIDC:authority"] + "/userinfo"
-            );
-
-            if (!response.IsSuccessStatusCode)
-            {
-                return StatusCode((int)response.StatusCode);
-            }
-
-            var userInfo = await response.Content.ReadFromJsonAsync<NhsLoginUserInfo>(
-                new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                }
-            );
-
-            return new JsonResult(userInfo);
         }
 
         [Authorize]
