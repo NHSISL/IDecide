@@ -33,23 +33,24 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.NhsLogins
             Message = "Access token is required."
         };
 
-        private static void Validate(
-           Func<InvalidArgumentsNhsLoginServiceException> createException,
-           params (dynamic Rule, string Parameter)[] validations)
-        {
-            InvalidArgumentsNhsLoginServiceException invalidPdsException = createException();
+        private static void Validate<T>(  
+            Func<T> createException,  
+            params (dynamic Rule, string Parameter)[] validations)  
+            where T : Xeption  
+        {  
+            T invalidDataException = createException();  
 
-            foreach ((dynamic rule, string parameter) in validations)
-            {
-                if (rule.Condition)
-                {
-                    invalidPdsException.UpsertDataList(
-                        key: parameter,
-                        value: rule.Message);
-                }
-            }
+            foreach ((dynamic rule, string parameter) in validations)  
+            {  
+                if (rule.Condition)  
+                {  
+                    invalidDataException.UpsertDataList(  
+                        key: parameter,  
+                        value: rule.Message);  
+                }  
+            }  
 
-            invalidPdsException.ThrowIfContainsErrors();
-        }
+            invalidDataException.ThrowIfContainsErrors();  
+        }  
     }
 }

@@ -25,14 +25,9 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.NhsLogins
         public ValueTask<NhsLoginUserInfo> NhsLoginAsync() =>
             TryCatch(async () =>
             {
-                var accessToken =
-                    await this.securityBroker.GetAccessTokenAsync();
-
+                var accessToken = await this.securityBroker.GetAccessTokenAsync();
                 ValidateAccessToken(accessToken);
-
-                NhsLoginUserInfo userInfo =
-                    await this.securityBroker.GetNhsLoginUserInfoAsync(accessToken);
-
+                NhsLoginUserInfo userInfo = await this.securityBroker.GetNhsLoginUserInfoAsync(accessToken);
                 ValidateSuccessStatusCode(userInfo);
 
                 return userInfo;
