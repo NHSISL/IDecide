@@ -3,6 +3,8 @@
 // ---------------------------------------------------------
 
 using System;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Models.Foundations.NhsLogins;
 using LondonDataServices.IDecide.Core.Models.Foundations.NhsLogins.Exceptions;
@@ -24,25 +26,38 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.NhsLogins
             {
                 throw await CreateAndLogValidationExceptionAsync(invalidArgumentsException);
             }
-            catch (NhsLoginUserInfoException userInfoException)
+            catch (NhsLoginNullResponseException nhsLoginNullResponseException)
             {
-                throw await CreateAndLogValidationExceptionAsync(userInfoException);
+                throw await CreateAndLogValidationExceptionAsync(nhsLoginNullResponseException);
             }
-            catch (NhsLoginServiceDependencyValidationException dependencyValidationException)
+            catch (HttpRequestException httpRequestException)
+                when (httpRequestException.StatusCode == HttpStatusCode.BadRequest)
             {
-                throw await CreateAndLogDependencyValidationExceptionAsync(dependencyValidationException);
+                var clientNhsLoginException = new ClientNhsLoginException(
+                    message: "NHS Login client error occurred, please fix the errors and try again.",
+                    innerException: httpRequestException,
+                    data: httpRequestException.Data);
+
+                throw await CreateAndLogDependencyValidationExceptionAsync(clientNhsLoginException);
             }
-            catch (NhsLoginServiceDependencyException dependencyException)
+            catch (OperationCanceledException operationCanceledException)
             {
-                throw await CreateAndLogDependencyExceptionAsync(dependencyException);
+                var clientNhsLoginException = new ClientNhsLoginException(
+                    message: "NHS Login client error occurred, please fix the errors and try again.",
+                    innerException: operationCanceledException,
+                    data: operationCanceledException.Data);
+
+                throw await CreateAndLogDependencyValidationExceptionAsync(clientNhsLoginException);
             }
-            catch (FailedNhsLoginServiceException failedServiceException)
+            catch (HttpRequestException httpRequestException)
+                when (httpRequestException.StatusCode == HttpStatusCode.InternalServerError)
             {
-                throw await CreateAndLogServiceExceptionAsync(failedServiceException);
-            }
-            catch (NhsLoginServiceServiceException serviceException)
-            {
-                throw await CreateAndLogServiceExceptionAsync(serviceException);
+                var serverNhsLoginException = new ServerNhsLoginException(
+                   message: "NHS Login userinfo endpoint did not return a successful response.",
+                   innerException: httpRequestException,
+                   data: httpRequestException.Data);
+
+                throw await CreateAndLogDependencyExceptionAsync(serverNhsLoginException);
             }
             catch (Exception exception)
             {
@@ -68,11 +83,11 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.NhsLogins
         }
 
         private async ValueTask<NhsLoginServiceDependencyValidationException>
-            CreateAndLogDependencyValidationExceptionAsync(Xeption exception)
+            CreateAndLogDependencyValidationExceptionAsync(Exception exception)
         {
             var dependencyValidationException = new NhsLoginServiceDependencyValidationException(
                 message: "NHS Login dependency validation error occurred, fix errors and try again.",
-                innerException: exception);
+                innerException: exception as Xeption);
 
             await this.loggingBroker.LogErrorAsync(dependencyValidationException);
 
@@ -80,21 +95,21 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.NhsLogins
         }
 
         private async ValueTask<NhsLoginServiceDependencyException>
-            CreateAndLogDependencyExceptionAsync(Xeption exception)
+            CreateAndLogDependencyExceptionAsync(Exception exception)
         {
             var dependencyException = new NhsLoginServiceDependencyException(
                 message: "NHS Login dependency error occurred, please contact support.",
-                innerException: exception);
+                innerException: exception as Xeption);
 
             await this.loggingBroker.LogErrorAsync(dependencyException);
 
             return dependencyException;
         }
 
-        private async ValueTask<NhsLoginServiceServiceException>
+        private async ValueTask<NhsLoginServiceException>
             CreateAndLogServiceExceptionAsync(Xeption exception)
         {
-            var serviceException = new NhsLoginServiceServiceException(
+            var serviceException = new NhsLoginServiceException(
                 message: "NHS Login service error occurred, please contact support.",
                 innerException: exception);
 

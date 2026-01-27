@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using LondonDataServices.IDecide.Core.Models.Foundations.NhsLogins;
 using LondonDataServices.IDecide.Core.Models.Foundations.NhsLogins.Exceptions;
 
@@ -11,20 +12,44 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.NhsLogins
     {
         private static void ValidateAccessToken(string accessToken)
         {
-            if (string.IsNullOrWhiteSpace(accessToken))
-            {
-                throw new NullNhsLoginException(
-                    message: "Access token is required.");
-            }
+            Validate(
+                createException: () => new InvalidArgumentsNhsLoginServiceException(
+                    message: "Invalid NHS Login argument. Please correct the errors and try again."),
+                (Rule: IsInvalidAccessToken(accessToken), Parameter: nameof(accessToken)));
         }
 
-        private void ValidateSuccessStatusCode(NhsLoginUserInfo userInfo)
+        private static void ValidateSuccessStatusCode(NhsLoginUserInfo userInfo)
         {
             if (userInfo is null)
             {
-                throw new NhsLoginUserInfoException(
+                throw new NhsLoginNullResponseException(
                     message: "NHS Login userinfo endpoint did not return a successful response.");
             }
+        }
+
+        private static dynamic IsInvalidAccessToken(string accessToken) => new
+        {
+            Condition = string.IsNullOrWhiteSpace(accessToken),
+            Message = "Access token is required."
+        };
+
+        private static void Validate(
+           Func<InvalidArgumentsNhsLoginServiceException> createException,
+           params (dynamic Rule, string Parameter)[] validations)
+        {
+            InvalidArgumentsNhsLoginServiceException invalidPdsException = createException();
+
+            foreach ((dynamic rule, string parameter) in validations)
+            {
+                if (rule.Condition)
+                {
+                    invalidPdsException.UpsertDataList(
+                        key: parameter,
+                        value: rule.Message);
+                }
+            }
+
+            invalidPdsException.ThrowIfContainsErrors();
         }
     }
 }

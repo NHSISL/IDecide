@@ -19,7 +19,7 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
         ValueTask<CaptchaResult> ValidateCaptchaAsync();
         ValueTask<string> GetIpAddressAsync();
         ValueTask<string> GetHeaderAsync(string key);
-        ValueTask<string> GetNhsLoginAccessTokenAsync();
+        ValueTask<string> GetAccessTokenAsync();
         ValueTask<NhsLoginUserInfo> GetNhsLoginUserInfoAsync(string accessToken);
     }
 }

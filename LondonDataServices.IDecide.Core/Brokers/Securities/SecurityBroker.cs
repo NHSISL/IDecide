@@ -105,7 +105,7 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
         /// <returns>
         /// A <see cref="string"/> containing the access token if present; otherwise, an empty string.
         /// </returns>
-        public async ValueTask<string> GetNhsLoginAccessTokenAsync()
+        public async ValueTask<string> GetAccessTokenAsync()
         {
             if (this.httpContextAccessor?.HttpContext == null)
             {

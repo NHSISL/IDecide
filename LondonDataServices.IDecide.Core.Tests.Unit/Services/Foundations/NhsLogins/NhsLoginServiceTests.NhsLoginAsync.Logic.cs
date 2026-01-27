@@ -27,7 +27,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.NhsLog
             };
 
             this.securityBrokerMock.Setup(broker =>
-                broker.GetNhsLoginAccessTokenAsync())
+                broker.GetAccessTokenAsync())
                     .ReturnsAsync(randomAccessToken);
 
             this.securityBrokerMock.Setup(broker =>
@@ -42,7 +42,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.NhsLog
             actualUserInfo.Should().BeEquivalentTo(randomUserInfo);
 
             this.securityBrokerMock.Verify(broker =>
-                broker.GetNhsLoginAccessTokenAsync(),
+                broker.GetAccessTokenAsync(),
                     Times.Once);
 
             this.securityBrokerMock.Verify(broker =>

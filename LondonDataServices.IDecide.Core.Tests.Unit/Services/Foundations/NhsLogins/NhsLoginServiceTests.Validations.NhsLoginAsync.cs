@@ -13,46 +13,51 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.NhsLog
 {
     public partial class NhsLoginServiceTests
     {
-        [Fact]
-        public async Task ShouldThrowNhsLoginServiceServiceExceptionOnNhsLoginAsyncIfAccessTokenIsNullAndLogItAsync()
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData(" ")]
+        [InlineData("   ")]
+        public async Task ShouldThrowInvalidArgumentsNhsLoginServiceExceptionOnNhsLoginAsyncIfArgumentInvalidAndLogItAsync(
+            string invalidAccessToken)
         {
             // given
-            string nullAccessToken = null;
+            string nullAccessToken = invalidAccessToken;
 
-            var nullNhsLoginException = new NullNhsLoginException(
-                message: "Access token is required.");
+            var invalidArgumentsException = new InvalidArgumentsNhsLoginServiceException(
+                message: "Invalid NHS Login argument. Please correct the errors and try again.");
 
-            var failedNhsLoginServiceException = new FailedNhsLoginServiceException(
-                message: "Failed NHS Login service error occurred, please contact support.",
-                innerException: nullNhsLoginException,
-                data: null);
+            invalidArgumentsException.UpsertDataList(
+                key: "accessToken",
+                value: "Access token is required.");
 
-            var expectedNhsLoginServiceServiceException = new NhsLoginServiceServiceException(
-                message: "NHS Login service error occurred, please contact support.",
-                innerException: failedNhsLoginServiceException);
+            var expectedNhsLoginServiceDependencyValidationException =
+                new NhsLoginServiceDependencyValidationException(
+                    message: "NHS Login validation error occurred, please fix the errors and try again.",
+                    innerException: invalidArgumentsException);
 
             this.securityBrokerMock.Setup(broker =>
-                broker.GetNhsLoginAccessTokenAsync())
+                broker.GetAccessTokenAsync())
                     .ReturnsAsync(nullAccessToken);
 
             // when
             ValueTask<NhsLoginUserInfo> nhsLoginTask =
                 this.nhsLoginService.NhsLoginAsync();
 
-            NhsLoginServiceServiceException actualException =
-                await Assert.ThrowsAsync<NhsLoginServiceServiceException>(
+            NhsLoginServiceDependencyValidationException actualException =
+                await Assert.ThrowsAsync<NhsLoginServiceDependencyValidationException>(
                     nhsLoginTask.AsTask);
 
             // then
-            actualException.Should().BeEquivalentTo(expectedNhsLoginServiceServiceException);
+            actualException.Should().BeEquivalentTo(expectedNhsLoginServiceDependencyValidationException);
 
             this.securityBrokerMock.Verify(broker =>
-                broker.GetNhsLoginAccessTokenAsync(),
+                broker.GetAccessTokenAsync(),
                 Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
-                    expectedNhsLoginServiceServiceException))),
+                    expectedNhsLoginServiceDependencyValidationException))),
                 Times.Once);
 
             this.securityBrokerMock.VerifyNoOtherCalls();
@@ -66,7 +71,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.NhsLog
             string validAccessToken = "valid-token";
             NhsLoginUserInfo nullUserInfo = null;
 
-            var nhsLoginUserInfoException = new NhsLoginUserInfoException(
+            var nhsLoginUserInfoException = new NhsLoginNullResponseException(
                 message: "NHS Login userinfo endpoint did not return a successful response.");
 
             var expectedNhsLoginServiceDependencyValidationException =
@@ -75,7 +80,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.NhsLog
                     innerException: nhsLoginUserInfoException);
 
             this.securityBrokerMock.Setup(broker =>
-                broker.GetNhsLoginAccessTokenAsync())
+                broker.GetAccessTokenAsync())
                     .ReturnsAsync(validAccessToken);
 
             this.securityBrokerMock.Setup(broker =>
@@ -95,7 +100,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.NhsLog
                 expectedNhsLoginServiceDependencyValidationException);
 
             this.securityBrokerMock.Verify(broker =>
-                broker.GetNhsLoginAccessTokenAsync(),
+                broker.GetAccessTokenAsync(),
                 Times.Once);
 
             this.securityBrokerMock.Verify(broker =>

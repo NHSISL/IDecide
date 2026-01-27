@@ -5,6 +5,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Models.Foundations.NhsLogins;
@@ -42,28 +45,54 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.NhsLog
             var innerException = new Xeption(randomMessage);
 
             return new NhsLoginServiceDependencyException(
-                message: "NHS Login dependency error occurred, contact support.",
+                message: "NHS Login dependency error occurred, please contact support.",
                 innerException: innerException);
         }
 
-        private static NhsLoginServiceServiceException GetNhsLoginServiceServiceException()
+        private static NhsLoginServiceException GetNhsLoginServiceException()
         {
             string randomMessage = GetRandomString();
             var innerException = new Xeption(randomMessage);
 
-            return new NhsLoginServiceServiceException(
-                message: "NHS Login service error occurred, contact support.",
+            return new NhsLoginServiceException(
+                message: "NHS Login service error occurred, please contact support.",
                 innerException: innerException);
         }
 
-        public static TheoryData<Xeption> DependencyExceptions()
+        public static TheoryData<Exception> DependencyValidationExceptions()
         {
-            return
-            [
-                GetNhsLoginServiceDependencyException(),
-                GetNhsLoginServiceServiceException()
-            ];
+            string randomMessage = GetRandomString();
+            string exceptionMessage = randomMessage;
+            var innerException = new Exception(exceptionMessage);
+
+            return new TheoryData<Exception>
+            {
+                new HttpRequestException(
+                    message: randomMessage,
+                    inner: innerException,
+                    statusCode: HttpStatusCode.BadRequest),
+
+                new OperationCanceledException(
+                    message: randomMessage,
+                    innerException),
+            };
         }
+
+        public static TheoryData<Exception> DependencyExceptions()
+        {
+            string randomMessage = GetRandomString();
+            string exceptionMessage = randomMessage;
+            var innerException = new Exception(exceptionMessage);
+
+            return new TheoryData<Exception>
+            {
+                 new HttpRequestException(
+                    message: randomMessage,
+                    inner: null,
+                    statusCode: HttpStatusCode.InternalServerError),
+            };
+        }
+
 
         private static string GetRandomString() =>
             new MnemonicString(wordCount: GetRandomNumber()).GetValue();

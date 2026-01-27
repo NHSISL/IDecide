@@ -58,7 +58,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
             {
                 return InternalServerError(nhsLoginServiceDependencyException);
             }
-            catch (NhsLoginServiceServiceException nhsLoginServiceServiceException)
+            catch (NhsLoginServiceException nhsLoginServiceServiceException)
             {
                 return InternalServerError(nhsLoginServiceServiceException);
             }
