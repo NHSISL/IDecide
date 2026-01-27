@@ -77,5 +77,35 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Patien
             // Then
             attribute.Should().NotBeNull();
         }
+
+        [Fact]
+        public void GetShouldHaveAuthorizeAttributeWithNoRoles()
+        {
+            // Given
+            var controllerType = typeof(PatientsController);
+            var methodInfo = controllerType.GetMethod("GetPatientInfo");
+            Type attributeType = typeof(AuthorizeAttribute);
+            string attributeProperty = "Roles";
+
+            // When
+            var methodAttribute = methodInfo?
+                .GetCustomAttributes(attributeType, inherit: true)
+                .FirstOrDefault();
+
+            var controllerAttribute = controllerType
+                .GetCustomAttributes(attributeType, inherit: true)
+                .FirstOrDefault();
+
+            var attribute = methodAttribute ?? controllerAttribute;
+
+            // Then
+            attribute.Should().NotBeNull();
+
+            var actualAttributeValue = attributeType
+                .GetProperty(attributeProperty)?
+                .GetValue(attribute) as string;
+
+            actualAttributeValue.Should().BeNullOrEmpty();
+        }
     }
 }

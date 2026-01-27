@@ -53,6 +53,7 @@ using LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions;
 using LondonDataServices.IDecide.Core.Services.Foundations.Consumers;
 using LondonDataServices.IDecide.Core.Services.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes;
+using LondonDataServices.IDecide.Core.Services.Foundations.NhsLogins;
 using LondonDataServices.IDecide.Core.Services.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Services.Foundations.Pds;
@@ -456,6 +457,7 @@ namespace LondonDataServices.IDecide.Portal.Server
             services.AddTransient<INotificationService, NotificationService>();
             services.AddTransient<IConsumerService, ConsumerService>();
             services.AddTransient<IConsumerAdoptionService, ConsumerAdoptionService>();
+            services.AddTransient<INhsLoginService, NhsLoginService>();
         }
 
         private static void AddProcessingServices(IServiceCollection services)

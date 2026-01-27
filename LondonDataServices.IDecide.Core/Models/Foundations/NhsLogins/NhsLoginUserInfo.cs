@@ -1,17 +1,13 @@
-﻿// ---------------------------------------------------------
-// Copyright (c) North East London ICB. All rights reserved.
-// ---------------------------------------------------------
-
-using System;
+﻿using System;
 using System.Text.Json.Serialization;
 
-namespace LondonDataServices.IDecide.Portal.Server.Models
+namespace LondonDataServices.IDecide.Core.Models.Foundations.NhsLogins
 {
     public class NhsLoginUserInfo
     {
         [JsonPropertyName("birthdate")]
         public DateTime Birthdate { get; set; }
-        
+
         [JsonPropertyName("family_name")]
         public string FamilyName { get; set; }
         

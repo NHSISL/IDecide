@@ -4,6 +4,7 @@
 
 using System.Threading.Tasks;
 using ISL.Providers.Captcha.Abstractions.Models;
+using LondonDataServices.IDecide.Core.Models.Foundations.NhsLogins;
 using LondonDataServices.IDecide.Core.Models.Securities;
 
 namespace LondonDataServices.IDecide.Core.Brokers.Securities
@@ -18,5 +19,7 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
         ValueTask<CaptchaResult> ValidateCaptchaAsync();
         ValueTask<string> GetIpAddressAsync();
         ValueTask<string> GetHeaderAsync(string key);
+        ValueTask<string> GetAccessTokenAsync();
+        ValueTask<NhsLoginUserInfo> GetNhsLoginUserInfoAsync(string accessToken);
     }
 }
