@@ -6,10 +6,10 @@ using Xeptions;
 
 namespace LondonDataServices.IDecide.Core.Models.Foundations.NhsLogins.Exceptions
 {
-    public class NhsLoginServiceServiceException : Xeption
+    public class NhsLoginNullResponseException : Xeption
     {
-        public NhsLoginServiceServiceException(string message, Xeption innerException)
-            : base(message, innerException)
+        public NhsLoginNullResponseException(string message)
+            : base(message)
         { }
     }
 }

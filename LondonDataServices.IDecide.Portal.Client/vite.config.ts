@@ -54,6 +54,26 @@ export default defineConfig({
             '^/api/*': {
                 target,
                 secure: false
+            },
+            '^/login': {
+                target,
+                secure: false
+            },
+            '^/signin-oidc': {
+                target,
+                secure: false
+            },
+            '^/token': {
+                target,
+                secure: false
+            },
+            '^/logout': {
+                target,
+                secure: false
+            },
+            '^/patientinfo': {
+                target,
+                secure: false
             }
         },
         port: 5173,

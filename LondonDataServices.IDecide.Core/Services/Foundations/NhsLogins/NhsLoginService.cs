@@ -2,9 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using System;
 using System.Threading.Tasks;
-using LondonDataServices.IDecide.Core.Brokers.DateTimes;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Models.Foundations.NhsLogins;
@@ -13,21 +11,26 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.NhsLogins
 {
     public partial class NhsLoginService : INhsLoginService
     {
-        private readonly IDateTimeBroker dateTimeBroker;
-        private readonly ISecurityAuditBroker securityAuditBroker;
+        private readonly ISecurityBroker securityBroker;
         private readonly ILoggingBroker loggingBroker;
 
         public NhsLoginService(
-            IDateTimeBroker dateTimeBroker,
-            ISecurityAuditBroker securityAuditBroker,
+            ISecurityBroker securityBroker,
             ILoggingBroker loggingBroker)
         {
-            this.dateTimeBroker = dateTimeBroker;
-            this.securityAuditBroker = securityAuditBroker;
+            this.securityBroker = securityBroker;
             this.loggingBroker = loggingBroker;
         }
 
         public ValueTask<NhsLoginUserInfo> NhsLoginAsync() =>
-            throw new NotImplementedException();
+            TryCatch(async () =>
+            {
+                var accessToken = await this.securityBroker.GetAccessTokenAsync();
+                ValidateAccessToken(accessToken);
+                NhsLoginUserInfo userInfo = await this.securityBroker.GetNhsLoginUserInfoAsync(accessToken);
+                ValidateSuccessStatusCode(userInfo);
+
+                return userInfo;
+            });
     }
 }

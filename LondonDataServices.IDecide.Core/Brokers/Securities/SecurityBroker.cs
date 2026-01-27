@@ -3,13 +3,19 @@
 // ---------------------------------------------------------
 
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using ISL.Providers.Captcha.Abstractions;
 using ISL.Providers.Captcha.Abstractions.Models;
 using ISL.Security.Client.Clients;
+using LondonDataServices.IDecide.Core.Models.Foundations.NhsLogins;
 using LondonDataServices.IDecide.Core.Models.Securities;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
 
 namespace LondonDataServices.IDecide.Core.Brokers.Securities
@@ -26,6 +32,8 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
         private readonly IHeaderDictionary headers = new HeaderDictionary();
         private readonly ISecurityClient securityClient;
         private readonly ICaptchaAbstractionProvider captchaAbstractionProvider;
+        private readonly IHttpContextAccessor httpContextAccessor;
+        private readonly IConfiguration configuration;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SecurityBroker"/> class
@@ -35,14 +43,17 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
         /// <param name="httpContextAccessor">Provides access to the current HTTP context.</param>
         public SecurityBroker(
             IHttpContextAccessor httpContextAccessor,
-            ICaptchaAbstractionProvider captchaAbstractionProvider)
+            ICaptchaAbstractionProvider captchaAbstractionProvider,
+            IConfiguration configuration)
         {
+            this.httpContextAccessor = httpContextAccessor;
             claimsPrincipal = httpContextAccessor.HttpContext?.User ?? new ClaimsPrincipal();
             remoteIpAddress = httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString();
             httpContextAccessor.HttpContext?.Request.Headers.TryGetValue("X-Recaptcha-Token", out captchaToken);
             this.headers = httpContextAccessor.HttpContext?.Request?.Headers ?? new HeaderDictionary();
             this.securityClient = new SecurityClient();
             this.captchaAbstractionProvider = captchaAbstractionProvider;
+            this.configuration = configuration;
         }
 
         /// <summary>
@@ -86,6 +97,58 @@ namespace LondonDataServices.IDecide.Core.Brokers.Securities
                 jobTitle: user.JobTitle,
                 roles: user.Roles,
                 claims: user.Claims);
+        }
+
+        /// <summary>
+        /// Retrieves the NHS Login access token for the current user from the HTTP context.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="string"/> containing the access token if present; otherwise, an empty string.
+        /// </returns>
+        public async ValueTask<string> GetAccessTokenAsync()
+        {
+            if (this.httpContextAccessor?.HttpContext == null)
+            {
+                return string.Empty;
+            }
+
+            string accessToken =
+                await this.httpContextAccessor.HttpContext.GetTokenAsync("access_token");
+
+            return accessToken ?? string.Empty;
+        }
+
+        /// <summary>
+        /// Retrieves NHS Login user information from the userinfo endpoint using the provided access token.
+        /// </summary>
+        /// <param name="accessToken">
+        /// The OAuth 2.0 access token to authorize the request to the NHS Login userinfo endpoint.
+        /// </param>
+        /// <returns>
+        /// A <see cref="NhsLoginUserInfo"/> object containing user details as returned by the NHS Login service.
+        /// </returns>
+        /// <exception cref="HttpRequestException">
+        /// Thrown if the HTTP response indicates a non-success status code.
+        /// </exception>
+        public async ValueTask<NhsLoginUserInfo> GetNhsLoginUserInfoAsync(string accessToken)
+        {
+            using var httpClient = new HttpClient();
+
+            httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", accessToken);
+
+            string userInfoEndpoint =
+                $"{this.configuration["NHSLoginOIDC:authority"]}/userinfo";
+
+            HttpResponseMessage response =
+                await httpClient.GetAsync(userInfoEndpoint);
+
+            response.EnsureSuccessStatusCode();
+
+            NhsLoginUserInfo userInfo =
+                await response.Content.ReadFromJsonAsync<NhsLoginUserInfo>();
+
+            return userInfo;
         }
 
         /// <summary>
