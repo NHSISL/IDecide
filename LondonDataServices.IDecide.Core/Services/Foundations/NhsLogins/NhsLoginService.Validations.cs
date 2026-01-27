@@ -5,6 +5,7 @@
 using System;
 using LondonDataServices.IDecide.Core.Models.Foundations.NhsLogins;
 using LondonDataServices.IDecide.Core.Models.Foundations.NhsLogins.Exceptions;
+using Xeptions;
 
 namespace LondonDataServices.IDecide.Core.Services.Foundations.NhsLogins
 {
