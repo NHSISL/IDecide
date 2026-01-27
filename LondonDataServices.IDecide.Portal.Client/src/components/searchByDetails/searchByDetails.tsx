@@ -291,200 +291,198 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttorn
                             {translate("SearchByDetails.back")}
                         </button>
 
-                        <Card cardType="feature">
-                            <Card.Content>
-                                <Card.Heading>{translate("SearchByDetails.myDetails")}</Card.Heading>
+                        <div className="grouped-input-block">
 
-                                <div className={`nhsuk-form-group${errors.surname ? " nhsuk-form-group--error" : ""}`}>
-                                    <label className="nhsuk-label" htmlFor="surname">
-                                        {translate("SearchByDetails.surnameLabel")}
-                                    </label>
-                                    <span className="nhsuk-hint" id="surname-hint">
-                                        {translate("SearchByDetails.surnameHint")}
-                                    </span>
-                                    {errors.surname && (
-                                        <span className="nhsuk-error-message" id="surname-error">
-                                            <strong>{translate("SearchByDetails.errorPrefix")}</strong> {errors.surname}
-                                        </span>
-                                    )}
-                                    <input
-                                        className={`nhsuk-input${errors.surname ? " nhsuk-input--error" : ""}`}
-                                        id="surname"
-                                        name="surname"
-                                        type="text"
-                                        autoComplete="family-name"
-                                        aria-describedby="surname-hint"
-                                        value={surname}
-                                        onChange={e => {
-                                            setSurname(e.target.value);
-                                            handleFieldChange("surname");
-                                        }}
-                                        style={{ marginBottom: "1rem", maxWidth: "400px" }}
-                                    />
-                                </div>
+                            <h3><strong>{translate("SearchByDetails.myDetails")}</strong></h3>
 
-                                <div className={`nhsuk-form-group${errors.postcode ? " nhsuk-form-group--error" : ""}`}>
-                                    <label className="nhsuk-label" htmlFor="postcode">
-                                        {translate("SearchByDetails.postcodeLabel")}
-                                    </label>
-                                    <span className="nhsuk-hint" id="postcode-hint">
-                                        {translate("SearchByDetails.postcodeHint")}
+                            <div className={`nhsuk-form-group${errors.surname ? " nhsuk-form-group--error" : ""}`}>
+                                <label className="nhsuk-label" htmlFor="surname">
+                                    {translate("SearchByDetails.surnameLabel")}
+                                </label>
+                                <span className="nhsuk-hint" id="surname-hint">
+                                    {translate("SearchByDetails.surnameHint")}
+                                </span>
+                                {errors.surname && (
+                                    <span className="nhsuk-error-message" id="surname-error">
+                                        <strong>{translate("SearchByDetails.errorPrefix")}</strong> {errors.surname}
                                     </span>
-                                    {errors.postcode && (
-                                        <span className="nhsuk-error-message" id="postcode-error">
-                                            <strong>{translate("SearchByDetails.errorPrefix")}</strong> {errors.postcode}
-                                        </span>
-                                    )}
-                                    <input
-                                        className={`nhsuk-input${errors.postcode ? " nhsuk-input--error" : ""}`}
-                                        id="postcode"
-                                        name="postcode"
-                                        type="text"
-                                        autoComplete="postal-code"
-                                        aria-describedby="postcode-hint"
-                                        value={postcode}
-                                        onChange={e => {
-                                            setPostcode(e.target.value);
-                                            handleFieldChange("postcode");
-                                        }}
-                                        style={{ marginBottom: "1rem", maxWidth: "400px" }}
-                                    />
-                                </div>
-                                <fieldset className={`nhsuk-fieldset${errors.dob ? " nhsuk-form-group--error" : ""}`} style={{ marginBottom: "1rem" }}>
-                                    <legend className="nhsuk-fieldset__legend nhsuk-label">
-                                        {translate("SearchByDetails.dobLegend")}
-                                    </legend>
-                                    <span className="nhsuk-hint" id="dob-hint">
-                                        {translate("SearchByDetails.dobHint")}
+                                )}
+                                <input
+                                    className={`nhsuk-input${errors.surname ? " nhsuk-input--error" : ""}`}
+                                    id="surname"
+                                    name="surname"
+                                    type="text"
+                                    autoComplete="family-name"
+                                    aria-describedby="surname-hint"
+                                    value={surname}
+                                    onChange={e => {
+                                        setSurname(e.target.value);
+                                        handleFieldChange("surname");
+                                    }}
+                                    style={{ marginBottom: "1rem", maxWidth: "400px" }}
+                                />
+                            </div>
+
+                            <div className={`nhsuk-form-group${errors.postcode ? " nhsuk-form-group--error" : ""}`}>
+                                <label className="nhsuk-label" htmlFor="postcode">
+                                    {translate("SearchByDetails.postcodeLabel")}
+                                </label>
+                                <span className="nhsuk-hint" id="postcode-hint">
+                                    {translate("SearchByDetails.postcodeHint")}
+                                </span>
+                                {errors.postcode && (
+                                    <span className="nhsuk-error-message" id="postcode-error">
+                                        <strong>{translate("SearchByDetails.errorPrefix")}</strong> {errors.postcode}
                                     </span>
-                                    {errors.dob && (
-                                        <span className="nhsuk-error-message" id="dob-error">
-                                            <strong>{translate("SearchByDetails.errorPrefix")}</strong> {errors.dob}
-                                        </span>
-                                    )}
-                                    <div className="nhsuk-date-input" id="dob" aria-describedby="dob-hint">
-                                        <div className="nhsuk-date-input__item" style={{ display: "inline-block", marginRight: "0.5rem" }}>
-                                            <label className="nhsuk-label nhsuk-date-input__label" htmlFor="dob-day">
-                                                {translate("SearchByDetails.dobDayLabel")}
-                                            </label>
-                                            <input
-                                                className={`nhsuk-input nhsuk-date-input__input${errors.dob ? " nhsuk-input--error" : ""}`}
-                                                id="dob-day"
-                                                name="dob-day"
-                                                type="text"
-                                                inputMode="numeric"
-                                                pattern="[0-9]*"
-                                                maxLength={2}
-                                                value={dobDay}
-                                                onChange={e => {
-                                                    setDobDay(e.target.value.replace(/\D/g, ""));
-                                                    handleFieldChange("dobDay");
-                                                }}
-                                                style={{ width: "3em" }}
-                                                autoComplete="bday-day"
-                                            />
-                                        </div>
-                                        <div className="nhsuk-date-input__item" style={{ display: "inline-block", marginRight: "0.5rem" }}>
-                                            <label className="nhsuk-label nhsuk-date-input__label" htmlFor="dob-month">
-                                                {translate("SearchByDetails.dobMonthLabel")}
-                                            </label>
-                                            <input
-                                                className={`nhsuk-input nhsuk-date-input__input${errors.dob ? " nhsuk-input--error" : ""}`}
-                                                id="dob-month"
-                                                name="dob-month"
-                                                type="text"
-                                                inputMode="numeric"
-                                                pattern="^(0[1-9]|1[0-2])$"
-                                                maxLength={2}
-                                                value={dobMonth}
-                                                onChange={e => handleMonthChange(e.target.value)}
-                                                style={{ width: "3em" }}
-                                                autoComplete="bday-month"
-                                            />
-                                        </div>
-                                        <div className="nhsuk-date-input__item" style={{ display: "inline-block" }}>
-                                            <label className="nhsuk-label nhsuk-date-input__label" htmlFor="dob-year">
-                                                {translate("SearchByDetails.dobYearLabel")}
-                                            </label>
-                                            <input
-                                                className={`nhsuk-input nhsuk-date-input__input${errors.dob ? " nhsuk-input--error" : ""}`}
-                                                id="dob-year"
-                                                name="dob-year"
-                                                type="text"
-                                                inputMode="numeric"
-                                                pattern="[0-9]*"
-                                                maxLength={4}
-                                                value={dobYear}
-                                                onChange={e => {
-                                                    setDobYear(e.target.value.replace(/\D/g, ""));
-                                                    handleFieldChange("dobYear");
-                                                }}
-                                                style={{ width: "4em" }}
-                                                autoComplete="bday-year"
-                                            />
-                                        </div>
+                                )}
+                                <input
+                                    className={`nhsuk-input${errors.postcode ? " nhsuk-input--error" : ""}`}
+                                    id="postcode"
+                                    name="postcode"
+                                    type="text"
+                                    autoComplete="postal-code"
+                                    aria-describedby="postcode-hint"
+                                    value={postcode}
+                                    onChange={e => {
+                                        setPostcode(e.target.value);
+                                        handleFieldChange("postcode");
+                                    }}
+                                    style={{ marginBottom: "1rem", maxWidth: "400px" }}
+                                />
+                            </div>
+                            <fieldset className={`nhsuk-fieldset${errors.dob ? " nhsuk-form-group--error" : ""}`} style={{ marginBottom: "1rem" }}>
+                                <legend className="nhsuk-fieldset__legend nhsuk-label">
+                                    {translate("SearchByDetails.dobLegend")}
+                                </legend>
+                                <span className="nhsuk-hint" id="dob-hint">
+                                    {translate("SearchByDetails.dobHint")}
+                                </span>
+                                {errors.dob && (
+                                    <span className="nhsuk-error-message" id="dob-error">
+                                        <strong>{translate("SearchByDetails.errorPrefix")}</strong> {errors.dob}
+                                    </span>
+                                )}
+                                <div className="nhsuk-date-input" id="dob" aria-describedby="dob-hint">
+                                    <div className="nhsuk-date-input__item" style={{ display: "inline-block", marginRight: "0.5rem" }}>
+                                        <label className="nhsuk-label nhsuk-date-input__label" htmlFor="dob-day">
+                                            {translate("SearchByDetails.dobDayLabel")}
+                                        </label>
+                                        <input
+                                            className={`nhsuk-input nhsuk-date-input__input${errors.dob ? " nhsuk-input--error" : ""}`}
+                                            id="dob-day"
+                                            name="dob-day"
+                                            type="text"
+                                            inputMode="numeric"
+                                            pattern="[0-9]*"
+                                            maxLength={2}
+                                            value={dobDay}
+                                            onChange={e => {
+                                                setDobDay(e.target.value.replace(/\D/g, ""));
+                                                handleFieldChange("dobDay");
+                                            }}
+                                            style={{ width: "3em" }}
+                                            autoComplete="bday-day"
+                                        />
                                     </div>
-                                </fieldset>
-                            </Card.Content>
-                        </Card>
+                                    <div className="nhsuk-date-input__item" style={{ display: "inline-block", marginRight: "0.5rem" }}>
+                                        <label className="nhsuk-label nhsuk-date-input__label" htmlFor="dob-month">
+                                            {translate("SearchByDetails.dobMonthLabel")}
+                                        </label>
+                                        <input
+                                            className={`nhsuk-input nhsuk-date-input__input${errors.dob ? " nhsuk-input--error" : ""}`}
+                                            id="dob-month"
+                                            name="dob-month"
+                                            type="text"
+                                            inputMode="numeric"
+                                            pattern="^(0[1-9]|1[0-2])$"
+                                            maxLength={2}
+                                            value={dobMonth}
+                                            onChange={e => handleMonthChange(e.target.value)}
+                                            style={{ width: "3em" }}
+                                            autoComplete="bday-month"
+                                        />
+                                    </div>
+                                    <div className="nhsuk-date-input__item" style={{ display: "inline-block" }}>
+                                        <label className="nhsuk-label nhsuk-date-input__label" htmlFor="dob-year">
+                                            {translate("SearchByDetails.dobYearLabel")}
+                                        </label>
+                                        <input
+                                            className={`nhsuk-input nhsuk-date-input__input${errors.dob ? " nhsuk-input--error" : ""}`}
+                                            id="dob-year"
+                                            name="dob-year"
+                                            type="text"
+                                            inputMode="numeric"
+                                            pattern="[0-9]*"
+                                            maxLength={4}
+                                            value={dobYear}
+                                            onChange={e => {
+                                                setDobYear(e.target.value.replace(/\D/g, ""));
+                                                handleFieldChange("dobYear");
+                                            }}
+                                            style={{ width: "4em" }}
+                                            autoComplete="bday-year"
+                                        />
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
 
                         {powerOfAttorney && (
-                            <Card cardType="feature">
-                                <Card.Content>
-                                    <Card.Heading>{translate("SearchByDetails.myDetailsRequester")}</Card.Heading>
-                                    <Card.Description>
-                                        <div style={{ marginBottom: "1.5rem" }}>
-                                            <TextInput
-                                                label={translate("SearchByDetails.poaFirstnameLabel")}
-                                                id="poa-firstname"
-                                                name="poa-firstname"
-                                                autoComplete="off"
-                                                value={poaFirstname}
-                                                onChange={handlePoaFirstnameChange}
-                                                error={poaFirstnameError || undefined}
+                            <div className="grouped-input-block">
+
+                                <h3><strong>{translate("SearchByDetails.myDetailsRequester")}</strong></h3>
+                                <Card.Description>
+                                    <div style={{ marginBottom: "1.5rem" }}>
+                                        <TextInput
+                                            label={translate("SearchByDetails.poaFirstnameLabel")}
+                                            id="poa-firstname"
+                                            name="poa-firstname"
+                                            autoComplete="off"
+                                            value={poaFirstname}
+                                            onChange={handlePoaFirstnameChange}
+                                            error={poaFirstnameError || undefined}
+                                            style={{ maxWidth: "400px", marginBottom: "1rem" }}
+                                        />
+                                        <TextInput
+                                            label={translate("SearchByDetails.poaSurnameLabel")}
+                                            id="poa-surname"
+                                            name="poa-surname"
+                                            autoComplete="off"
+                                            value={poaSurname}
+                                            onChange={handlePoaSurnameChange}
+                                            error={poaSurnameError || undefined}
+                                            style={{ maxWidth: "400px", marginBottom: "1rem" }}
+                                        />
+                                        <div style={{ marginBottom: "1rem" }}>
+                                            <Select
+                                                label={translate("SearchByDetails.poaRelationshipLabel")}
+                                                id="poa-relationship"
+                                                name="poa-relationship"
+                                                aria-label={translate("SearchByDetails.poaRelationshipLabel")}
+                                                aria-required="true"
+                                                required
+                                                value={poaRelationship}
+                                                onChange={handlePoaRelationshipChange}
+                                                error={poaRelationshipError || undefined}
                                                 style={{ maxWidth: "400px", marginBottom: "1rem" }}
-                                            />
-                                            <TextInput
-                                                label={translate("SearchByDetails.poaSurnameLabel")}
-                                                id="poa-surname"
-                                                name="poa-surname"
-                                                autoComplete="off"
-                                                value={poaSurname}
-                                                onChange={handlePoaSurnameChange}
-                                                error={poaSurnameError || undefined}
-                                                style={{ maxWidth: "400px", marginBottom: "1rem" }}
-                                            />
-                                            <div style={{ marginBottom: "1rem" }}>
-                                                <Select
-                                                    label={translate("SearchByDetails.poaRelationshipLabel")}
-                                                    id="poa-relationship"
-                                                    name="poa-relationship"
-                                                    aria-label={translate("SearchByDetails.poaRelationshipLabel")}
-                                                    aria-required="true"
-                                                    required
-                                                    value={poaRelationship}
-                                                    onChange={handlePoaRelationshipChange}
-                                                    error={poaRelationshipError || undefined}
-                                                    style={{ maxWidth: "400px", marginBottom: "1rem" }}
-                                                >
-                                                    <option value="" disabled>
-                                                        {translate("SearchByDetails.poaRelationshipSelect")}
-                                                    </option>
-                                                    <option value={translate("SearchByDetails.poaRelationshipParent")}>
-                                                        {translate("SearchByDetails.poaRelationshipParent")}
-                                                    </option>
-                                                    <option value={translate("SearchByDetails.poaRelationshipGuardian")}>
-                                                        {translate("SearchByDetails.poaRelationshipGuardian")}
-                                                    </option>
-                                                    <option value={translate("SearchByDetails.poaRelationshipAttorney")}>
-                                                        {translate("SearchByDetails.poaRelationshipAttorney")}
-                                                    </option>
-                                                </Select>
-                                            </div>
+                                            >
+                                                <option value="" disabled>
+                                                    {translate("SearchByDetails.poaRelationshipSelect")}
+                                                </option>
+                                                <option value={translate("SearchByDetails.poaRelationshipParent")}>
+                                                    {translate("SearchByDetails.poaRelationshipParent")}
+                                                </option>
+                                                <option value={translate("SearchByDetails.poaRelationshipGuardian")}>
+                                                    {translate("SearchByDetails.poaRelationshipGuardian")}
+                                                </option>
+                                                <option value={translate("SearchByDetails.poaRelationshipAttorney")}>
+                                                    {translate("SearchByDetails.poaRelationshipAttorney")}
+                                                </option>
+                                            </Select>
                                         </div>
-                                    </Card.Description>
-                                </Card.Content>
-                            </Card>
+                                    </div>
+                                </Card.Description>
+                            </div>
                         )}
 
                         {apiError && (

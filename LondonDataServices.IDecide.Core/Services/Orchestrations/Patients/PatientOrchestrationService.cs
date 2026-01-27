@@ -581,5 +581,6 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
 
             await this.notificationService.SendCodeNotificationAsync(notificationInfo);
         }
+
     }
 }

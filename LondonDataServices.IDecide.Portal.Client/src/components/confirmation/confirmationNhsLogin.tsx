@@ -6,38 +6,40 @@ import { PatientDecision } from "../../models/patientDecisions/patientDecision";
 import { useTranslation } from "react-i18next";
 import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
 import { Patient } from "../../models/patients/patient";
-import { PowerOfAttorney } from "../../models/powerOfAttourneys/powerOfAttourney";
 import { useApiErrorHandlerChecks } from "../../hooks/useApiErrorHandlerChecks";
 import { faArrowLeftLong } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-interface ConfirmationProps {
+interface ConfirmationNhsLoginProps {
     selectedOption: "optout" | "optin" | null;
     nhsNumber: string | null;
     createdPatient?: Patient | null;
-    powerOfAttorney?: PowerOfAttorney | null;
 }
 
-export const Confirmation: React.FC<ConfirmationProps> = ({
+export const ConfirmationNhsLogin: React.FC<ConfirmationNhsLoginProps> = ({
     selectedOption,
     nhsNumber,
-    createdPatient,
-    powerOfAttorney
+    createdPatient
 }) => {
 
     const { nextStep, previousStep } = useStep();
-    const createDecisionMutation = decisionViewService.useCreatePatientDecision();
+    const createDecisionMutation = decisionViewService.useCreatePatientDecisionNhsLogin();
     const [apiError, setApiError] = useState<string | JSX.Element>("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { t: translate } = useTranslation();
     const { configuration } = useFrontendConfiguration();
-    const RECAPTCHA_SITE_KEY = configuration.recaptchaSiteKey;
-    const RECAPTCHA_ACTION_SUBMIT = "submit";
-
+    const [notificationPreference, setNotificationPreference] = useState<"SMS" | "Email" | "None" | "">("");
+    const EmptyGuid = "00000000-0000-0000-0000-000000000000"
     const handleApiError = useApiErrorHandlerChecks({
         setApiError,
         configuration
     });
+
+    const handleNotificationChange = (value: "SMS" | "Email" | "None") => {
+        setNotificationPreference(prev =>
+            prev === value ? "" : value
+        );
+    };
 
     const handleBack = () => {
         previousStep();
@@ -46,8 +48,8 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!nhsNumber || !selectedOption) {
-            setApiError(translate("ConfirmAndSave.errorMissingNhsOrOption"));
+        if (!notificationPreference) {
+            setApiError("Please select how you would like to be notified.");
             return;
         }
 
@@ -56,27 +58,26 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
 
         const decision = new PatientDecision({
             id: crypto.randomUUID(),
-            patientId: createdPatient?.id,
+            patientId: EmptyGuid,
             patient: {
                 nhsNumber: nhsNumber || "",
-                validationCode: createdPatient?.validationCode
+                validationCode: "LOGIN",
+                notificationPreference: notificationPreference === "Email"
+                    ? 0
+                    : notificationPreference === "SMS"
+                        ? 2
+                        : notificationPreference === "None"
+                            ? 3
+                            : undefined
             },
-            decisionChoice: selectedOption,
-            decisionTypeId: configuration.decisionTypeId,
-            responsiblePersonGivenName: powerOfAttorney?.firstName,
-            responsiblePersonRelationship: powerOfAttorney?.relationship,
-            responsiblePersonSurname: powerOfAttorney?.surname
+            decisionChoice: selectedOption!,
+            decisionTypeId: configuration.decisionTypeId
         });
 
         try {
-            const token = await grecaptcha.execute(
-                RECAPTCHA_SITE_KEY,
-                { action: RECAPTCHA_ACTION_SUBMIT });
-
             createDecisionMutation.mutate(
                 decision,
                 {
-                    headers: { "X-Recaptcha-Token": token },
                     onSuccess: () => {
                         setIsSubmitting(false);
                         nextStep();
@@ -132,17 +133,24 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
         }
     };
 
+    const getNotificationPreferenceLabel = () => {
+        if (notificationPreference === "SMS") return "SMS";
+        if (notificationPreference === "Email") return "Email";
+        if (notificationPreference === "None") return "None";
+        return <span style={{ color: "#888" }}>Not selected</span>;
+    };
+
     return (
         <>
             <Row className="custom-col-spacing">
                 <Col xs={12} md={6} lg={6}>
 
-
                     <div className="nhsuk-card nhsuk-card--summary">
+
                         <div className="nhsuk-card__content">
                             <h3 className="nhsuk-card__heading">Your Data Sharing Choice</h3>
 
-                            <dl className="nhsuk-summary-list">
+                            <dl className="nhsuk-summary-list mb-2">
                                 <div className="nhsuk-summary-list__row">
                                     <dt className="nhsuk-summary-list__key" style={{ fontWeight: "lighter" }}>Decision</dt>
                                     <dd className="nhsuk-summary-list__value">
@@ -164,35 +172,70 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
                                         </strong>
                                     </dd>
                                 </div>
+
+                                <div className="nhsuk-summary-list__row">
+                                    <dt className="nhsuk-summary-list__key" style={{ fontWeight: "lighter" }}>
+                                        Notification Preference
+                                    </dt>
+                                    <dd className="nhsuk-summary-list__value">
+                                        <strong data-testid="notification-preference-value">
+                                            {getNotificationPreferenceLabel()}
+                                        </strong>
+                                    </dd>
+                                </div>
                             </dl>
 
-                            {powerOfAttorney && (
-                                <>
-                                    <hr />
-                                    <h3 className="nhsuk-card__heading nhsuk-u-margin-top-4">
-                                        {translate("ConfirmAndSave.powerOfAttorneyDetails")}
-                                    </h3>
-                                    <dl className="nhsuk-summary-list">
-                                        <div className="nhsuk-summary-list__row">
-                                            <dt className="nhsuk-summary-list__key" style={{ fontWeight: "lighter" }}>
-                                                {translate("ConfirmAndSave.powerOfAttorneyName")}
-                                            </dt>
-                                            <dd className="nhsuk-summary-list__value">
-                                                <strong>{powerOfAttorney.firstName} {powerOfAttorney.surname}</strong>
-                                            </dd>
+                            <Alert>
+                                {/* Notification Preference Selection */}
+                                <div className="nhsuk-form-group" style={{ marginBottom: "1.5rem" }}>
+                                    <fieldset className="nhsuk-fieldset">
+                                        <legend className="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">
+                                            How would you like to be notified when your data flows into the London Data Service?
+                                        </legend>
+                                        <div className="nhsuk-checkboxes">
+                                            <div className="nhsuk-checkboxes__item">
+                                                <input
+                                                    className="nhsuk-checkboxes__input"
+                                                    id="notify-text"
+                                                    name="notificationPreferenceText"
+                                                    type="checkbox"
+                                                    checked={notificationPreference === "SMS"}
+                                                    onChange={() => handleNotificationChange("SMS")}
+                                                />
+                                                <label className="nhsuk-label nhsuk-checkboxes__label" htmlFor="notify-text">
+                                                    SMS
+                                                </label>
+                                            </div>
+                                            <div className="nhsuk-checkboxes__item">
+                                                <input
+                                                    className="nhsuk-checkboxes__input"
+                                                    id="notify-email"
+                                                    name="notificationPreferenceEmail"
+                                                    type="checkbox"
+                                                    checked={notificationPreference === "Email"}
+                                                    onChange={() => handleNotificationChange("Email")}
+                                                />
+                                                <label className="nhsuk-label nhsuk-checkboxes__label" htmlFor="notify-email">
+                                                    Email
+                                                </label>
+                                            </div>
+                                            <div className="nhsuk-checkboxes__item">
+                                                <input
+                                                    className="nhsuk-checkboxes__input"
+                                                    id="notify-none"
+                                                    name="notificationPreferenceNone"
+                                                    type="checkbox"
+                                                    checked={notificationPreference === "None"}
+                                                    onChange={() => handleNotificationChange("None")}
+                                                />
+                                                <label className="nhsuk-label nhsuk-checkboxes__label" htmlFor="notify-none">
+                                                    I don't want to be notified.
+                                                </label>
+                                            </div>
                                         </div>
-
-                                        <div className="nhsuk-summary-list__row">
-                                            <dt className="nhsuk-summary-list__key" style={{ fontWeight: "lighter" }}>
-                                                {translate("ConfirmAndSave.powerOfAttorneyRelationship")}
-                                            </dt>
-                                            <dd className="nhsuk-summary-list__value">
-                                                <strong>{powerOfAttorney.relationship}</strong>
-                                            </dd>
-                                        </div>
-                                    </dl>
-                                </>
-                            )}
+                                    </fieldset>
+                                </div>
+                            </Alert>
 
                             <hr />
                             <form className="nhsuk-form-group" onSubmit={handleSubmit} data-testid="confirmation-form" >
@@ -201,7 +244,7 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
                                     type="submit"
                                     style={{ width: "100%", marginBottom: "5px" }}
                                     data-testid="save-preferences-btn"
-                                    disabled={isSubmitting || !selectedOption}
+                                    disabled={isSubmitting || !selectedOption || !notificationPreference}
                                     aria-busy={isSubmitting}
                                 >
                                     {isSubmitting ? translate("ConfirmAndSave.submitting") : translate("ConfirmAndSave.savePreferences")}
@@ -211,7 +254,7 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
                             <hr />
 
                             <p className="nhsuk-hint" style={{ marginBottom: "1rem" }}>
-                                    If you have changed your mind and want to update your choice, click below to go back.
+                                If you have changed your mind and want to update your choice, click below to go back.
                             </p>
                             <button
                                 className="nhsuk-button nhsuk-button--secondary"
@@ -227,7 +270,6 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
                             </p>
                         </div>
                     </div>
-
 
                     {apiError && (
                         <Alert variant="danger" onClose={() => setApiError("")} dismissible data-testid="error-alert">
@@ -253,11 +295,46 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
                             {translate("ConfirmAndSave.aboutThisStepDesc1")}
                         </p>
                         <p>
-                            {translate("ConfirmAndSave.helpChangePrefs")}
+                            <strong>What to expect:</strong><br />
+                            - If you chose to be notified, you will receive updates when your data is used by the London Data Service.<br />
+                            - If you opted out of notifications, you will not receive updates, but your choice is still recorded and respected.
                         </p>
-                        <h3 data-testid="need-help-heading">{translate("ConfirmAndSave.needHelpTitle")}</h3>
                         <p>
+                            <strong>Your rights and privacy:</strong><br />
+                            You are in control of your confidential patient information. The NHS takes your privacy seriously and your information will never be used for marketing or insurance purposes. You can change your data sharing choice at any time.
+                        </p>
+                        <p>
+                            <strong>Need more information?</strong><br />
+                            Visit the&nbsp;
+                            <a
+                                href="https://www.nhs.uk/your-nhs-data-matters/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{ color: "#005eb8", textDecoration: "underline" }}
+                            >
+                                NHS Your Data Matters
+                            </a>
+                            &nbsp;page to learn more about how your data is used and your choices.
+                        </p>
+                        <p>
+                            <strong>{translate("ConfirmAndSave.needHelpTitle")}</strong><br />
+
                             {translate("ConfirmAndSave.needHelpDesc")}
+
+                            on &nbsp;
+                            <a
+                                href={`tel:${configuration.helpdeskContactNumber}`}
+                                style={{ textDecoration: "underline" }}
+                            >
+                                {configuration.helpdeskContactNumber}
+                            </a> or email us at&nbsp;
+
+                            <a
+                                href={`mailto:${configuration.helpdeskContactEmail}`}
+                                style={{ textDecoration: "underline" }}
+                            >
+                                {configuration.helpdeskContactEmail}
+                            </a>.
                         </p>
                     </div>
                 </Col>
@@ -266,4 +343,4 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
     );
 };
 
-export default Confirmation;
+export default ConfirmationNhsLogin;

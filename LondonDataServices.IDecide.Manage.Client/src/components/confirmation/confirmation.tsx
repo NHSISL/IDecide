@@ -181,7 +181,7 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
                                 <FontAwesomeIcon icon={faArrowLeftLong} /> Go Back
                             </button>
                             <p className="nhsuk-hint" style={{ marginBottom: "1.5rem" }}>
-                                <strong>You can change your mind at any time by returning to this site.</strong>
+                                <strong>You can also change your mind at any time by returning to this site.</strong>
                             </p>
                         </div>
                     </div>

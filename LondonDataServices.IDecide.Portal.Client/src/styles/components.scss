@@ -80,6 +80,19 @@
     position: static;
 }
 
+.accessibility-img {
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s;
+    will-change: transform, box-shadow;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border-radius: 50%;
+}
+
+.accessibility-img-link:hover .accessibility-img,
+.accessibility-img-link:focus .accessibility-img {
+    transform: scale(1.2);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.16);
+}
+
 .grecaptcha-badge {
     z-index: 1;
     width: 256px;
@@ -93,7 +106,14 @@
     border-radius: 2px;
     overflow: hidden;
 }
-
+.nhsuk-button--small {
+    font-size: 0.875rem;
+    padding: 0.25em 1em;
+    min-width: unset;
+    min-height: 2rem;
+    margin:0;
+    margin-right:10px;
+}
 
 
 /* Remove display: flex and flex-wrap from .custom-col-spacing */
@@ -121,6 +141,24 @@
 .custom-col-spacing {
     padding-left: 10px !important;
 
+}
+
+/* Add this to your CSS file if the NHSUK CSS is not being applied */
+.nhsuk-button-blue {
+    background-color: #005eb8;
+    color: #fff;
+    border: none;
+}
+
+.nhsuk-button-blue:hover,
+.nhsuk-button-blue:focus {
+    background-color: #003087;
+    color: #fff;
+}
+
+.nhsuk-button-blue:active {
+    background-color: #002d72;
+    color: #fff;
 }
 
 
@@ -172,3 +210,6 @@
 .nhsuk-card__heading--feature {
     background: #004F69 !important;
 }
+
+
+

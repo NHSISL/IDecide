@@ -1,8 +1,14 @@
-declare interface Window {
-    grecaptcha: {
-        ready: (cb: () => void) => void;
-        execute: (siteKey: string, options: { action: string }) => Promise<string>;
-    };
+declare interface Grecaptcha {
+    ready(cb: () => void): void;
+    execute(siteKey: string, options: { action: string }): Promise<string>;
+    render(container: string | HTMLElement, parameters: object): number;
+    getResponse(optWidgetId?: number): string;
+    reset(optWidgetId?: number): void;
 }
-
-declare const grecaptcha: Window["grecaptcha"];
+interface Grecaptcha {
+    execute(siteKey: string, options: { action: string }): Promise<string>;
+}
+declare const grecaptcha: Grecaptcha;
+interface Window {
+    grecaptcha?: Grecaptcha;
+}

@@ -1,6 +1,5 @@
 ﻿import { Container, Card, Row, Col } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import HeaderComponent from "../../components/layouts/header";
 import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
 
 const CopyrightPage = () => {
@@ -9,7 +8,6 @@ const CopyrightPage = () => {
 
     return (
         <>
-            <HeaderComponent />
             <Container className="py-4" style={{ maxWidth: 800 }}>
                 <button
                     className="nhsuk-back-link mt-4"

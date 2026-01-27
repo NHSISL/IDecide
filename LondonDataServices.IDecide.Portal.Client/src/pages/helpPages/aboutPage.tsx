@@ -1,13 +1,11 @@
 ﻿import { Container, Row, Col, Card } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import HeaderComponent from "../../components/layouts/header";
 
 const AboutPage = () => {
     const navigate = useNavigate();
 
     return (
         <>
-            <HeaderComponent />
             <Container style={{ padding: 20 }}>
                 <button
                     className="nhsuk-back-link mt-4"

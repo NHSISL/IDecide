@@ -22,6 +22,25 @@ export const decisionViewService = {
             }
         };
     },
+    useCreatePatientDecisionNhsLogin: () => {
+        return {
+            mutate: async (
+                decision: PatientDecision,
+                options?: {
+                    onSuccess?: () => void,
+                    onError?: (error: unknown) => void
+                }
+            ) => {
+                try {
+                    await patientDecisionService
+                        .useCreatePatientDecisionNhsLogin(decision);
+                    options?.onSuccess?.();
+                } catch (error) {
+                    options?.onError?.(error);
+                }
+            }
+        };
+    },
 
     useUpdatePatientDecision: () => {
         return patientDecisionService.useModifyPatientDecision();
