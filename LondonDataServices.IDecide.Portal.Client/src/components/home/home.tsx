@@ -181,6 +181,7 @@ export const Home = () => {
                     <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
                         <Button
                             className="nhsuk-button-blue"
+                            data-testid="start-login-button"
                             onClick={() => (window.location.href = "/login")}
                             style={{
                                 width: 260,
@@ -191,6 +192,7 @@ export const Home = () => {
                             {translate("homepage.startButton")}
                         </Button>
                         <Button
+                            data-testid="start-another-person-button"
                             onClick={() => {
                                 fetch("/logout", { method: "POST" }).then(d => {
                                     if (d.ok) {
