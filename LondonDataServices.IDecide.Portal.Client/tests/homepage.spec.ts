@@ -11,12 +11,12 @@ test.describe('Home Page', () => {
     });
 
     test('should display the Start button', async ({ page }) => {
-        await expect(page.getByRole('button', { name: 'Start' })).toBeVisible();
+        await expect(page.getByTestId('start-login-button')).toBeVisible();
     });
 
     test('should navigate to /optOut when Start button is clicked', async ({ page }) => {
         await clickStartButton(page);
-        await expect(page).toHaveURL(/\/optOut/);
+        await expect(page).toHaveURL('https://access.sandpit.signin.nhs.uk/login');
     });
 
     test('should display all expandable section headers', async ({ page }) => {

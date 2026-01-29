@@ -335,6 +335,7 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
                         )}
                         <div style={{ display: "flex", gap: "1rem", marginBottom: "0.2rem", marginTop: "1rem" }}>
                             <Button
+                                data-testid="search"
                                 type="submit"
                                 disabled={
                                     loading ||
