@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 import { useTranslation } from "react-i18next";
 
-const steps = ["nhs", "details", "confirm", "choice", "notify", "thanks"];
+const steps = ["confirm", "choice", "notify", "thanks"];
 
 function useIsMobile() {
     const [isMobile, setIsMobile] = React.useState(false);
@@ -18,12 +18,12 @@ function useIsMobile() {
     return isMobile;
 }
 
-interface LeftProgressProps {
+interface LeftProgressNhsLoginProps {
     currentStepIndex: number;
     setCurrentStepIndex: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const LeftProgress: React.FC<LeftProgressProps> = ({ currentStepIndex, setCurrentStepIndex }) => {
+const LeftProgressNhsLogin: React.FC<LeftProgressNhsLoginProps> = ({ currentStepIndex, setCurrentStepIndex }) => {
     const { t: translate } = useTranslation();
 
     const isMobile = useIsMobile();
@@ -117,7 +117,7 @@ const LeftProgress: React.FC<LeftProgressProps> = ({ currentStepIndex, setCurren
                                                 style={{
                                                     display: "flex",
                                                     alignItems: "center",
-                                                    cursor: isPreviousStep(idx) ? "pointer" : "default",
+                                                    cursor: "default",
                                                     marginBottom: 8,
                                                     color: "black",
                                                 }}
@@ -156,4 +156,4 @@ const LeftProgress: React.FC<LeftProgressProps> = ({ currentStepIndex, setCurren
     );
 };
 
-export default LeftProgress;
+export default LeftProgressNhsLogin;

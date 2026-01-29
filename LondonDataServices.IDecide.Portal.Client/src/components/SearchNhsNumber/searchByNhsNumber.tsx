@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useStep } from "../../hooks/useStep";
 import { PowerOfAttorney } from "../../models/powerOfAttourneys/powerOfAttourney";
 import { patientViewService } from "../../services/views/patientViewService";
-import { TextInput, Button, Select, Card } from "nhsuk-react-components";
+import { TextInput, Button, Select } from "nhsuk-react-components";
 import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
 import { loadRecaptchaScript } from "../../helpers/recaptureLoad";
 import { Container, Row, Col, Alert } from "react-bootstrap";
@@ -156,13 +156,13 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
             }
         }
 
-        if (!recaptchaReady || typeof grecaptcha === "undefined" || !recaptchaSiteKey) {
+        if (!recaptchaReady || typeof window.grecaptcha === "undefined" || !recaptchaSiteKey) {
             setError(translate("SearchByNHSNumber.errorRecaptchaNotReady"));
             return;
         }
         setLoading(true);
         try {
-            grecaptcha.execute(recaptchaSiteKey, { action: RECAPTCHA_ACTION_SUBMIT }).then((token: string) => {
+            window.grecaptcha.execute(recaptchaSiteKey, { action: RECAPTCHA_ACTION_SUBMIT }).then((token: string) => {
                 const nhsNumberToUse = powerOfAttorney ? poaNhsNumberInput : nhsNumberInput;
                 const searchCriteria = new SearchCriteria({ nhsNumber: nhsNumberToUse });
                 const patientLookup = new PatientLookup(searchCriteria, []);
@@ -258,77 +258,79 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
 
                         {powerOfAttorney && (
                             <div style={{ marginBottom: "1.5rem" }}>
-                                <Card cardType="feature">
-                                    <Card.Content>
-                                        <Card.Heading>{translate("SearchByNHSNumber.poaNhsNumberLabel")}</Card.Heading>
-                                        <TextInput
-                                            label={translate("SearchByNHSNumber.nhsNumberLabel")}
-                                            id="poa-nhs-number"
-                                            name="poa-nhs-number"
-                                            inputMode="numeric"
-                                            pattern="\d*"
-                                            maxLength={10}
-                                            autoComplete="off"
-                                            value={poaNhsNumberInput}
-                                            onChange={handlePoaNhsNumberChange}
-                                            error={poaNhsNumberError || undefined}
-                                            style={{ maxWidth: "300px", marginBottom: "1rem" }}
-                                        />
-                                    </Card.Content>
-                                </Card>
 
-                                <Card cardType="feature">
-                                    <Card.Content>
-                                        <Card.Heading>{translate("SearchByNHSNumber.poaMyDetailsHeading")}</Card.Heading>
-                                        <TextInput
-                                            label={translate("SearchByNHSNumber.poaFirstnameLabel")}
-                                            id="poa-firstname"
-                                            name="poa-firstname"
-                                            autoComplete="off"
-                                            value={poaFirstname}
-                                            onChange={handlePoaFirstnameChange}
-                                            error={poaFirstnameError || undefined}
+                                <div className="grouped-input-block">
+                                    <h3>
+                                        <strong>{translate("SearchByNHSNumber.poaNhsNumberLabel")}</strong>
+                                    </h3>
+                                    <TextInput
+                                        label={translate("SearchByNHSNumber.nhsNumberLabel")}
+                                        id="poa-nhs-number"
+                                        name="poa-nhs-number"
+                                        inputMode="numeric"
+                                        pattern="\d*"
+                                        maxLength={10}
+                                        autoComplete="off"
+                                        value={poaNhsNumberInput}
+                                        onChange={handlePoaNhsNumberChange}
+                                        error={poaNhsNumberError || undefined}
+                                        style={{ maxWidth: "300px", marginBottom: "1rem" }}
+                                    />
+                                </div>
+
+                                <div className="grouped-input-block">
+                                    <h3>
+                                        <h3><strong>{translate("SearchByNHSNumber.poaMyDetailsHeading")}</strong></h3>
+                                    </h3>
+
+                                    <TextInput
+                                        label={translate("SearchByNHSNumber.poaFirstnameLabel")}
+                                        id="poa-firstname"
+                                        name="poa-firstname"
+                                        autoComplete="off"
+                                        value={poaFirstname}
+                                        onChange={handlePoaFirstnameChange}
+                                        error={poaFirstnameError || undefined}
+                                        style={{ maxWidth: "400px", marginBottom: "1rem" }}
+                                    />
+                                    <TextInput
+                                        label={translate("SearchByNHSNumber.poaSurnameLabel")}
+                                        id="poa-surname"
+                                        name="poa-surname"
+                                        autoComplete="off"
+                                        value={poaSurname}
+                                        onChange={handlePoaSurnameChange}
+                                        error={poaSurnameError || undefined}
+                                        style={{ maxWidth: "400px", marginBottom: "1rem" }}
+                                    />
+                                    <div style={{ marginBottom: "1rem" }}>
+                                        <Select
+                                            label={translate("SearchByNHSNumber.poaRelationshipLabel")}
+                                            id="poa-relationship"
+                                            name="poa-relationship"
+                                            aria-label={translate("SearchByNHSNumber.poaRelationshipLabel")}
+                                            aria-required="true"
+                                            required
+                                            value={poaRelationship}
+                                            onChange={handlePoaRelationshipChange}
+                                            error={poaRelationshipError || undefined}
                                             style={{ maxWidth: "400px", marginBottom: "1rem" }}
-                                        />
-                                        <TextInput
-                                            label={translate("SearchByNHSNumber.poaSurnameLabel")}
-                                            id="poa-surname"
-                                            name="poa-surname"
-                                            autoComplete="off"
-                                            value={poaSurname}
-                                            onChange={handlePoaSurnameChange}
-                                            error={poaSurnameError || undefined}
-                                            style={{ maxWidth: "400px", marginBottom: "1rem" }}
-                                        />
-                                        <div style={{ marginBottom: "1rem" }}>
-                                            <Select
-                                                label={translate("SearchByNHSNumber.poaRelationshipLabel")}
-                                                id="poa-relationship"
-                                                name="poa-relationship"
-                                                aria-label={translate("SearchByNHSNumber.poaRelationshipLabel")}
-                                                aria-required="true"
-                                                required
-                                                value={poaRelationship}
-                                                onChange={handlePoaRelationshipChange}
-                                                error={poaRelationshipError || undefined}
-                                                style={{ maxWidth: "400px", marginBottom: "1rem" }}
-                                            >
-                                                <option value="" disabled>
-                                                    {translate("SearchByNHSNumber.poaRelationshipSelect")}
-                                                </option>
-                                                <option value={translate("SearchByNHSNumber.poaRelationshipOptions.parent")}>
-                                                    {translate("SearchByNHSNumber.poaRelationshipOptions.parent")}
-                                                </option>
-                                                <option value={translate("SearchByNHSNumber.poaRelationshipOptions.guardian")}>
-                                                    {translate("SearchByNHSNumber.poaRelationshipOptions.guardian")}
-                                                </option>
-                                                <option value={translate("SearchByNHSNumber.poaRelationshipOptions.attorney")}>
-                                                    {translate("SearchByNHSNumber.poaRelationshipOptions.attorney")}
-                                                </option>
-                                            </Select>
-                                        </div>
-                                    </Card.Content>
-                                </Card>
+                                        >
+                                            <option value="" disabled>
+                                                {translate("SearchByNHSNumber.poaRelationshipSelect")}
+                                            </option>
+                                            <option value={translate("SearchByNHSNumber.poaRelationshipOptions.parent")}>
+                                                {translate("SearchByNHSNumber.poaRelationshipOptions.parent")}
+                                            </option>
+                                            <option value={translate("SearchByNHSNumber.poaRelationshipOptions.guardian")}>
+                                                {translate("SearchByNHSNumber.poaRelationshipOptions.guardian")}
+                                            </option>
+                                            <option value={translate("SearchByNHSNumber.poaRelationshipOptions.attorney")}>
+                                                {translate("SearchByNHSNumber.poaRelationshipOptions.attorney")}
+                                            </option>
+                                        </Select>
+                                    </div>
+                                </div>
                             </div>
                         )}
                         <div style={{ display: "flex", gap: "1rem", marginBottom: "0.2rem", marginTop: "1rem" }}>

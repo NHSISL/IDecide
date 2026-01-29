@@ -68,6 +68,26 @@ export const patientViewService = {
             }
         };
     },
+    useAddPatientNhsLogin: () => {
+        return {
+            mutate: async (
+                phoneNumber: string,
+                options?: {
+                    headers?: Record<string, string>,
+                    onSuccess?: () => void,
+                    onError?: (error: unknown) => void
+                }
+            ) => {
+                try {
+                    await patientService
+                        .usePostPatientNhsLogin(phoneNumber, options?.headers);
+                    options?.onSuccess?.();
+                } catch (error) {
+                    options?.onError?.(error);
+                }
+            }
+        };
+    },
     useConfirmCode: () => {
         return {
             mutate: async (
@@ -87,5 +107,8 @@ export const patientViewService = {
                 }
             }
         };
+    },
+    useRetrievePatientInfoNhsLogin: () => {
+        return patientService.useRetrievePatientInfoNhsLogin();
     },
 };

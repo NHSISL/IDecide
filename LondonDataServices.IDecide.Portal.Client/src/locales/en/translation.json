@@ -4,9 +4,9 @@
     "intro1": "OneLondon have developed a world leading resource for health and care improvement known as the London SDE (Secure Data Environment). This is comprised of the LDS (London Data Service) and the LAP (London Analytics Platform).",
     "intro2": "The data collected from healthcare systems across London by these services can be used for many things all ensuring patient information is shared for improved provision of care.",
     "intro3": "This portal is where you can tell us if you don't want your data used by LDS or LAP for anything other than your personal healthcare. By clicking the start button below you will be taken through a process to exercise your right to request that we do not use your data for anything other than care provided to you by healthcare professionals. If you ever want to change that decision in the future you can go through the same process to tell us we can use your data.",
-    "intro4": "Click on the Start button below to tell us your data preference",
-    "startButton": "Start",
-    "startButtonOther": "Requesting an Opt-out on someone else's behalf",
+    "intro4": "Click below to record your data preference",
+    "startButton": "Opt-out using NHS Login",
+    "startButtonOther": "Opt-out for Another Person",
     "beforeYouStartTitle": "Before you start",
     "beforeYouStartList1": "You'll need your 10-digit NHS Number or your Full name, Postcode & Date Of Birth so that we can identify you.",
     "beforeYouStartList2": "We will be sending an e-mail, SMS text message or letter to the contact details you have registered with your GP. This will help us confirm we are speaking with the right person. You should be confident that your GP has your up-to-date contact details.",
@@ -42,8 +42,8 @@
     "steps": {
       "nhs": "Provide Your NHS Number",
       "details": "Confirm Your Details",
-      "confirm": "Positive Confirmation",
-      "choice": "Make Your Choice",
+      "confirm": "Confirmation",
+      "choice": "Data Sharing Choice",
       "notify": "Confirm Choices",
       "thanks": "Complete"
     },
@@ -277,7 +277,7 @@
   },
   "DevEnvironmentWarning": {
     "bannerTitle": "Test Environment:",
-    "bannerMessage": "This website is for demonstration and testing purposes only. Any information you enter here will not be saved to real patient records or used for clinical care. Please do not enter real patient data."
+    "bannerMessage": "THIS SITE IS FOR TESTING ONLY. DO NOT ENTER REAL PATIENT DATA."
   },
   "errors": {
     "400": "Please make sure all fields are filled in correctly.",
