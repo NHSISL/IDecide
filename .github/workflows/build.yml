@@ -51,8 +51,8 @@ jobs:
         }
       shell: pwsh
     env:
-      NOTIFICATIONCONFIGURATIONS__APIKEY: ${{ secrets.NOTIFICATIONCONFIGURATIONS__APIKEY }}
-      NHSLOGINOIDC__PRIVATEKEYB64: ${{ secrets.NHSLOGINOIDC__PRIVATEKEYB64 }}
+        NotificationConfigurations__ApiKey: ${{ secrets.NOTIFICATIONCONFIGURATIONS__APIKEY }}
+        NHSLoginOIDC__privateKeyb64: ${{ secrets.NHSLOGINOIDC__PRIVATEKEYB64 }}
   add_tag:
     name: Tag and Release
     runs-on: ubuntu-latest
