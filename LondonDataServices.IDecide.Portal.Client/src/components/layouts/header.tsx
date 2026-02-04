@@ -55,7 +55,7 @@ const HeaderComponent: React.FC = () => {
                     <Header.Container>
                         <Header.Logo href="/home" />
                         <Header.ServiceName href="/home">
-                            OneLondon Data Opt-Out Portal
+                            London Secure Data Environment Opt-Out Portal
                         </Header.ServiceName>
                         <Header.Content>
                             <div style={{ display: "flex", alignItems: "center", gap: "1.5rem" }}>
