@@ -8,7 +8,7 @@ test.describe('Home Page', () => {
 
     test('should display the main heading', async ({ page }) => {
         await expect(
-            page.getByRole('heading', { name: 'Weclome to the London Secure Data Environment Data Portal' })
+            page.getByRole('heading', { name: 'Welcome to the London Secure Data Environment Data Portal' })
         ).toBeVisible();
     });
 
