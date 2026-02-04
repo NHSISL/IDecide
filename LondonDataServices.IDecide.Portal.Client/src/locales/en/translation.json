@@ -8,7 +8,7 @@
     "startButton": "Manage your data sharing",
     "startButtonOther": "Manage data sharing for another person",
     "beforeYouStartTitle": "Before you start",
-    "beforeYouStartList1": "You’ll need your 10-digit NHS number or your full name, postcode and date of birth so that we can identify you.",
+    "beforeYouStartList1": "You'll need your 10-digit NHS number or your full name, postcode and date of birth so that we can identify you.",
     "beforeYouStartList2": "We will be sending an e-mail, SMS text message or letter to the contact details you have registered with your GP. This will help us to confirm that we are in contact with the right person. You should be confident that your GP has your up-to-date contact details.",
     "expandableHeaders": {
       "section1": "What is the London Data Service?",
@@ -30,10 +30,8 @@
         "p2": "Telling us that you don't want your data shared with healthcare professionals who will be treating you is a different process. To do that please e-mail NELondonicb.oneLondon.opt-out@nhs.net and make the subject of the e-mail \"Dissent from data sharing for direct care\"."
       },
       "section4": {
-        "p1": "The SDE privacy notice is",
-        "p1LinkText": "here",
-        "p2": "and the LDS Privacy notice is available",
-        "p2LinkText": "here"
+        "p1": "The London Data Service and London Analytics Platform Privacy Notices are available ",
+        "p1LinkText": "here."
       }
     }
   },

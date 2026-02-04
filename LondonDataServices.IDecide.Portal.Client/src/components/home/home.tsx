@@ -113,20 +113,12 @@ export const Home = () => {
             <p key="p3">
                 {translate("homepage.expandableContent.section4.p1")}{' '}
                 <a
-                    href="https://healthinnovationnetwork.com/wp-content/uploads/2025/07/OLHDS-LAP-Full-Privacy-Notice.pdf"
+                    href="https://www.onelondon.online/your-information/"
                     target="_blank"
                     rel="noopener noreferrer"
                 >
                     {translate("homepage.expandableContent.section4.p1LinkText")}
                 </a>{' '}
-                {translate("homepage.expandableContent.section4.p2")}{' '}
-                <a
-                    href="https://healthinnovationnetwork.com/wp-content/uploads/2025/07/OLHDS-LDS-Full-Privacy-Notice.pdf"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    {translate("homepage.expandableContent.section4.p2LinkText")}
-                </a>.
             </p>
         ]
     ];
