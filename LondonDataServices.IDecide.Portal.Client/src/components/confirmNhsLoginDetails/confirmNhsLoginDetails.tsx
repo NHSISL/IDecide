@@ -108,7 +108,7 @@ export const ConfirmNhsLoginDetails: React.FC = () => {
                     <dl className="nhsuk-summary-list" style={{ marginBottom: "2rem" }}>
                         <div className="nhsuk-summary-list__row">
                             <dt className="nhsuk-summary-list__key">{translate("ConfirmDetails.name")}</dt>
-                            <dd className="nhsuk-summary-list__value">{createdPatient.givenName + ', ' + createdPatient.surname}</dd>
+                            <dd className="nhsuk-summary-list__value">{createdPatient.givenName + ' ' + createdPatient.surname}</dd>
                         </div>
                         <div className="nhsuk-summary-list__row">
                             <dt className="nhsuk-summary-list__key">{translate("ConfirmDetails.email")}</dt>
