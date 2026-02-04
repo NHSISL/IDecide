@@ -1,10 +1,4 @@
 import { test, expect } from '@playwright/test';
-import {
-    clickStartButton,
-    fillNhsLoginCredentials,
-    clickContinueButton,
-    handleOtpIfPrompted
-} from './helpers/helper';
 
 test.describe('Home Page Nhs Login', () => {
     test.beforeEach(async ({ page }) => {
