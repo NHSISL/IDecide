@@ -2,7 +2,7 @@
   "homepage": {
     "title": "Welcome to the London Secure Data Environment Data Portal",
     "intro1": "OneLondon has developed a world leading resource for health and care improvement known as the London Secure Data Environment (SDE). This is comprised of the London Data Service (LDS) and the London Analytics Platform (LAP).",
-    "intro2": "The data collected from healthcare systems from across London by these services is used to improve patient care and support healthier communities across London.”",
+    "intro2": "The data collected from healthcare systems from across London by these services is used to improve patient care and support healthier communities across London.",
     "intro3": "This portal is where you can tell us if you don't want your data used by LDS or LAP for anything other than your direct healthcare. By clicking the start button below you will be taken through a process to exercise your right to request that we do not use your data for anything other than care provided to you by healthcare professionals. If you ever want to change that decision in the future you can go through the same process to tell us we can use your data.",
     "intro4": "By clicking the button below you can exercise your right to opt-out of your data being used for anything other than the direct care provided to you by healthcare professionals.",
     "startButton": "Manage your data sharing",
@@ -23,7 +23,7 @@
       },
       "section2": {
         "p1": "Both the London Data Service (LDS) and London Analytics Platform (LAP) only securely share identifiable data, data that can be used to tell someone who you are, with services that use your data to provide you with direct care.",
-        "p2": "Both the LDS and LAP only provide de-identified data to other approved services, which does not include information which could tell someone who you are (such as names, addresses and dates of birth). These approved services use the de-identified data for healthcare planning and design, population health management and healthcare research. This helps to better understand the needs of Londoners to more effectively plan and improve healthcare services. It also helps to understand more about different conditions and diseases, develop new treatments as well as run clinical trials. "
+        "p2": "Both the LDS and LAP only provide de-identified data to other approved services, which does not include information which could tell someone who you are (such as names, addresses and dates of birth). These approved services use the de-identified data for healthcare planning and design, population health management and healthcare research. This helps to better understand the needs of Londoners to more effectively plan and improve healthcare services. It also helps to understand more about different conditions and diseases, develop new treatments as well as run clinical trials."
       },
       "section3": {
         "p1": "You can use this portal to tell us that you do not want your data used for secondary purposes such as healthcare planning, population health management and research. To register your details to 'opt-out' click the button above.",
