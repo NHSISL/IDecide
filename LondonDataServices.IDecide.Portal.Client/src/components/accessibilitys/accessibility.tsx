@@ -14,6 +14,27 @@ const AccessibilityBox: React.FC = () => {
         document.documentElement.style.setProperty('--app-font-size', `${fontSize}px`);
     }, [fontSize]);
 
+    useEffect(() => {
+        if (!showAccessibilityBox) return;
+
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                dropdownRef.current &&
+                !dropdownRef.current.contains(event.target as Node) &&
+                linkRef.current &&
+                !linkRef.current.contains(event.target as Node)
+            ) {
+                setShowAccessibilityBox(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [showAccessibilityBox]);
+
     const increaseFontSize = (e: React.MouseEvent) => {
         e.preventDefault();
         setFontSize((size) => size + 2);
@@ -68,7 +89,13 @@ const AccessibilityBox: React.FC = () => {
     }, [showAccessibilityBox]);
 
     return (
-        <div style={{ position: "relative", display: "inline-block" }}>
+        <div style={{
+            position: "fixed",
+            bottom: "1em",
+            right: "0.5em",
+            zIndex: "1100",
+            background: "transparent"
+        }}>
             <a
                 href="#"
                 onClick={toggleAccessibilityBox}
@@ -76,19 +103,19 @@ const AccessibilityBox: React.FC = () => {
                 tabIndex={-1}
                 ref={linkRef}
                 style={{
-                    fontSize: "1.1em",
+                    fontSize: "1.5em",
                     textDecoration: "none",
                     fontWeight: 500,
-                    cursor: "pointer",
                     userSelect: "none",
-                    outline: "none"
+                    outline: "none",
                 }}
                 aria-haspopup="true"
                 aria-expanded={showAccessibilityBox}
             >
                 <img
-                    src="/accessibility-icon-white.webp"
+                    src="/64px-Accessibility.svg.png"
                     alt="Accessibility"
+                    className="accessibility-img"
                     style={{
                         height: "2em",
                         verticalAlign: "middle",

@@ -49,7 +49,7 @@ const LeftProgress: React.FC<LeftProgressProps> = ({ currentStepIndex, setCurren
                 <form style={{ padding: 20 }}>
                     <div className="leftProgressPadding">
                         <Fieldset.Legend>
-                            <h2>{translate("LeftProgress.legend")}</h2>
+                            {/*<h2>{translate("LeftProgress.legend")}</h2>*/}
                         </Fieldset.Legend>
 
                         {isMobile ? (
@@ -121,7 +121,6 @@ const LeftProgress: React.FC<LeftProgressProps> = ({ currentStepIndex, setCurren
                                                     marginBottom: 8,
                                                     color: "black",
                                                 }}
-                                                onClick={() => isPreviousStep(idx) && setCurrentStepIndex(idx)}
                                             >
                                                 <FontAwesomeIcon
                                                     icon={faCheckCircle}
@@ -137,7 +136,6 @@ const LeftProgress: React.FC<LeftProgressProps> = ({ currentStepIndex, setCurren
                                                 value={step}
                                                 disabled={true}
                                                 checked={isCurrentStep(idx)}
-                                                onChange={() => { }}
                                                 style={{ marginBottom: 8 }}
                                             >
                                                 <span className="radio-label">{stepLabels[step]}</span>

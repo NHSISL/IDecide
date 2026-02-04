@@ -8,11 +8,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Brokers;
 using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.Consumers;
+using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.Decisions;
 using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.DecisionTypes;
 using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.Patients;
 using Tynamix.ObjectFiller;
-using DecisionEntity = LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.Decisions.Decision;
-using PatientDecision = LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.PatientDecisions.Decision;
 
 namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.PatientDecisions
 {
@@ -56,39 +55,37 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.Patient
             return randomNumber;
         }
 
-        private async ValueTask<List<PatientDecision>> PostRandomDecisionsAsync(
+        private async ValueTask<List<Decision>> PostRandomDecisionsAsync(
             Patient patient,
             DecisionType decisionType)
         {
-            List<PatientDecision> randomDecisions = CreateRandomDecisions(patient, decisionType);
-            List<PatientDecision> createdDecisions = new List<PatientDecision>();
+            List<Decision> randomDecisions = CreateRandomDecisions(patient, decisionType);
+            List<Decision> createdDecisions = new List<Decision>();
 
-            foreach (PatientDecision decision in randomDecisions)
+            foreach (Decision decision in randomDecisions)
             {
-                DecisionEntity decisionEntity = ToDecisionEntity(decision);
-                DecisionEntity createdDecision = await apiBroker.PostDecisionAsync(decisionEntity);
-                PatientDecision patientDecision = ToPatientDecision(createdDecision);
-                createdDecisions.Add(patientDecision);
+                Decision createdDecision = await apiBroker.PostDecisionAsync(decision);
+                createdDecisions.Add(createdDecision);
             }
 
             return createdDecisions;
         }
 
-        private static List<PatientDecision> CreateRandomDecisions(Patient patient, DecisionType decisionType)
+        private static List<Decision> CreateRandomDecisions(Patient patient, DecisionType decisionType)
         {
             return CreateRandomDecisionFiller(patient, decisionType)
                 .Create(count: GetRandomNumber())
                 .ToList();
         }
 
-        private static PatientDecision CreateRandomDecision(Patient patient, DecisionType decisionType) =>
+        private static Decision CreateRandomDecision(Patient patient, DecisionType decisionType) =>
             CreateRandomDecisionFiller(patient, decisionType).Create();
 
-        private static Filler<PatientDecision> CreateRandomDecisionFiller(Patient patient, DecisionType decisionType)
+        private static Filler<Decision> CreateRandomDecisionFiller(Patient patient, DecisionType decisionType)
         {
             string user = Guid.NewGuid().ToString();
             DateTime now = DateTime.UtcNow;
-            var filler = new Filler<PatientDecision>();
+            var filler = new Filler<Decision>();
 
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(now)
@@ -104,38 +101,6 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.Patient
 
             return filler;
         }
-
-        private static DecisionEntity ToDecisionEntity(PatientDecision patientDecision) =>
-            new()
-            {
-                Id = patientDecision.Id,
-                PatientId = patientDecision.PatientId,
-                DecisionTypeId = patientDecision.DecisionTypeId,
-                DecisionChoice = patientDecision.DecisionChoice,
-                CreatedBy = patientDecision.CreatedBy,
-                CreatedDate = patientDecision.CreatedDate,
-                UpdatedBy = patientDecision.UpdatedBy,
-                UpdatedDate = patientDecision.UpdatedDate,
-                ResponsiblePersonGivenName = patientDecision.ResponsiblePersonGivenName,
-                ResponsiblePersonSurname = patientDecision.ResponsiblePersonSurname,
-                ResponsiblePersonRelationship = patientDecision.ResponsiblePersonRelationship
-            };
-
-        private static PatientDecision ToPatientDecision(DecisionEntity decisionEntity) =>
-            new()
-            {
-                Id = decisionEntity.Id,
-                PatientId = decisionEntity.PatientId,
-                DecisionTypeId = decisionEntity.DecisionTypeId,
-                DecisionChoice = decisionEntity.DecisionChoice,
-                CreatedBy = decisionEntity.CreatedBy,
-                CreatedDate = decisionEntity.CreatedDate,
-                UpdatedBy = decisionEntity.UpdatedBy,
-                UpdatedDate = decisionEntity.UpdatedDate,
-                ResponsiblePersonGivenName = decisionEntity.ResponsiblePersonGivenName,
-                ResponsiblePersonSurname = decisionEntity.ResponsiblePersonSurname,
-                ResponsiblePersonRelationship = decisionEntity.ResponsiblePersonRelationship
-            };
 
         private async ValueTask<Patient> PostRandomPatientAsync()
         {

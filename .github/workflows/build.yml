@@ -16,6 +16,8 @@ jobs:
     name: Build
     runs-on: windows-latest
     steps:
+    - name: Enable long paths for Git
+      run: git config --system core.longpaths true
     - name: Check out
       uses: actions/checkout@v3
     - name: Setup .Net
@@ -27,7 +29,7 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
     - name: Install EF Tools
-      run: dotnet tool install --global dotnet-ef
+      run: dotnet tool install --global dotnet-ef --version 9
     - name: Deploy Database
       run: dotnet ef database update --project LondonDataServices.IDecide.Core/LondonDataServices.IDecide.Core.csproj --startup-project LondonDataServices.IDecide.Core/LondonDataServices.IDecide.Core.csproj
     - name: Run Unit Tests
@@ -47,8 +49,10 @@ jobs:
           Write-Host "Running tests for: $($project.FullName)"
           dotnet test $project.FullName --no-build --verbosity normal
         }
+      shell: pwsh
     env:
       NOTIFICATIONCONFIGURATIONS__APIKEY: ${{ secrets.NOTIFICATIONCONFIGURATIONS__APIKEY }}
+      NHSLOGINOIDC__PRIVATEKEYB64: ${{ secrets.NHSLOGINOIDC__PRIVATEKEYB64 }}
   add_tag:
     name: Tag and Release
     runs-on: ubuntu-latest

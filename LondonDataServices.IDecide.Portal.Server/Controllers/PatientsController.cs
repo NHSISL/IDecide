@@ -4,14 +4,21 @@
 
 using System;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Attrify.Attributes;
+using LondonDataServices.IDecide.Core.Models.Foundations.NhsLogins;
+using LondonDataServices.IDecide.Core.Models.Foundations.NhsLogins.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients.Exceptions;
+using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
+using LondonDataServices.IDecide.Core.Services.Foundations.NhsLogins;
 using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
+using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
+using Microsoft.Extensions.Configuration;
 using RESTFulSense.Controllers;
 
 namespace LondonDataServices.IDecide.Portal.Server.Controllers
@@ -21,9 +28,101 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
     public class PatientsController : RESTFulController
     {
         private readonly IPatientService patientService;
+        private readonly INhsLoginService nhsLoginService;
+        private readonly IPatientOrchestrationService patientOrchestrationService;
+        private readonly IConfiguration configuration;
 
-        public PatientsController(IPatientService patientService) =>
+        public PatientsController(
+            IPatientService patientService,
+            INhsLoginService nhsLoginService,
+            IPatientOrchestrationService patientOrchestrationService,
+            IConfiguration configuration)
+        {
             this.patientService = patientService;
+            this.nhsLoginService = nhsLoginService;
+            this.patientOrchestrationService = patientOrchestrationService;
+            this.configuration = configuration;
+        }
+
+        [Authorize]
+        [HttpGet("patientInfo")]
+        public async ValueTask<ActionResult<NhsLoginUserInfo>> GetPatientInfo()
+        {
+            try
+            {
+                NhsLoginUserInfo nhsLoginUserInfo =
+                    await this.nhsLoginService.NhsLoginAsync();
+
+                return Ok(nhsLoginUserInfo);
+            }
+            catch (NhsLoginServiceDependencyException nhsLoginServiceDependencyException)
+            {
+                return InternalServerError(nhsLoginServiceDependencyException);
+            }
+            catch (NhsLoginServiceException nhsLoginServiceServiceException)
+            {
+                return InternalServerError(nhsLoginServiceServiceException);
+            }
+        }
+
+        [Authorize]
+        [HttpPost("PatientGenerationNhsLoginRequest")]
+        public async ValueTask<ActionResult> PostPatientGenerationNhsLoginRequestAsync(string phoneNumber)
+        {
+            try
+            {
+                var nhsnumber = HttpContext.User.Claims
+                    .FirstOrDefault(x => x.Type == "nhs_number")?.Value;
+
+                if (string.IsNullOrWhiteSpace(nhsnumber))
+                {
+                    return BadRequest("NHS number is required but was not provided.");
+                }
+
+                var firstName = HttpContext.User.Claims
+                    .FirstOrDefault(x => x.Type == "given_name")?.Value;
+                var lastName = HttpContext.User.Claims
+                    .FirstOrDefault(x => x.Type == "surname")?.Value;
+                var email = HttpContext.User.Claims
+                    .FirstOrDefault(x => x.Type == "email")?.Value;
+                var dobString = HttpContext.User.Claims
+                    .FirstOrDefault(
+                        x => x.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/dateofbirth")?.Value;
+
+                DateTimeOffset.TryParse(dobString, out DateTimeOffset dob);
+
+                var patient = new Patient
+                {
+                    NhsNumber = nhsnumber,
+                    GivenName = firstName,
+                    Surname = lastName,
+                    DateOfBirth = dob,
+                    Email = email,
+                    Phone = phoneNumber
+                };
+
+                await this.patientOrchestrationService.RecordPatientInformationNhsLoginAsync(patient);
+
+                return Ok();
+            }
+            catch (PatientOrchestrationValidationException patientOrchestrationValidationException)
+            {
+                return BadRequest(patientOrchestrationValidationException.InnerException);
+            }
+            catch (PatientOrchestrationDependencyValidationException
+                patientOrchestrationDependencyValidationException)
+            {
+                return BadRequest(patientOrchestrationDependencyValidationException.InnerException);
+            }
+            catch (PatientOrchestrationDependencyException patientOrchestrationDependencyException)
+            {
+                return InternalServerError(patientOrchestrationDependencyException);
+            }
+            catch (PatientOrchestrationServiceException patientOrchestrationServiceException)
+            {
+                return InternalServerError(patientOrchestrationServiceException);
+            }
+        }
 
         [HttpPost]
         [InvisibleApi]
@@ -100,7 +199,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
                 return Ok(patient);
             }
             catch (PatientValidationException patientValidationException)
-                when (patientValidationException.InnerException is NotFoundPatientException)
+                when (patientValidationException.InnerException is Core.Models.Foundations.Patients.Exceptions.NotFoundPatientException)
             {
                 return NotFound(patientValidationException.InnerException);
             }
@@ -135,7 +234,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
                 return Ok(modifiedPatient);
             }
             catch (PatientValidationException patientValidationException)
-                when (patientValidationException.InnerException is NotFoundPatientException)
+                when (patientValidationException.InnerException is Core.Models.Foundations.Patients.Exceptions.NotFoundPatientException)
             {
                 return NotFound(patientValidationException.InnerException);
             }
@@ -175,7 +274,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
                 return Ok(deletedPatient);
             }
             catch (PatientValidationException patientValidationException)
-                when (patientValidationException.InnerException is NotFoundPatientException)
+                when (patientValidationException.InnerException is Core.Models.Foundations.Patients.Exceptions.NotFoundPatientException)
             {
                 return NotFound(patientValidationException.InnerException);
             }

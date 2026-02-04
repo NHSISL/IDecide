@@ -4,6 +4,7 @@ import LeftProgress from "./leftProgress/leftProgress";
 import FooterComponent from "./layouts/footer";
 import HeaderComponent from "./layouts/header";
 import { useStep } from "../hooks/useStep";
+import LeftProgressNhsLogin from "./leftProgress/leftProgressNhsLogin";
 
 export default function Root() {
     const location = useLocation();
@@ -21,23 +22,28 @@ export default function Root() {
     ];
 
     const doNotShowLeftPanel = doNotShowLeftPanelRoutes.includes(cleanPath);
+    const isNhsLoginRoute = cleanPath === "/nhs-optOut";
     const { currentStepIndex, setCurrentStepIndex } = useStep();
 
     return (
         <div className="root-layout">
-            {!doNotShowLeftPanel && (
                 <HeaderComponent />
-            )}
-
             <div className="root-content">
                 <Container fluid>
                     <Row>
                         {!doNotShowLeftPanel && (
                             <Col md={4}>
+                                {isNhsLoginRoute ? (
+                                    <LeftProgressNhsLogin
+                                        currentStepIndex={currentStepIndex}
+                                        setCurrentStepIndex={setCurrentStepIndex}
+                                    />
+                                ) : (
                                 <LeftProgress
                                     currentStepIndex={currentStepIndex}
                                     setCurrentStepIndex={setCurrentStepIndex}
-                                />
+                                    />
+                                )}
                             </Col>
                         )}
                         <Col md={doNotShowLeftPanel ? 12 : 8}>

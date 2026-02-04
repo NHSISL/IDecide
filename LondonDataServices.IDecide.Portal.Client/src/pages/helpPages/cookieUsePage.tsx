@@ -1,14 +1,11 @@
 ﻿import { Container, Card } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import HeaderComponent from "../../components/layouts/header";
 
 const CookiePage = () => {
     const navigate = useNavigate();
 
     return (
         <>
-            <HeaderComponent />
-
             <Container style={{ padding: 20, maxWidth: 900 }}>
                 <button
                     className="nhsuk-back-link mt-1"

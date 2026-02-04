@@ -1,36 +1,38 @@
 import { test, expect } from '@playwright/test';
-import { clickStartButton } from './helpers/helper';
+import { clickStartAnotherPersonButton, fillPoaFields } from './helpers/helper';
 
 test.describe('Search by NHS Number Page', () => {
     test.beforeEach(async ({ page }) => {
         test.setTimeout(60000); // Increase timeout for setup
         await page.goto('https://localhost:5173/home', { waitUntil: 'networkidle' });
-        await clickStartButton(page);
-        await expect(page.locator('#nhs-number')).toBeVisible({ timeout: 15000 });
+        await clickStartAnotherPersonButton(page);
+        await expect(page.locator('#poa-nhs-number')).toBeVisible({ timeout: 15000 });
     });
 
     test('should display NHS number input and Search button', async ({ page }) => {
-        await expect(page.locator('#nhs-number')).toBeVisible({ timeout: 10000 });
+        await expect(page.locator('#poa-nhs-number')).toBeVisible({ timeout: 10000 });
         await expect(page.getByRole('button', { name: /^search$/i })).toBeVisible({ timeout: 10000 });
     });
 
     test('should disable Search button if NHS number is not 10 digits', async ({ page }) => {
-        await page.locator('#nhs-number').fill('12345');
+        await page.locator('#poa-nhs-number').fill('12345');
         const searchButton = page.getByRole('button', { name: /^search$/i });
         await expect(searchButton).toBeDisabled({ timeout: 5000 });
     });
 
     test('should enable Search button when NHS number is 10 digits', async ({ page }) => {
-        await page.locator('#nhs-number').fill('0000000000');
-        await page.locator('#nhs-number').blur();
-        const searchButton = page.getByRole('button', { name: /^search$/i });
+        await page.locator('#poa-nhs-number').fill('0000000000');
+        await page.locator('#poa-nhs-number').blur();
+        await fillPoaFields(page);
+        const searchButton = page.getByTestId('search');
         await expect(searchButton).toBeEnabled({ timeout: 5000 });
     });
 
     test('should NOT enable Search button when NHS number doesnt have a check digit', async ({ page }) => {
-        await page.locator('#nhs-number').fill('0000000001');
-        await page.locator('#nhs-number').blur();
-        const searchButton = page.getByRole('button', { name: /^search$/i });
+        await page.locator('#poa-nhs-number').fill('0000000001');
+        await page.locator('#poa-nhs-number').blur();
+        await fillPoaFields(page);
+        const searchButton = page.getByTestId('search');
         await expect(searchButton).toBeDisabled({ timeout: 5000 });
     });
 
@@ -45,9 +47,10 @@ test.describe('Search by NHS Number Page', () => {
     });
 
     test('should show loading state when submitting', async ({ page }) => {
-        await page.locator('#nhs-number').fill('0000000000');
-        await page.locator('#nhs-number').blur();
-        const searchButton = page.getByRole('button', { name: /^search$/i });
+        await page.locator('#poa-nhs-number').fill('0000000000');
+        await page.locator('#poa-nhs-number').blur();
+        await fillPoaFields(page);
+        const searchButton = page.getByTestId('search');
         await page.route('**/api/patients/GetPatientByNhsNumber', async route => {
             await new Promise(res => setTimeout(res, 500));
             route.fulfill({ status: 200, body: '{}' });

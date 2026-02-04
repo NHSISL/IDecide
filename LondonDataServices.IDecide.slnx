@@ -1,0 +1,38 @@
+<Solution>
+  <Folder Name="/Build/">
+    <File Path=".github/dependabot.yml" />
+    <File Path=".github/workflows/build.yml" />
+    <File Path=".github/workflows/prLinter.yml" />
+    <File Path="README.md" />
+    <Project Path="LondonDataServices.IDecide.Infrastructure/LondonDataServices.IDecide.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/Core/">
+    <Project Path="LondonDataServices.IDecide.Core.Tests.Unit/LondonDataServices.IDecide.Core.Tests.Unit.csproj" />
+    <Project Path="LondonDataServices.IDecide.Core/LondonDataServices.IDecide.Core.csproj" />
+  </Folder>
+  <Folder Name="/Documentation/">
+    <Project Path="Documentation/LondonDataServices.IDecide.Documentation.csproj" />
+  </Folder>
+  <Folder Name="/Functions/" />
+  <Folder Name="/WebApps/" />
+  <Folder Name="/WebApps/Management/">
+    <Project Path="LondonDataServices.IDecide.Manage.Client/LondonDataServices.IDecide.Manage.Client.esproj">
+      <Build />
+      <Deploy />
+    </Project>
+    <Project Path="LondonDataServices.IDecide.Manage.Server.Tests.Acceptance/LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.csproj" />
+    <Project Path="LondonDataServices.IDecide.Manage.Server.Tests.Integration/LondonDataServices.IDecide.Manage.Server.Tests.Integration.csproj" />
+    <Project Path="LondonDataServices.IDecide.Manage.Server.Tests.Unit/LondonDataServices.IDecide.Manage.Server.Tests.Unit.csproj" />
+    <Project Path="LondonDataServices.IDecide.Manage.Server/LondonDataServices.IDecide.Manage.Server.csproj" />
+  </Folder>
+  <Folder Name="/WebApps/Portals/">
+    <Project Path="LondonDataServices.IDecide.Portal.Client/LondonDataServices.IDecide.Portal.Client.esproj">
+      <Build />
+      <Deploy />
+    </Project>
+    <Project Path="LondonDataServices.IDecide.Portal.Server.Tests.Acceptance/LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.csproj" />
+    <Project Path="LondonDataServices.IDecide.Portal.Server.Tests.Integration/LondonDataServices.IDecide.Portal.Server.Tests.Integration.csproj" />
+    <Project Path="LondonDataServices.IDecide.Portal.Server.Tests.Unit/LondonDataServices.IDecide.Portal.Server.Tests.Unit.csproj" />
+    <Project Path="LondonDataServices.IDecide.Portal.Server/LondonDataServices.IDecide.Portal.Server.csproj" />
+  </Folder>
+</Solution>

@@ -23,6 +23,14 @@ export const patientService = {
         return await broker.PostPatientWithNotificationPreference(patient, headers);
     },
 
+    usePostPatientNhsLogin: async (
+        phoneNumber: string,
+        headers?: Record<string, string>
+    ) => {
+        const broker = new PatientCodeBroker();
+        return await broker.PostPatientNhsLogin(phoneNumber, headers);
+    },
+
     useConfirmCode: async(
         request: PatientCodeRequest,
         headers?: Record<string, string>
@@ -66,5 +74,13 @@ export const patientService = {
         });
     },
 
-    
+    useRetrievePatientInfoNhsLogin: () => {
+        const broker = new PatientBroker();
+
+        return useQuery({
+            queryKey: ["PatientGetInfoNhsLogin"],
+            queryFn: () => broker.GetPatientInfoNhsLoginAsync(),
+            staleTime: Infinity
+        });
+    }
 };

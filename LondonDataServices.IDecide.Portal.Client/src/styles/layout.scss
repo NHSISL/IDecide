@@ -34,7 +34,9 @@ body {
     height: 100%;
 }
 
-.home-box {
+
+
+/*.home-box {
     position: absolute;
     top: 20px;
     left: 20px;
@@ -51,7 +53,7 @@ body {
     min-height: 0;
     max-height: 100%;
 }
-.fullscreen-bg {
+*/.fullscreen-bg {
     position: fixed;
     top: 0;
     left: 0;
@@ -91,3 +93,23 @@ footer .nhsuk-width-container {
 }
 
 .appflow-wrapper{padding: 3rem 1rem 1rem 1rem}
+
+
+.nhsuk-summary-list__key {
+    width: 40%;
+}
+
+
+.grouped-input-block {
+    background: #f4f8fb;
+    border: 1px solid #d1e3f0;
+    border-radius: 8px;
+    padding: 1.5rem 1.5rem 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.grouped-input-block h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: #005eb8;
+}

@@ -46,7 +46,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 this.identifierBrokerMock.Object,
                 this.patientServiceMock.Object,
                 this.decisionServiceMock.Object,
-                this.notificationServiceMock.Object,
                 this.consumerServiceMock.Object,
                 this.decisionConfigurations,
                 this.securityBrokerConfigurations)
@@ -142,7 +141,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             this.auditBrokerMock.VerifyNoOtherCalls();
             this.identifierBrokerMock.VerifyNoOtherCalls();
             this.patientServiceMock.VerifyNoOtherCalls();
-            this.notificationServiceMock.VerifyNoOtherCalls();
             this.decisionServiceMock.VerifyNoOtherCalls();
         }
 
@@ -173,7 +171,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 this.identifierBrokerMock.Object,
                 this.patientServiceMock.Object,
                 this.decisionServiceMock.Object,
-                this.notificationServiceMock.Object,
                 this.consumerServiceMock.Object,
                 this.decisionConfigurations,
                 this.securityBrokerConfigurations)
@@ -269,7 +266,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             this.auditBrokerMock.VerifyNoOtherCalls();
             this.identifierBrokerMock.VerifyNoOtherCalls();
             this.patientServiceMock.VerifyNoOtherCalls();
-            this.notificationServiceMock.VerifyNoOtherCalls();
             this.decisionServiceMock.VerifyNoOtherCalls();
         }
 
@@ -298,7 +294,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                     this.identifierBrokerMock.Object,
                     this.patientServiceMock.Object,
                     this.decisionServiceMock.Object,
-                    this.notificationServiceMock.Object,
                     this.consumerServiceMock.Object,
                     this.decisionConfigurations,
                     this.securityBrokerConfigurations)
@@ -393,7 +388,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             this.auditBrokerMock.VerifyNoOtherCalls();
             this.identifierBrokerMock.VerifyNoOtherCalls();
             this.patientServiceMock.VerifyNoOtherCalls();
-            this.notificationServiceMock.VerifyNoOtherCalls();
             this.decisionServiceMock.VerifyNoOtherCalls();
         }
 
@@ -426,7 +420,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 this.identifierBrokerMock.Object,
                 this.patientServiceMock.Object,
                 this.decisionServiceMock.Object,
-                this.notificationServiceMock.Object,
                 this.consumerServiceMock.Object,
                 this.decisionConfigurations,
                 this.securityBrokerConfigurations)
@@ -530,7 +523,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             this.auditBrokerMock.VerifyNoOtherCalls();
             this.identifierBrokerMock.VerifyNoOtherCalls();
             this.patientServiceMock.VerifyNoOtherCalls();
-            this.notificationServiceMock.VerifyNoOtherCalls();
             this.decisionServiceMock.VerifyNoOtherCalls();
         }
 
@@ -559,7 +551,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 this.identifierBrokerMock.Object,
                 this.patientServiceMock.Object,
                 this.decisionServiceMock.Object,
-                this.notificationServiceMock.Object,
                 this.consumerServiceMock.Object,
                 this.decisionConfigurations,
                 this.securityBrokerConfigurations)
@@ -654,7 +645,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             this.auditBrokerMock.VerifyNoOtherCalls();
             this.identifierBrokerMock.VerifyNoOtherCalls();
             this.patientServiceMock.VerifyNoOtherCalls();
-            this.notificationServiceMock.VerifyNoOtherCalls();
             this.decisionServiceMock.VerifyNoOtherCalls();
         }
 
@@ -688,7 +678,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 this.identifierBrokerMock.Object,
                 this.patientServiceMock.Object,
                 this.decisionServiceMock.Object,
-                this.notificationServiceMock.Object,
                 this.consumerServiceMock.Object,
                 this.decisionConfigurations,
                 this.securityBrokerConfigurations)
@@ -792,7 +781,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             this.auditBrokerMock.VerifyNoOtherCalls();
             this.identifierBrokerMock.VerifyNoOtherCalls();
             this.patientServiceMock.VerifyNoOtherCalls();
-            this.notificationServiceMock.VerifyNoOtherCalls();
             this.decisionServiceMock.VerifyNoOtherCalls();
         }
     }

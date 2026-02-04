@@ -4,7 +4,7 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.ConsumerStatuses;
+using LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Models.Decisions;
 
 namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Brokers
 {

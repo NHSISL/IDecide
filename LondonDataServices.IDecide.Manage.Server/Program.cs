@@ -5,6 +5,7 @@
 using System;
 using System.IO;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Attrify.Extensions;
 using Attrify.InvisibleApi.Models;
 using ISL.Providers.Captcha.Abstractions;
@@ -41,6 +42,7 @@ using LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions;
 using LondonDataServices.IDecide.Core.Services.Foundations.Consumers;
 using LondonDataServices.IDecide.Core.Services.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes;
+using LondonDataServices.IDecide.Core.Services.Foundations.NhsLogins;
 using LondonDataServices.IDecide.Core.Services.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Services.Foundations.Pds;
@@ -148,6 +150,7 @@ namespace LondonDataServices.IDecide.Manage.Server
                    options.JsonSerializerOptions.DictionaryKeyPolicy = jsonNamingPolicy;
                    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
                    options.JsonSerializerOptions.WriteIndented = true;
+                   options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
                });
         }
 
