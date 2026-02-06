@@ -26,18 +26,22 @@ export const ConfirmNhsLoginDetails: React.FC = () => {
 
     useEffect(() => {
         if (isSuccess && nhsLoginPatient) {
-            setCreatedPatient(
-                new Patient({
-                    nhsNumber: nhsLoginPatient.nhsNumber,
-                    givenName: nhsLoginPatient.givenName,
-                    surname: nhsLoginPatient.surname,
-                    dateOfBirth: nhsLoginPatient.dateOfBirth
-                        ? new Date(nhsLoginPatient.dateOfBirth)
-                        : undefined,
-                    email: nhsLoginPatient.email,
-                    phone: nhsLoginPatient.phone
-                })
-            );
+            if (nhsLoginPatient.givenName) {
+                setCreatedPatient(
+                    new Patient({
+                        nhsNumber: nhsLoginPatient.nhsNumber,
+                        givenName: nhsLoginPatient.givenName,
+                        surname: nhsLoginPatient.surname,
+                        dateOfBirth: nhsLoginPatient.dateOfBirth
+                            ? new Date(nhsLoginPatient.dateOfBirth)
+                            : undefined,
+                        email: nhsLoginPatient.email,
+                        phone: nhsLoginPatient.phone
+                    })
+                );
+            } else {
+                window.location.href = "/";
+            }
         }
     }, [isSuccess, nhsLoginPatient, setCreatedPatient]);
 

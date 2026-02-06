@@ -86,6 +86,7 @@ export const Home = () => {
     const [expandedSections, setExpandedSections] = useState<boolean[]>([false, false, false, false]);
 
     const expandableHeaders = [
+        translate("homepage.expandableHeaders.section0"),
         translate("homepage.expandableHeaders.section1"),
         translate("homepage.expandableHeaders.section2"),
         translate("homepage.expandableHeaders.section3"),
@@ -93,6 +94,10 @@ export const Home = () => {
     ];
 
     const expandableContent: React.ReactNode[][] = [
+        [
+            <p key="p1">{translate("homepage.expandableContent.section0.p1")}</p>,
+            <p key="p2">{translate("homepage.expandableContent.section0.p2")}</p>
+        ],
         [
             <p key="p1">{translate("homepage.expandableContent.section1.p1")}</p>,
             <p key="p2">{translate("homepage.expandableContent.section1.p2")}</p>
