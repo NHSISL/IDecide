@@ -246,7 +246,7 @@ namespace LondonDataServices.IDecide.Portal.Server
                             audience: $"{options.Authority}/token", // token endpoint
                             notBefore: now,
                             issuedAt: now,
-                            expires: now.AddMinutes(5),
+                            expires: now.AddMinutes(30),
                             signingCredentials: new SigningCredentials(rsaKey, SecurityAlgorithms.RsaSha512)
                         );
 

@@ -11,12 +11,17 @@
     "beforeYouStartList1": "You'll need your 10-digit NHS number or your full name, postcode and date of birth so that we can identify you.",
     "beforeYouStartList2": "We will be sending an e-mail, SMS text message or letter to the contact details you have registered with your GP. This will help us to confirm that we are in contact with the right person. You should be confident that your GP has your up-to-date contact details.",
     "expandableHeaders": {
+      "section0": "What is the London Secure Data Environment?",
       "section1": "What is the London Data Service?",
       "section2": "How will the London Data Service and the London Analytics Platform use my data?",
       "section3": "How do I stop the London Data Service and London Analytics Platform using my data?",
       "section4": "Where can I see the privacy notices for the London Data Service and London Analytics Platform?"
     },
     "expandableContent": {
+      "section0": {
+        "p1": "The London Secure Data Environment (SDE) is a highly secure platform that allows approved organisations to access and analyse sensitive health and care data for London, without the data ever leaving the environment. It follows national NHS Secure Data Environment standards and is designed to protect patient privacy while enabling valuable insights for healthcare planning, research, and service improvement.",
+        "p2": "Rather than sharing copies of data, the SDE brings users to the data in a controlled, auditable setting. Access is tightly governed, data is pseudonymised where appropriate, and all outputs are checked before release, ensuring data is used safely, legally, and transparently."
+      },
       "section1": {
         "p1": "The London Data Service securely collects patient information from a range of healthcare locations across London such as GP surgeries and hospitals. It then organises and stores this information ready to be used by other approved systems such as the London Care Record and London Analytics Platform to improve patient care and support healthier communities across London.",
         "p2": ""
@@ -139,7 +144,7 @@
     "errorPrefix": "Error:"
   },
   "ConfirmDetails": {
-    "powerOfAttorneyDetails": "Power of Attorney Details",
+    "powerOfAttorneyDetails": "Your Details:",
     "powerOfAttorneyName": "Name",
     "powerOfAttorneyRelationship": "Relationship",
     "isThisYou": "Is this you?",
@@ -249,7 +254,7 @@
     "powerOfAttorneyRelationship": "Requester's Relationship:",
     "errorMissingNhsOrOption": "NHS number and option are required.",
     "errorSaveFailed": "Sorry, we couldn't save your decision. Please try again.",
-    "howToBeNotifiedLabel": "How would you like to be notified when your data has flowed into The London Data Service:",
+    "howToBeNotifiedLabel": "How would you like to be told when your instruction has been applied?",
     "sms": "SMS",
     "email": "Email",
     "post": "Post",
@@ -269,7 +274,7 @@
   "ThankyouScreen": {
     "title": "Thank You!",
     "preferencesSaved": "Your preferences have been saved and your request is complete.",
-    "appreciation": "We appreciate your time. You will be notified when your preferences have been enacted.",
+    "appreciation": "If you have chosen to receive notifications, you will be notified once your preferences are enacted.",
     "safeToClose": "You may now safely close this window or browser tab.",
     "returnHome": "Return Home"
   },
