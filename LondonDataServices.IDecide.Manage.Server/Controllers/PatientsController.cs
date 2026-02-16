@@ -7,8 +7,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients.Exceptions;
-using LondonDataServices.IDecide.Core.Models.Foundations.Users;
-using LondonDataServices.IDecide.Core.Services.Foundations.NhsLogins;
 using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

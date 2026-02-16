@@ -6,17 +6,19 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Security.Claims;
+using System.Text.Json;
 using System.Threading.Tasks;
+using Hl7.Fhir.Model.CdsHooks;
+using LondonDataServices.IDecide.Core.Brokers.Storages.Sql;
+using LondonDataServices.IDecide.Manage.Server.Data;
+using LondonDataServices.IDecide.Manage.Server.Models;
+using LondonDataServices.IDecide.Manage.Server.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System.Text.Json;
-using LondonDataServices.IDecide.Manage.Server.Services;
-using LondonDataServices.IDecide.Core.Brokers.Storages.Sql;
-using LondonDataServices.IDecide.Manage.Server.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace LondonDataServices.IDecide.Manage.Server.Controllers
 {
@@ -28,20 +30,21 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
         private readonly IConfiguration configuration;
         private readonly ILogger<AuthController> logger;
         private readonly ISecureTokenStorage secureTokenStorage;
-        private readonly StorageBroker storageBroker;
+        private readonly ApplicationDbContext context;
 
         public AuthController(
             IHttpClientFactory httpClientFactory,
             IConfiguration configuration,
             ILogger<AuthController> logger,
             ISecureTokenStorage secureTokenStorage,
-            StorageBroker storageBroker)
+            StorageBroker storageBroker,
+           ApplicationDbContext context)
         {
             this.httpClientFactory = httpClientFactory;
             this.configuration = configuration;
             this.logger = logger;
             this.secureTokenStorage = secureTokenStorage;
-            this.storageBroker = storageBroker;
+            this.context = context;
         }
 
         [HttpGet("login")]
@@ -156,9 +159,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
                     throw new Exception("Could not Process User Info");
                 }
 
-                var user =
-                    await storageBroker.Users.FirstOrDefaultAsync(
-                        u => u.NhsIdUserUid == userInfo.NhsIdUserUid);
+                var user = await context.Users.FirstOrDefaultAsync(u => u.NhsIdUserUid == userInfo.NhsIdUserUid);
 
                 if (user == null)
                 {
@@ -171,15 +172,14 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
                         LastLoginAt = DateTime.UtcNow,
                         IsAuthorised = false
                     };
-
-                    storageBroker.Users.Add(user);
+                    context.Users.Add(user);
                 }
                 else
                 {
                     user.LastLoginAt = DateTime.UtcNow;
                 }
 
-                await storageBroker.SaveChangesAsync();
+                await context.SaveChangesAsync();
 
                 if (!user.IsAuthorised)
                 {

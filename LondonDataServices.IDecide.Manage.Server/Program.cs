@@ -50,6 +50,7 @@ using LondonDataServices.IDecide.Core.Services.Foundations.Pds;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Consumers;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
+using LondonDataServices.IDecide.Manage.Server.Data;
 using LondonDataServices.IDecide.Manage.Server.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -80,6 +81,11 @@ namespace LondonDataServices.IDecide.Manage.Server
             {
                 var storageBroker = scope.ServiceProvider.GetRequiredService<StorageBroker>();
                 storageBroker.Database.Migrate();
+
+                var applicationDbContext =
+                    scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+                applicationDbContext.Database.Migrate();
             }
 
             ConfigurePipeline(app, invisibleApiKey);
@@ -171,6 +177,11 @@ namespace LondonDataServices.IDecide.Manage.Server
             builder.Services.AddSingleton(invisibleApiKey);
             builder.Services.AddAuthorization();
             builder.Services.AddDbContext<StorageBroker>();
+
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(
+                    configuration.GetConnectionString("IDecideConnectionString")));
+
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddHttpClient();
 
