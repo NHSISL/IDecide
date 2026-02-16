@@ -36,6 +36,7 @@ using LondonDataServices.IDecide.Core.Models.Foundations.Consumers;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
+using LondonDataServices.IDecide.Core.Models.Foundations.Users;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions;
 using LondonDataServices.IDecide.Core.Services.Foundations.Audits;
 using LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions;
@@ -49,8 +50,12 @@ using LondonDataServices.IDecide.Core.Services.Foundations.Pds;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Consumers;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
+using LondonDataServices.IDecide.Manage.Server.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -97,15 +102,58 @@ namespace LondonDataServices.IDecide.Manage.Server
 
             builder.Configuration
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+                .AddJsonFile(
+                    $"appsettings.{builder.Environment.EnvironmentName}.json",
+                    optional: true,
+                    reloadOnChange: true)
                 .AddEnvironmentVariables();
+
+            // Configure session cache using SQL Server
+            builder.Services.AddDistributedSqlServerCache(options =>
+            {
+                options.ConnectionString = configuration.GetConnectionString("SessionCache");
+                options.SchemaName = "dbo";
+                options.TableName = "SessionCache";
+            });
+
+            // Configure session
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                options.Cookie.SameSite = SameSiteMode.Lax;
+                options.Cookie.Name = ".IDecide.Session";
+            });
+
+            // Configure Data Protection
+            var keysPath = builder.Environment.IsProduction()
+                ? Path.Combine(builder.Environment.ContentRootPath, "DataProtectionKeys")
+                : Path.Combine(Path.GetTempPath(), "IDecide-DataProtection-Dev");
+
+            Directory.CreateDirectory(keysPath);
+
+            builder.Services.AddDataProtection()
+                .PersistKeysToFileSystem(new DirectoryInfo(keysPath))
+                .SetApplicationName("IDecide")
+                .SetDefaultKeyLifetime(TimeSpan.FromDays(90));
 
             // Add services to the container.
             var azureAdOptions = builder.Configuration.GetSection("AzureAd");
 
+            // Configure dual authentication: JWT for API calls and Cookie for BFF pattern
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddMicrosoftIdentityWebApi(azureAdOptions);
-
+                .AddCookie("bff-cookie", options =>
+                {
+                    options.LoginPath = "/Login";
+                    options.LogoutPath = "/Logout";
+                    options.ExpireTimeSpan = TimeSpan.FromDays(7);
+                    options.Cookie.HttpOnly = true;
+                    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                    options.Cookie.SameSite = SameSiteMode.Lax;
+                    options.Cookie.Name = "bff-cookie";
+                });
 
             var instance = builder.Configuration["AzureAd:Instance"];
             var tenantId = builder.Configuration["AzureAd:TenantId"];
@@ -113,14 +161,18 @@ namespace LondonDataServices.IDecide.Manage.Server
 
             if (string.IsNullOrEmpty(instance) || string.IsNullOrEmpty(tenantId) || string.IsNullOrEmpty(scopes))
             {
-                throw new InvalidOperationException("AzureAd configuration is incomplete. Please check appsettings.json.");
+                throw new InvalidOperationException(
+                    "AzureAd configuration is incomplete. Please check appsettings.json.");
             }
 
             builder.Services.AddSwaggerGen();
+            builder.Services.AddScoped<ISecureTokenStorage, SecureTokenStorage>();
+            builder.Services.AddScoped<ITokenService, TokenService>();
             builder.Services.AddSingleton(invisibleApiKey);
             builder.Services.AddAuthorization();
             builder.Services.AddDbContext<StorageBroker>();
             builder.Services.AddHttpContextAccessor();
+            builder.Services.AddHttpClient();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -168,14 +220,15 @@ namespace LondonDataServices.IDecide.Manage.Server
                     configuration.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
 
                     // Configure OAuth2 for Swagger UI
-                    configuration.OAuthClientId(app.Configuration["AzureAd:ClientId"]); // Use the application ClientId
-                    configuration.OAuthClientSecret(""); // For PKCE, client secret can be empty
-                    configuration.OAuthUsePkce(); // Enable PKCE (Proof Key for Code Exchange)
-                    configuration.OAuthScopes(app.Configuration["AzureAd:Scopes"]); // Add required scopes
+                    configuration.OAuthClientId(app.Configuration["AzureAd:ClientId"]);
+                    configuration.OAuthClientSecret("");
+                    configuration.OAuthUsePkce();
+                    configuration.OAuthScopes(app.Configuration["AzureAd:Scopes"]);
                 });
             }
 
             app.UseHttpsRedirection();
+            app.UseSession();
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseInvisibleApiMiddleware(invisibleApiKey);
@@ -185,9 +238,7 @@ namespace LondonDataServices.IDecide.Manage.Server
 
         private static IEdmModel GetEdmModel()
         {
-            ODataConventionModelBuilder builder =
-               new ODataConventionModelBuilder();
-
+            ODataConventionModelBuilder builder = new ODataConventionModelBuilder();
             builder.EntitySet<Audit>("Audits");
             builder.EntitySet<Patient>("Patients");
             builder.EntitySet<Decision>("Decisions");
@@ -200,22 +251,21 @@ namespace LondonDataServices.IDecide.Manage.Server
 
         private static void AddProviders(IServiceCollection services, IConfiguration configuration)
         {
-            NotificationConfig notificationConfig = configuration.GetSection("NotificationConfig")
-                .Get<NotificationConfig>();
+            NotificationConfig notificationConfig =
+                configuration.GetSection("NotificationConfig").Get<NotificationConfig>();
 
             services.AddSingleton(notificationConfig);
             services.AddTransient<IPdsAbstractionProvider, PdsAbstractionProvider>();
             services.AddTransient<ICaptchaAbstractionProvider, CaptchaAbstractionProvider>();
 
-            bool fakeCaptchaProviderMode = configuration
-                .GetSection("FakeCaptchaProviderMode").Get<bool>();
+            bool fakeCaptchaProviderMode =
+                configuration.GetSection("FakeCaptchaProviderMode").Get<bool>();
 
-            bool interceptNotificationProviderMode = configuration
-                .GetSection("InterceptNotificationProviderMode").Get<bool>();
+            bool interceptNotificationProviderMode =
+                configuration.GetSection("InterceptNotificationProviderMode").Get<bool>();
 
-            PdsFHIRConfigurations pdsFhirConfigurations = configuration
-            .GetSection("pdsFHIRConfigurations")
-                .Get<PdsFHIRConfigurations>();
+            PdsFHIRConfigurations pdsFhirConfigurations =
+                configuration.GetSection("pdsFHIRConfigurations").Get<PdsFHIRConfigurations>();
 
             services.AddSingleton(pdsFhirConfigurations);
             services.AddTransient<IPdsProvider, PdsFHIRProvider>();
@@ -226,9 +276,9 @@ namespace LondonDataServices.IDecide.Manage.Server
             }
             else
             {
-                GoogleReCaptchaConfigurations reCaptchaConfigurations = configuration
-                .GetSection("googleReCaptchaConfigurations")
-                    .Get<GoogleReCaptchaConfigurations>();
+                GoogleReCaptchaConfigurations reCaptchaConfigurations =
+                    configuration.GetSection("googleReCaptchaConfigurations")
+                        .Get<GoogleReCaptchaConfigurations>();
 
                 services.AddSingleton(reCaptchaConfigurations);
                 services.AddTransient<ICaptchaProvider, GoogleReCaptchaProvider>();
@@ -240,21 +290,29 @@ namespace LondonDataServices.IDecide.Manage.Server
                     configuration.GetSection("NotifyConfigurations")
                         .Get<ISL.Providers.Notifications.NotifyIntercept.Models.NotifyConfigurations>();
 
-                NotifyConfigurations govUkNotifyConfigurations = configuration.GetSection("NotifyConfigurations")
-                    .Get<NotifyConfigurations>();
+                NotifyConfigurations govUkNotifyConfigurations =
+                    configuration.GetSection("NotifyConfigurations").Get<NotifyConfigurations>();
 
                 var govUkNotifyProvider = new GovUkNotifyProvider(govUkNotifyConfigurations);
-                var notifyInterceptProvider = new NotifyInterceptProvider(notifyConfigurations, govUkNotifyProvider);
-                var notificationAbstractionProvider = new NotificationAbstractionProvider(notifyInterceptProvider);
+
+                var notifyInterceptProvider =
+                    new NotifyInterceptProvider(notifyConfigurations, govUkNotifyProvider);
+
+                var notificationAbstractionProvider =
+                    new NotificationAbstractionProvider(notifyInterceptProvider);
+
                 services.AddTransient<INotificationAbstractionProvider>(_ => notificationAbstractionProvider);
             }
             else
             {
-                NotifyConfigurations notifyConfigurations = configuration.GetSection("NotifyConfigurations")
-                    .Get<NotifyConfigurations>();
+                NotifyConfigurations notifyConfigurations =
+                    configuration.GetSection("NotifyConfigurations").Get<NotifyConfigurations>();
 
                 var govUkNotifyProvider = new GovUkNotifyProvider(notifyConfigurations);
-                var notificationAbstractionProvider = new NotificationAbstractionProvider(govUkNotifyProvider);
+
+                var notificationAbstractionProvider =
+                    new NotificationAbstractionProvider(govUkNotifyProvider);
+
                 services.AddTransient<INotificationAbstractionProvider>(_ => notificationAbstractionProvider);
             }
         }
@@ -264,12 +322,11 @@ namespace LondonDataServices.IDecide.Manage.Server
             SecurityConfigurations securityConfigurations = new SecurityConfigurations();
             services.AddSingleton(securityConfigurations);
 
-            SecurityBrokerConfigurations securityBrokerConfigurations = configuration
-                .GetSection("SecurityBrokerConfigurations")
+            SecurityBrokerConfigurations securityBrokerConfigurations =
+                configuration.GetSection("SecurityBrokerConfigurations")
                     .Get<SecurityBrokerConfigurations>();
 
             services.AddSingleton(securityBrokerConfigurations);
-
             services.AddTransient<IDateTimeBroker, DateTimeBroker>();
             services.AddTransient<IIdentifierBroker, IdentifierBroker>();
             services.AddTransient<ILoggingBroker, LoggingBroker>();
@@ -291,6 +348,7 @@ namespace LondonDataServices.IDecide.Manage.Server
             services.AddTransient<INotificationService, NotificationService>();
             services.AddTransient<IConsumerService, ConsumerService>();
             services.AddTransient<IConsumerAdoptionService, ConsumerAdoptionService>();
+            services.AddTransient<INhsLoginService, NhsLoginService>();
         }
 
         private static void AddProcessingServices(IServiceCollection services)
@@ -298,10 +356,9 @@ namespace LondonDataServices.IDecide.Manage.Server
 
         private static void AddOrchestrationServices(IServiceCollection services, IConfiguration configuration)
         {
-            DecisionConfigurations decisionConfigurations = configuration
-                .GetSection("DecisionConfigurations")
-                    .Get<DecisionConfigurations>() ??
-                        new DecisionConfigurations();
+            DecisionConfigurations decisionConfigurations =
+                configuration.GetSection("DecisionConfigurations").Get<DecisionConfigurations>() ??
+                    new DecisionConfigurations();
 
             services.AddSingleton(decisionConfigurations);
             services.AddTransient<IPatientOrchestrationService, PatientOrchestrationService>();

@@ -22,12 +22,15 @@
 		<PackageReference Include="ISL.Providers.ReIdentification.DemoData" Version="0.0.0.5" />
 		<PackageReference Include="ISL.Providers.ReIdentification.Necs" Version="0.0.0.5" />
 		<PackageReference Include="ISL.Providers.ReIdentification.OfflineFileSources" Version="0.0.0.5" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.3.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="9.0.11" />
 		<PackageReference Include="Microsoft.AspNetCore.OData" Version="9.4.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.9" />
-		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.9" />
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.11" />
 		<PackageReference Include="Microsoft.AspNetCore.SpaProxy">
 			<Version>9.0.9</Version>
 		</PackageReference>
+		<PackageReference Include="Microsoft.Extensions.Caching.SqlServer" Version="10.0.2" />
 		<PackageReference Include="Microsoft.Identity.Web" Version="3.14.1" />
 		<PackageReference Include="NHSISL.CsvHelperClient" Version="1.1.0" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.6" />

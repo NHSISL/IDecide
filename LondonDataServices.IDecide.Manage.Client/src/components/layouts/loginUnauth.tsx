@@ -6,9 +6,9 @@ export const LoginUnAuthorisedComponent = () => {
 
     const { instance } = useMsal();
 
-    const handleLoginRedirect = () => {
-        instance.loginRedirect(MsalConfig.loginRequest).catch((error) => console.log(error));
-    };
+    //const handleLoginRedirect = () => {
+    //    instance.loginRedirect(MsalConfig.loginRequest).catch((error) => console.log(error));
+    //};
 
     return (
         <Container className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
@@ -29,7 +29,7 @@ export const LoginUnAuthorisedComponent = () => {
                                 <p>Welcome to the One London Local Data Opt-Out Management Portal.</p>
                                 <p>Please sign in to continue.</p>
                             </Card.Text>
-                            <Button onClick={handleLoginRedirect} className="me-3">Sign in</Button>
+                            <Button href="/auth/login" className="me-3">Sign in</Button>
                         </Card.Body>
                     </Card>
                 </Col>
