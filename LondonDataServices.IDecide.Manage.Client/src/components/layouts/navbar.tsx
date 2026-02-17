@@ -1,31 +1,29 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
-import { Button, Container, Navbar } from "react-bootstrap";
+import { Button, Container, Navbar, NavDropdown } from "react-bootstrap";
+import { useAuth } from '../../hooks/useAuth';
+import { UserProfile } from '../securitys/userProfile';
+import { authService } from '../../services/foundations/authService';
 
 interface NavbarComponentProps {
     toggleSidebar: () => void;
     showMenuButton: boolean;
 }
 
-const logout = async () => {
-    try {
-        await fetch('/auth/logout', {
-            method: "POST",
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
-
-        window.location.href = '/';
-    } catch (error) {
-        console.error('Logout failed:', error);
-        window.location.href = '/';
-    }
-}
-
 const NavbarComponent: React.FC<NavbarComponentProps> = ({ toggleSidebar, showMenuButton }) => {
+    const { sessionData } = useAuth();
+    const logoutMutation = authService.useLogout();
+
+    const handleLogout = async () => {
+        try {
+            await logoutMutation.mutateAsync();
+            window.location.href = '/';
+        } catch (error) {
+            console.error('Logout failed:', error);
+            window.location.href = '/';
+        }
+    };
 
     return (
         <Navbar className="bg-light" sticky="top">
@@ -36,13 +34,25 @@ const NavbarComponent: React.FC<NavbarComponentProps> = ({ toggleSidebar, showMe
                     </Button>
                 )}
                 <Navbar.Brand href="/" className="me-auto ms-3 d-flex align-items-center">
-                    <img src="/OneLondon_Logo_OneLondon_Logo_Blue.png" alt="London Data Service logo" height="35" width="108" />
+                    <img
+                        src="/OneLondon_Logo_OneLondon_Logo_Blue.png"
+                        alt="London Data Service logo"
+                        height="35"
+                        width="108"
+                    />
                     <span className="d-none d-md-inline" style={{ marginLeft: "10px" }}>
                         Opt-Out Management Portal
                     </span>
                 </Navbar.Brand>
                 <Navbar.Text>
-                    <Button onClick={logout}>Logout</Button>
+                    <NavDropdown
+                        title={sessionData?.name || 'User'}
+                        id="collasible-nav-dropdown"
+                        className="me-3"
+                    >
+                        <NavDropdown.Item onClick={handleLogout}>Sign out</NavDropdown.Item>
+                        <UserProfile />
+                    </NavDropdown>
                 </Navbar.Text>
             </Container>
         </Navbar>

@@ -51,7 +51,7 @@ const ConsumerTable = () => {
     };
 
     const updateTotalPages = (pages: Page[], uniqueAccessAudit: Array<Consumer>) => {
-        const itemsPerPage = pages[0]?.data.length || 1;
+        const itemsPerPage = pages?.[0]?.data?.length || 1;
         const totalItems = uniqueAccessAudit.length;
         setTotalPages(Math.ceil(totalItems / itemsPerPage));
     };

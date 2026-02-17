@@ -6,6 +6,7 @@ using System;
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 using Attrify.Extensions;
 using Attrify.InvisibleApi.Models;
 using ISL.Providers.Captcha.Abstractions;
@@ -52,8 +53,6 @@ using LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
 using LondonDataServices.IDecide.Manage.Server.Data;
 using LondonDataServices.IDecide.Manage.Server.Services;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
@@ -152,6 +151,11 @@ namespace LondonDataServices.IDecide.Manage.Server
             builder.Services.AddAuthentication("bff-cookie")
                 .AddCookie("bff-cookie", options =>
                 {
+                    options.Events.OnRedirectToLogin = context =>
+                    {
+                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                        return Task.CompletedTask;
+                    };
                     //options.LoginPath = "/Login";
                     options.LogoutPath = "/Logout";
                     options.ExpireTimeSpan = TimeSpan.FromDays(7);

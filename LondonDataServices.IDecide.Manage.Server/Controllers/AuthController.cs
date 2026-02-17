@@ -39,7 +39,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
             ILogger<AuthController> logger,
             ISecureTokenStorage secureTokenStorage,
             StorageBroker storageBroker,
-           ApplicationDbContext context)
+            ApplicationDbContext context)
         {
             this.httpClientFactory = httpClientFactory;
             this.configuration = configuration;
@@ -77,8 +77,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
 
             return Redirect(authUrl);
         }
-
-        [AllowAnonymous]
+        [Authorize]
         [HttpGet("session")]
         public IActionResult Session()
         {
@@ -88,9 +87,15 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
             }
 
             var expiresAtClaim = User.FindFirstValue(ClaimTypes.Expiration);
-            DateTime? expiresAt = string.IsNullOrEmpty(expiresAtClaim)
-                ? null
-                : DateTimeOffset.FromUnixTimeSeconds(long.Parse(expiresAtClaim)).UtcDateTime;
+            string expiresAtIso = expiresAtClaim;
+
+            if (!string.IsNullOrEmpty(expiresAtClaim))
+            {
+                if (DateTimeOffset.TryParse(expiresAtClaim, out var expiresAtDateTime))
+                {
+                    expiresAtIso = expiresAtDateTime.ToString("o");
+                }
+            }
 
             return Ok(new
             {
@@ -98,11 +103,11 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
                 upn = User.FindFirstValue(ClaimTypes.Upn),
                 name = User.FindFirstValue(ClaimTypes.Name),
                 roles = User.FindAll(ClaimTypes.Role).Select(c => c.Value).ToArray(),
-                expiresAt = expiresAt
+                expiresAt = expiresAtIso
             });
         }
 
-        [AllowAnonymous]
+        [Authorize]
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
@@ -205,14 +210,14 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
                     return Redirect("/unauthorised");
                 }
 
-                var expiresAt = DateTimeOffset.UtcNow.AddSeconds(int.Parse(token.ExpiresIn));
+                var expiresAt = DateTimeOffset.UtcNow.AddSeconds(int.Parse(token.RefreshTokenExpiresIn));
 
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.NameIdentifier, userInfo.Sub),
                     new Claim(ClaimTypes.Name, userInfo.Name),
                     new Claim(ClaimTypes.Upn, userInfo.NhsIdUserUid),
-                    new Claim(ClaimTypes.Expiration, expiresAt.ToUnixTimeSeconds().ToString()),
+                    new Claim(ClaimTypes.Expiration, expiresAt.ToString("o")),
                 };
 
                 foreach (var role in userInfo.NhsIdNrbacRoles)

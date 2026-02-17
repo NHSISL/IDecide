@@ -1,10 +1,10 @@
-import { useMsal } from "@azure/msal-react";
 import { ReactElement, useState } from "react"
 import { Button, Card, ListGroup, Modal, NavDropdown } from "react-bootstrap";
-
+import { useAuth } from "../../hooks/useAuth";
+import moment from "moment";
 
 export const UserProfile = (): ReactElement => {
-    const { accounts } = useMsal();
+    const { sessionData } = useAuth();
     const [showModal, setShowModal] = useState(false);
     const closeModal = () => setShowModal(false);
     const openModal = () => setShowModal(true);
@@ -21,24 +21,40 @@ export const UserProfile = (): ReactElement => {
                             <ListGroup variant="flush">
                                 <ListGroup.Item>
                                     <div className="d-flex justify-content-between align-items-center">
-                                        <div className="fw-bold">Username / Email</div>
-                                        <div>{accounts[0]?.username}</div>
+                                        <div className="fw-bold">Username / UPN</div>
+                                        <div>{sessionData?.upn}</div>
                                     </div>
                                 </ListGroup.Item>
                                 <ListGroup.Item>
                                     <div className="d-flex justify-content-between align-items-center">
                                         <div className="fw-bold">Name</div>
-                                        <div>{accounts[0]?.name}</div>
+                                        <div>{sessionData?.name}</div>
                                     </div>
                                 </ListGroup.Item>
-                                {accounts[0]?.idTokenClaims?.roles?.map((r, i) => (
-                                    <ListGroup.Item key={i}>
+                                <ListGroup.Item>
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <div className="fw-bold">Subject (Sub)</div>
+                                        <div>{sessionData?.sub}</div>
+                                    </div>
+                                </ListGroup.Item>
+                                {sessionData?.roles?.map((role: string, index: number) => (
+                                    <ListGroup.Item key={index}>
                                         <div className="d-flex justify-content-between align-items-center">
                                             <div className="fw-bold">Role</div>
-                                            <div>{r}</div>
+                                            <div>{role}</div>
                                         </div>
                                     </ListGroup.Item>
                                 ))}
+                                <ListGroup.Item>
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <div className="fw-bold">Session Expires At</div>
+                                        <div>
+                                            {sessionData?.expiresAt
+                                                ? moment(sessionData.expiresAt).format("DD/MM/YYYY HH:mm:ss")
+                                                : ""}
+                                        </div>
+                                    </div>
+                                </ListGroup.Item>
                             </ListGroup>
                         </Card.Body>
                     </Card>
@@ -54,3 +70,5 @@ export const UserProfile = (): ReactElement => {
         </div>
     );
 };
+
+export default UserProfile;

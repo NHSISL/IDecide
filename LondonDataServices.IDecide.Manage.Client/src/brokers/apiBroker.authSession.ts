@@ -1,4 +1,4 @@
-import { Feature } from "../models/features/feature";
+import { SessionData } from "../models/sessions/SessionData";
 import ApiBroker from "./apiBroker";
 
 class AuthSessionBroker {
@@ -6,20 +6,17 @@ class AuthSessionBroker {
 
     private apiBroker: ApiBroker = new ApiBroker();
 
-    //async GetSessionDetailsAsync(): Promise<Session[]> {
-    //    const url = this.relativeFeatureUrl;
-    //    const result = await this.apiBroker.GetAsync(url);
-    //    return result.data.map((session: any) => new Session(session));
-    //}
+    async GetSessionDetailsAsync(): Promise<SessionData> {
+        const url = this.relativeFeatureUrl;
+        const result = await this.apiBroker.GetAsyncUnauthenticated(url);
 
-    //async CheckIsAuthenticatedAsync(): Promise<boolean> {
-    //    try {
-    //        const url = this.relativeFeatureUrl;
-    //        const result = await this.apiBroker.GetAsync(url);
-    //        return result.status === 200;
-    //    } catch {
-    //        return false;
-    //    }
-    //}
+        return result.data;
+    }
+
+    async PostLogoutAsync(): Promise<void> {
+        const url = '/auth/logout';
+        await this.apiBroker.PostAsync(url, {});
+    }
 }
+
 export default AuthSessionBroker;
