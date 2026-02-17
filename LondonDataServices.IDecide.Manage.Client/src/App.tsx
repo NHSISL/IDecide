@@ -77,6 +77,10 @@ function App() {
                     element: <ConsumersPage />
                 },
                 {
+                    path: "unauthorised",
+                    element: <ErrorPage />
+                },
+                {
                     index: true,
                     element: <Navigate to="/home" />
                 },

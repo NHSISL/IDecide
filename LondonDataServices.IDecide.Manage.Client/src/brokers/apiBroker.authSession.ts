@@ -14,8 +14,9 @@ class AuthSessionBroker {
     }
 
     async PostLogoutAsync(): Promise<void> {
-        const url = '/auth/logout';
-        await this.apiBroker.PostAsync(url, {});
+        const response = await fetch('/auth/logout', { method: 'POST' });
+        const { logoutUrl } = await response.json();
+        window.location.href = logoutUrl;
     }
 }
 

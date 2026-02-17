@@ -111,13 +111,24 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
+            var logoutEndpoint = configuration["CIS:LogoutEndpoint"];
+            var postLogoutRedirectUri = configuration["CIS:PostLogoutRedirectUri"];
+            var idToken = User.FindFirstValue("id_token");
+
             if (User.Identity?.IsAuthenticated == true)
             {
                 HttpContext.Session.Clear();
+                secureTokenStorage.ClearTokens(HttpContext);
                 await HttpContext.SignOutAsync("bff-cookie");
             }
 
-            return Ok();
+            var logoutUrl = $"{logoutEndpoint}" +
+                $"?id_token_hint={idToken}" +
+                $"&post_logout_redirect_uri={Uri.EscapeDataString(postLogoutRedirectUri)}";
+
+            logger.LogInformation("User logged out, redirecting to CIS2 logout");
+
+            return Ok(new { logoutUrl });
         }
 
         [HttpGet("callback")]
@@ -164,6 +175,14 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
                     throw new Exception("Could not Process token");
                 }
 
+                logger.LogInformation(
+                    $"Token response - ID Token present: {!string.IsNullOrEmpty(token.IdToken)}");
+
+                if (string.IsNullOrEmpty(token.IdToken))
+                {
+                    logger.LogWarning("ID Token is missing from CIS2 response, logout may not work");
+                }
+
                 client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token.AccessToken}");
                 var userInfoEndpoint = configuration["CIS:UserInfoEndpoint"];
                 var userInfoResponse = await client.GetAsync(userInfoEndpoint);
@@ -176,7 +195,8 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
                     throw new Exception("Could not Process User Info");
                 }
 
-                var user = await context.Users.FirstOrDefaultAsync(u => u.NhsIdUserUid == userInfo.NhsIdUserUid);
+                var user = await context.Users
+                    .FirstOrDefaultAsync(u => u.NhsIdUserUid == userInfo.NhsIdUserUid);
 
                 if (user == null)
                 {
@@ -210,19 +230,21 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
                     return Redirect("/unauthorised");
                 }
 
-                var expiresAt = DateTimeOffset.UtcNow.AddSeconds(int.Parse(token.RefreshTokenExpiresIn));
+                var expiresAt = DateTimeOffset.UtcNow
+                    .AddSeconds(int.Parse(token.RefreshTokenExpiresIn));
 
                 var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.NameIdentifier, userInfo.Sub),
-                    new Claim(ClaimTypes.Name, userInfo.Name),
-                    new Claim(ClaimTypes.Upn, userInfo.NhsIdUserUid),
-                    new Claim(ClaimTypes.Expiration, expiresAt.ToString("o")),
-                };
+                    {
+                        new Claim(ClaimTypes.NameIdentifier, userInfo.Sub),
+                        new Claim(ClaimTypes.Name, userInfo.Name),
+                        new Claim(ClaimTypes.Upn, userInfo.NhsIdUserUid),
+                        new Claim(ClaimTypes.Expiration, expiresAt.ToString("o")),
+                        new Claim("id_token", token.IdToken ?? string.Empty),
+                    };
 
                 foreach (var role in userInfo.NhsIdNrbacRoles)
                 {
-                    claims.Add(new Claim(ClaimTypes.Role, role.ToString()));
+                    claims.Add(new Claim(ClaimTypes.Role, role.RoleName));
                 }
 
                 var identity = new ClaimsIdentity(claims, "OAuth");

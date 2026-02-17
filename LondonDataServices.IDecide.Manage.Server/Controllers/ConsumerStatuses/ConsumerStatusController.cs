@@ -13,7 +13,7 @@ using RESTFulSense.Controllers;
 
 namespace LondonDataServices.IDecide.Manage.Server.Controllers.ConsumerStatuses
 {
-    [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,LondonDataServices.IDecide.Manage.Server.Agents")]
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class ConsumerStatusController : RESTFulController
