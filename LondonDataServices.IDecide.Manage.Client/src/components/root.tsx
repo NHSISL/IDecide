@@ -16,7 +16,19 @@ export default function Root() {
 
     useEffect(() => {
         fetch('/auth/session')
-            .then(r => setIsAuthenticated(r.status == 200));
+            .then(async (r) => {
+                if (r.status === 200) {
+                    const data = await r.json();
+                    console.log('sub:', data.sub);
+                    console.log('upn:', data.upn);
+                    console.log('name:', data.name);
+                    console.log('roles:', data.roles);
+                    console.log('expiry:', data.expiresAt);
+                    setIsAuthenticated(true);
+                } else {
+                    setIsAuthenticated(false);
+                }
+            });
     }, [])
 
     useEffect(() => {

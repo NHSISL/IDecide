@@ -42,7 +42,6 @@ const NavbarComponent: React.FC<NavbarComponentProps> = ({ toggleSidebar, showMe
                     </span>
                 </Navbar.Brand>
                 <Navbar.Text>
-
                     <Button onClick={logout}>Logout</Button>
                 </Navbar.Text>
             </Container>

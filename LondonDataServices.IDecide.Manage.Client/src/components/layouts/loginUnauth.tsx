@@ -1,14 +1,6 @@
-import { useMsal } from "@azure/msal-react";
 import { Button, Container, Row, Col, Card } from "react-bootstrap";
-import { MsalConfig } from '../../authConfig';
 
 export const LoginUnAuthorisedComponent = () => {
-
-    const { instance } = useMsal();
-
-    //const handleLoginRedirect = () => {
-    //    instance.loginRedirect(MsalConfig.loginRequest).catch((error) => console.log(error));
-    //};
 
     return (
         <Container className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>

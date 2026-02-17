@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Text.Json;
@@ -86,10 +87,18 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
                 return Unauthorized();
             }
 
+            var expiresAtClaim = User.FindFirstValue(ClaimTypes.Expiration);
+            DateTime? expiresAt = string.IsNullOrEmpty(expiresAtClaim)
+                ? null
+                : DateTimeOffset.FromUnixTimeSeconds(long.Parse(expiresAtClaim)).UtcDateTime;
+
             return Ok(new
             {
                 sub = User.FindFirstValue(ClaimTypes.NameIdentifier),
-                upn = User.FindFirstValue(ClaimTypes.Upn)
+                upn = User.FindFirstValue(ClaimTypes.Upn),
+                name = User.FindFirstValue(ClaimTypes.Name),
+                roles = User.FindAll(ClaimTypes.Role).Select(c => c.Value).ToArray(),
+                expiresAt = expiresAt
             });
         }
 
@@ -196,11 +205,20 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
                     return Redirect("/unauthorised");
                 }
 
+                var expiresAt = DateTimeOffset.UtcNow.AddSeconds(int.Parse(token.ExpiresIn));
+
                 var claims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.NameIdentifier, userInfo.Name),
+                    new Claim(ClaimTypes.NameIdentifier, userInfo.Sub),
+                    new Claim(ClaimTypes.Name, userInfo.Name),
                     new Claim(ClaimTypes.Upn, userInfo.NhsIdUserUid),
+                    new Claim(ClaimTypes.Expiration, expiresAt.ToUnixTimeSeconds().ToString()),
                 };
+
+                foreach (var role in userInfo.NhsIdNrbacRoles)
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, role.ToString()));
+                }
 
                 var identity = new ClaimsIdentity(claims, "OAuth");
                 var principal = new ClaimsPrincipal(identity);
