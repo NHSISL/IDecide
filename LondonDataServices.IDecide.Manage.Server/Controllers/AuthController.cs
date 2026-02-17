@@ -77,7 +77,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
             return Redirect(authUrl);
         }
 
-        [Authorize]
+        [AllowAnonymous]
         [HttpGet("session")]
         public IActionResult Session()
         {
@@ -93,14 +93,17 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
             });
         }
 
-        [Authorize]
+        [AllowAnonymous]
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
-            HttpContext.Session.Clear();
-            await HttpContext.SignOutAsync("bff-cookie");
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                HttpContext.Session.Clear();
+                await HttpContext.SignOutAsync("bff-cookie");
+            }
 
-            return Redirect(@"\");
+            return Ok();
         }
 
         [HttpGet("callback")]
@@ -170,7 +173,11 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
                         Sub = userInfo.Sub,
                         RawUserInfo = userInfoJson,
                         LastLoginAt = DateTime.UtcNow,
-                        IsAuthorised = false
+                        IsAuthorised = false,
+                        CreatedBy = "HealthCareWorkerLogin",
+                        CreatedDate = DateTime.UtcNow,
+                        UpdatedBy = "HealthCareWorkerLogin",
+                        UpdatedDate = DateTime.UtcNow
                     };
                     context.Users.Add(user);
                 }
@@ -209,7 +216,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
                     token.RefreshToken,
                     int.Parse(token.RefreshTokenExpiresIn));
 
-                return Redirect("/");
+                return Redirect("/home");
             }
             catch (Exception ex)
             {

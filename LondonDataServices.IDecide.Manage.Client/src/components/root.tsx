@@ -1,4 +1,3 @@
-import { AuthenticatedTemplate, UnauthenticatedTemplate } from "@azure/msal-react";
 import { Outlet } from "react-router-dom";
 import NavbarComponent from "./layouts/navbar";
 import { useState, useEffect } from "react";
@@ -12,6 +11,13 @@ export default function Root() {
     const toggleSidebar = () => {
         setSidebarOpen(!sidebarOpen);
     };
+
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+    useEffect(() => {
+        fetch('/auth/session')
+            .then(r => setIsAuthenticated(r.status == 200));
+    }, [])
 
     useEffect(() => {
         const handleResize = () => {
@@ -31,31 +37,29 @@ export default function Root() {
         };
     }, []);
 
+    if (!isAuthenticated) {
+        return (<LoginUnAuthorisedComponent />);
+    }
+
     return (
         <>
-            <AuthenticatedTemplate>
-                <div className="layout-container">
-                    <div className={`sidebar bg-light ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
-                        <SideBarComponent />
-                        <div className="footerContent">
-                            <FooterComponent />
-                        </div>
-                    </div>
-
-                    <div className={`content ${sidebarOpen ? 'content-shift-right' : 'content-shift-left'}`}>
-                        <NavbarComponent toggleSidebar={toggleSidebar} showMenuButton={true} />
-
-                        <div className="content-inner">
-                            <Outlet />
-                        </div>
-
+            <div className="layout-container">
+                <div className={`sidebar bg-light ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+                    <SideBarComponent />
+                    <div className="footerContent">
+                        <FooterComponent />
                     </div>
                 </div>
-            </AuthenticatedTemplate>
 
-            <UnauthenticatedTemplate>
-                <LoginUnAuthorisedComponent />
-            </UnauthenticatedTemplate>
+                <div className={`content ${sidebarOpen ? 'content-shift-right' : 'content-shift-left'}`}>
+                    <NavbarComponent toggleSidebar={toggleSidebar} showMenuButton={true} />
+
+                    <div className="content-inner">
+                        <Outlet />
+                    </div>
+
+                </div>
+            </div>
         </>
     );
 }

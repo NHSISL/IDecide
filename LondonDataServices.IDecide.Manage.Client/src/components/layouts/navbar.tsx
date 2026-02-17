@@ -1,12 +1,28 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars} from '@fortawesome/free-solid-svg-icons';
+import { faBars } from '@fortawesome/free-solid-svg-icons';
 import { Button, Container, Navbar } from "react-bootstrap";
-import Login from '../securitys/login';
 
 interface NavbarComponentProps {
     toggleSidebar: () => void;
     showMenuButton: boolean;
+}
+
+const logout = async () => {
+    try {
+        await fetch('/auth/logout', {
+            method: "POST",
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+
+        window.location.href = '/';
+    } catch (error) {
+        console.error('Logout failed:', error);
+        window.location.href = '/';
+    }
 }
 
 const NavbarComponent: React.FC<NavbarComponentProps> = ({ toggleSidebar, showMenuButton }) => {
@@ -26,7 +42,8 @@ const NavbarComponent: React.FC<NavbarComponentProps> = ({ toggleSidebar, showMe
                     </span>
                 </Navbar.Brand>
                 <Navbar.Text>
-                    <Login />
+
+                    <Button onClick={logout}>Logout</Button>
                 </Navbar.Text>
             </Container>
         </Navbar>

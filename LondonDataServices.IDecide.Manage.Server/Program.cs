@@ -149,10 +149,10 @@ namespace LondonDataServices.IDecide.Manage.Server
             var azureAdOptions = builder.Configuration.GetSection("AzureAd");
 
             // Configure dual authentication: JWT for API calls and Cookie for BFF pattern
-            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            builder.Services.AddAuthentication("bff-cookie")
                 .AddCookie("bff-cookie", options =>
                 {
-                    options.LoginPath = "/Login";
+                    //options.LoginPath = "/Login";
                     options.LogoutPath = "/Logout";
                     options.ExpireTimeSpan = TimeSpan.FromDays(7);
                     options.Cookie.HttpOnly = true;

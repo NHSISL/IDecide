@@ -61,7 +61,7 @@ MsalConfig.build().then(() => {
 
         root.render(
             <React.StrictMode>
-                <App instance={msalInstance} />
+                <App />
             </React.StrictMode>
         );
     });
