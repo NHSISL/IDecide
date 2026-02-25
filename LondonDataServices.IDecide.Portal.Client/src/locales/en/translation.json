@@ -166,7 +166,7 @@
     "noPatientDetails": "No patient details available."
   },
   "PositiveConfirmation": {
-    "poaDetailsTitle": "Power of Attorney Details",
+    "poaDetailsTitle": "Your Details:",
     "poaNameLabel": "Name:",
     "poaRelationshipLabel": "Relationship:",
     "confirmationRequiredTitle": "Confirmation required",
@@ -194,7 +194,7 @@
     "resendInfo": "If you have already requested a code but haven't received it please click here to resend yourself a code."
   },
   "ConfirmCode": {
-    "powerOfAttorneyDetails": "Power of Attorney Details",
+    "powerOfAttorneyDetails": "Your Details:",
     "powerOfAttorneyName": "Name:",
     "powerOfAttorneyRelationship": "Relationship:",
     "enterCodeLabel": "Enter Code",
@@ -216,7 +216,7 @@
     "helpWrongCodeText": "If you enter the wrong code 3 times, you will be prompted to call our helpdesk to complete your opt-in or opt-out request."
   },
   "OptOut": {
-    "powerOfAttorneyDetails": "Power of Attorney Details",
+    "powerOfAttorneyDetails": "Your Details:",
     "powerOfAttorneyName": "Name:",
     "powerOfAttorneyRelationship": "Relationship:",
     "errorNoPatient": "Patient information is missing.",
@@ -249,7 +249,7 @@
     "nhsNumberNotProvided": "Not provided",
     "notificationMethodLabel": "Notification Method:",
     "notificationNoneSelected": "None selected",
-    "powerOfAttorneyDetails": "Power of Attorney Details",
+    "powerOfAttorneyDetails": "Your Details:",
     "powerOfAttorneyName": "Name of Requester:",
     "powerOfAttorneyRelationship": "Requester's Relationship:",
     "errorMissingNhsOrOption": "NHS number and option are required.",
