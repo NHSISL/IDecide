@@ -81,8 +81,6 @@ const ExpandableSection: React.FC<ExpandableSectionProps> = ({
 
 export const Home = () => {
     const { t: translate } = useTranslation();
-    const navigate = useNavigate();
-    // Track expanded state for each section
     const [expandedSections, setExpandedSections] = useState<boolean[]>([false, false, false, false, false]);
 
     const expandableHeaders = [
