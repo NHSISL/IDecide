@@ -29,6 +29,12 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
             {
                 await this.decisionOrchestrationService.VerifyAndRecordDecisionAsync(decision);
 
+                decision.ResponsiblePersonGivenName = HttpContext.User.Claims
+                    .FirstOrDefault(x => x.Type == "given_name")?.Value;
+
+                decision.ResponsiblePersonSurname = HttpContext.User.Claims
+                    .FirstOrDefault(x => x.Type == "surname")?.Value;
+
                 return Ok();
             }
             catch (DecisionOrchestrationValidationException decisionOrchestrationValidationException)

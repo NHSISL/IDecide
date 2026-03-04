@@ -12,6 +12,7 @@ export default function Root() {
 
     const doNotShowLeftPanelRoutes = [
         "/home",
+        "/nhsLoginHome",
         "/end",
         "/copyright",
         "/about",

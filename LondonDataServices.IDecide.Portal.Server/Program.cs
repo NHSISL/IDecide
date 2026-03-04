@@ -321,7 +321,7 @@ namespace LondonDataServices.IDecide.Portal.Server
                 return Results.Challenge(
                     new AuthenticationProperties
                     {
-                        RedirectUri = "/nhs-optOut"
+                        RedirectUri = "/nhsLoginHome"
                     },
                     new[] { "oidc" }
                 );

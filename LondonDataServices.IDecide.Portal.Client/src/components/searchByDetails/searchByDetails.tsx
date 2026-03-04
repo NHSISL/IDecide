@@ -3,7 +3,7 @@ import { useStep } from "../../hooks/useStep";
 import { Patient } from "../../models/patients/patient";
 import { PowerOfAttorney } from "../../models/powerOfAttourneys/powerOfAttourney";
 import { patientViewService } from "../../services/views/patientViewService";
-import { TextInput, Select, Card } from "nhsuk-react-components";
+import { Select, Card } from "nhsuk-react-components";
 import { Col, Container, Row, Alert } from "react-bootstrap";
 import { StepContext } from "../context/stepContext";
 import { useTranslation } from "react-i18next";
@@ -34,13 +34,15 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttorn
     const [apiError, setApiError] = useState<string | JSX.Element>("");
     const [loading, setLoading] = useState(false);
     const { configuration } = useFrontendConfiguration();
-    const [poaFirstname, setPoaFirstname] = useState("");
-    const [poaSurname, setPoaSurname] = useState("");
+   // const [poaFirstname, setPoaFirstname] = useState("");
+    //const [poaSurname, setPoaSurname] = useState("");
     const [poaRelationship, setPoaRelationship] = useState("");
-    const [poaFirstnameError, setPoaFirstnameError] = useState("");
-    const [poaSurnameError, setPoaSurnameError] = useState("");
+    //const [poaFirstnameError, setPoaFirstnameError] = useState("");
+    //const [poaSurnameError, setPoaSurnameError] = useState("");
     const [poaRelationshipError, setPoaRelationshipError] = useState("");
     const addPatient = patientViewService.usePostPatientDetails();
+    const [loggedInPatient, setLoggedInPatient] = useState<Patient | null>(null);
+    const { data: nhsLoginPatient, isSuccess } = patientViewService.useRetrievePatientInfoNhsLogin();
 
     const handleApiError = useApiErrorHandlerChecks({
         setApiError,
@@ -52,10 +54,32 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttorn
     const { nextStep, setCreatedPatient } = useStep();
 
     useEffect(() => {
+        if (isSuccess && nhsLoginPatient) {
+            if (nhsLoginPatient.givenName) {
+                const patient = new Patient({
+                    nhsNumber: nhsLoginPatient.nhsNumber,
+                    givenName: nhsLoginPatient.givenName,
+                    surname: nhsLoginPatient.surname,
+                    dateOfBirth: nhsLoginPatient.dateOfBirth
+                        ? new Date(nhsLoginPatient.dateOfBirth)
+                        : undefined,
+                    email: nhsLoginPatient.email,
+                    phone: nhsLoginPatient.phone
+                });
+                setCreatedPatient(patient);
+                setLoggedInPatient(patient);
+            } else {
+                window.location.href = "/";
+            }
+        }
+    }, [isSuccess, nhsLoginPatient, setCreatedPatient]);
+
+    useEffect(() => {
         if (configuration?.recaptchaSiteKey) {
             setRecaptchaSiteKey(configuration.recaptchaSiteKey);
         }
     }, [configuration]);
+
     useEffect(() => {
         if (stepContext && typeof stepContext.resetStepContext === "function") {
             stepContext.resetStepContext();
@@ -86,14 +110,6 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttorn
     }, [recaptchaSiteKey, translate]);
 
     // PoA handlers
-    const handlePoaFirstnameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setPoaFirstname(e.target.value);
-        setPoaFirstnameError("");
-    };
-    const handlePoaSurnameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setPoaSurname(e.target.value);
-        setPoaSurnameError("");
-    };
     const handlePoaRelationshipChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setPoaRelationship(e.target.value);
         setPoaRelationshipError("");
@@ -160,8 +176,6 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttorn
 
         // PoA validation
         if (powerOfAttorney) {
-            if (!poaFirstname.trim()) newErrors.poaFirstname = translate("SearchByDetails.poaFirstnameError");
-            if (!poaSurname.trim()) newErrors.poaSurname = translate("SearchByDetails.poaSurnameError");
             if (!poaRelationship) newErrors.poaRelationship = translate("SearchByDetails.poaRelationshipError");
         }
 
@@ -180,8 +194,8 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttorn
             let poaModel = undefined;
             if (powerOfAttorney) {
                 poaModel = new PowerOfAttorney({
-                    firstName: poaFirstname,
-                    surname: poaSurname,
+                    firstName: loggedInPatient?.givenName || "",
+                    surname: loggedInPatient?.surname || "",
                     relationship: poaRelationship
                 });
             }
@@ -293,7 +307,7 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttorn
 
                         <div className="grouped-input-block">
 
-                            <h3><strong>{translate("SearchByDetails.myDetails")}</strong></h3>
+                            <h3><strong>{translate("SearchByDetails.detailsOfPersonRepresenting")}</strong></h3>
 
                             <div className={`nhsuk-form-group${errors.surname ? " nhsuk-form-group--error" : ""}`}>
                                 <label className="nhsuk-label" htmlFor="surname">
@@ -433,26 +447,52 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttorn
                                 <h3><strong>{translate("SearchByDetails.myDetailsRequester")}</strong></h3>
                                 <Card.Description>
                                     <div style={{ marginBottom: "1.5rem" }}>
-                                        <TextInput
-                                            label={translate("SearchByDetails.poaFirstnameLabel")}
-                                            id="poa-firstname"
-                                            name="poa-firstname"
-                                            autoComplete="off"
-                                            value={poaFirstname}
-                                            onChange={handlePoaFirstnameChange}
-                                            error={poaFirstnameError || undefined}
-                                            style={{ maxWidth: "400px", marginBottom: "1rem" }}
-                                        />
-                                        <TextInput
-                                            label={translate("SearchByDetails.poaSurnameLabel")}
-                                            id="poa-surname"
-                                            name="poa-surname"
-                                            autoComplete="off"
-                                            value={poaSurname}
-                                            onChange={handlePoaSurnameChange}
-                                            error={poaSurnameError || undefined}
-                                            style={{ maxWidth: "400px", marginBottom: "1rem" }}
-                                        />
+                                        <div style={{ maxWidth: "400px", marginBottom: "1rem" }}>
+                                            <label
+                                                htmlFor="poa-firstname"
+                                                style={{
+                                                    display: "block",
+                                                    marginBottom: "0.25rem"
+                                                }}
+                                            >
+                                                {translate("SearchByNHSNumber.poaFirstnameLabel")}
+                                            </label>
+                                            <div
+                                                id="poa-firstname"
+                                                style={{
+                                                    padding: "0.5rem 0.75rem",
+                                                    background: "#f4f8fb",
+                                                    border: "1px solid #d1e3f0",
+                                                    borderRadius: "4px",
+                                                    minHeight: "38px"
+                                                }}
+                                            >
+                                                {loggedInPatient?.givenName || ""}
+                                            </div>
+                                        </div>
+                                        <div style={{ maxWidth: "400px", marginBottom: "1rem" }}>
+                                            <label
+                                                htmlFor="poa-surname"
+                                                style={{
+                                                    display: "block",
+                                                    marginBottom: "0.25rem"
+                                                }}
+                                            >
+                                                {translate("SearchByNHSNumber.poaSurnameLabel")}
+                                            </label>
+                                            <div
+                                                id="poa-surname"
+                                                style={{
+                                                    padding: "0.5rem 0.75rem",
+                                                    background: "#f4f8fb",
+                                                    border: "1px solid #d1e3f0",
+                                                    borderRadius: "4px",
+                                                    minHeight: "38px"
+                                                }}
+                                            >
+                                                {loggedInPatient?.surname || ""}
+                                            </div>
+                                        </div>
                                         <div style={{ marginBottom: "1rem" }}>
                                             <Select
                                                 label={translate("SearchByDetails.poaRelationshipLabel")}

@@ -7,8 +7,9 @@ import { useFrontendConfiguration } from "../../hooks/useFrontendConfiguration";
 import { isApiErrorResponse } from "../../helpers/isApiErrorResponse";
 import { useApiErrorHandlerChecks } from "../../hooks/useApiErrorHandlerChecks";
 import { patientViewService } from "../../services/views/patientViewService";
-import { faArrowRight, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { SpinnerBase } from "../bases/spinner/SpinnerBase";
 
 export const ConfirmNhsLoginDetails: React.FC = () => {
     const { t: translate } = useTranslation();
@@ -99,7 +100,7 @@ export const ConfirmNhsLoginDetails: React.FC = () => {
     };
 
     if (!createdPatient) {
-        return <div>{translate("ConfirmDetails.noPatientDetails")}</div>;
+        return <SpinnerBase />;
     }
 
     return (
@@ -135,23 +136,26 @@ export const ConfirmNhsLoginDetails: React.FC = () => {
                             <FontAwesomeIcon icon={faArrowRight} ></FontAwesomeIcon>
                         </button>
 
-                        
+
                     </div>
                     <Alert variant="info" style={{ marginTop: "0.5rem" }}>
                         <p>
-                            <span style={{ marginRight: "0.5rem" }}>
-                                <FontAwesomeIcon icon={faInfoCircle} ></FontAwesomeIcon>
-                            </span>
-
-                            If these details are incorrect, you'll need to update your details at your GP practice. You can do this by contacting your GP directly.</p>
+                            {translate("ConfirmDetails.nhsLoginParagraph1")}
+                        </p>
                         <p>
-                            Once your details are updated, you'll be able to make your choice online.
+                            {translate("ConfirmDetails.nhsLoginParagraph2")}&nbsp;
+                            <a
+                                href={translate("ConfirmDetails.nhsLoginParagraph2Link")}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{ color: "#005eb8", textDecoration: "underline" }}
+                            >
+                                {translate("ConfirmDetails.nhsLoginParagraph2LinkText", "here")}
+                            </a>.
                         </p>
 
                         <p>
-                            If you do not know your GP's contact details or are not registered with one,
-                            try using the <a href="https://www.nhs.uk/service-search/find-a-gp" target="_blank" rel="noopener noreferrer">
-                                find a GP</a> service.
+                            {translate("ConfirmDetails.nhsLoginParagraph3")}
                         </p>
 
                         <p>

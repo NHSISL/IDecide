@@ -27,14 +27,10 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
 
     const [nhsNumberInput, setNhsNumberInput] = useState("");
     const [poaNhsNumberInput, setPoaNhsNumberInput] = useState("");
-    const [poaFirstname, setPoaFirstname] = useState("");
-    const [poaSurname, setPoaSurname] = useState("");
     const [poaRelationship, setPoaRelationship] = useState("");
     const [error, setError] = useState("");
     const [apiError, setApiError] = useState<string | JSX.Element>("");
     const [poaNhsNumberError, setPoaNhsNumberError] = useState("");
-    const [poaFirstnameError, setPoaFirstnameError] = useState("");
-    const [poaSurnameError, setPoaSurnameError] = useState("");
     const [poaRelationshipError, setPoaRelationshipError] = useState("");
     const [loading, setLoading] = useState(false);
     const [recaptchaReady, setRecaptchaReady] = useState(false);
@@ -45,11 +41,34 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
     const { nextStep, setCreatedPatient } = useStep();
     const addPatient = patientViewService.usePostPatientSearch();
     const { validate } = useNhsNumberValidator();
+    const [loggedInPatient, setLoggedInPatient] = useState<Patient | null>(null);
+    const { data: nhsLoginPatient, isSuccess } = patientViewService.useRetrievePatientInfoNhsLogin();
 
     const handleApiError = useApiErrorHandlerChecks({
         setApiError,
         configuration
     });
+
+    useEffect(() => {
+        if (isSuccess && nhsLoginPatient) {
+            if (nhsLoginPatient.givenName) {
+                const patient = new Patient({
+                    nhsNumber: nhsLoginPatient.nhsNumber,
+                    givenName: nhsLoginPatient.givenName,
+                    surname: nhsLoginPatient.surname,
+                    dateOfBirth: nhsLoginPatient.dateOfBirth
+                        ? new Date(nhsLoginPatient.dateOfBirth)
+                        : undefined,
+                    email: nhsLoginPatient.email,
+                    phone: nhsLoginPatient.phone
+                });
+                setCreatedPatient(patient);
+                setLoggedInPatient(patient);
+            } else {
+                window.location.href = "/";
+            }
+        }
+    }, [isSuccess, nhsLoginPatient, setCreatedPatient]);
 
     useEffect(() => {
         if (configuration?.recaptchaSiteKey) {
@@ -104,14 +123,6 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
         setPoaNhsNumberInput(value);
         setPoaNhsNumberError("");
     };
-    const handlePoaFirstnameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setPoaFirstname(e.target.value);
-        setPoaFirstnameError("");
-    };
-    const handlePoaSurnameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setPoaSurname(e.target.value);
-        setPoaSurnameError("");
-    };
     const handlePoaRelationshipChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setPoaRelationship(e.target.value);
         setPoaRelationshipError("");
@@ -121,14 +132,6 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
         let valid = true;
         if (poaNhsNumberInput.length !== 10) {
             setPoaNhsNumberError(translate("SearchByNHSNumber.errorNhsNumber"));
-            valid = false;
-        }
-        if (!poaFirstname.trim()) {
-            setPoaFirstnameError(translate("SearchByNHSNumber.errorFirstname"));
-            valid = false;
-        }
-        if (!poaSurname.trim()) {
-            setPoaSurnameError(translate("SearchByNHSNumber.errorSurname"));
             valid = false;
         }
         if (!poaRelationship) {
@@ -143,8 +146,6 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
         setError("");
         setApiError("");
         setPoaNhsNumberError("");
-        setPoaFirstnameError("");
-        setPoaSurnameError("");
         setPoaRelationshipError("");
 
         if (powerOfAttorney) {
@@ -170,8 +171,8 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
                 let poaModel = undefined;
                 if (powerOfAttorney) {
                     poaModel = new PowerOfAttorney({
-                        firstName: poaFirstname,
-                        surname: poaSurname,
+                        firstName: loggedInPatient?.givenName || "",
+                        surname: loggedInPatient?.surname || "",
                         relationship: poaRelationship
                     });
                 }
@@ -238,6 +239,8 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
         <Container>
             <Row className="custom-col-spacing">
                 <Col xs={12} md={6} lg={6}>
+
+                  
                     <form autoComplete="off" onSubmit={handleSubmit}>
                         {!powerOfAttorney && (
                             <TextInput
@@ -258,7 +261,6 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
 
                         {powerOfAttorney && (
                             <div style={{ marginBottom: "1.5rem" }}>
-
                                 <div className="grouped-input-block">
                                     <h3>
                                         <strong>{translate("SearchByNHSNumber.poaNhsNumberLabel")}</strong>
@@ -276,6 +278,15 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
                                         error={poaNhsNumberError || undefined}
                                         style={{ maxWidth: "300px", marginBottom: "1rem" }}
                                     />
+
+                                    <Button
+                                        type="button"
+                                        secondary
+                                        onClick={() => onIDontKnow(powerOfAttorney)}
+                                        disabled={loading}
+                                    >
+                                        {translate("SearchByNHSNumber.idontknowButton")}
+                                    </Button>
                                 </div>
 
                                 <div className="grouped-input-block">
@@ -283,26 +294,52 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
                                         <h3><strong>{translate("SearchByNHSNumber.poaMyDetailsHeading")}</strong></h3>
                                     </h3>
 
-                                    <TextInput
-                                        label={translate("SearchByNHSNumber.poaFirstnameLabel")}
-                                        id="poa-firstname"
-                                        name="poa-firstname"
-                                        autoComplete="off"
-                                        value={poaFirstname}
-                                        onChange={handlePoaFirstnameChange}
-                                        error={poaFirstnameError || undefined}
-                                        style={{ maxWidth: "400px", marginBottom: "1rem" }}
-                                    />
-                                    <TextInput
-                                        label={translate("SearchByNHSNumber.poaSurnameLabel")}
-                                        id="poa-surname"
-                                        name="poa-surname"
-                                        autoComplete="off"
-                                        value={poaSurname}
-                                        onChange={handlePoaSurnameChange}
-                                        error={poaSurnameError || undefined}
-                                        style={{ maxWidth: "400px", marginBottom: "1rem" }}
-                                    />
+                                    <div style={{ maxWidth: "400px", marginBottom: "1rem" }}>
+                                        <label
+                                            htmlFor="poa-firstname"
+                                            style={{
+                                                display: "block",
+                                                marginBottom: "0.25rem"
+                                            }}
+                                        >
+                                            {translate("SearchByNHSNumber.poaFirstnameLabel")}
+                                        </label>
+                                        <div
+                                            id="poa-firstname"
+                                            style={{
+                                                padding: "0.5rem 0.75rem",
+                                                background: "#f4f8fb",
+                                                border: "1px solid #d1e3f0",
+                                                borderRadius: "4px",
+                                                minHeight: "38px"
+                                            }}
+                                        >
+                                            {loggedInPatient?.givenName || ""}
+                                        </div>
+                                    </div>
+                                    <div style={{ maxWidth: "400px", marginBottom: "1rem" }}>
+                                        <label
+                                            htmlFor="poa-surname"
+                                            style={{
+                                                display: "block",
+                                                marginBottom: "0.25rem"
+                                            }}
+                                        >
+                                            {translate("SearchByNHSNumber.poaSurnameLabel")}
+                                        </label>
+                                        <div
+                                            id="poa-surname"
+                                            style={{
+                                                padding: "0.5rem 0.75rem",
+                                                background: "#f4f8fb",
+                                                border: "1px solid #d1e3f0",
+                                                borderRadius: "4px",
+                                                minHeight: "38px"
+                                            }}
+                                        >
+                                            {loggedInPatient?.surname || ""}
+                                        </div>
+                                    </div>
                                     <div style={{ marginBottom: "1rem" }}>
                                         <Select
                                             label={translate("SearchByNHSNumber.poaRelationshipLabel")}
@@ -342,8 +379,6 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
                                     !recaptchaReady ||
                                     (powerOfAttorney
                                         ? !poaNhsNumberInput ||
-                                        !poaFirstname.trim() ||
-                                        !poaSurname.trim() ||
                                         !poaRelationship ||
                                         poaNhsNumberInput.length !== 10
                                         : nhsNumberInput.length !== 10 || !nhsValid)
@@ -351,14 +386,7 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
                             >
                                 {loading ? translate("SearchByNHSNumber.submittingButton") : translate("SearchByNHSNumber.submitButton")}
                             </Button>
-                            <Button
-                                type="button"
-                                secondary
-                                onClick={() => onIDontKnow(powerOfAttorney)}
-                                disabled={loading}
-                            >
-                                {translate("SearchByNHSNumber.idontknowButton")}
-                            </Button>
+                           
                         </div>
                     </form>
 
