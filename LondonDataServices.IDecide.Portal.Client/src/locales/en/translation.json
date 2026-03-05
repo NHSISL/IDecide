@@ -20,6 +20,7 @@
       "section3": "How do I stop the London Data Service and London Analytics Platform using my data?",
       "section4": "Where can I see the privacy notices for the London Data Service and London Analytics Platform?"
     },
+    "yourChoice": "Your choice will help determine how your information is used to support healthcare research and improvements across London.",
     "expandableContent": {
       "section0": {
         "p1": "The London Secure Data Environment (SDE) is a highly secure platform that allows approved organisations to access and analyse sensitive health and care data for London, without the data ever leaving the environment. It follows national NHS Secure Data Environment standards and is designed to protect patient privacy while enabling valuable insights for healthcare planning, research, and service improvement.",

@@ -49,7 +49,7 @@ export const LoginDecision = () => {
                                         </p>
                                         <p>
                                             {translate(
-
+                                                "homepage.yourChoice",
                                                 "Your choice will help determine how your information is used to support healthcare research and improvements across London."
                                             )}
                                         </p>
