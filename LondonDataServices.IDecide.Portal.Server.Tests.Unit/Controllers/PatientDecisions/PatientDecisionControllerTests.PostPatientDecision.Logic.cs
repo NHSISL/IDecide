@@ -3,11 +3,13 @@
 // ---------------------------------------------------------
 
 using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Force.DeepCloner;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -27,6 +29,18 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Patien
             Decision inputDecision = randomDecision.DeepClone();
             var expectedResult = new OkResult();
             var expectedActionResult = expectedResult;
+
+            var user = new ClaimsPrincipal(
+                new ClaimsIdentity(new[]
+                {
+                    new Claim("given_name", "TestGivenName"),
+                    new Claim("surname", "TestSurname")
+                }));
+
+            this.patientDecisionController.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext { User = user }
+            };
 
             // when
             ActionResult actualActionResult = await this.patientDecisionController
