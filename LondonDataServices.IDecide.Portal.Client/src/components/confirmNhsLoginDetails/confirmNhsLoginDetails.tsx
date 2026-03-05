@@ -22,8 +22,7 @@ export const ConfirmNhsLoginDetails: React.FC = () => {
         data: nhsLoginPatient,
         isSuccess,
         isLoading,
-        isError,
-        error: nhsLoginError
+        isError
     } = patientViewService.useRetrievePatientInfoNhsLogin();
 
     const handleApiError = useApiErrorHandlerChecks({
