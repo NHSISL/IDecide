@@ -34,11 +34,7 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttorn
     const [apiError, setApiError] = useState<string | JSX.Element>("");
     const [loading, setLoading] = useState(false);
     const { configuration } = useFrontendConfiguration();
-   // const [poaFirstname, setPoaFirstname] = useState("");
-    //const [poaSurname, setPoaSurname] = useState("");
     const [poaRelationship, setPoaRelationship] = useState("");
-    //const [poaFirstnameError, setPoaFirstnameError] = useState("");
-    //const [poaSurnameError, setPoaSurnameError] = useState("");
     const [poaRelationshipError, setPoaRelationshipError] = useState("");
     const addPatient = patientViewService.usePostPatientDetails();
     const [loggedInPatient, setLoggedInPatient] = useState<Patient | null>(null);
@@ -455,7 +451,7 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttorn
                                                     marginBottom: "0.25rem"
                                                 }}
                                             >
-                                                {translate("SearchByNHSNumber.poaFirstnameLabel")}
+                                                {translate("SearchByDetails.poaFirstnameLabel")}
                                             </label>
                                             <div
                                                 id="poa-firstname"
@@ -478,7 +474,7 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttorn
                                                     marginBottom: "0.25rem"
                                                 }}
                                             >
-                                                {translate("SearchByNHSNumber.poaSurnameLabel")}
+                                                {translate("SearchByDetails.poaSurnameLabel")}
                                             </label>
                                             <div
                                                 id="poa-surname"

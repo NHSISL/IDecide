@@ -18,7 +18,13 @@ export const ConfirmNhsLoginDetails: React.FC = () => {
     const updatePatient = patientViewService.useAddPatientNhsLogin();
     const [apiError, setApiError] = useState<string | JSX.Element>("");
     const [info, setInfo] = useState<string | JSX.Element>("");
-    const { data: nhsLoginPatient, isSuccess } = patientViewService.useRetrievePatientInfoNhsLogin();
+    const {
+        data: nhsLoginPatient,
+        isSuccess,
+        isLoading,
+        isError,
+        error: nhsLoginError
+    } = patientViewService.useRetrievePatientInfoNhsLogin();
 
     const handleApiError = useApiErrorHandlerChecks({
         setApiError,
@@ -96,8 +102,26 @@ export const ConfirmNhsLoginDetails: React.FC = () => {
     };
 
     const handleYesClick = () => {
-        handleSubmit()
+        handleSubmit();
     };
+
+    if (isLoading) {
+        return <SpinnerBase />;
+    }
+
+    if (isError) {
+        return (
+            <Row className="custom-col-spacing">
+                <Col xs={12} md={6} lg={6}>
+                    <Alert variant="danger">
+                        <div id="code-error">
+                            {translate("ConfirmDetails.noPatientDetails", "Unable to retrieve your details. Please try again later.")}
+                        </div>
+                    </Alert>
+                </Col>
+            </Row>
+        );
+    }
 
     if (!createdPatient) {
         return <SpinnerBase />;
@@ -133,10 +157,8 @@ export const ConfirmNhsLoginDetails: React.FC = () => {
                             onClick={handleYesClick}
                         >
                             {translate("ConfirmDetails.Continue", "Next")}&nbsp;&nbsp;
-                            <FontAwesomeIcon icon={faArrowRight} ></FontAwesomeIcon>
+                            <FontAwesomeIcon icon={faArrowRight}></FontAwesomeIcon>
                         </button>
-
-
                     </div>
                     <Alert variant="info" style={{ marginTop: "0.5rem" }}>
                         <p>
@@ -153,11 +175,9 @@ export const ConfirmNhsLoginDetails: React.FC = () => {
                                 {translate("ConfirmDetails.nhsLoginParagraph2LinkText", "here")}
                             </a>.
                         </p>
-
                         <p>
                             {translate("ConfirmDetails.nhsLoginParagraph3")}
                         </p>
-
                         <p>
                             Click{' '}
                             <a
@@ -178,13 +198,11 @@ export const ConfirmNhsLoginDetails: React.FC = () => {
                         </p>
                     </Alert>
                 </div>
-
                 {apiError && (
                     <Alert variant="danger">
                         <div id="code-error">{apiError}</div>
                     </Alert>
                 )}
-
                 {info && (
                     <Alert variant="info">
                         <div id="code-info">{info}</div>

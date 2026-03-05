@@ -27,13 +27,13 @@ namespace LondonDataServices.IDecide.Portal.Server.Controllers
         {
             try
             {
-                await this.decisionOrchestrationService.VerifyAndRecordDecisionAsync(decision);
-
                 decision.ResponsiblePersonGivenName = HttpContext.User.Claims
                     .FirstOrDefault(x => x.Type == "given_name")?.Value;
 
                 decision.ResponsiblePersonSurname = HttpContext.User.Claims
                     .FirstOrDefault(x => x.Type == "surname")?.Value;
+
+                await this.decisionOrchestrationService.VerifyAndRecordDecisionAsync(decision);
 
                 return Ok();
             }

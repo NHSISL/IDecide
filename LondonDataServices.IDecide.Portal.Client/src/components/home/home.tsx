@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Button } from "nhsuk-react-components";
-import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlusCircle, faMinusCircle } from "@fortawesome/free-solid-svg-icons";
 import { useTranslation } from "react-i18next";
@@ -167,7 +166,7 @@ export const Home = () => {
                                 minHeight: 75
                             }}
                         >
-                          Continue to NHS Login
+                            {translate("homepage.continue")} 
                         </Button>
                     </div>
                 </section>
