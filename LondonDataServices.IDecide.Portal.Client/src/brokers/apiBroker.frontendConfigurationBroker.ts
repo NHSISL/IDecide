@@ -78,7 +78,7 @@ class FrontendConfigurationBroker {
                 throw new Error("notification Request Count down not provided in config");
             }
 
-            if (!result.manageNhsDetailsUri.length) {
+            if (!result.manageNhsDetailsUri?.length) {
                 throw new Error("manageNhsDetailsUri not provided in config");
             }
 
