@@ -165,14 +165,20 @@ export const ConfirmNhsLoginDetails: React.FC = () => {
                         </p>
                         <p>
                             {translate("ConfirmDetails.nhsLoginParagraph2")}&nbsp;
-                            <a
-                                href={configuration?.manageNhsDetailsUri}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                style={{ color: "#005eb8", textDecoration: "underline" }}
-                            >
-                                {translate("ConfirmDetails.nhsLoginParagraph2LinkText", "here")}
-                            </a>.
+
+                            {configuration?.manageNhsDetailsUri ? (
+                                <a
+                                    href={configuration.manageNhsDetailsUri}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{ color: "#005eb8", textDecoration: "underline" }}
+                                >
+                                    {translate("ConfirmDetails.nhsLoginParagraph2Link", "here")}
+                                </a>
+                            ) : (
+                                translate("ConfirmDetails.nhsLoginParagraph2Link", "here")
+                            )}
+                            .
                         </p>
                         <p>
                             {translate("ConfirmDetails.nhsLoginParagraph3")}

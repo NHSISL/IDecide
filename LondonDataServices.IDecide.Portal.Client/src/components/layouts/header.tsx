@@ -91,7 +91,7 @@ const HeaderComponent: React.FC = () => {
                                 gap: "0.75rem"
                             }}
                         >
-                            {showAccountActions && (
+                            {showAccountActions && configuration?.manageNhsDetailsUri && (
                                 <>
                                     <a
                                         href={configuration?.manageNhsDetailsUri}

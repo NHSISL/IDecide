@@ -291,7 +291,7 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
 
                                 <div className="grouped-input-block">
                                     <h3>
-                                        <h3><strong>{translate("SearchByNHSNumber.poaMyDetailsHeading")}</strong></h3>
+                                        <strong>{translate("SearchByNHSNumber.poaMyDetailsHeading")}</strong>
                                     </h3>
 
                                     <div style={{ maxWidth: "400px", marginBottom: "1rem" }}>
