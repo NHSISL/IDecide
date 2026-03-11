@@ -237,6 +237,7 @@ namespace LondonDataServices.IDecide.Portal.Server
                         context.ProtocolMessage.SetParameter(
                             "vtr",
                             "[\"P9.Cp.Cd\",\"P9.Cp.Ck\",\"P9.Cm\"]");
+
                         return Task.CompletedTask;
                     },
                     OnAuthorizationCodeReceived = ctx =>
