@@ -166,7 +166,7 @@ export const ConfirmNhsLoginDetails: React.FC = () => {
                         <p>
                             {translate("ConfirmDetails.nhsLoginParagraph2")}&nbsp;
                             <a
-                                href={translate("ConfirmDetails.nhsLoginParagraph2Link")}
+                                href={configuration?.manageNhsDetailsUri}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 style={{ color: "#005eb8", textDecoration: "underline" }}

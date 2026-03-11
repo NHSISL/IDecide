@@ -94,7 +94,7 @@ const HeaderComponent: React.FC = () => {
                             {showAccountActions && (
                                 <>
                                     <a
-                                        href="https://nhsconnect.github.io/nhslogin/linking-to-settings/"
+                                        href={configuration?.manageNhsDetailsUri}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         style={linkStyle}

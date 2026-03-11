@@ -12,7 +12,8 @@ export type FrontendConfigurationResponse = {
     helpdeskContactEmail: string,
     helpdeskContactNumber: string,
     decisionTypeId: string,
-    notificationRequestCountdown: number
+    notificationRequestCountdown: number,
+    manageNhsDetailsUri: string
 }
 
 export type FrontendConfiguration = {
@@ -27,7 +28,8 @@ export type FrontendConfiguration = {
     helpdeskContactEmail: string
     helpdeskContactNumber: string,
     decisionTypeId: string,
-    notificationRequestCountdown: number
+    notificationRequestCountdown: number,
+    manageNhsDetailsUri: string
 }
 
 class FrontendConfigurationBroker {

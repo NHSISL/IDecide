@@ -231,6 +231,14 @@ namespace LondonDataServices.IDecide.Portal.Server
 
                 options.Events = new OpenIdConnectEvents
                 {
+                    OnRedirectToIdentityProvider = context =>
+                    {
+                        // Set vtr parameter to request P9
+                        context.ProtocolMessage.SetParameter(
+                            "vtr",
+                            "[\"P9.Cp.Cd\",\"P9.Cp.Ck\",\"P9.Cm\"]");
+                        return Task.CompletedTask;
+                    },
                     OnAuthorizationCodeReceived = ctx =>
                     {
                         // Create JWT client_assertion
@@ -279,7 +287,6 @@ namespace LondonDataServices.IDecide.Portal.Server
                         return Task.CompletedTask;
                     }
                 };
-
             }).AddMicrosoftIdentityWebApi(azureAdOptions);
         }
 
