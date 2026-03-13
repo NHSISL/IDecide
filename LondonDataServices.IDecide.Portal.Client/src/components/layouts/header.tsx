@@ -4,18 +4,21 @@ import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
 import AccessibilityBox from "../accessibilitys/accessibility";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
+import { useLogout } from "../../hooks/useLogout";
 
 const linkStyle: React.CSSProperties = {
     color: "#fff",
     textDecoration: "none",
     background: "none",
-    boxShadow: "none"
+    boxShadow: "none",
+    cursor: "pointer"
 };
 
 const HeaderComponent: React.FC = () => {
     const { configuration } = useFrontendConfiguration();
     const { t: translate } = useTranslation();
     const location = useLocation();
+    const logout = useLogout();
 
     const showAccountActions =
         location.pathname === "/nhs-optOut" ||
@@ -27,15 +30,6 @@ const HeaderComponent: React.FC = () => {
             document.documentElement.style.setProperty('--nhsuk-header-bg', configuration.bannerColour);
         }
     }, [configuration?.bannerColour]);
-
-    const handleLogout = (e: React.MouseEvent<HTMLAnchorElement>) => {
-        e.preventDefault();
-        fetch('/logout', { method: 'POST' }).then(d => {
-            if (d.ok) {
-                window.location.href = '/';
-            }
-        });
-    };
 
     return (
         <>
@@ -104,11 +98,9 @@ const HeaderComponent: React.FC = () => {
                                     </a>
                                     <span style={{ color: "#fff", margin: "0 0.5rem" }}>|</span>
                                     <a
-                                        href="/logout"
-                                        onClick={handleLogout}
+                                        onClick={logout}
                                         style={linkStyle}
-                                        className="header-link"
-                                    >
+                                        className="header-link">
                                         Log out
                                     </a>
                                 </>

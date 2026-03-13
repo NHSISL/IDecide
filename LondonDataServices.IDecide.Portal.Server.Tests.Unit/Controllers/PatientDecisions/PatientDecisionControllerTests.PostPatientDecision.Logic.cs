@@ -49,6 +49,10 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Patien
             // then
             actualActionResult.Should().BeEquivalentTo(expectedActionResult);
 
+            // Assert that the claims were copied to the decision
+            inputDecision.ResponsiblePersonGivenName.Should().Be("TestGivenName");
+            inputDecision.ResponsiblePersonSurname.Should().Be("TestSurname");
+
             this.decisionOrchestrationServiceMock.Verify(service =>
                 service.VerifyAndRecordDecisionAsync(inputDecision),
                    Times.Once);

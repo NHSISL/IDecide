@@ -10,6 +10,7 @@ import { patientViewService } from "../../services/views/patientViewService";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { SpinnerBase } from "../bases/spinner/SpinnerBase";
+import { useLogout } from "../../hooks/useLogout";
 
 export const ConfirmNhsLoginDetails: React.FC = () => {
     const { t: translate } = useTranslation();
@@ -18,12 +19,15 @@ export const ConfirmNhsLoginDetails: React.FC = () => {
     const updatePatient = patientViewService.useAddPatientNhsLogin();
     const [apiError, setApiError] = useState<string | JSX.Element>("");
     const [info, setInfo] = useState<string | JSX.Element>("");
+
     const {
         data: nhsLoginPatient,
         isSuccess,
         isLoading,
         isError
     } = patientViewService.useRetrievePatientInfoNhsLogin();
+
+    const logout = useLogout();
 
     const handleApiError = useApiErrorHandlerChecks({
         setApiError,
@@ -123,7 +127,17 @@ export const ConfirmNhsLoginDetails: React.FC = () => {
     }
 
     if (!createdPatient) {
-        return <SpinnerBase />;
+        return (
+            <Row className="custom-col-spacing">
+                <Col xs={12} md={6} lg={6}>
+                    <Alert variant="danger">
+                        <div id="code-error">
+                            {translate("ConfirmDetails.noPatientDetails", "Unable to retrieve your details. Please try again later.")}
+                        </div>
+                    </Alert>
+                </Col>
+            </Row>
+        );
     }
 
     return (
@@ -166,19 +180,16 @@ export const ConfirmNhsLoginDetails: React.FC = () => {
                         <p>
                             {translate("ConfirmDetails.nhsLoginParagraph2")}&nbsp;
 
-                            {configuration?.manageNhsDetailsUri ? (
+                            {configuration?.manageNhsDetailsUri && (
                                 <a
                                     href={configuration.manageNhsDetailsUri}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     style={{ color: "#005eb8", textDecoration: "underline" }}
                                 >
-                                    {translate("ConfirmDetails.nhsLoginParagraph2Link", "here")}
+                                    {translate("ConfirmDetails.nhsLoginManageNhsDetailsClick", "here")}
                                 </a>
-                            ) : (
-                                translate("ConfirmDetails.nhsLoginParagraph2Link", "here")
                             )}
-                            .
                         </p>
                         <p>
                             {translate("ConfirmDetails.nhsLoginParagraph3")}
@@ -188,14 +199,7 @@ export const ConfirmNhsLoginDetails: React.FC = () => {
                             <a
                                 href="#"
                                 style={{ padding: 0, border: "none", background: "none", color: "#005eb8", textDecoration: "underline" }}
-                                onClick={e => {
-                                    e.preventDefault();
-                                    fetch('/logout', { method: 'POST' }).then(d => {
-                                        if (d.ok) {
-                                            window.location.href = '/';
-                                        }
-                                    });
-                                }}
+                                onClick={logout}
                             >
                                 here
                             </a>{' '}

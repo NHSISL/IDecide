@@ -65,7 +65,7 @@ export const LoginDecision = () => {
                                     marginTop: 20
                                 }}
                             >
-                                Continue
+                                {translate("homepage.continueToNextPage", "Continue")}
                             </Button>
                         </Card.Body>
                     </Card>
@@ -127,7 +127,7 @@ export const LoginDecision = () => {
                                     marginTop: 20
                                 }}
                             >
-                                Continue
+                                {translate("homepage.continueToNextPage", "Continue")}
                             </Button>
                         </Card.Body>
                     </Card>

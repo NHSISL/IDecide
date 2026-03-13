@@ -239,8 +239,6 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
         <Container>
             <Row className="custom-col-spacing">
                 <Col xs={12} md={6} lg={6}>
-
-                  
                     <form autoComplete="off" onSubmit={handleSubmit}>
                         {!powerOfAttorney && (
                             <TextInput
@@ -296,7 +294,6 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
 
                                     <div style={{ maxWidth: "400px", marginBottom: "1rem" }}>
                                         <label
-                                            htmlFor="poa-firstname"
                                             style={{
                                                 display: "block",
                                                 marginBottom: "0.25rem"
@@ -319,7 +316,6 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
                                     </div>
                                     <div style={{ maxWidth: "400px", marginBottom: "1rem" }}>
                                         <label
-                                            htmlFor="poa-surname"
                                             style={{
                                                 display: "block",
                                                 marginBottom: "0.25rem"

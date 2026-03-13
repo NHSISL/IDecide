@@ -6,6 +6,7 @@
     "intro3": "This portal is where you can tell us if you don't want your data used by LDS or LAP for anything other than your direct healthcare. By clicking the start button below you will be taken through a process to exercise your right to request that we do not use your data for anything other than care provided to you by healthcare professionals. If you ever want to change that decision in the future you can go through the same process to tell us we can use your data.",
     "intro4": "By clicking the button below you can exercise your right to opt-out of your data being used for anything other than the direct care provided to you by healthcare professionals.",
     "continue": "Continue to NHS Login",
+    "continueToNextPage": "Continue",
     "startButton": "Manage your data sharing",
     "startButtonOther": "Manage data sharing for another person",
     "startButtonOtherDescription": "Act on behalf of someone else to manage their NHS Data sharing preferences in the London Data Service, if you have the legal authority to represent them.",
@@ -171,8 +172,8 @@
     "noPatientDetails": "No patient details available.",
     "nhsLoginParagraph1": "The email address and phone number shown are taken from your NHS account settings.",
     "nhsLoginParagraph2": "If these details are incorrect, you can update them",
-    "nhsLoginParagraph2Link": "https://help.login.nhs.uk/manage",
-    "nhsLoginParagraph3": "Once updated, please sign out and sign back in to continue."
+    "nhsLoginParagraph3": "Once updated, please sign out and sign back in to continue.",
+    "nhsLoginManageNhsDetailsClick": "here"
   },
   "PositiveConfirmation": {
     "poaDetailsTitle": "Your Details:",
@@ -291,7 +292,33 @@
     "visitPrivacyDetails": "for more information on how and when your choice will be applied.",
     "returnHome": "Return Home",
     "privacy": "privacy notice",
-    "moreinfo": "for more information on how and when your choice will be applied."
+    "moreinfo": "for more information on how and when your choice will be applied.",
+    "visitOur": "Visit our"
+  },
+  "websitePrivacyNotice": {
+    "back": "Back",
+    "title": "Website Privacy Notice",
+    "intro": "This privacy notice explains how we collect, use and protect the personal information you provide when you use this website. It is written for patients and members of the public and follows clear, plain language so you can quickly understand what we do with your data.",
+    "whoWeAreTitle": "Who we are",
+    "whoWeAre": "The ONE London Opt In / Opt Out portal is provided on behalf of NHS organisations across London. The portal enables patients to exercise their right to choose how their confidential information is used for purposes beyond their individual care. The service is managed by the London Data Service (LDS) in partnership with NHS London Integrated Care Boards.",
+    "whatWeCollectTitle": "What information we collect",
+    "personalDetailsLabel": "Personal details:",
+    "personalDetails": " Information such as your NHS number, name, date of birth, and postcode are collected to verify your identity and apply your preference correctly.",
+    "howWeUseTitle": "How we use your information",
+    "howWeUseIntro": "The information you provide is used solely to:",
+    "howWeUse1": "verify your identity to process your opt-in or opt-out request,",
+    "howWeUse2": "record and maintain your current data sharing preference,",
+    "howWeUse3": "support auditing and compliance with NHS information governance standards,",
+    "howWeUse4": "ensure the website is secure and functioning properly.",
+    "updatesTitle": "Updates to this notice",
+    "updates": "This notice may be updated from time to time to reflect changes in legislation or the way the service operates. The latest version will always be available on this page.",
+    "nhsLoginTitle": "NHS Login",
+    "nhsLoginIntro": "If you access our service using NHS England services (such as NHS login), please note the following:",
+    "nhsLoginDetails": {
+      "part1": "Please note that if you access our service using your NHS login details, the identity verification services are managed by NHS England. NHS England is the controller for any personal information you provided to NHS England to get an NHS login account and verify your identity, and uses that personal information solely for that single purpose. For this personal information, our role is a “processor” only and we must act under the instructions provided by NHS England (as the “controller”) when verifying your identity. To see NHS login’s Privacy Notice and Terms and Conditions, please ",
+      "linkText": "click here",
+      "part2": ". This restriction does not apply to the personal information you provide to us separately."
+    }
   },
   "DevEnvironmentWarning": {
     "bannerTitle": "Test Environment:",
@@ -306,4 +333,4 @@
     "CatchAll": "An unexpected error occurred. Please try again later.",
     "InValidNhsNumber": "Please enter a valid 10-digit NHS number."
   }
-  }
+}

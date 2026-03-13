@@ -306,7 +306,7 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttorn
                             <h3><strong>{translate("SearchByDetails.detailsOfPersonRepresenting")}</strong></h3>
 
                             <div className={`nhsuk-form-group${errors.surname ? " nhsuk-form-group--error" : ""}`}>
-                                <label className="nhsuk-label" htmlFor="surname">
+                                <label className="nhsuk-label">
                                     {translate("SearchByDetails.surnameLabel")}
                                 </label>
                                 <span className="nhsuk-hint" id="surname-hint">
@@ -445,7 +445,6 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttorn
                                     <div style={{ marginBottom: "1.5rem" }}>
                                         <div style={{ maxWidth: "400px", marginBottom: "1rem" }}>
                                             <label
-                                                htmlFor="poa-firstname"
                                                 style={{
                                                     display: "block",
                                                     marginBottom: "0.25rem"
@@ -468,7 +467,6 @@ const SearchByDetails: React.FC<SearchByDetailsProps> = ({ onBack, powerOfAttorn
                                         </div>
                                         <div style={{ maxWidth: "400px", marginBottom: "1rem" }}>
                                             <label
-                                                htmlFor="poa-surname"
                                                 style={{
                                                     display: "block",
                                                     marginBottom: "0.25rem"

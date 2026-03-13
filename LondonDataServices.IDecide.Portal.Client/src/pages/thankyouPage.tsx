@@ -34,19 +34,21 @@ export const ThankyouPage = () => {
 
                     <br />
 
-                    <h2 style={{ marginBottom: "1rem", fontWeight: "bold", fontSize: "1.5rem" }}>More Information</h2>
+                    <h2 style={{ marginBottom: "1rem", fontWeight: "bold", fontSize: "1.5rem" }}>
+                        {translate("ThankyouScreen.moreInformation", "More Information")}
+                    </h2>
                     <p>
-                        Visit our&nbsp;
+                        {translate("ThankyouScreen.visitOur", "Visit our")}&nbsp;
                         <a
                             href="/websitePrivacyNotice"
                             target="_blank"
                             rel="noopener noreferrer"
                             style={{ textDecoration: "underline" }}
                         >
-                            {translate("ThankyouScreen.privacy")} 
+                            {translate("ThankyouScreen.privacy", "Privacy Notice")}
                         </a>
                         &nbsp;
-                        {translate("ThankyouScreen.moreinfo")}
+                        {translate("ThankyouScreen.moreinfo", "for more information.")}
                     </p>
                 </Col>
                 <Col xs={12} md={5} lg={5} className="custom-col-spacing">
