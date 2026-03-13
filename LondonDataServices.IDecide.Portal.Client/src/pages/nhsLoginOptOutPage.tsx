@@ -32,7 +32,7 @@ export const NhsLoginOptOutPage = () => {
                 setNhsNo("");
             });
     }, []);
-s
+
     return (
         <Container>
             <div>
