@@ -5,11 +5,15 @@
     "intro2": "The data collected from healthcare systems from across London by these services is used to improve patient care and support healthier communities across London.",
     "intro3": "This portal is where you can tell us if you don't want your data used by LDS or LAP for anything other than your direct healthcare. By clicking the start button below you will be taken through a process to exercise your right to request that we do not use your data for anything other than care provided to you by healthcare professionals. If you ever want to change that decision in the future you can go through the same process to tell us we can use your data.",
     "intro4": "By clicking the button below you can exercise your right to opt-out of your data being used for anything other than the direct care provided to you by healthcare professionals.",
+    "continue": "Continue to NHS Login",
+    "continueToNextPage": "Continue",
     "startButton": "Manage your data sharing",
     "startButtonOther": "Manage data sharing for another person",
+    "startButtonOtherDescription": "Act on behalf of someone else to manage their NHS Data sharing preferences in the London Data Service, if you have the legal authority to represent them.",
     "beforeYouStartTitle": "Before you start",
-    "beforeYouStartList1": "You'll need your 10-digit NHS number or your full name, postcode and date of birth so that we can identify you.",
-    "beforeYouStartList2": "We will be sending an e-mail, SMS text message or letter to the contact details you have registered with your GP. This will help us to confirm that we are in contact with the right person. You should be confident that your GP has your up-to-date contact details.",
+    "beforeYouStartList1": "You will need the NHS number of the person you are representing",
+    "beforeYouStartList2": "We will be sending an e-mail, SMS text message or letter to the contact details the person you are representing has registered with their GP. This will help us to confirm that we are in contact with the right person. You should be confident that this person has up-to-date contact details recorded with their GP.",
+    "beforeYouStartList3": "The easiest way to identify the person you are representing is to provide their NHS number, if you do not have this you will need to provide other contact details.",
     "expandableHeaders": {
       "section0": "What is the London Secure Data Environment?",
       "section1": "What is the London Data Service?",
@@ -17,6 +21,7 @@
       "section3": "How do I stop the London Data Service and London Analytics Platform using my data?",
       "section4": "Where can I see the privacy notices for the London Data Service and London Analytics Platform?"
     },
+    "yourChoice": "Your choice will help determine how your information is used to support healthcare research and improvements across London.",
     "expandableContent": {
       "section0": {
         "p1": "The London Secure Data Environment (SDE) is a highly secure platform that allows approved organisations to access and analyse sensitive health and care data for London, without the data ever leaving the environment. It follows national NHS Secure Data Environment standards and is designed to protect patient privacy while enabling valuable insights for healthcare planning, research, and service improvement.",
@@ -75,7 +80,7 @@
     },
     "submitButton": "Search",
     "submittingButton": "Submitting...",
-    "idontknowButton": "I Don't know my NHS Number",
+    "idontknowButton": "I Don't know their NHS Number",
     "errorNhsNumber": "Enter a 10-digit NHS Number",
     "errorFirstname": "Enter a first name",
     "errorSurname": "Enter a surname",
@@ -105,6 +110,7 @@
   "SearchByDetails": {
     "back": "Back",
     "myDetails": "My Details",
+    "detailsOfPersonRepresenting": "Details of the person you are representing",
     "surnameLabel": "Surname",
     "surnameHint": "For example, Smith or O'Neill",
     "surnameError": "Enter your Surname",
@@ -147,10 +153,10 @@
     "powerOfAttorneyDetails": "Your Details:",
     "powerOfAttorneyName": "Name",
     "powerOfAttorneyRelationship": "Relationship",
-    "isThisYou": "Is this you?",
+    "isThisYou": "Is this the person you are representing?",
     "name": "Name",
     "email": "Email",
-    "mobileNumber": "Mobile Number",
+    "mobileNumber": "Telephone Number",
     "address": "Address",
     "yes": "Yes",
     "no": "No",
@@ -158,12 +164,16 @@
     "useExistingCodeClick": "Click here to continue",
     "helpGuidance": "Help and Guidance",
     "checkingYourDetails": "Checking Your Details",
-    "reviewDetails": "Please review the details shown on this page. Some information, such as your mobile number, may be partially hidden for your privacy.",
+    "reviewDetails": "Please review the details shown on this page. Some information, such as your telephone number, may be partially hidden for your privacy.",
     "detailsCorrect": "If these details are correct and belong to you, click Yes to continue.",
     "detailsIncorrect": "If these details do not match you, click No to return and try searching again with your NHS Number.",
     "alreadyReceivedCode": "If you have already received a code by SMS, email, or post, you can use it now by clicking the button below to go straight to the code confirmation page.",
     "securityInfo": "This process helps us keep your information secure and ensures only you can access your records.",
-    "noPatientDetails": "No patient details available."
+    "noPatientDetails": "No patient details available.",
+    "nhsLoginParagraph1": "The email address and phone number shown are taken from your NHS account settings.",
+    "nhsLoginParagraph2": "If these details are incorrect, you can update them",
+    "nhsLoginParagraph3": "Once updated, please sign out and sign back in to continue.",
+    "nhsLoginManageNhsDetailsClick": "here"
   },
   "PositiveConfirmation": {
     "poaDetailsTitle": "Your Details:",
@@ -173,7 +183,7 @@
     "confirmationRequiredDescription": "Please confirm these details are correct before continuing:",
     "summaryName": "Name",
     "summaryEmail": "Email",
-    "summaryMobile": "Mobile Number",
+    "summaryMobile": "Telephone Number",
     "summaryAddress": "Address",
     "chooseMethod": "We need to send a code to you, how would you like to receive it:",
     "methodEmail": "Email",
@@ -207,7 +217,7 @@
     "helpGuidanceTitle": "Help and Guidance",
     "helpHowGetCodeTitle": "How do I get my code?",
     "helpHowGetCodeText1": "A 5-digit code has been sent to you by one of the following methods:",
-    "helpHowGetCodeSMS": "SMS (text message) to your mobile phone",
+    "helpHowGetCodeSMS": "SMS (text message) to your telephone",
     "helpHowGetCodeEmail": "Email to your registered email address",
     "helpHowGetCodeLetter": "Letter to your home address (please allow up to 3 days for delivery)",
     "helpHowGetCodeText2": "Once you receive your code, please enter it in the box provided. This helps us confirm that the contact details you have provided match our records.",
@@ -264,7 +274,7 @@
     "aboutThisStepTitle": "About this step",
     "aboutThisStepDesc1": "You are about to save your opt-out preference. This means you are choosing how your data will be shared for secondary uses within The London Data Service.",
     "aboutThisStepDesc2": "Please select how you would like to be notified when your data has flowed into The London Data Service. You can choose to receive updates by SMS, email, or letter.",
-    "helpSms": "SMS - a text message will be sent to your mobile phone",
+    "helpSms": "SMS - a text message will be sent to your telephone",
     "helpEmail": "Email - a message will be sent to your registered email address",
     "helpLetter": "Letter - a letter will be sent to your home address (please allow up to 3 days for delivery)",
     "helpChangePrefs": "You can return to this site at any time to change your notification preferences.",
@@ -272,11 +282,43 @@
     "needHelpDesc": "If you have any questions or need assistance, please contact our helpdesk."
   },
   "ThankyouScreen": {
+    "thankyou": "Your choice has been saved",
     "title": "Thank You!",
-    "preferencesSaved": "Your preferences have been saved and your request is complete.",
-    "appreciation": "If you have chosen to receive notifications, you will be notified once your preferences are enacted.",
+    "preferencesSaved": "Your preference has been saved and your request is complete.",
+    "appreciation": "If you have chosen to receive notifications, you will be notified once your preference is applied.",
     "safeToClose": "You may now safely close this window or browser tab.",
-    "returnHome": "Return Home"
+    "moreInformation": "More information",
+    "visitPrivacy": "Visit our privacy notice",
+    "visitPrivacyDetails": "for more information on how and when your choice will be applied.",
+    "returnHome": "Return Home",
+    "privacy": "privacy notice",
+    "moreinfo": "for more information on how and when your choice will be applied.",
+    "visitOur": "Visit our"
+  },
+  "websitePrivacyNotice": {
+    "back": "Back",
+    "title": "Website Privacy Notice",
+    "intro": "This privacy notice explains how we collect, use and protect the personal information you provide when you use this website. It is written for patients and members of the public and follows clear, plain language so you can quickly understand what we do with your data.",
+    "whoWeAreTitle": "Who we are",
+    "whoWeAre": "The ONE London Opt In / Opt Out portal is provided on behalf of NHS organisations across London. The portal enables patients to exercise their right to choose how their confidential information is used for purposes beyond their individual care. The service is managed by the London Data Service (LDS) in partnership with NHS London Integrated Care Boards.",
+    "whatWeCollectTitle": "What information we collect",
+    "personalDetailsLabel": "Personal details:",
+    "personalDetails": " Information such as your NHS number, name, date of birth, and postcode are collected to verify your identity and apply your preference correctly.",
+    "howWeUseTitle": "How we use your information",
+    "howWeUseIntro": "The information you provide is used solely to:",
+    "howWeUse1": "verify your identity to process your opt-in or opt-out request,",
+    "howWeUse2": "record and maintain your current data sharing preference,",
+    "howWeUse3": "support auditing and compliance with NHS information governance standards,",
+    "howWeUse4": "ensure the website is secure and functioning properly.",
+    "updatesTitle": "Updates to this notice",
+    "updates": "This notice may be updated from time to time to reflect changes in legislation or the way the service operates. The latest version will always be available on this page.",
+    "nhsLoginTitle": "NHS Login",
+    "nhsLoginIntro": "If you access our service using NHS England services (such as NHS login), please note the following:",
+    "nhsLoginDetails": {
+      "part1": "Please note that if you access our service using your NHS login details, the identity verification services are managed by NHS England. NHS England is the controller for any personal information you provided to NHS England to get an NHS login account and verify your identity, and uses that personal information solely for that single purpose. For this personal information, our role is a “processor” only and we must act under the instructions provided by NHS England (as the “controller”) when verifying your identity. To see NHS login’s Privacy Notice and Terms and Conditions, please ",
+      "linkText": "click here",
+      "part2": ". This restriction does not apply to the personal information you provide to us separately."
+    }
   },
   "DevEnvironmentWarning": {
     "bannerTitle": "Test Environment:",
@@ -291,4 +333,4 @@
     "CatchAll": "An unexpected error occurred. Please try again later.",
     "InValidNhsNumber": "Please enter a valid 10-digit NHS number."
   }
-  }
+}

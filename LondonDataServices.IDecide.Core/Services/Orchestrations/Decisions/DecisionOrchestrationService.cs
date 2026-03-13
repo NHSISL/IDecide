@@ -171,7 +171,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
                 string verifyingDecisionAuditMessage;
                 string ipAddress = await this.securityBroker.GetIpAddressAsync();
 
-                verifyingDecisionAuditMessage = 
+                verifyingDecisionAuditMessage =
                     $"Patient with IP address {ipAddress} is validating a code for " +
                     $"patient Nhs Number: {maybeMatchingPatient.NhsNumber}, " +
                     $"with PatientId {maybeMatchingPatient.Id}";
@@ -192,7 +192,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
                     auditType: "Decision",
                     title: "Decision Submitted",
 
-                    message: 
+                    message:
                         $"The patient's decision has been successfully submitted for " +
                         $"decisionId {addedDecision.Id}, " +
                         $"patient Nhs Number: {maybeMatchingPatient.NhsNumber}, with " +
@@ -266,9 +266,10 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
 
         virtual internal async ValueTask<bool> CheckIfIsAuthenticatedUserWithRequiredRoleAsync()
         {
-            var currentUserIsAuthenticated = await this.securityBroker.IsCurrentUserAuthenticatedAsync();
+            var isHealthCareWorker = await this.securityBroker.IsCurrentUserAuthenticatedAsync()
+                && await this.securityBroker.IsInRoleAsync("HealthCareWorker");
 
-            if (currentUserIsAuthenticated)
+            if (isHealthCareWorker)
             {
                 bool userIsInWorkflowRole = false;
 

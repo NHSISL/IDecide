@@ -25,6 +25,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     .ReturnsAsync(true);
 
             this.securityBrokerMock.Setup(broker =>
+                broker.IsInRoleAsync("HealthCareWorker"))
+                    .ReturnsAsync(true);
+
+            this.securityBrokerMock.Setup(broker =>
                 broker.IsInRoleAsync(this.decisionConfigurations.DecisionWorkflowRoles.First()))
                     .ReturnsAsync(true);
 
@@ -37,6 +41,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             this.securityBrokerMock.Verify(broker =>
                 broker.IsCurrentUserAuthenticatedAsync(),
+                    Times.Once);
+
+            this.securityBrokerMock.Verify(broker =>
+                broker.IsInRoleAsync("HealthCareWorker"),
                     Times.Once);
 
             this.securityBrokerMock.Verify(broker =>
@@ -60,6 +68,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             this.securityBrokerMock.Setup(broker =>
                 broker.IsCurrentUserAuthenticatedAsync())
                     .ReturnsAsync(true);
+
+            this.securityBrokerMock.Setup(broker =>
+               broker.IsInRoleAsync("HealthCareWorker"))
+                   .ReturnsAsync(true);
 
             foreach (string role in this.decisionConfigurations.DecisionWorkflowRoles)
             {
@@ -87,6 +99,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             this.securityBrokerMock.Verify(broker =>
                 broker.IsCurrentUserAuthenticatedAsync(),
+                    Times.Once);
+
+            this.securityBrokerMock.Verify(broker =>
+                broker.IsInRoleAsync("HealthCareWorker"),
                     Times.Once);
 
             foreach (string role in this.decisionConfigurations.DecisionWorkflowRoles)
