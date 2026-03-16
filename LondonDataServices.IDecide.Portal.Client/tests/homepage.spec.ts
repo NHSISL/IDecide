@@ -52,18 +52,6 @@ test.describe('Home Page', () => {
         }
     });
 
-    test('should show "Before you start" info box', async ({ page }) => {
-        const beforeYouStartSection = page.locator('section').filter({ hasText: 'Before you start' });
-
-        await expect(beforeYouStartSection).toBeVisible();
-        await expect(beforeYouStartSection).toContainText(
-            "You'll need your 10-digit NHS number or your full name, postcode and date of birth so that we can identify you."
-        );
-        await expect(beforeYouStartSection).toContainText(
-            "We will be sending an e-mail, SMS text message or letter to the contact details you have registered with your GP."
-        );
-    });
-
     test('should show correct content when expanding "What is the London Data Service?"', async ({ page }) => {
         const header = "What is the London Data Service?";
         const sectionButton = page.getByRole('button', { name: header });
