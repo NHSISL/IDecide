@@ -22,7 +22,7 @@ export default function ConsentDeniedPage(): JSX.Element {
                         {translate("consentDenied.consentNotGiven", "Consent Not Given")}
                     </h1>
                     <p>
-                        {translate("consentDenied.consentNotGivenP1", "You have chosen not to give consent for NHS Login. Unfortunately, we cannot proceed without your consent.")}
+                        {translate("consentDenied.consentNotGivenP1", "You have chosen not to give consent for NHS login. Unfortunately, we cannot proceed without your consent.")}
                     </p>
                     <p>
                         {translate("consentDenied.consentNotGivenP2", "If you wish to use this service, please try logging in again and providing the required consent.")}
