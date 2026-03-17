@@ -5,7 +5,7 @@
     "intro2": "The data collected from healthcare systems from across London by these services is used to improve patient care and support healthier communities across London.",
     "intro3": "This portal is where you can tell us if you don't want your data used by LDS or LAP for anything other than your direct healthcare. By clicking the start button below you will be taken through a process to exercise your right to request that we do not use your data for anything other than care provided to you by healthcare professionals. If you ever want to change that decision in the future you can go through the same process to tell us we can use your data.",
     "intro4": "By clicking the button below you can exercise your right to opt-out of your data being used for anything other than the direct care provided to you by healthcare professionals.",
-    "continue": "Continue to NHS Login",
+    "continue": "Continue to NHS login",
     "continueToNextPage": "Continue",
     "startButton": "Manage your data sharing",
     "startButtonOther": "Manage data sharing for another person",
@@ -312,13 +312,19 @@
     "howWeUse4": "ensure the website is secure and functioning properly.",
     "updatesTitle": "Updates to this notice",
     "updates": "This notice may be updated from time to time to reflect changes in legislation or the way the service operates. The latest version will always be available on this page.",
-    "nhsLoginTitle": "NHS Login",
+    "nhsLoginTitle": "NHS login",
     "nhsLoginIntro": "If you access our service using NHS England services (such as NHS login), please note the following:",
     "nhsLoginDetails": {
       "part1": "Please note that if you access our service using your NHS login details, the identity verification services are managed by NHS England. NHS England is the controller for any personal information you provided to NHS England to get an NHS login account and verify your identity, and uses that personal information solely for that single purpose. For this personal information, our role is a “processor” only and we must act under the instructions provided by NHS England (as the “controller”) when verifying your identity. To see NHS login’s Privacy Notice and Terms and Conditions, please ",
       "linkText": "click here",
       "part2": ". This restriction does not apply to the personal information you provide to us separately."
     }
+  },
+  "consentDenied": {
+    "consentNotGiven": "Consent Not Given",
+    "consentNotGivenP1": "You have chosen not to give consent for NHS login. Unfortunately, we cannot proceed without your consent.",
+    "consentNotGivenP2": "If you wish to use this service, please try logging in again and providing the required consent.",
+    "consentNotGivenReturn": "RETURN TO HOME"
   },
   "DevEnvironmentWarning": {
     "bannerTitle": "Test Environment:",
