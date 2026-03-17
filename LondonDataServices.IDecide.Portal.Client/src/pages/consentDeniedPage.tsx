@@ -32,7 +32,6 @@ export default function ConsentDeniedPage(): JSX.Element {
                         onClick={() => navigate('/home')}
                     >
                         {translate("consentDenied.consentNotGivenReturn", "RETURN TO HOME")}
-                       
                     </Button>
                 </Col>
             </Row>
