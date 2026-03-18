@@ -163,7 +163,8 @@ export const Home = () => {
                             style={{
                                 width: 300,
                                 fontWeight: 100,
-                                minHeight: 75
+                                minHeight: 44,
+                                boxShadow: "0 4px 0 #003A8F"
                             }}
                         >
                             {translate("homepage.continue")} 
