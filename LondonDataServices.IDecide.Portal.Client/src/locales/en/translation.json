@@ -250,7 +250,7 @@
     "helpOptOutDesc2": "Choosing to opt-out of sharing your data for secondary purposes means your personal health information will still be used to make sure you get the treatment and care you need. For example, your data may be shared if you need to be referred to hospital or get a prescription."
   },
   "ConfirmAndSave": {
-    "yourDataSharingChoice": "Your Data Sharing Choice",
+    "yourDataSharingChoice": "Data Sharing Choice",
     "decisionLabel": "Decision:",
     "decisionOptIn": "Opt-In",
     "decisionOptOut": "Opt-Out",
@@ -322,7 +322,7 @@
   },
   "consentDenied": {
     "consentNotGiven": "Consent Not Given",
-    "consentNotGivenP1": "You have chosen not to give consent for NHS login. Unfortunately, we cannot proceed without your consent.",
+    "consentNotGivenP1": "You did not agree to charre your Data. Unfortunately, we cannot proceed without your consent.",
     "consentNotGivenP2": "If you wish to use this service, please try logging in again and providing the required consent.",
     "consentNotGivenReturn": "RETURN TO HOME"
   },

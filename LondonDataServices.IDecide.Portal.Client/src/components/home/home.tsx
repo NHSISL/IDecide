@@ -162,9 +162,10 @@ export const Home = () => {
                             onClick={() => (window.location.href = "/login")}
                             style={{
                                 width: 300,
-                                fontWeight: 100,
+                                fontWeight: 600,
                                 minHeight: 44,
-                                boxShadow: "0 4px 0 #003A8F"
+                                boxShadow: "0 4px 0 #003A8F",
+                                fontFamily: "Frutiger45Light, Arial, sans-serif"
                             }}
                         >
                             {translate("homepage.continue")} 

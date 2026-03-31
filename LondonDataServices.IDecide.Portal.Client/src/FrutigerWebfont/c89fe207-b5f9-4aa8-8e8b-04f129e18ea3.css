@@ -1,0 +1,26 @@
+
+
+/* @import must be at top of file, otherwise CSS will not work */
+@import url("https://cdn.fonts.net/t/1.css?apiType=css&projectid=c89fe207-b5f9-4aa8-8e8b-04f129e18ea3");
+  
+@font-face {
+  font-family: "Frutiger45Light";
+  font-style: normal;
+  font-stretch: normal;
+  font-display: swap;
+  src: url('Frutiger/Frutiger45Light_normal_normal.woff2') format('woff2'), url('Frutiger/Frutiger45Light_normal_normal.woff') format('woff');
+}
+@font-face {
+  font-family: "Frutiger55Roman";
+  font-style: normal;
+  font-stretch: normal;
+  font-display: swap;
+  src: url('Frutiger/Frutiger55Roman_normal_normal.woff2') format('woff2'), url('Frutiger/Frutiger55Roman_normal_normal.woff') format('woff');
+}
+@font-face {
+  font-family: "Frutiger65Bold";
+  font-style: normal;
+  font-stretch: normal;
+  font-display: swap;
+  src: url('Frutiger/Frutiger65Bold_normal_normal.woff2') format('woff2'), url('Frutiger/Frutiger65Bold_normal_normal.woff') format('woff');
+}
