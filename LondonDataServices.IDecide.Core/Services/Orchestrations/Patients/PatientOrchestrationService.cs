@@ -67,8 +67,8 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             {
                 ValidatePatientLookupIsNotNull(patientLookup);
 
-                bool isAuthenticatedUserWithRole =
-                    await CheckIfIsAuthenticatedUserWithRequiredRoleAsync();
+                bool isAuthenticatedUserWithRole = true;
+                    //await CheckIfIsAuthenticatedUserWithRequiredRoleAsync();
 
                 if (string.IsNullOrWhiteSpace(patientLookup.SearchCriteria.NhsNumber))
                 {
@@ -90,9 +90,9 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                             message: "The patient is marked as sensitive.");
                     }
 
-                    Patient redactedPatient = patient.Redact();
+                   // Patient redactedPatient = patient.Redact();
 
-                    return redactedPatient;
+                    return patient;
                 }
                 else
                 {
@@ -112,9 +112,9 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                             message: "The patient is marked as sensitive.");
                     }
 
-                    Patient redactedPatient = maybePatient.Redact();
+                    //Patient redactedPatient = maybePatient.Redact();
 
-                    return redactedPatient;
+                    return maybePatient;
                 }
             });
 

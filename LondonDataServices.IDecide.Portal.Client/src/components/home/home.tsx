@@ -200,7 +200,7 @@ export const Home = () => {
                             style={{
                                 width: 260,
                                 fontWeight: 600,
-                                minHeight: 75
+                                minHeight: 75,
                             }}
                         >
                             {translate("homepage.startButtonOther")}

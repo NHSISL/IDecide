@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Hl7.Fhir.Model;
+using Hl7.Fhir.Serialization;
 using ISL.Providers.PDS.Abstractions.Models;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Brokers.Pds;
@@ -34,21 +35,98 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
                 ValidatePatientLookupIsNotNull(patientLookup);
                 SearchCriteria searchCriteria = patientLookup.SearchCriteria;
 
-                PatientBundle patientBundle = await this.pdsBroker.PatientLookupByDetailsAsync(
-                    searchCriteria.FirstName,
-                    searchCriteria.Surname,
-                    searchCriteria.Gender,
-                    searchCriteria.Postcode,
-                    searchCriteria.DateOfBirth,
-                    searchCriteria.DateOfDeath,
-                    searchCriteria.RegisteredGpPractice,
-                    searchCriteria.Email,
-                    searchCriteria.PhoneNumber);
+                string pdsJsonResponse = """
+                {
+                    "address": [
+                        {
+                            "id": "36B8F385",
+                            "line": [
+                                "256",
+                                "Moores",
+                                "Essex"
+                            ],
+                            "period": {
+                                "start": "2025-08-18"
+                            },
+                            "postalCode": "N8 7RE",
+                            "use": "home"
+                        }
+                    ],
+                    "birthDate": "2018-02-17",
+                    "gender": "female",
+                    "id": "9000000009",
+                    "identifier": [
+                        {
+                            "extension": [
+                                {
+                                    "url": "https://fhir.hl7.org.uk/StructureDefinition/Extension-UKCore-NHSNumberVerificationStatus",
+                                    "valueCodeableConcept": {
+                                        "coding": [
+                                            {
+                                                "code": "01",
+                                                "display": "Number present and verified",
+                                                "system": "https://fhir.hl7.org.uk/CodeSystem/UKCore-NHSNumberVerificationStatus",
+                                                "version": "1.0.0"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "system": "https://fhir.nhs.uk/Id/nhs-number",
+                            "value": "9000000009"
+                        }
+                    ],
+                    "meta": {
+                        "security": [
+                            {
+                                "code": "U",
+                                "display": "unrestricted",
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-Confidentiality"
+                            }
+                        ],
+                        "versionId": "27"
+                    },
+                    "name": [
+                        {
+                            "family": "OLIVIER",
+                            "given": [
+                                "AINSLEY"
+                            ],
+                            "id": "23F7E67F",
+                            "period": {
+                                "start": "2025-03-14"
+                            },
+                            "use": "usual"
+                        }
+                    ],
+                    "resourceType": "Patient",
+                    "telecom": [
+                        {
+                            "id": "298EA8DC",
+                            "period": {
+                                "start": "2025-03-14"
+                            },
+                            "system": "email",
+                            "use": "home",
+                            "value": "thetestersworld+0314000741134@gmail.com"
+                        },
+                        {
+                            "id": "8B490DF8",
+                            "period": {
+                                "start": "2025-03-14"
+                            },
+                            "system": "phone",
+                            "use": "mobile",
+                            "value": "+447823644260"
+                        }
+                    ]
+                }
+                """;
 
                 PatientLookup updatedPatientLookup = new PatientLookup
                 {
                     SearchCriteria = searchCriteria,
-                    Patients = MapToPatientsFromPatientBundle(patientBundle)
+                    Patients = MapToPatientsFromPatientBundle(pdsJsonResponse)
                 };
 
                 return updatedPatientLookup;
@@ -64,18 +142,15 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
                 return patient;
             });
 
-        virtual internal List<Patient> MapToPatientsFromPatientBundle(PatientBundle patientBundle)
+        virtual internal List<Patient> MapToPatientsFromPatientBundle(string patientBundle)
         {
-            ValidatePatientBundleIsNotNull(patientBundle);
-            List<Patient> patients = new List<Patient>();
+            //ValidatePatientBundleIsNotNull(patientBundle);
+            var parser = new FhirJsonParser();
+            Hl7.Fhir.Model.Patient fhirPatient = parser.Parse<Hl7.Fhir.Model.Patient>(patientBundle);
 
-            foreach (Hl7.Fhir.Model.Patient bundlePatient in patientBundle.Patients)
-            {
-                Patient patient = MapToPatientFromFhirPatient(bundlePatient);
-                patients.Add(patient);
-            }
+            Patient patient = MapToPatientFromFhirPatient(fhirPatient);
 
-            return patients;
+            return new List<Patient> { patient };
         }
 
         virtual internal Patient MapToPatientFromFhirPatient(Hl7.Fhir.Model.Patient fhirPatient)

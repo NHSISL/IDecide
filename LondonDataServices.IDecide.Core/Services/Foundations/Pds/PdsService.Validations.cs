@@ -38,6 +38,14 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
             }
         }
 
+        private static void ValidateJsonStringIsNotNull(string jsonString)
+        {
+            if (string.IsNullOrWhiteSpace(jsonString))
+            {
+                throw new ArgumentNullException(nameof(jsonString), "JSON string is null or empty.");
+            }
+        }
+
         private static void ValidatePatientLookupByNhsNumberArguments(string nhsNumber)
         {
             Validate(
