@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Button } from "nhsuk-react-components";
-import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlusCircle, faMinusCircle } from "@fortawesome/free-solid-svg-icons";
 import { useTranslation } from "react-i18next";
@@ -81,8 +80,6 @@ const ExpandableSection: React.FC<ExpandableSectionProps> = ({
 
 export const Home = () => {
     const { t: translate } = useTranslation();
-    const navigate = useNavigate();
-    // Track expanded state for each section
     const [expandedSections, setExpandedSections] = useState<boolean[]>([false, false, false, false, false]);
 
     const expandableHeaders = [
@@ -154,23 +151,6 @@ export const Home = () => {
                     <p style={{ marginBottom: "0.5rem" }}>{translate("homepage.intro3")}</p>
                 </header>
 
-                {/* Before You Start Section */}
-                <section
-                    style={{
-                        marginTop: "1rem",
-                        background: "#f0f4f5",
-                        padding: "0.7rem 1rem",
-                        borderRadius: "6px",
-                        fontSize: "0.97rem"
-                    }}
-                >
-                    <strong>{translate("homepage.beforeYouStartTitle")}</strong>
-                    <ul style={{ marginTop: "0.3rem", paddingLeft: "1.1rem" }}>
-                        <li>{translate("homepage.beforeYouStartList1")}</li>
-                        <li>{translate("homepage.beforeYouStartList2")}</li>
-                    </ul>
-                </section>
-
                 <section style={{ margin: "1rem 0 0 0rem" }}>
                     <p style={{ marginBottom: "0.7rem" }}>
                         <strong>{translate("homepage.intro4")}</strong>
@@ -181,29 +161,14 @@ export const Home = () => {
                             data-testid="start-login-button"
                             onClick={() => (window.location.href = "/login")}
                             style={{
-                                width: 260,
+                                width: 300,
                                 fontWeight: 600,
-                                minHeight: 75
+                                minHeight: 44,
+                                boxShadow: "0 4px 0 #003A8F",
+                                fontFamily: "Frutiger45Light, Arial, sans-serif"
                             }}
                         >
-                            {translate("homepage.startButton")}
-                        </Button>
-                        <Button
-                            data-testid="start-another-person-button"
-                            onClick={() => {
-                                fetch("/logout", { method: "POST" }).then(d => {
-                                    if (d.ok) {
-                                        navigate("/optOut", { state: { powerOfAttorney: true } });
-                                    }
-                                });
-                            }}
-                            style={{
-                                width: 260,
-                                fontWeight: 600,
-                                minHeight: 75,
-                            }}
-                        >
-                            {translate("homepage.startButtonOther")}
+                            {translate("homepage.continue")} 
                         </Button>
                     </div>
                 </section>

@@ -17,6 +17,7 @@ import { queryClientGlobalOptions } from './brokers/apiBroker.globals';
 import SearchByNhsNumber from './components/SearchNhsNumber/searchByNhsNumber';
 import { AppFlowNhsLogin } from './components/appFlowNhsLogin';
 import ConsentDeniedPage from './pages/consentDeniedPage';
+import HomePageNhsLogin from './pages/homePageNhsLogin';
 
 function App() {
 
@@ -41,6 +42,10 @@ function App() {
                 {
                     path: "home",
                     element: <HomePage />
+                },
+                {
+                    path: "nhsLoginHome",
+                    element: <HomePageNhsLogin />
                 },
                 {
                     path: "optOut",

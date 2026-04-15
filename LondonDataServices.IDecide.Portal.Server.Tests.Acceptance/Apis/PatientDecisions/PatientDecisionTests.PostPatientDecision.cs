@@ -22,6 +22,9 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Apis.Patient
             Decision randomDecision =
                 CreateRandomDecision(patient: randomPatient, decisionTypeId: randomDecisionType.Id);
 
+            randomDecision.ResponsiblePersonGivenName = "TestGivenName";
+            randomDecision.ResponsiblePersonSurname = "TesSurname";
+
             Decision inputDecision = randomDecision;
             Decision expectedDecision = inputDecision;
 

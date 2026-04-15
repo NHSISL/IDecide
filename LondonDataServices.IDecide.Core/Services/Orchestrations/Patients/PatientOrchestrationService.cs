@@ -67,8 +67,8 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             {
                 ValidatePatientLookupIsNotNull(patientLookup);
 
-                bool isAuthenticatedUserWithRole = true;
-                    //await CheckIfIsAuthenticatedUserWithRequiredRoleAsync();
+                bool isAuthenticatedUserWithRole =
+                   await CheckIfIsAuthenticatedUserWithRequiredRoleAsync();
 
                 if (string.IsNullOrWhiteSpace(patientLookup.SearchCriteria.NhsNumber))
                 {
@@ -90,9 +90,9 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                             message: "The patient is marked as sensitive.");
                     }
 
-                   // Patient redactedPatient = patient.Redact();
+                    Patient redactedPatient = patient.Redact();
 
-                    return patient;
+                    return redactedPatient;
                 }
                 else
                 {
@@ -112,9 +112,9 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                             message: "The patient is marked as sensitive.");
                     }
 
-                    //Patient redactedPatient = maybePatient.Redact();
+                    Patient redactedPatient = maybePatient.Redact();
 
-                    return maybePatient;
+                    return redactedPatient;
                 }
             });
 
@@ -285,7 +285,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                          auditType: "Patient",
                          title: "Patient Recorded",
 
-                         message: 
+                         message:
                             $"A new patient was created with NHS Number {patient.NhsNumber} " +
                             $"this was through NHS Login.",
 
@@ -302,7 +302,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                          auditType: "Patient",
                          title: "Patient Recorded",
 
-                         message: 
+                         message:
                             $"Patient with NHS Number {patient.NhsNumber} " +
                             $"was updated and new validation code was sent.",
 
@@ -525,9 +525,10 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
 
         virtual internal async ValueTask<bool> CheckIfIsAuthenticatedUserWithRequiredRoleAsync()
         {
-            var currentUserIsAuthenticated = await this.securityBroker.IsCurrentUserAuthenticatedAsync();
+            var isHealthCareWorker = await this.securityBroker.IsCurrentUserAuthenticatedAsync()
+                && await this.securityBroker.IsInRoleAsync("HealthCareWorker");
 
-            if (currentUserIsAuthenticated)
+            if (isHealthCareWorker)
             {
                 bool userIsInWorkflowRole = false;
 
