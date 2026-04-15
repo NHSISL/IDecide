@@ -143,6 +143,19 @@
     .header-padding-top {
         padding-top: 30px;
     }
+    .login-decision-card {
+        margin-top: 10px;
+        margin-right: 10px !important;
+    }
+
+    .nhsuk-header__transactional-service-name--link {
+        font-size: 14px !important;
+    }
+
+    .logout-header {
+        font-size: 14px !important;
+    }
+
 }
 
 /* DESKTOP: min-width: 768px */
@@ -154,6 +167,11 @@
     .nhs-logo {
         margin-left: 50px;
     }
+    .login-decision-card {
+        margin-top: 10px;
+        margin-right: 10px !important;
+    }
+
 }
 
 
