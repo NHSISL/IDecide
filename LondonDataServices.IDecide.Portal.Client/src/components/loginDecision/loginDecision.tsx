@@ -133,16 +133,6 @@ export const LoginDecision = () => {
                     </Card>
                 </Col>
             </Row>
-            <style>
-                {`
-                    @media (max-width: 767.98px) {
-                        .login-decision-card {
-                            margin-left: 0 !important;
-                            margin-right: 0 !important;
-                        }
-                    }
-                `}
-            </style>
         </Container>
     );
 };
