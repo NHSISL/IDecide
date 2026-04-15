@@ -322,7 +322,7 @@
   },
   "consentDenied": {
     "consentNotGiven": "Consent Not Given",
-    "consentNotGivenP1": "You did not agree to charre your Data. Unfortunately, we cannot proceed without your consent.",
+    "consentNotGivenP1": "You did not agree to share your Data. Unfortunately, we cannot proceed without your consent.",
     "consentNotGivenP2": "If you wish to use this service, please try logging in again and providing the required consent.",
     "consentNotGivenReturn": "RETURN TO HOME"
   },
