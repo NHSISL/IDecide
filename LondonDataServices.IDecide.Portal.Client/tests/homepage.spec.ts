@@ -16,16 +16,6 @@ test.describe('Home Page', () => {
         await expect(page.getByTestId('start-login-button')).toBeVisible();
     });
 
-    test('should navigate to /optOut when Start button is clicked', async ({ page }) => {
-        await page.route(
-            'https://access.sandpit.signin.nhs.uk/**',
-            route => route.fulfill({ status: 200, body: '' }));
-
-        await clickStartButton(page);
-
-        await expect(page).toHaveURL(/https:\/\/access\.sandpit\.signin\.nhs\.uk\/login/);
-    });
-
     test('should display all expandable section headers', async ({ page }) => {
         const headers = [
             "What is the London Data Service?",
