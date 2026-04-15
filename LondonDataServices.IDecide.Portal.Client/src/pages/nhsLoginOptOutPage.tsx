@@ -1,5 +1,6 @@
 ﻿import { useEffect, useState } from "react";
 import { Button, Container } from "react-bootstrap";
+import { useLogout } from "../hooks/useLogout";
 
 export const NhsLoginOptOutPage = () => {
     const [familyName, setFamilyName] = useState("");
@@ -8,6 +9,7 @@ export const NhsLoginOptOutPage = () => {
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState("");
     const [nhsNo, setNhsNo] = useState("");
+    const logout = useLogout();
 
     useEffect(() => {
         fetch("/api/patients/patientInfo")
@@ -31,14 +33,6 @@ export const NhsLoginOptOutPage = () => {
             });
     }, []);
 
-    const handleLogout = () => {
-        fetch("/logout", { method: "POST" }).then((response) => {
-            if (response.ok) {
-                window.location.href = "/";
-            }
-        });
-    };
-
     return (
         <Container>
             <div>
@@ -48,7 +42,7 @@ export const NhsLoginOptOutPage = () => {
             <div>email: {email}</div>
             <div>phone: {phone}</div>
             <div>nhsnumber: {nhsNo}</div>
-            <Button onClick={handleLogout}>Logout</Button>
+            <Button onClick={logout}>Logout</Button>
         </Container>
     );
 };

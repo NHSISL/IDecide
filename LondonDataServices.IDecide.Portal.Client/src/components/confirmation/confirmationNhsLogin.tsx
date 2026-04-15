@@ -190,7 +190,7 @@ export const ConfirmationNhsLogin: React.FC<ConfirmationNhsLoginProps> = ({
                                 <div className="nhsuk-form-group" style={{ marginBottom: "1.5rem" }}>
                                     <fieldset className="nhsuk-fieldset">
                                         <legend className="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">
-                                            How would you like to be notified when your data flows into the London Data Service?
+                                            {translate("ConfirmAndSave.howToBeNotifiedLabel")}
                                         </legend>
                                         <div className="nhsuk-checkboxes">
                                             <div className="nhsuk-checkboxes__item">

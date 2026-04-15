@@ -24,8 +24,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                     .ReturnsAsync(true);
 
             this.securityBrokerMock.Setup(broker =>
-                broker.IsInRoleAsync(this.decisionConfigurations.DecisionWorkflowRoles.First()))
+                broker.IsInRoleAsync("HealthCareWorker"))
                     .ReturnsAsync(true);
+
+            this.securityBrokerMock.Setup(broker =>
+               broker.IsInRoleAsync(this.decisionConfigurations.DecisionWorkflowRoles.First()))
+                   .ReturnsAsync(true);
 
             // when
             bool actualResult =
@@ -39,8 +43,15 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                     Times.Once);
 
             this.securityBrokerMock.Verify(broker =>
-                broker.IsInRoleAsync(this.decisionConfigurations.DecisionWorkflowRoles.First()),
+                broker.IsInRoleAsync("HealthCareWorker"),
                     Times.Once);
+
+            foreach (string role in this.decisionConfigurations.DecisionWorkflowRoles)
+            {
+                this.securityBrokerMock.Verify(broker =>
+                    broker.IsInRoleAsync(role),
+                        Times.Once);
+            }
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
@@ -58,6 +69,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             this.securityBrokerMock.Setup(broker =>
                 broker.IsCurrentUserAuthenticatedAsync())
                     .ReturnsAsync(true);
+
+            this.securityBrokerMock.Setup(broker =>
+               broker.IsInRoleAsync("HealthCareWorker"))
+                   .ReturnsAsync(true);
 
             foreach (string role in this.decisionConfigurations.DecisionWorkflowRoles)
             {
@@ -85,6 +100,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
 
             this.securityBrokerMock.Verify(broker =>
                 broker.IsCurrentUserAuthenticatedAsync(),
+                    Times.Once);
+
+            this.securityBrokerMock.Verify(broker =>
+                broker.IsInRoleAsync("HealthCareWorker"),
                     Times.Once);
 
             foreach (string role in this.decisionConfigurations.DecisionWorkflowRoles)

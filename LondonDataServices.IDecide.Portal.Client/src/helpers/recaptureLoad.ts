@@ -9,7 +9,7 @@ export function loadRecaptchaScript(siteKey: string): Promise<void> {
             return;
         }
         const script = document.createElement("script");
-        script.src = `https://www.google.com/recaptcha/api.js?render=${siteKey}`;
+        script.src = `https://www.google.com/recaptcha/api.js?render=${siteKey}&badge=bottomleft`;
         script.async = true;
         script.onload = () => resolve();
         script.onerror = () => reject();

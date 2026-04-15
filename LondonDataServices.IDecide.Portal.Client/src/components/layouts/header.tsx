@@ -1,15 +1,29 @@
 import React, { useEffect } from "react";
-import { Header, } from "nhsuk-react-components";
+import { Header } from "nhsuk-react-components";
 import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
 import AccessibilityBox from "../accessibilitys/accessibility";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
-import { Button } from "react-bootstrap";
+import { useLogout } from "../../hooks/useLogout";
+
+const linkStyle: React.CSSProperties = {
+    color: "#fff",
+    textDecoration: "none",
+    background: "none",
+    boxShadow: "none",
+    cursor: "pointer"
+};
 
 const HeaderComponent: React.FC = () => {
     const { configuration } = useFrontendConfiguration();
     const { t: translate } = useTranslation();
     const location = useLocation();
+    const logout = useLogout();
+
+    const showAccountActions =
+        location.pathname === "/nhs-optOut" ||
+        location.pathname === "/optOut" ||
+        location.pathname === "/nhsLoginHome";
 
     useEffect(() => {
         if (configuration?.bannerColour) {
@@ -55,7 +69,7 @@ const HeaderComponent: React.FC = () => {
                     <Header.Container>
                         <Header.Logo href="/home" />
                         <Header.ServiceName href="/home">
-                            OneLondon Data Opt-Out Portal
+                            London Secure Data Environment Data Portal
                         </Header.ServiceName>
                         <Header.Content>
                             <div style={{ display: "flex", alignItems: "center", gap: "1.5rem" }}>
@@ -67,22 +81,29 @@ const HeaderComponent: React.FC = () => {
                             style={{
                                 marginLeft: "auto",
                                 display: "flex",
-                                alignItems: "center"
+                                alignItems: "center",
+                                gap: "0.75rem"
                             }}
                         >
-                            {location.pathname === "/nhs-optOut" && (
-                                <Button
-                                    className="nhsuk-button--small"
-                                    onClick={() => {
-                                        fetch('/logout', { method: 'POST' }).then(d => {
-                                            if (d.ok) {
-                                                window.location.href = '/';
-                                            }
-                                        });
-                                    }}
-                                >
-                                    Log out
-                                </Button>
+                            {showAccountActions && configuration?.manageNhsDetailsUri && (
+                                <>
+                                    <a
+                                        href={configuration?.manageNhsDetailsUri}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        style={linkStyle}
+                                        className="header-link"
+                                    >
+                                        Manage NHS account
+                                    </a>
+                                    <span style={{ color: "#fff", margin: "0 0.5rem" }}>|</span>
+                                    <a
+                                        onClick={logout}
+                                        style={linkStyle}
+                                        className="header-link">
+                                        Log out
+                                    </a>
+                                </>
                             )}
                         </div>
                     </Header.Container>
