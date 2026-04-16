@@ -64,6 +64,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Identity.Web;
 using Microsoft.OData.Edm;
 using Microsoft.OData.ModelBuilder;
+using NHSDigital.ApiPlatform.Sdk;
+using NHSDigital.ApiPlatform.Sdk.AspNetCore;
+using NHSDigital.ApiPlatform.Sdk.Models.Configurations;
 
 namespace LondonDataServices.IDecide.Manage.Server
 {
@@ -165,6 +168,26 @@ namespace LondonDataServices.IDecide.Manage.Server
                     options.Cookie.Name = "bff-cookie";
                 });
 
+            // NHS Digital API Platform SDK (Core + AspNetCore/session storage)
+            ApiPlatformConfigurations apiPlatformConfigurations = new()
+            {
+                CareIdentity = new CareIdentityConfigurations
+                {
+                    ClientId = builder.Configuration["CIS:ClientId"] ?? string.Empty,
+                    ClientSecret = builder.Configuration["CIS:ClientSecret"] ?? string.Empty,
+                    RedirectUri = builder.Configuration["CIS:RedirectUri"] ?? string.Empty,
+                    AuthEndpoint = builder.Configuration["CIS:AuthEndpoint"] ?? string.Empty,
+                    TokenEndpoint = builder.Configuration["CIS:TokenEndpoint"] ?? string.Empty,
+                    UserInfoEndpoint = builder.Configuration["CIS:UserInfoEndpoint"] ?? string.Empty,
+                    AcrValues = builder.Configuration["CIS:AALLevel"]
+                },
+                PersonalDemographicsService = new PersonalDemographicsServiceConfigurations
+                {
+                    BaseUrl = builder.Configuration["PDS:BaseUrl"]
+                        ?? "https://int.api.service.nhs.uk/personal-demographics/FHIR/R4"
+                }
+            };
+
             var instance = builder.Configuration["AzureAd:Instance"];
             var tenantId = builder.Configuration["AzureAd:TenantId"];
             var scopes = builder.Configuration["AzureAd:Scopes"];
@@ -178,6 +201,9 @@ namespace LondonDataServices.IDecide.Manage.Server
             builder.Services.AddSwaggerGen();
             builder.Services.AddScoped<ISecureTokenStorage, SecureTokenStorage>();
             builder.Services.AddScoped<ITokenService, TokenService>();
+            builder.Services.AddApiPlatformSdkCore(
+                apiPlatformConfigurations);
+            builder.Services.AddApiPlatformSdkAspNetCore();
             builder.Services.AddSingleton(invisibleApiKey);
             builder.Services.AddAuthorization();
             builder.Services.AddDbContext<StorageBroker>();
@@ -198,8 +224,6 @@ namespace LondonDataServices.IDecide.Manage.Server
             AddFoundationServices(builder.Services);
             AddOrchestrationServices(builder.Services, builder.Configuration);
             AddClients(builder.Services);
-            //  AddProcessingServices(builder.Services);
-            //  AddCoordinationServices(builder.Services, builder.Configuration);
 
             // Register IConfiguration to be available for dependency injection
             builder.Services.AddSingleton<IConfiguration>(builder.Configuration);

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using Hl7.Fhir.Model.CdsHooks;
 using LondonDataServices.IDecide.Core.Brokers.Storages.Sql;
@@ -20,6 +21,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using NHSDigital.ApiPlatform.Sdk.Clients.ApiPlatforms;
 
 namespace LondonDataServices.IDecide.Manage.Server.Controllers
 {
@@ -31,6 +33,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
         private readonly IConfiguration configuration;
         private readonly ILogger<AuthController> logger;
         private readonly ISecureTokenStorage secureTokenStorage;
+        private readonly IApiPlatformClient apiPlatformClient;
         private readonly ApplicationDbContext context;
 
         public AuthController(
@@ -38,6 +41,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
             IConfiguration configuration,
             ILogger<AuthController> logger,
             ISecureTokenStorage secureTokenStorage,
+            IApiPlatformClient apiPlatformClient,
             StorageBroker storageBroker,
             ApplicationDbContext context)
         {
@@ -45,38 +49,22 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
             this.configuration = configuration;
             this.logger = logger;
             this.secureTokenStorage = secureTokenStorage;
+            this.apiPlatformClient = apiPlatformClient;
             this.context = context;
         }
 
         [HttpGet("login")]
-        public async Task<IActionResult> Login()
+        public async Task<IActionResult> Login(CancellationToken cancellationToken)
         {
-            var clientId = configuration["CIS:ClientId"];
-            var redirectUri = configuration["CIS:RedirectUri"];
-            var authEndpoint = configuration["CIS:AuthEndpoint"];
-            var acrValues = configuration["CIS:AALLevel"];
-            var stateBytes = new byte[32];
-            System.Security.Cryptography.RandomNumberGenerator.Fill(stateBytes);
+            string url = await this.apiPlatformClient
+                .CareIdentityServiceClient
+                .BuildLoginUrlAsync(cancellationToken);
 
-            var csrfState = Convert.ToBase64String(stateBytes)
-                .TrimEnd('=')
-                .Replace('+', '-')
-                .Replace('/', '_');
+            this.logger.LogInformation("Initiating CIS2 authentication.");
 
-            secureTokenStorage.StoreCSRFState(HttpContext, csrfState);
-            await HttpContext.Session.CommitAsync();
-
-            var authUrl = $"{authEndpoint}" +
-                $"?client_id={clientId}" +
-                $"&redirect_uri={Uri.EscapeDataString(redirectUri)}" +
-                $"&response_type=code" +
-                $"&state={csrfState}" +
-                (string.IsNullOrEmpty(acrValues) ? "" : $"&acr_values={acrValues}");
-
-            logger.LogInformation("Initiating CIS2 authentication with state parameter");
-
-            return Redirect(authUrl);
+            return Redirect(url);
         }
+
         [Authorize]
         [HttpGet("session")]
         public IActionResult Session()

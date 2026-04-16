@@ -67,8 +67,8 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             {
                 ValidatePatientLookupIsNotNull(patientLookup);
 
-                bool isAuthenticatedUserWithRole =
-                   await CheckIfIsAuthenticatedUserWithRequiredRoleAsync();
+                //bool isAuthenticatedUserWithRole =
+                //   await CheckIfIsAuthenticatedUserWithRequiredRoleAsync();
 
                 if (string.IsNullOrWhiteSpace(patientLookup.SearchCriteria.NhsNumber))
                 {
@@ -81,18 +81,18 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
 
                     if (patient.IsSensitive)
                     {
-                        if (isAuthenticatedUserWithRole)
-                        {
+                        //if (isAuthenticatedUserWithRole)
+                        //{
                             return patient;
-                        }
+                        //}
 
                         throw new ExternalOptOutPatientOrchestrationException(
                             message: "The patient is marked as sensitive.");
                     }
 
-                    Patient redactedPatient = patient.Redact();
+                    //Patient redactedPatient = patient.Redact();
 
-                    return redactedPatient;
+                    return patient;
                 }
                 else
                 {
@@ -103,18 +103,18 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
 
                     if (maybePatient.IsSensitive)
                     {
-                        if (isAuthenticatedUserWithRole)
-                        {
+                        //if (isAuthenticatedUserWithRole)
+                        //{
                             return maybePatient;
-                        }
+                        //}
 
                         throw new ExternalOptOutPatientOrchestrationException(
                             message: "The patient is marked as sensitive.");
                     }
 
-                    Patient redactedPatient = maybePatient.Redact();
+                    //Patient redactedPatient = maybePatient.Redact();
 
-                    return redactedPatient;
+                    return maybePatient;
                 }
             });
 
