@@ -3,7 +3,6 @@
 // ---------------------------------------------------------
 
 using FluentAssertions;
-using ISL.Providers.PDS.Abstractions.Models;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
@@ -11,10 +10,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
     public partial class PdsServiceTests
     {
         [Fact]
-        public void ShouldThrowNullPatientBundleExceptionOnMapToPatientsFromPatientBundleWhenNull()
+        public void ShouldThrowNullBundleJsonExceptionOnMapToPatientsFromBundleJsonWhenNull()
         {
             // given
-            PatientBundle nullPatientBundle = null;
+            string nullBundleJson = null;
 
             var expectedNullPatientBundleException =
                 new NullPatientBundleException(message: "Patient bundle is null.");
@@ -22,13 +21,14 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
             // when
             NullPatientBundleException actualNullPatientBundleException =
                  Assert.Throws<NullPatientBundleException>(() =>
-                    pdsService.MapToPatientsFromPatientBundle(nullPatientBundle));
+                    pdsService.MapToPatientsFromBundleJson(nullBundleJson));
 
             // then
             actualNullPatientBundleException.Should().BeEquivalentTo(
                 expectedNullPatientBundleException);
 
             this.pdsBrokerMock.VerifyNoOtherCalls();
+            this.nhsDigitalApiBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }

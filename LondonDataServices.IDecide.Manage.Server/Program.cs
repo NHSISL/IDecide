@@ -25,6 +25,7 @@ using LondonDataServices.IDecide.Core.Brokers.Audits;
 using LondonDataServices.IDecide.Core.Brokers.DateTimes;
 using LondonDataServices.IDecide.Core.Brokers.Identifiers;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
+using LondonDataServices.IDecide.Core.Brokers.NhsDigitalApi;
 using LondonDataServices.IDecide.Core.Brokers.Notifications;
 using LondonDataServices.IDecide.Core.Brokers.Pds;
 using LondonDataServices.IDecide.Core.Brokers.Securities;
@@ -159,7 +160,7 @@ namespace LondonDataServices.IDecide.Manage.Server
                         context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                         return Task.CompletedTask;
                     };
-                    //options.LoginPath = "/Login";
+                    options.LoginPath = "/Login";
                     options.LogoutPath = "/Logout";
                     options.ExpireTimeSpan = TimeSpan.FromDays(7);
                     options.Cookie.HttpOnly = true;
@@ -188,6 +189,9 @@ namespace LondonDataServices.IDecide.Manage.Server
                 }
             };
 
+            builder.Services.AddApiPlatformSdkCore(apiPlatformConfigurations);
+            builder.Services.AddApiPlatformSdkAspNetCore();
+
             var instance = builder.Configuration["AzureAd:Instance"];
             var tenantId = builder.Configuration["AzureAd:TenantId"];
             var scopes = builder.Configuration["AzureAd:Scopes"];
@@ -201,9 +205,6 @@ namespace LondonDataServices.IDecide.Manage.Server
             builder.Services.AddSwaggerGen();
             builder.Services.AddScoped<ISecureTokenStorage, SecureTokenStorage>();
             builder.Services.AddScoped<ITokenService, TokenService>();
-            builder.Services.AddApiPlatformSdkCore(
-                apiPlatformConfigurations);
-            builder.Services.AddApiPlatformSdkAspNetCore();
             builder.Services.AddSingleton(invisibleApiKey);
             builder.Services.AddAuthorization();
             builder.Services.AddDbContext<StorageBroker>();
@@ -374,6 +375,7 @@ namespace LondonDataServices.IDecide.Manage.Server
             services.AddTransient<IStorageBroker, StorageBroker>();
             services.AddTransient<INotificationBroker, NotificationBroker>();
             services.AddTransient<IPdsBroker, PdsBroker>();
+            services.AddTransient<INhsDigitalApiBroker, NhsDigitalApiBroker>();
             services.AddTransient<IAuditBroker, AuditBroker>();
         }
 

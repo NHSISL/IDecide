@@ -10,6 +10,7 @@ using System.Security.Claims;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 using Hl7.Fhir.Model.CdsHooks;
 using LondonDataServices.IDecide.Core.Brokers.Storages.Sql;
 using LondonDataServices.IDecide.Manage.Server.Data;
@@ -67,22 +68,20 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
 
         [Authorize]
         [HttpGet("session")]
-        public IActionResult Session()
+        public async Task<IActionResult> Session(CancellationToken cancellationToken)
         {
             if (!User.Identity.IsAuthenticated)
             {
                 return Unauthorized();
             }
 
-            var expiresAtClaim = User.FindFirstValue(ClaimTypes.Expiration);
-            string expiresAtIso = expiresAtClaim;
+            string accessToken = await this.apiPlatformClient
+           .CareIdentityServiceClient
+           .GetAccessTokenAsync(cancellationToken);
 
-            if (!string.IsNullOrEmpty(expiresAtClaim))
+            if (string.IsNullOrWhiteSpace(accessToken))
             {
-                if (DateTimeOffset.TryParse(expiresAtClaim, out var expiresAtDateTime))
-                {
-                    expiresAtIso = expiresAtDateTime.ToString("o");
-                }
+                return Unauthorized();
             }
 
             return Ok(new
@@ -90,101 +89,53 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
                 sub = User.FindFirstValue(ClaimTypes.NameIdentifier),
                 upn = User.FindFirstValue(ClaimTypes.Upn),
                 name = User.FindFirstValue(ClaimTypes.Name),
-                roles = User.FindAll(ClaimTypes.Role).Select(c => c.Value).ToArray(),
-                expiresAt = expiresAtIso
+                roles = User.FindAll(ClaimTypes.Role).Select(c => c.Value).ToArray()
             });
         }
 
         [Authorize]
         [HttpPost("logout")]
-        public async Task<IActionResult> Logout()
+        public async Task<IActionResult> Logout(CancellationToken cancellationToken)
         {
-            var logoutEndpoint = configuration["CIS:LogoutEndpoint"];
-            var postLogoutRedirectUri = configuration["CIS:PostLogoutRedirectUri"];
-            var idToken = User.FindFirstValue("id_token");
+            await this.apiPlatformClient
+                .CareIdentityServiceClient
+                .LogoutAsync(cancellationToken);
 
-            if (User.Identity?.IsAuthenticated == true)
-            {
-                HttpContext.Session.Clear();
-                secureTokenStorage.ClearTokens(HttpContext);
-                await HttpContext.SignOutAsync("bff-cookie");
-            }
+            HttpContext.Session.Clear();
+            await HttpContext.SignOutAsync("bff-cookie");
 
-            var logoutUrl = $"{logoutEndpoint}" +
-                $"?id_token_hint={idToken}" +
-                $"&post_logout_redirect_uri={Uri.EscapeDataString(postLogoutRedirectUri)}";
-
-            logger.LogInformation("User logged out, redirecting to CIS2 logout");
-
-            return Ok(new { logoutUrl });
+            return Redirect(@"\");
         }
 
         [HttpGet("callback")]
-        public async Task<IActionResult> Callback([FromQuery] string code, string state)
+        public async Task<IActionResult> Callback(
+        [FromQuery] string code,
+        [FromQuery] string state,
+        CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(code))
             {
+                this.logger.LogWarning("Authorization code is missing from callback");
                 return BadRequest("Authorization code is missing");
             }
 
-            var expectedCRSFState = secureTokenStorage.GetCSRFState(HttpContext);
-
-            if (string.IsNullOrEmpty(expectedCRSFState) || state != expectedCRSFState)
+            if (string.IsNullOrEmpty(state))
             {
-                return BadRequest("Invalid state parameter");
+                this.logger.LogWarning("State parameter is missing from callback");
+                return BadRequest("State parameter is missing");
             }
-
-            secureTokenStorage.ClearCSRFState(HttpContext);
 
             try
             {
-                var client = httpClientFactory.CreateClient();
-                var tokenEndpoint = configuration["CIS:TokenEndpoint"];
-                var clientId = configuration["CIS:ClientId"];
-                var clientSecret = configuration["CIS:ClientSecret"];
-                var redirectUri = configuration["CIS:RedirectUri"];
+                // ✅ Use SDK's built-in method - handles token storage correctly
+                var userInfo = await this.apiPlatformClient
+                    .CareIdentityServiceClient
+                    .GetUserInfoAsync(code, state, cancellationToken);
 
-                var tokenRequest = new FormUrlEncodedContent(new[]
-                {
-                    new KeyValuePair<string, string>("grant_type", "authorization_code"),
-                    new KeyValuePair<string, string>("code", code),
-                    new KeyValuePair<string, string>("redirect_uri", redirectUri),
-                    new KeyValuePair<string, string>("client_id", clientId),
-                    new KeyValuePair<string, string>("client_secret", clientSecret)
-                });
-
-                var response = await client.PostAsync(tokenEndpoint, tokenRequest);
-                response.EnsureSuccessStatusCode();
-                var json = await response.Content.ReadAsStringAsync();
-                var token = JsonSerializer.Deserialize<TokenResult>(json);
-
-                if (token == null)
-                {
-                    throw new Exception("Could not Process token");
-                }
-
-                logger.LogInformation(
-                    $"Token response - ID Token present: {!string.IsNullOrEmpty(token.IdToken)}");
-
-                if (string.IsNullOrEmpty(token.IdToken))
-                {
-                    logger.LogWarning("ID Token is missing from CIS2 response, logout may not work");
-                }
-
-                client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token.AccessToken}");
-                var userInfoEndpoint = configuration["CIS:UserInfoEndpoint"];
-                var userInfoResponse = await client.GetAsync(userInfoEndpoint);
-                userInfoResponse.EnsureSuccessStatusCode();
-                var userInfoJson = await userInfoResponse.Content.ReadAsStringAsync();
-                var userInfo = JsonSerializer.Deserialize<NhsUserInfo>(userInfoJson);
-
-                if (userInfo == null)
-                {
-                    throw new Exception("Could not Process User Info");
-                }
+                string userInfoJson = JsonSerializer.Serialize(userInfo);
 
                 var user = await context.Users
-                    .FirstOrDefaultAsync(u => u.NhsIdUserUid == userInfo.NhsIdUserUid);
+                    .FirstOrDefaultAsync(u => u.NhsIdUserUid == userInfo.NhsIdUserUid, cancellationToken);
 
                 if (user == null)
                 {
@@ -206,29 +157,29 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
                 else
                 {
                     user.LastLoginAt = DateTime.UtcNow;
+                    user.RawUserInfo = userInfoJson;
                 }
 
-                await context.SaveChangesAsync();
+                await context.SaveChangesAsync(cancellationToken);
 
                 if (!user.IsAuthorised)
                 {
+                    await this.apiPlatformClient
+                        .CareIdentityServiceClient
+                        .LogoutAsync(cancellationToken);
+
                     HttpContext.Session.Clear();
                     await HttpContext.SignOutAsync("bff-cookie");
 
                     return Redirect("/unauthorised");
                 }
 
-                var expiresAt = DateTimeOffset.UtcNow
-                    .AddSeconds(int.Parse(token.RefreshTokenExpiresIn));
-
                 var claims = new List<Claim>
-                    {
-                        new Claim(ClaimTypes.NameIdentifier, userInfo.Sub),
-                        new Claim(ClaimTypes.Name, userInfo.Name),
-                        new Claim(ClaimTypes.Upn, userInfo.NhsIdUserUid),
-                        new Claim(ClaimTypes.Expiration, expiresAt.ToString("o")),
-                        new Claim("id_token", token.IdToken ?? string.Empty),
-                    };
+        {
+            new Claim(ClaimTypes.NameIdentifier, userInfo.Sub),
+            new Claim(ClaimTypes.Name, userInfo.Name),
+            new Claim(ClaimTypes.Upn, userInfo.NhsIdUserUid),
+        };
 
                 foreach (var role in userInfo.NhsIdNrbacRoles)
                 {
@@ -239,22 +190,11 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
                 var principal = new ClaimsPrincipal(identity);
                 await HttpContext.SignInAsync("bff-cookie", principal);
 
-                secureTokenStorage.StoreAccessToken(
-                    HttpContext,
-                    token.AccessToken,
-                    int.Parse(token.ExpiresIn));
-
-                secureTokenStorage.StoreRefreshToken(
-                    HttpContext,
-                    token.RefreshToken,
-                    int.Parse(token.RefreshTokenExpiresIn));
-
                 return Redirect("/home");
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, "Error during OAuth callback");
-
                 return StatusCode(500, "Authentication failed");
             }
         }

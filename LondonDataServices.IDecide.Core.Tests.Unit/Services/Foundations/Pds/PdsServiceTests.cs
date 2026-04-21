@@ -11,6 +11,7 @@ using ISL.Providers.PDS.Abstractions.Models;
 using ISL.Providers.PDS.FakeFHIR.Mappers;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Brokers.Pds;
+using LondonDataServices.IDecide.Core.Brokers.NhsDigitalApi;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
 using LondonDataServices.IDecide.Core.Services.Foundations.Pds;
 using Moq;
@@ -23,16 +24,19 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
     public partial class PdsServiceTests
     {
         private readonly Mock<IPdsBroker> pdsBrokerMock;
+        private readonly Mock<INhsDigitalApiBroker> nhsDigitalApiBrokerMock;
         private readonly Mock<ILoggingBroker> loggingBrokerMock;
         private readonly PdsService pdsService;
 
         public PdsServiceTests()
         {
             this.pdsBrokerMock = new Mock<IPdsBroker>();
+            this.nhsDigitalApiBrokerMock = new Mock<INhsDigitalApiBroker>();
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
 
             this.pdsService = new PdsService(
                 pdsBroker: pdsBrokerMock.Object,
+                nhsDigitalApiBroker: nhsDigitalApiBrokerMock.Object,
                 loggingBroker: loggingBrokerMock.Object);
         }
 

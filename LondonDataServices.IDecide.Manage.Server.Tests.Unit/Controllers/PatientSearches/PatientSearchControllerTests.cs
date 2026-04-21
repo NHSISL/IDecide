@@ -10,6 +10,7 @@ using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
 using LondonDataServices.IDecide.Manage.Server.Controllers;
 using LondonDataServices.IDecide.Manage.Server.Models;
 using Moq;
+using NHSDigital.ApiPlatform.Sdk.Clients.ApiPlatforms;
 using RESTFulSense.Controllers;
 using Tynamix.ObjectFiller;
 using Xeptions;
@@ -19,14 +20,18 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Patien
     public partial class PatientSearchControllerTests : RESTFulController
     {
         private readonly Mock<IPatientOrchestrationService> patientOrchestrationServiceMock;
+        private readonly Mock<IApiPlatformClient> apiPlatformClientMock;
         private readonly PatientSearchController patientSearchController;
 
         public PatientSearchControllerTests()
         {
             this.patientOrchestrationServiceMock = new Mock<IPatientOrchestrationService>();
+            this.apiPlatformClientMock = new Mock<IApiPlatformClient>();
 
             this.patientSearchController =
-                new PatientSearchController(this.patientOrchestrationServiceMock.Object);
+                new PatientSearchController(
+                    this.patientOrchestrationServiceMock.Object,
+                    this.apiPlatformClientMock.Object);
         }
 
         public static TheoryData<Xeption> ValidationExceptions()

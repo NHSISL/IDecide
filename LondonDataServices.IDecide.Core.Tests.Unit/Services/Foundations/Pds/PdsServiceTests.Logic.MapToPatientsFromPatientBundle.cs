@@ -5,9 +5,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
-using Force.DeepCloner;
 using Hl7.Fhir.Model;
-using ISL.Providers.PDS.Abstractions.Models;
+using Hl7.Fhir.Serialization;
 using Patient = LondonDataServices.IDecide.Core.Models.Foundations.Patients.Patient;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
@@ -15,22 +14,27 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
     public partial class PdsServiceTests
     {
         [Fact]
-        public void ShouldMapToPatientsFromPatientBundle()
+        public void ShouldMapToPatientsFromBundleJson()
         {
             // given
             Bundle randomBundle = CreateRandomBundle();
-            PatientBundle patientBundle = CreateRandomPatientBundle(randomBundle);
-            PatientBundle inputPatientBundle = patientBundle.DeepClone();
-            Patient mappedPatient = GeneratePatientFromFhirPatient(inputPatientBundle.Patients.First());
+            var serializer = new FhirJsonSerializer();
+            string bundleJson = serializer.SerializeToString(randomBundle);
+
+            Hl7.Fhir.Model.Patient fhirPatient =
+                (Hl7.Fhir.Model.Patient)randomBundle.Entry.First().Resource;
+
+            Patient mappedPatient = GeneratePatientFromFhirPatient(fhirPatient);
             List<Patient> expectedPatients = new List<Patient> { mappedPatient };
 
             // when
-            List<Patient> actualPatients = this.pdsService.MapToPatientsFromPatientBundle(inputPatientBundle);
+            List<Patient> actualPatients = this.pdsService.MapToPatientsFromBundleJson(bundleJson);
 
             //then
             actualPatients.Should().BeEquivalentTo(expectedPatients);
 
             this.pdsBrokerMock.VerifyNoOtherCalls();
+            this.nhsDigitalApiBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }
