@@ -3,14 +3,6 @@
 // ---------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text.Json.Serialization;
-using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
-using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
-using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace LondonDataServices.IDecide.Core.Models.Foundations.Users
 {
