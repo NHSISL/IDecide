@@ -76,17 +76,6 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
 
                     Patient patient = responsePatientLookup.Patients.First();
 
-                    if (patient.IsSensitive)
-                    {
-                        //if (isAuthenticatedUserWithRole)
-                        //{
-                            return patient;
-                        //}
-
-                        throw new ExternalOptOutPatientOrchestrationException(
-                            message: "The patient is marked as sensitive.");
-                    }
-
                     return patient;
                 }
                 else
@@ -95,17 +84,6 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                     ValidatePatientLookupByNhsNumberArguments(nhsNumber);
                     Patient maybePatient = await this.pdsService.PatientLookupByNhsNumberAsync(nhsNumber);
                     ValidatePatientIsNotNull(maybePatient);
-
-                    if (maybePatient.IsSensitive)
-                    {
-                        //if (isAuthenticatedUserWithRole)
-                        //{
-                            return maybePatient;
-                        //}
-
-                        throw new ExternalOptOutPatientOrchestrationException(
-                            message: "The patient is marked as sensitive.");
-                    }
 
                     return maybePatient;
                 }

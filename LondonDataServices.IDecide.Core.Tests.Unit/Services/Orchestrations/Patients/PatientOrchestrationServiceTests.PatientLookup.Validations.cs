@@ -89,10 +89,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 this.securityBrokerConfigurations)
             { CallBase = true };
 
-            patientOrchestrationServiceMock.Setup(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
-                    .ReturnsAsync(false);
-
             var nullPatientLookupException =
                 new NoExactPatientFoundException(message: "No matching patient found.");
 
@@ -119,10 +115,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             // then
             actualPatientOrchestrationValidationException
                 .Should().BeEquivalentTo(expectedPatientOrchestrationValidationException);
-
-            patientOrchestrationServiceMock.Verify(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
-                    Times.Once);
 
             this.pdsServiceMock.Verify(service =>
                 service.PatientLookupByDetailsAsync(inputPatientLookup),
@@ -169,10 +161,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 this.securityBrokerConfigurations)
             { CallBase = true };
 
-            patientOrchestrationServiceMock.Setup(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
-                    .ReturnsAsync(false);
-
             var nullPatientLookupException =
                 new NoExactPatientFoundException(message: "Multiple matching patients found.");
 
@@ -200,9 +188,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             actualPatientOrchestrationValidationException
                 .Should().BeEquivalentTo(expectedPatientOrchestrationValidationException);
 
-            patientOrchestrationServiceMock.Verify(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
-                    Times.Once);
 
             this.pdsServiceMock.Verify(service =>
                 service.PatientLookupByDetailsAsync(inputPatientLookup),
@@ -246,10 +231,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 this.securityBrokerConfigurations)
             { CallBase = true };
 
-            patientOrchestrationServiceMock.Setup(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
-                    .ReturnsAsync(false);
-
             var invalidPatientOrchestrationArgumentException =
                 new InvalidPatientOrchestrationArgumentException(
                     "Invalid patient orchestration argument. Please correct the errors and try again.");
@@ -273,10 +254,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             // then
             actualException.Should().BeEquivalentTo(expectedPatientOrchestrationValidationException);
-
-            patientOrchestrationServiceMock.Verify(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
-                    Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                broker.LogErrorAsync(It.Is(SameExceptionAs(
@@ -317,10 +294,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 this.securityBrokerConfigurations)
             { CallBase = true };
 
-            patientOrchestrationServiceMock.Setup(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
-                    .ReturnsAsync(false);
-
             var nullPatientException =
                 new NullPatientOrchestrationException(message: "Patient is null.");
 
@@ -347,10 +320,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             // then
             actualPatientOrchestrationValidationException
                 .Should().BeEquivalentTo(expectedPatientOrchestrationValidationException);
-
-            patientOrchestrationServiceMock.Verify(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
-                    Times.Once);
 
             this.pdsServiceMock.Verify(service =>
                 service.PatientLookupByNhsNumberAsync(inputNhsNumber),

@@ -3,12 +3,14 @@
 // ---------------------------------------------------------
 
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds.Exceptions;
 using Moq;
 using Task = System.Threading.Tasks.Task;
+using NhsDigitalSearchCriteria = NHSDigital.ApiPlatform.Sdk.Models.Foundations.Pds.SearchCriteria;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
 {
@@ -34,18 +36,11 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
                     message: "PDS service error occurred, please contact support.",
                     innerException: failedServicePdsException);
 
-            pdsBrokerMock.Setup(broker =>
-                broker.PatientLookupByDetailsAsync(
-                    string.Empty,
-                    inputPatientLookup.SearchCriteria.Surname,
-                    string.Empty,
-                    string.Empty,
-                    string.Empty,
-                    string.Empty,
-                    string.Empty,
-                    string.Empty,
-                    string.Empty))
-                    .ThrowsAsync(serviceException);
+            this.nhsDigitalApiBrokerMock.Setup(broker =>
+                broker.SearchPatientPDSAsync(
+                    It.IsAny<NhsDigitalSearchCriteria>(),
+                    CancellationToken.None))
+                        .ThrowsAsync(serviceException);
 
             // when
             ValueTask<PatientLookup> patientLookupByDetailsTask =
@@ -59,17 +54,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
             actualPdsServiceException.Should().BeEquivalentTo(
                 expectedPdsServiceException);
 
-            pdsBrokerMock.Verify(broker =>
-                broker.PatientLookupByDetailsAsync(
-                    string.Empty,
-                    inputPatientLookup.SearchCriteria.Surname,
-                    string.Empty,
-                    string.Empty,
-                    string.Empty,
-                    string.Empty,
-                    string.Empty,
-                    string.Empty,
-                    string.Empty),
+            this.nhsDigitalApiBrokerMock.Verify(broker =>
+                broker.SearchPatientPDSAsync(
+                    It.IsAny<NhsDigitalSearchCriteria>(),
+                    CancellationToken.None),
                         Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
@@ -77,6 +65,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
                     expectedPdsServiceException))),
                         Times.Once);
 
+            this.nhsDigitalApiBrokerMock.VerifyNoOtherCalls();
             this.pdsBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }

@@ -81,7 +81,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
 
         virtual internal List<Patient> MapToPatientsFromPatientBundle(string patientBundle)
         {
-            //ValidatePatientBundleIsNotNull(patientBundle);
+            ValidateJsonStringIsNotNull(patientBundle);
             var parser = new FhirJsonParser();
             Hl7.Fhir.Model.Patient fhirPatient = parser.Parse<Hl7.Fhir.Model.Patient>(patientBundle);
 
@@ -92,6 +92,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
 
         virtual internal List<Patient> MapToPatientsFromBundleJson(string bundleJson)
         {
+            ValidateJsonStringIsNotNull(bundleJson);
             var parser = new FhirJsonParser();
             Bundle bundle = parser.Parse<Bundle>(bundleJson);
 

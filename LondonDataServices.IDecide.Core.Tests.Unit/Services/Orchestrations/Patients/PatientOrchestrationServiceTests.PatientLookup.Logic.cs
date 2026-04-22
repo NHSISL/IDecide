@@ -29,9 +29,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             updatedPatientLookup.Patients = new List<Patient> { GetRandomPatient(inputSurname) };
             PatientLookup outputPatientLookup = updatedPatientLookup.DeepClone();
             Patient patient = outputPatientLookup.Patients.FirstOrDefault();
-            Patient patientToRedact = patient.DeepClone();
-            Patient redactedPatient = patientToRedact.Redact();
-            Patient expectedPatient = redactedPatient.DeepClone();
+            Patient expectedPatient = patient.DeepClone();
 
             var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
                 this.loggingBrokerMock.Object,
@@ -46,10 +44,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 this.securityBrokerConfigurations)
             { CallBase = true };
 
-            patientOrchestrationServiceMock.Setup(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
-                    .ReturnsAsync(false);
-
             this.pdsServiceMock.Setup(service =>
                 service.PatientLookupByDetailsAsync(inputPatientLookup))
                     .ReturnsAsync(outputPatientLookup);
@@ -60,10 +54,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             //then
             actualPatient.Should().BeEquivalentTo(expectedPatient);
-
-            patientOrchestrationServiceMock.Verify(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
-                    Times.Once);
 
             this.pdsServiceMock.Verify(service =>
                 service.PatientLookupByDetailsAsync(inputPatientLookup),
@@ -107,10 +97,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 this.securityBrokerConfigurations)
             { CallBase = true };
 
-            patientOrchestrationServiceMock.Setup(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
-                    .ReturnsAsync(true);
-
             this.pdsServiceMock.Setup(service =>
                 service.PatientLookupByDetailsAsync(inputPatientLookup))
                     .ReturnsAsync(outputPatientLookup);
@@ -121,10 +107,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             //then
             actualPatient.Should().BeEquivalentTo(expectedPatient);
-
-            patientOrchestrationServiceMock.Verify(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
-                    Times.Once);
 
             this.pdsServiceMock.Verify(service =>
                 service.PatientLookupByDetailsAsync(inputPatientLookup),
@@ -150,9 +132,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             PatientLookup randomPatientLookup = GetRandomSearchPatientLookupWithNhsNumber(inputNhsNumber);
             PatientLookup inputPatientLookup = randomPatientLookup.DeepClone();
             Patient outputPatient = GetRandomPatientWithNhsNumber(inputNhsNumber);
-            Patient patientToRedact = outputPatient.DeepClone();
-            Patient redactedPatient = patientToRedact.Redact();
-            Patient expectedPatient = redactedPatient.DeepClone();
+            Patient expectedPatient = outputPatient.DeepClone();
 
             var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
                 this.loggingBrokerMock.Object,
@@ -167,10 +147,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 this.securityBrokerConfigurations)
             { CallBase = true };
 
-            patientOrchestrationServiceMock.Setup(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
-                    .ReturnsAsync(false);
-
             this.pdsServiceMock.Setup(service =>
                 service.PatientLookupByNhsNumberAsync(inputNhsNumber))
                     .ReturnsAsync(outputPatient);
@@ -181,10 +157,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             //then
             actualPatient.Should().BeEquivalentTo(expectedPatient);
-
-            patientOrchestrationServiceMock.Verify(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
-                    Times.Once);
 
             this.pdsServiceMock.Verify(service =>
                 service.PatientLookupByNhsNumberAsync(inputNhsNumber),
@@ -225,10 +197,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 this.securityBrokerConfigurations)
             { CallBase = true };
 
-            patientOrchestrationServiceMock.Setup(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
-                    .ReturnsAsync(true);
-
             this.pdsServiceMock.Setup(service =>
                     service.PatientLookupByNhsNumberAsync(inputNhsNumber))
                 .ReturnsAsync(outputPatient);
@@ -239,10 +207,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             //then
             actualPatient.Should().BeEquivalentTo(expectedPatient);
-
-            patientOrchestrationServiceMock.Verify(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
-                    Times.Once);
 
             this.pdsServiceMock.Verify(service =>
                 service.PatientLookupByNhsNumberAsync(inputNhsNumber),
