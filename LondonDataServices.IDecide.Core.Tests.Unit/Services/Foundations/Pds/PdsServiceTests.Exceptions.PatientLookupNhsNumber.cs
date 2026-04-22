@@ -3,11 +3,13 @@
 // ---------------------------------------------------------
 
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds.Exceptions;
 using Moq;
+using NhsDigitalSearchCriteria = NHSDigital.ApiPlatform.Sdk.Models.Foundations.Pds.SearchCriteria;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
 {
@@ -32,9 +34,11 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
                     message: "PDS service error occurred, please contact support.",
                     innerException: failedServicePdsException);
 
-            pdsBrokerMock.Setup(broker =>
-                broker.PatientLookupByNhsNumberAsync(inputNhsNumber))
-                    .ThrowsAsync(serviceException);
+            this.nhsDigitalApiBrokerMock.Setup(broker =>
+                broker.SearchPatientPDSAsync(
+                    It.IsAny<NhsDigitalSearchCriteria>(),
+                    CancellationToken.None))
+                        .ThrowsAsync(serviceException);
 
             // when
             ValueTask<Patient> patientLookupByNhsNumberTask =
@@ -48,14 +52,17 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
             actualPdsServiceException.Should().BeEquivalentTo(
                 expectedpdsServiceException);
 
-            pdsBrokerMock.Verify(broker =>
-                broker.PatientLookupByNhsNumberAsync(inputNhsNumber),
-                    Times.Once);
+            this.nhsDigitalApiBrokerMock.Verify(broker =>
+                broker.SearchPatientPDSAsync(
+                    It.IsAny<NhsDigitalSearchCriteria>(),
+                    CancellationToken.None),
+                        Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(expectedpdsServiceException))),
                     Times.Once);
 
+            this.nhsDigitalApiBrokerMock.VerifyNoOtherCalls();
             this.pdsBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }

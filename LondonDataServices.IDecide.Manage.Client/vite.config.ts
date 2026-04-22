@@ -51,12 +51,16 @@ export default defineConfig({
                 target,
                 secure: false
             },
+            '/auth/': {
+                target,
+                secure: false
+            },
             '^/api/*': {
                 target,
                 secure: false
             }
         },
-        port: 6073,
+        port: 5174,
         https: {
             key: fs.readFileSync(keyFilePath),
             cert: fs.readFileSync(certFilePath),

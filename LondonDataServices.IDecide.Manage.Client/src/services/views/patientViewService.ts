@@ -63,7 +63,7 @@ export const patientViewService = {
         const [mappedPatients, setMappedPatients] = useState<Array<PatientView>>();
 
         useEffect(() => {
-            if (response.data) {
+            if (response.data?.pages?.[0]?.data) {
                 const patients = response.data.pages[0].data.map((patient: Patient) =>
                     new PatientView(
                         patient.id!,

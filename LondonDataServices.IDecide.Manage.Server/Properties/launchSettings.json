@@ -13,13 +13,12 @@
     "https": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "ASPNETCORE_HOSTINGSTARTUPASSEMBLIES": "Microsoft.AspNetCore.SpaProxy"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "https://localhost:6284;http://localhost:6034"
+      "applicationUrl": ""
     },
     "IIS Express": {
       "commandName": "IISExpress",

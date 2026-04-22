@@ -67,9 +67,6 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             {
                 ValidatePatientLookupIsNotNull(patientLookup);
 
-                bool isAuthenticatedUserWithRole =
-                   await CheckIfIsAuthenticatedUserWithRequiredRoleAsync();
-
                 if (string.IsNullOrWhiteSpace(patientLookup.SearchCriteria.NhsNumber))
                 {
                     PatientLookup responsePatientLookup =
@@ -79,20 +76,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
 
                     Patient patient = responsePatientLookup.Patients.First();
 
-                    if (patient.IsSensitive)
-                    {
-                        if (isAuthenticatedUserWithRole)
-                        {
-                            return patient;
-                        }
-
-                        throw new ExternalOptOutPatientOrchestrationException(
-                            message: "The patient is marked as sensitive.");
-                    }
-
-                    Patient redactedPatient = patient.Redact();
-
-                    return redactedPatient;
+                    return patient;
                 }
                 else
                 {
@@ -101,20 +85,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                     Patient maybePatient = await this.pdsService.PatientLookupByNhsNumberAsync(nhsNumber);
                     ValidatePatientIsNotNull(maybePatient);
 
-                    if (maybePatient.IsSensitive)
-                    {
-                        if (isAuthenticatedUserWithRole)
-                        {
-                            return maybePatient;
-                        }
-
-                        throw new ExternalOptOutPatientOrchestrationException(
-                            message: "The patient is marked as sensitive.");
-                    }
-
-                    Patient redactedPatient = maybePatient.Redact();
-
-                    return redactedPatient;
+                    return maybePatient;
                 }
             });
 

@@ -2,33 +2,33 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using FluentAssertions;
-using ISL.Providers.PDS.Abstractions.Models;
-using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
 {
     public partial class PdsServiceTests
     {
         [Fact]
-        public void ShouldThrowNullPatientBundleExceptionOnMapToPatientsFromPatientBundleWhenNull()
+        public void ShouldThrowNullBundleJsonExceptionOnMapToPatientsFromBundleJsonWhenNull()
         {
             // given
-            PatientBundle nullPatientBundle = null;
+            string nullBundleJson = null;
 
-            var expectedNullPatientBundleException =
-                new NullPatientBundleException(message: "Patient bundle is null.");
+            var expectedArgumentNullException =
+                new ArgumentNullException("jsonString", "JSON string is null or empty.");
 
             // when
-            NullPatientBundleException actualNullPatientBundleException =
-                 Assert.Throws<NullPatientBundleException>(() =>
-                    pdsService.MapToPatientsFromPatientBundle(nullPatientBundle));
+            ArgumentNullException actualArgumentNullException =
+                 Assert.Throws<ArgumentNullException>(() =>
+                    pdsService.MapToPatientsFromBundleJson(nullBundleJson));
 
             // then
-            actualNullPatientBundleException.Should().BeEquivalentTo(
-                expectedNullPatientBundleException);
+            actualArgumentNullException.Should().BeEquivalentTo(
+                expectedArgumentNullException);
 
             this.pdsBrokerMock.VerifyNoOtherCalls();
+            this.nhsDigitalApiBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }

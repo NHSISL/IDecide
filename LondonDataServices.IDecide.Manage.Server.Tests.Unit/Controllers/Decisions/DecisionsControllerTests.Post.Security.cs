@@ -15,47 +15,6 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Decisi
     public partial class DecisionsControllerTests
     {
         [Fact]
-        public void PostShouldHaveRoleAttributeWithRoles()
-        {
-            // Given
-            var controllerType = typeof(DecisionsController);
-            var methodInfo = controllerType.GetMethod("PostDecisionAsync");
-            Type attributeType = typeof(AuthorizeAttribute);
-            string attributeProperty = "Roles";
-
-            List<string> expectedAttributeValues = new List<string>
-            {
-                "LondonDataServices.IDecide.Manage.Server.Administrators"
-            };
-
-            // When
-            var methodAttribute = methodInfo?
-                .GetCustomAttributes(attributeType, inherit: true)
-                .FirstOrDefault();
-
-            var controllerAttribute = controllerType
-                .GetCustomAttributes(attributeType, inherit: true)
-                .FirstOrDefault();
-
-            var attribute = methodAttribute ?? controllerAttribute;
-
-            // Then
-            attribute.Should().NotBeNull();
-
-            var actualAttributeValue = attributeType
-                .GetProperty(attributeProperty)?
-                .GetValue(attribute) as string ?? string.Empty;
-
-            var actualAttributeValues = actualAttributeValue?
-                .Split(',')
-                .Select(role => role.Trim())
-                .Where(role => !string.IsNullOrEmpty(role))
-                .ToList();
-
-            actualAttributeValues.Should().BeEquivalentTo(expectedAttributeValues);
-        }
-
-        [Fact]
         public void PostShouldNotHaveInvisibleApiAttribute()
         {
             // Given

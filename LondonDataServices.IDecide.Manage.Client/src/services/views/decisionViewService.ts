@@ -52,25 +52,25 @@ export const decisionViewService = {
         const [mappedDecisions, setMappedDecisions] = useState<Array<DecisionView>>();
 
         useEffect(() => {
-            if (response.data) {
+            if (response.data?.pages?.[0]?.data) {
                 const decisions = response.data.pages[0].data.map((decision: Decision) =>
-                        new DecisionView({
-                            id: decision.id,
-                            patientId: decision.patientId,
-                            decisionTypeId: decision.decisionTypeId,
-                            decisionChoice: decision.decisionChoice,
-                            createdBy: decision.createdBy,
-                            createdDate: decision.createdDate,
-                            updatedBy: decision.updatedBy,
-                            updatedDate: decision.updatedDate,
-                            responsiblePersonGivenName: decision.responsiblePersonGivenName,
-                            responsiblePersonSurname: decision.responsiblePersonSurname,
-                            responsiblePersonRelationship: decision.responsiblePersonRelationship,
-                            decisionType: decision.decisionType,
-                            patient: decision.patient,
-                            consumerAdoptions: decision.consumerAdoptions
-                        })
-                    );
+                    new DecisionView({
+                        id: decision.id,
+                        patientId: decision.patientId,
+                        decisionTypeId: decision.decisionTypeId,
+                        decisionChoice: decision.decisionChoice,
+                        createdBy: decision.createdBy,
+                        createdDate: decision.createdDate,
+                        updatedBy: decision.updatedBy,
+                        updatedDate: decision.updatedDate,
+                        responsiblePersonGivenName: decision.responsiblePersonGivenName,
+                        responsiblePersonSurname: decision.responsiblePersonSurname,
+                        responsiblePersonRelationship: decision.responsiblePersonRelationship,
+                        decisionType: decision.decisionType,
+                        patient: decision.patient,
+                        consumerAdoptions: decision.consumerAdoptions
+                    })
+                );
 
                 setMappedDecisions(decisions);
             }

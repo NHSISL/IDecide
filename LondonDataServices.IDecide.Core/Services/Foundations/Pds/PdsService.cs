@@ -7,24 +7,31 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Hl7.Fhir.Model;
+using Hl7.Fhir.Serialization;
 using ISL.Providers.PDS.Abstractions.Models;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Brokers.Pds;
+using LondonDataServices.IDecide.Core.Brokers.NhsDigitalApi;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
 using Patient = LondonDataServices.IDecide.Core.Models.Foundations.Patients.Patient;
+using System.Threading;
+using NhsDigitalSearchCriteria = NHSDigital.ApiPlatform.Sdk.Models.Foundations.Pds.SearchCriteria;
 
 namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
 {
     public partial class PdsService : IPdsService
     {
         private readonly IPdsBroker pdsBroker;
+        private readonly INhsDigitalApiBroker nhsDigitalApiBroker;
         private readonly ILoggingBroker loggingBroker;
 
         public PdsService(
             IPdsBroker pdsBroker,
+            INhsDigitalApiBroker nhsDigitalApiBroker,
             ILoggingBroker loggingBroker)
         {
             this.pdsBroker = pdsBroker;
+            this.nhsDigitalApiBroker = nhsDigitalApiBroker;
             this.loggingBroker = loggingBroker;
         }
 
@@ -34,21 +41,18 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
                 ValidatePatientLookupIsNotNull(patientLookup);
                 SearchCriteria searchCriteria = patientLookup.SearchCriteria;
 
-                PatientBundle patientBundle = await this.pdsBroker.PatientLookupByDetailsAsync(
-                    searchCriteria.FirstName,
-                    searchCriteria.Surname,
-                    searchCriteria.Gender,
-                    searchCriteria.Postcode,
-                    searchCriteria.DateOfBirth,
-                    searchCriteria.DateOfDeath,
-                    searchCriteria.RegisteredGpPractice,
-                    searchCriteria.Email,
-                    searchCriteria.PhoneNumber);
+                NhsDigitalSearchCriteria nhsDigitalSearchCriteria =
+                    MapToNhsDigitalSearchCriteria(searchCriteria);
+
+                string pdsJsonResponse =
+                    await this.nhsDigitalApiBroker.SearchPatientPDSAsync(
+                        nhsDigitalSearchCriteria,
+                        CancellationToken.None);
 
                 PatientLookup updatedPatientLookup = new PatientLookup
                 {
                     SearchCriteria = searchCriteria,
-                    Patients = MapToPatientsFromPatientBundle(patientBundle)
+                    Patients = MapToPatientsFromBundleJson(pdsJsonResponse)
                 };
 
                 return updatedPatientLookup;
@@ -58,20 +62,46 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
             TryCatch(async () =>
             {
                 ValidatePatientLookupByNhsNumberArguments(nhsNumber);
-                Hl7.Fhir.Model.Patient fhirPatient = await this.pdsBroker.PatientLookupByNhsNumberAsync(nhsNumber);
-                Patient patient = MapToPatientFromFhirPatient(fhirPatient);
+
+                NhsDigitalSearchCriteria nhsDigitalSearchCriteria = new NhsDigitalSearchCriteria
+                {
+                    NhsNumber = nhsNumber
+                };
+
+                string pdsJsonResponse =
+                   await this.nhsDigitalApiBroker.SearchPatientPDSAsync(
+                       nhsDigitalSearchCriteria,
+                       CancellationToken.None);
+
+                List<Patient> patients = MapToPatientsFromPatientBundle(pdsJsonResponse);
+                Patient patient = patients.FirstOrDefault();
 
                 return patient;
             });
 
-        virtual internal List<Patient> MapToPatientsFromPatientBundle(PatientBundle patientBundle)
+        virtual internal List<Patient> MapToPatientsFromPatientBundle(string patientBundle)
         {
-            ValidatePatientBundleIsNotNull(patientBundle);
+            ValidateJsonStringIsNotNull(patientBundle);
+            var parser = new FhirJsonParser();
+            Hl7.Fhir.Model.Patient fhirPatient = parser.Parse<Hl7.Fhir.Model.Patient>(patientBundle);
+
+            Patient patient = MapToPatientFromFhirPatient(fhirPatient);
+
+            return new List<Patient> { patient };
+        }
+
+        virtual internal List<Patient> MapToPatientsFromBundleJson(string bundleJson)
+        {
+            ValidateJsonStringIsNotNull(bundleJson);
+            var parser = new FhirJsonParser();
+            Bundle bundle = parser.Parse<Bundle>(bundleJson);
+
             List<Patient> patients = new List<Patient>();
 
-            foreach (Hl7.Fhir.Model.Patient bundlePatient in patientBundle.Patients)
+            foreach (Bundle.EntryComponent entry in bundle.Entry)
             {
-                Patient patient = MapToPatientFromFhirPatient(bundlePatient);
+                Hl7.Fhir.Model.Patient fhirPatient = (Hl7.Fhir.Model.Patient)entry.Resource;
+                Patient patient = MapToPatientFromFhirPatient(fhirPatient);
                 patients.Add(patient);
             }
 
@@ -224,6 +254,20 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Pds
                 .FirstOrDefault();
 
             return title;
+        }
+
+        virtual internal NhsDigitalSearchCriteria MapToNhsDigitalSearchCriteria(SearchCriteria searchCriteria)
+        {
+            NhsDigitalSearchCriteria nhsDigitalSearchCriteria = new NhsDigitalSearchCriteria
+            {
+                NhsNumber = searchCriteria.NhsNumber,
+                FirstName = searchCriteria.FirstName,
+                Surname = searchCriteria.Surname,
+                Postcode = searchCriteria.Postcode,
+                DateOfBirth = searchCriteria.DateOfBirth,
+            };
+
+            return nhsDigitalSearchCriteria;
         }
     }
 }

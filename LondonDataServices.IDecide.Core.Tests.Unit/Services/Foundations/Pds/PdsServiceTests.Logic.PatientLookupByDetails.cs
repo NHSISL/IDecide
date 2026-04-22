@@ -3,15 +3,17 @@
 // ---------------------------------------------------------
 
 using System.Collections.Generic;
+using System.Threading;
 using FluentAssertions;
 using Force.DeepCloner;
 using Hl7.Fhir.Model;
-using ISL.Providers.PDS.Abstractions.Models;
+using Hl7.Fhir.Serialization;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
 using LondonDataServices.IDecide.Core.Services.Foundations.Pds;
 using Moq;
 using Patient = LondonDataServices.IDecide.Core.Models.Foundations.Patients.Patient;
 using Task = System.Threading.Tasks.Task;
+using NhsDigitalSearchCriteria = NHSDigital.ApiPlatform.Sdk.Models.Foundations.Pds.SearchCriteria;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
 {
@@ -26,7 +28,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
             PatientLookup randomPatientLookup = GetRandomSearchPatientLookup(inputSurname);
             PatientLookup inputPatientLookup = randomPatientLookup.DeepClone();
             Bundle randomBundle = CreateRandomBundle(inputSurname);
-            PatientBundle outputPatientBundle = CreateRandomPatientBundle(randomBundle);
+            var serializer = new FhirJsonSerializer();
+            string bundleJson = serializer.SerializeToString(randomBundle);
             PatientLookup updatedPatientLookup = randomPatientLookup.DeepClone();
             Patient mappedPatient = GetRandomPatient(inputSurname);
             List<Patient> mappedPatients = new List<Patient> { mappedPatient };
@@ -35,25 +38,19 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
 
             var pdsServiceMock = new Mock<PdsService>(
                 this.pdsBrokerMock.Object,
+                this.nhsDigitalApiBrokerMock.Object,
                 this.loggingBrokerMock.Object)
             { CallBase = true };
 
             pdsServiceMock.Setup(service =>
-                service.MapToPatientsFromPatientBundle(outputPatientBundle))
+                service.MapToPatientsFromBundleJson(bundleJson))
                     .Returns(mappedPatients);
 
-            this.pdsBrokerMock.Setup(broker =>
-                broker.PatientLookupByDetailsAsync(
-                    string.Empty,
-                    inputPatientLookup.SearchCriteria.Surname,
-                    string.Empty,
-                    string.Empty,
-                    string.Empty,
-                    string.Empty,
-                    string.Empty,
-                    string.Empty,
-                    string.Empty))
-                        .ReturnsAsync(outputPatientBundle);
+            this.nhsDigitalApiBrokerMock.Setup(broker =>
+                broker.SearchPatientPDSAsync(
+                    It.IsAny<NhsDigitalSearchCriteria>(),
+                    CancellationToken.None))
+                        .ReturnsAsync(bundleJson);
 
             PdsService pdsService = pdsServiceMock.Object;
 
@@ -64,22 +61,16 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
             actualPatientLookup.Should().BeEquivalentTo(expectedPatientLookup);
 
             pdsServiceMock.Verify(service =>
-                service.MapToPatientsFromPatientBundle(outputPatientBundle),
+                service.MapToPatientsFromBundleJson(bundleJson),
                     Times.Once());
 
-            this.pdsBrokerMock.Verify(broker =>
-                broker.PatientLookupByDetailsAsync(
-                    string.Empty,
-                    inputPatientLookup.SearchCriteria.Surname,
-                    string.Empty,
-                    string.Empty,
-                    string.Empty,
-                    string.Empty,
-                    string.Empty,
-                    string.Empty,
-                    string.Empty),
+            this.nhsDigitalApiBrokerMock.Verify(broker =>
+                broker.SearchPatientPDSAsync(
+                    It.IsAny<NhsDigitalSearchCriteria>(),
+                    CancellationToken.None),
                         Times.Once);
 
+            this.nhsDigitalApiBrokerMock.VerifyNoOtherCalls();
             this.pdsBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
