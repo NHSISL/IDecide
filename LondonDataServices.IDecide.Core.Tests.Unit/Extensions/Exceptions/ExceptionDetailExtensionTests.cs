@@ -3,7 +3,6 @@
 // ---------------------------------------------------------
 
 using Tynamix.ObjectFiller;
-using Xunit.Abstractions;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Extensions
 {
