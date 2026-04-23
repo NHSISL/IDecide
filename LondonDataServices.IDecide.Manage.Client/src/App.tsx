@@ -3,7 +3,6 @@ import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
 import './App.css';
 import Root from './components/root';
 import ErrorPage from './errors/error';
-import { MsalProvider } from '@azure/msal-react';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClientGlobalOptions } from './brokers/apiBroker.globals';
 import { Home } from './pages/home';
@@ -22,7 +21,7 @@ import { PatientDetailsSearchPage } from './pages/patientDetailsSearchPage';
 import { ThankyouPage } from './pages/thankyouPage';
 import { ConsumersPage } from './pages/ConsumersPage';
 
-function App({ instance }: any) {
+function App() {
 
     const router = createBrowserRouter([
         {
@@ -99,8 +98,6 @@ function App({ instance }: any) {
             <ToastBroker.Container />
         </>
     );
-
-
 }
 
 export default App;
