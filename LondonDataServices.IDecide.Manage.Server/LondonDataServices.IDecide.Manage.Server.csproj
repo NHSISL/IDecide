@@ -6,7 +6,7 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<SpaRoot>..\LondonDataServices.IDecide.Manage.Client</SpaRoot>
 		<SpaProxyLaunchCommand>npm run dev</SpaProxyLaunchCommand>
-		<SpaProxyServerUrl>https://localhost:6073</SpaProxyServerUrl>
+		<SpaProxyServerUrl>https://localhost:5174</SpaProxyServerUrl>
 		<Version>1.0.0.2</Version>
 		<AssemblyVersion>1.0.0.2</AssemblyVersion>
 		<FileVersion>1.0.0.2</FileVersion>
@@ -28,7 +28,9 @@
 		<PackageReference Include="Microsoft.AspNetCore.SpaProxy">
 			<Version>10.0.6</Version>
 		</PackageReference>
+		<PackageReference Include="Microsoft.Extensions.Caching.SqlServer" Version="10.0.6" />
 		<PackageReference Include="Microsoft.Identity.Web" Version="4.7.0" />
+		<PackageReference Include="NHSDigital.ApiPlatform.Sdk.AspNetCore" Version="0.2.0.2" />
 		<PackageReference Include="NHSISL.CsvHelperClient" Version="1.1.0" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.7" />
 		<PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.6" />
