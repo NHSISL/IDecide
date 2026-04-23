@@ -4,7 +4,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
+using LondonDataServices.IDecide.Portal.Server.Tests.Integration.Models.NhsLoginUserInfo;
 using LondonDataServices.IDecide.Portal.Server.Tests.Integration.Models.Patients;
 
 namespace LondonDataServices.IDecide.Portal.Server.Tests.Integration.Brokers
@@ -20,12 +22,22 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Integration.Brokers
             await this.authenticatedApiFactoryClient.GetContentAsync<List<Patient>>(patientsRelativeUrl);
 
         public async ValueTask<Patient> GetPatientByIdAsync(Guid patientId) =>
-            await this.authenticatedApiFactoryClient.GetContentAsync<Patient>($"{patientsRelativeUrl}/{patientId}");
+            await this.authenticatedApiFactoryClient.GetContentAsync<Patient>(
+                $"{patientsRelativeUrl}/{patientId}");
 
         public async ValueTask<Patient> PutPatientAsync(Patient patient) =>
             await this.authenticatedApiFactoryClient.PutContentAsync(patientsRelativeUrl, patient);
 
         public async ValueTask<Patient> DeletePatientByIdAsync(Guid patientId) =>
-            await this.authenticatedApiFactoryClient.DeleteContentAsync<Patient>($"{patientsRelativeUrl}/{patientId}");
+            await this.authenticatedApiFactoryClient.DeleteContentAsync<Patient>(
+                $"{patientsRelativeUrl}/{patientId}");
+
+        public async ValueTask<NhsLoginUserInfo> GetPatientInfoAsync()
+        {
+            HttpResponseMessage response =
+                await this.authenticatedHttpClient.GetAsync($"{patientsRelativeUrl}/patientInfo");
+
+            return await DeserializeContentAsync<NhsLoginUserInfo>(response.Content);
+        }
     }
 }

@@ -3,6 +3,8 @@
 // ---------------------------------------------------------
 
 using System.Net.Http;
+using System.Text.Json;
+using System.Threading.Tasks;
 using Attrify.InvisibleApi.Models;
 using Microsoft.Extensions.DependencyInjection;
 using RESTFulSense.Clients;
@@ -19,6 +21,11 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Integration.Brokers
         private readonly HttpClient anonymousHttpClient;
         private readonly IRESTFulApiFactoryClient anonymousApiFactoryClient;
 
+        private static readonly JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+
         public ApiBroker()
         {
             authenticatedWebApplicationFactory = new TestWebApplicationFactory<Program>(true);
@@ -33,6 +40,13 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Integration.Brokers
             anonymousWebApplicationFactory = new TestWebApplicationFactory<Program>(false);
             anonymousHttpClient = anonymousWebApplicationFactory.CreateClient();
             anonymousApiFactoryClient = new RESTFulApiFactoryClient(anonymousHttpClient);
+        }
+
+        private static async ValueTask<T> DeserializeContentAsync<T>(HttpContent content)
+        {
+            string jsonContent = await content.ReadAsStringAsync();
+
+            return JsonSerializer.Deserialize<T>(jsonContent, jsonSerializerOptions);
         }
     }
 }
