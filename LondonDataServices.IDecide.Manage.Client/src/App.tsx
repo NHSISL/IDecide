@@ -79,6 +79,10 @@ function App({ instance }: any) {
                     element: <ConsumersPage />
                 },
                 {
+                    path: "unauthorised",
+                    element: <ErrorPage />
+                },
+                {
                     index: true,
                     element: <Navigate to="/home" />
                 },
@@ -88,13 +92,11 @@ function App({ instance }: any) {
 
     return (
         <>
-            <MsalProvider instance={instance}>
-                <QueryClientProvider client={queryClientGlobalOptions}>
-                    <RouterProvider router={router} />
-                    <ReactQueryDevtools initialIsOpen={false} />
-                </QueryClientProvider>
-                <ToastBroker.Container />
-            </MsalProvider>
+            <QueryClientProvider client={queryClientGlobalOptions}>
+                <RouterProvider router={router} />
+                <ReactQueryDevtools initialIsOpen={false} />
+            </QueryClientProvider>
+            <ToastBroker.Container />
         </>
     );
 

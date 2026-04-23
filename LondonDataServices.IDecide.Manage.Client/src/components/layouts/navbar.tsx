@@ -1,8 +1,11 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars} from '@fortawesome/free-solid-svg-icons';
-import { Button, Container, Navbar } from "react-bootstrap";
+import { Button, Container, Navbar, NavDropdown } from "react-bootstrap";
 import Login from '../securitys/login';
+import { useAuth } from '../../hooks/useAuth';
+import { authService } from '../../services/foundations/authService';
+import { UserProfile } from '../securitys/userProfile';
 
 interface NavbarComponentProps {
     toggleSidebar: () => void;
@@ -10,6 +13,18 @@ interface NavbarComponentProps {
 }
 
 const NavbarComponent: React.FC<NavbarComponentProps> = ({ toggleSidebar, showMenuButton }) => {
+    const { sessionData } = useAuth();
+    const logoutMutation = authService.useLogout();
+
+    const handleLogout = async () => {
+        try {
+            await logoutMutation.mutateAsync();
+            window.location.href = '/';
+        } catch (error) {
+            console.error('Logout failed:', error);
+            window.location.href = '/';
+        }
+    };
 
     return (
         <Navbar className="bg-light" sticky="top">
@@ -25,8 +40,16 @@ const NavbarComponent: React.FC<NavbarComponentProps> = ({ toggleSidebar, showMe
                         Opt-Out Management Portal
                     </span>
                 </Navbar.Brand>
+
                 <Navbar.Text>
-                    <Login />
+                    <NavDropdown
+                        title={sessionData?.name || 'User'}
+                        id="collasible-nav-dropdown"
+                        className="me-3"
+                    >
+                        <NavDropdown.Item onClick={handleLogout}>Sign out</NavDropdown.Item>
+                        <UserProfile />
+                    </NavDropdown>
                 </Navbar.Text>
             </Container>
         </Navbar>
