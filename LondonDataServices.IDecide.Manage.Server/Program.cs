@@ -53,8 +53,6 @@ using LondonDataServices.IDecide.Core.Services.Orchestrations.Consumers;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
 using LondonDataServices.IDecide.Manage.Server.Data;
-using LondonDataServices.IDecide.Manage.Server.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
@@ -105,7 +103,6 @@ namespace LondonDataServices.IDecide.Manage.Server
             IConfiguration configuration,
             InvisibleApiKey invisibleApiKey)
         {
-            // Load settings from launchSettings.json (for testing)
             var projectDir = Directory.GetCurrentDirectory();
             var launchSettingsPath = Path.Combine(projectDir, "Properties", "launchSettings.json");
 
@@ -153,7 +150,6 @@ namespace LondonDataServices.IDecide.Manage.Server
             // Add services to the container.
             var azureAdOptions = builder.Configuration.GetSection("AzureAd");
 
-            // Configure dual authentication: JWT for API calls and Cookie for BFF pattern
             builder.Services.AddAuthentication("bff-cookie")
                 .AddCookie("bff-cookie", options =>
                 {
@@ -204,8 +200,7 @@ namespace LondonDataServices.IDecide.Manage.Server
             }
 
             builder.Services.AddSwaggerGen();
-            builder.Services.AddScoped<ISecureTokenStorage, SecureTokenStorage>();
-            builder.Services.AddScoped<ITokenService, TokenService>();
+            //builder.Services.AddScoped<ISecureTokenStorage, SecureTokenStorage>();
             builder.Services.AddSingleton(invisibleApiKey);
             builder.Services.AddAuthorization();
             builder.Services.AddDbContext<StorageBroker>();
@@ -226,8 +221,6 @@ namespace LondonDataServices.IDecide.Manage.Server
             AddFoundationServices(builder.Services);
             AddOrchestrationServices(builder.Services, builder.Configuration);
             AddClients(builder.Services);
-            //  AddProcessingServices(builder.Services);
-            //  AddCoordinationServices(builder.Services, builder.Configuration);
 
             // Register IConfiguration to be available for dependency injection
             builder.Services.AddSingleton<IConfiguration>(builder.Configuration);

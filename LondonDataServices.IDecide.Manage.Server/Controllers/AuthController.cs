@@ -14,7 +14,6 @@ using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Brokers.Storages.Sql;
 using LondonDataServices.IDecide.Manage.Server.Data;
 using LondonDataServices.IDecide.Manage.Server.Models;
-using LondonDataServices.IDecide.Manage.Server.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -29,26 +28,16 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
     [Route("[controller]")]
     public class AuthController : Controller
     {
-        private readonly IHttpClientFactory httpClientFactory;
-        private readonly IConfiguration configuration;
         private readonly ILogger<AuthController> logger;
-        private readonly ISecureTokenStorage secureTokenStorage;
         private readonly IApiPlatformClient apiPlatformClient;
         private readonly ApplicationDbContext context;
 
         public AuthController(
-            IHttpClientFactory httpClientFactory,
-            IConfiguration configuration,
             ILogger<AuthController> logger,
-            ISecureTokenStorage secureTokenStorage,
             IApiPlatformClient apiPlatformClient,
-            StorageBroker storageBroker,
             ApplicationDbContext context)
         {
-            this.httpClientFactory = httpClientFactory;
-            this.configuration = configuration;
             this.logger = logger;
-            this.secureTokenStorage = secureTokenStorage;
             this.apiPlatformClient = apiPlatformClient;
             this.context = context;
         }
