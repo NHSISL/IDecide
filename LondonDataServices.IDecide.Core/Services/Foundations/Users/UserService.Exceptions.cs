@@ -42,7 +42,8 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Users
                 var failedUserStorageException =
                     new FailedUserStorageException(
                         message: "Failed user storage error occurred, contact support.",
-                        innerException: sqlException);
+                        innerException: sqlException,
+                        data: sqlException.Data);
 
                 throw await CreateAndLogCriticalDependencyException(failedUserStorageException);
             }
@@ -51,7 +52,8 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Users
                 var alreadyExistsUserException =
                     new AlreadyExistsUserException(
                         message: "User with the same Id already exists.",
-                        innerException: duplicateKeyException);
+                        innerException: duplicateKeyException,
+                        data: duplicateKeyException.Data);
 
                 throw await CreateAndLogDependencyValidationException(alreadyExistsUserException);
             }
@@ -60,16 +62,18 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Users
                 var failedUserStorageException =
                     new FailedUserStorageException(
                         message: "Failed user storage error occurred, contact support.",
-                        innerException: foreignKeyConstraintConflictException);
+                        innerException: foreignKeyConstraintConflictException,
+                        data: foreignKeyConstraintConflictException.Data);
 
-                throw await CreateAndLogDependencyValidationException(failedUserStorageException);
+                throw await CreateAndLogDependencyException(failedUserStorageException);
             }
             catch (DbUpdateConcurrencyException dbUpdateConcurrencyException)
             {
                 var lockedUserException =
                     new LockedUserException(
                         message: "Locked user record exception, please try again later",
-                        innerException: dbUpdateConcurrencyException);
+                        innerException: dbUpdateConcurrencyException,
+                        data: dbUpdateConcurrencyException.Data);
 
                 throw await CreateAndLogDependencyValidationException(lockedUserException);
             }
@@ -78,7 +82,8 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Users
                 var failedUserStorageException =
                     new FailedUserStorageException(
                         message: "Failed user storage error occurred, contact support.",
-                        innerException: databaseUpdateException);
+                        innerException: databaseUpdateException,
+                        data: databaseUpdateException.Data);
 
                 throw await CreateAndLogDependencyException(failedUserStorageException);
             }
@@ -102,9 +107,10 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.Users
             catch (SqlException sqlException)
             {
                 var failedUserStorageException =
-                    new FailedUserStorageException(
-                        message: "Failed user storage error occurred, contact support.",
-                        innerException: sqlException);
+                     new FailedUserStorageException(
+                         message: "Failed user storage error occurred, contact support.",
+                         innerException: sqlException,
+                         data: sqlException.Data);
 
                 throw await CreateAndLogCriticalDependencyException(failedUserStorageException);
             }
