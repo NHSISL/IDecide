@@ -28,8 +28,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Users
                     innerException: nullUserException);
 
             this.securityAuditBrokerMock.Setup(broker =>
-                    broker.ApplyModifyAuditValuesAsync(nullUser))
-                .ReturnsAsync(nullUser);
+                broker.ApplyModifyAuditValuesAsync(nullUser))
+                    .ReturnsAsync(nullUser);
 
             // when
             ValueTask<User> modifyUserTask = this.userService.ModifyUserAsync(nullUser);
@@ -42,12 +42,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Users
                 .BeEquivalentTo(expectedUserValidationException);
 
             this.securityAuditBrokerMock.Verify(broker =>
-                    broker.ApplyModifyAuditValuesAsync(nullUser),
-                Times.Once);
+                broker.ApplyModifyAuditValuesAsync(nullUser),
+                    Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-                    broker.LogErrorAsync(It.Is(SameExceptionAs(expectedUserValidationException))),
-                Times.Once);
+                broker.LogErrorAsync(It.Is(SameExceptionAs(expectedUserValidationException))),
+                    Times.Once);
 
             this.securityAuditBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
@@ -121,12 +121,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Users
                     innerException: invalidUserException);
 
             this.securityAuditBrokerMock.Setup(broker =>
-                    broker.ApplyModifyAuditValuesAsync(It.IsAny<User>()))
-                .ReturnsAsync(invalidUser);
+                broker.ApplyModifyAuditValuesAsync(It.IsAny<User>()))
+                    .ReturnsAsync(invalidUser);
 
             this.securityAuditBrokerMock.Setup(broker =>
-                    broker.GetCurrentUserIdAsync())
-                .ReturnsAsync(randomUserId);
+                broker.GetCurrentUserIdAsync())
+                    .ReturnsAsync(randomUserId);
 
             // when
             ValueTask<User> modifyUserTask = this.userService.ModifyUserAsync(invalidUser);
@@ -139,24 +139,24 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Users
                 .BeEquivalentTo(expectedUserValidationException);
 
             this.securityAuditBrokerMock.Verify(broker =>
-                    broker.ApplyModifyAuditValuesAsync(It.IsAny<User>()),
-                Times.Once);
+                broker.ApplyModifyAuditValuesAsync(It.IsAny<User>()),
+                    Times.Once);
 
             this.securityAuditBrokerMock.Verify(broker =>
-                    broker.GetCurrentUserIdAsync(),
-                Times.Once);
+                broker.GetCurrentUserIdAsync(),
+                    Times.Once);
 
             this.dateTimeBrokerMock.Verify(broker =>
-                    broker.GetCurrentDateTimeOffsetAsync(),
-                Times.Once);
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-                    broker.LogErrorAsync(It.Is(SameExceptionAs(expectedUserValidationException))),
-                Times.Once);
+                broker.LogErrorAsync(It.Is(SameExceptionAs(expectedUserValidationException))),
+                    Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                    broker.UpdateUserAsync(It.IsAny<User>()),
-                Times.Never);
+                broker.UpdateUserAsync(It.IsAny<User>()),
+                    Times.Never);
 
             this.securityAuditBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
@@ -185,20 +185,20 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Users
                     innerException: notFoundUserException);
 
             this.securityAuditBrokerMock.Setup(broker =>
-                    broker.ApplyModifyAuditValuesAsync(inputUser))
-                .ReturnsAsync(auditAppliedUser);
+                broker.ApplyModifyAuditValuesAsync(inputUser))
+                    .ReturnsAsync(auditAppliedUser);
 
             this.securityAuditBrokerMock.Setup(broker =>
-                    broker.GetCurrentUserIdAsync())
-                .ReturnsAsync(randomUserId);
+                broker.GetCurrentUserIdAsync())
+                    .ReturnsAsync(randomUserId);
 
             this.dateTimeBrokerMock.Setup(broker =>
-                    broker.GetCurrentDateTimeOffsetAsync())
-                .ReturnsAsync(randomDateTimeOffset);
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(randomDateTimeOffset);
 
             this.storageBrokerMock.Setup(broker =>
-                    broker.SelectUserByIdAsync(inputUser.Id))
-                .ReturnsAsync(noUser);
+                broker.SelectUserByIdAsync(inputUser.Id))
+                    .ReturnsAsync(noUser);
 
             // when
             ValueTask<User> modifyUserTask = this.userService.ModifyUserAsync(inputUser);
@@ -211,28 +211,28 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Users
                 .BeEquivalentTo(expectedUserValidationException);
 
             this.securityAuditBrokerMock.Verify(broker =>
-                    broker.ApplyModifyAuditValuesAsync(inputUser),
-                Times.Once);
+                broker.ApplyModifyAuditValuesAsync(inputUser),
+                    Times.Once);
 
             this.securityAuditBrokerMock.Verify(broker =>
-                    broker.GetCurrentUserIdAsync(),
-                Times.Once);
+                broker.GetCurrentUserIdAsync(),
+                    Times.Once);
 
             this.dateTimeBrokerMock.Verify(broker =>
-                    broker.GetCurrentDateTimeOffsetAsync(),
-                Times.Once);
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                    broker.SelectUserByIdAsync(inputUser.Id),
-                Times.Once);
+                broker.SelectUserByIdAsync(inputUser.Id),
+                    Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-                    broker.LogErrorAsync(It.Is(SameExceptionAs(expectedUserValidationException))),
-                Times.Once);
+                broker.LogErrorAsync(It.Is(SameExceptionAs(expectedUserValidationException))),
+                    Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                    broker.UpdateUserAsync(It.IsAny<User>()),
-                Times.Never);
+                broker.UpdateUserAsync(It.IsAny<User>()),
+                    Times.Never);
 
             this.securityAuditBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();

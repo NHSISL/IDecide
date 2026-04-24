@@ -43,12 +43,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Users
                 .BeEquivalentTo(expectedUserValidationException);
 
             this.loggingBrokerMock.Verify(broker =>
-                    broker.LogErrorAsync(It.Is(SameExceptionAs(expectedUserValidationException))),
-                Times.Once);
+                broker.LogErrorAsync(It.Is(SameExceptionAs(expectedUserValidationException))),
+                    Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                    broker.SelectUserByIdAsync(It.IsAny<Guid>()),
-                Times.Never);
+                broker.SelectUserByIdAsync(It.IsAny<Guid>()),
+                    Times.Never);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
@@ -87,12 +87,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Users
                 .BeEquivalentTo(expectedUserValidationException);
 
             this.storageBrokerMock.Verify(broker =>
-                    broker.SelectUserByIdAsync(someUserId),
-                Times.Once);
+                broker.SelectUserByIdAsync(someUserId),
+                    Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-                    broker.LogErrorAsync(It.Is(SameExceptionAs(expectedUserValidationException))),
-                Times.Once);
+                broker.LogErrorAsync(It.Is(SameExceptionAs(expectedUserValidationException))),
+                    Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();

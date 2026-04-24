@@ -61,28 +61,28 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Users
             actualUser.Should().BeEquivalentTo(expectedUser);
 
             this.securityAuditBrokerMock.Verify(broker =>
-                    broker.ApplyModifyAuditValuesAsync(inputUser),
-                Times.Once);
+                broker.ApplyModifyAuditValuesAsync(inputUser),
+                    Times.Once);
 
             this.securityAuditBrokerMock.Verify(broker =>
-                    broker.GetCurrentUserIdAsync(),
-                Times.Once);
+                broker.GetCurrentUserIdAsync(),
+                    Times.Once);
 
             this.dateTimeBrokerMock.Verify(broker =>
-                    broker.GetCurrentDateTimeOffsetAsync(),
-                Times.Once);
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                    broker.SelectUserByIdAsync(inputUser.Id),
-                Times.Once);
+                broker.SelectUserByIdAsync(inputUser.Id),
+                    Times.Once);
 
             this.securityAuditBrokerMock.Verify(broker =>
-                    broker.EnsureAddAuditValuesRemainsUnchangedOnModifyAsync(auditAppliedUser, storageUser),
-                Times.Once);
+                broker.EnsureAddAuditValuesRemainsUnchangedOnModifyAsync(auditAppliedUser, storageUser),
+                    Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                    broker.UpdateUserAsync(afterAuditUser),
-                Times.Once);
+                broker.UpdateUserAsync(afterAuditUser),
+                    Times.Once);
 
             this.securityAuditBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();

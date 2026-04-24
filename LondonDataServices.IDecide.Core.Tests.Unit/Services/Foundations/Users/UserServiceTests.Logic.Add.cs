@@ -52,20 +52,20 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Users
             actualUser.Should().BeEquivalentTo(expectedUser);
 
             this.securityAuditBrokerMock.Verify(broker =>
-                    broker.ApplyAddAuditValuesAsync(inputUser),
-                Times.Once);
+                broker.ApplyAddAuditValuesAsync(inputUser),
+                    Times.Once);
 
             this.securityAuditBrokerMock.Verify(broker =>
-                    broker.GetCurrentUserIdAsync(),
-                Times.Once);
+                broker.GetCurrentUserIdAsync(),
+                    Times.Once);
 
             this.dateTimeBrokerMock.Verify(broker =>
-                    broker.GetCurrentDateTimeOffsetAsync(),
-                Times.Once());
+                broker.GetCurrentDateTimeOffsetAsync(),
+                    Times.Once());
 
             this.storageBrokerMock.Verify(broker =>
-                    broker.InsertUserAsync(auditAppliedUser),
-                Times.Once);
+                broker.InsertUserAsync(auditAppliedUser),
+                    Times.Once);
 
             this.securityAuditBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();

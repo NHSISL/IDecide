@@ -37,12 +37,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Users
             actualUser.Should().BeEquivalentTo(expectedUser);
 
             this.storageBrokerMock.Verify(broker =>
-                    broker.SelectUserByIdAsync(randomUserId),
-                Times.Once);
+                broker.SelectUserByIdAsync(randomUserId),
+                    Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                    broker.DeleteUserAsync(storageUser),
-                Times.Once);
+                broker.DeleteUserAsync(storageUser),
+                    Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();

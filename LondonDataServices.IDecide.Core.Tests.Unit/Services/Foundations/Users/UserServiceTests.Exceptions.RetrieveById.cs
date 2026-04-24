@@ -32,8 +32,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Users
                     innerException: failedUserStorageException);
 
             this.storageBrokerMock.Setup(broker =>
-                    broker.SelectUserByIdAsync(someUserId))
-                .ThrowsAsync(sqlException);
+                broker.SelectUserByIdAsync(someUserId))
+                    .ThrowsAsync(sqlException);
 
             // when
             ValueTask<User> retrieveUserByIdTask = this.userService.RetrieveUserByIdAsync(someUserId);
@@ -46,12 +46,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Users
                 .BeEquivalentTo(expectedUserDependencyException);
 
             this.storageBrokerMock.Verify(broker =>
-                    broker.SelectUserByIdAsync(someUserId),
-                Times.Once);
+                broker.SelectUserByIdAsync(someUserId),
+                    Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-                    broker.LogCriticalAsync(It.Is(SameExceptionAs(expectedUserDependencyException))),
-                Times.Once);
+                broker.LogCriticalAsync(It.Is(SameExceptionAs(expectedUserDependencyException))),
+                    Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
@@ -77,8 +77,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Users
                     innerException: failedUserServiceException);
 
             this.storageBrokerMock.Setup(broker =>
-                    broker.SelectUserByIdAsync(someUserId))
-                .ThrowsAsync(serviceException);
+                broker.SelectUserByIdAsync(someUserId))
+                    .ThrowsAsync(serviceException);
 
             // when
             ValueTask<User> retrieveUserByIdTask = this.userService.RetrieveUserByIdAsync(someUserId);
@@ -91,12 +91,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Users
                 .BeEquivalentTo(expectedUserServiceException);
 
             this.storageBrokerMock.Verify(broker =>
-                    broker.SelectUserByIdAsync(someUserId),
-                Times.Once);
+                broker.SelectUserByIdAsync(someUserId),
+                    Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
-                    broker.LogErrorAsync(It.Is(SameExceptionAs(expectedUserServiceException))),
-                Times.Once);
+                broker.LogErrorAsync(It.Is(SameExceptionAs(expectedUserServiceException))),
+                    Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();

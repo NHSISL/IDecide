@@ -33,8 +33,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Users
             actualUsers.Should().BeEquivalentTo(expectedUsers);
 
             this.storageBrokerMock.Verify(broker =>
-                    broker.SelectAllUsersAsync(),
-                Times.Once);
+                broker.SelectAllUsersAsync(),
+                    Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
