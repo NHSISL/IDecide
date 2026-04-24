@@ -3,12 +3,13 @@
 // ---------------------------------------------------------
 
 using System;
+using LondonDataServices.IDecide.Core.Models.Bases;
 
 namespace LondonDataServices.IDecide.Core.Models.Foundations.Users
 {
-    public class User
+    public class User : IKey, IAudit
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string NhsIdUserUid { get; set; } = default!;
         public string Name { get; set; } = default!;
         public string Sub { get; set; } = default!;
