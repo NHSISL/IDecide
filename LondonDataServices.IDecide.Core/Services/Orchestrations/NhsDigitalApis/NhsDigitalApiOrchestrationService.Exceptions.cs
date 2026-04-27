@@ -32,6 +32,18 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis
 
                 throw nhsDigitalApiOrchestrationValidationException;
             }
+            catch (NhsDigitalApiDependencyValidationException nhsDigitalApiDependencyValidationException)
+            {
+                var nhsDigitalApiOrchestrationDependencyValidationException =
+                    new NhsDigitalApiOrchestrationDependencyValidationException(
+                        message: "NhsDigitalApi orchestration dependency validation error occurred, " +
+                            "please fix the errors and try again.",
+                        innerException: nhsDigitalApiDependencyValidationException);
+
+                await this.loggingBroker.LogErrorAsync(nhsDigitalApiOrchestrationDependencyValidationException);
+
+                throw nhsDigitalApiOrchestrationDependencyValidationException;
+            }
             catch (NhsDigitalApiValidationException nhsDigitalApiValidationException)
             {
                 var nhsDigitalApiOrchestrationDependencyValidationException =
