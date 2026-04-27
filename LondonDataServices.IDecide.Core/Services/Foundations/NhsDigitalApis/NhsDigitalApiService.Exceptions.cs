@@ -36,6 +36,17 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.NhsDigitalApis
 
                 throw await CreateAndLogDependencyValidationException(clientNhsDigitalApiException);
             }
+            catch (HttpRequestException httpRequestException)
+                when (httpRequestException.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                var serverNhsDigitalApiException =
+                    new ServerNhsDigitalApiException(
+                        message: "NhsDigitalApi server error occurred, please contact support.",
+                        innerException: httpRequestException,
+                        data: httpRequestException.Data);
+
+                throw await CreateAndLogDependencyException(serverNhsDigitalApiException);
+            }
             catch (Exception exception)
             {
                 var failedNhsDigitalApiServiceException =
@@ -73,6 +84,19 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.NhsDigitalApis
             await this.loggingBroker.LogErrorAsync(nhsDigitalApiDependencyValidationException);
 
             return nhsDigitalApiDependencyValidationException;
+        }
+
+        private async ValueTask<NhsDigitalApiDependencyException> CreateAndLogDependencyException(
+            Xeption exception)
+        {
+            var nhsDigitalApiDependencyException =
+                new NhsDigitalApiDependencyException(
+                    message: "NhsDigitalApi dependency error occurred, please contact support.",
+                    innerException: exception);
+
+            await this.loggingBroker.LogErrorAsync(nhsDigitalApiDependencyException);
+
+            return nhsDigitalApiDependencyException;
         }
 
         private async ValueTask<NhsDigitalApiServiceException> CreateAndLogServiceException(
