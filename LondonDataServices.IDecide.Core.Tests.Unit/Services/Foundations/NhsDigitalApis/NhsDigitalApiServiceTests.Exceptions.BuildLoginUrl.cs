@@ -115,5 +115,58 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.NhsDig
             this.nhsDigitalApiBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task
+            ShouldThrowDependencyExceptionOnBuildLoginUrlIfServerErrorOccursAndLogItAsync()
+        {
+            // given
+            CancellationToken inputCancellationToken = GetCancellationToken();
+
+            var httpRequestException =
+                new HttpRequestException(
+                    message: GetRandomString(),
+                    inner: null,
+                    statusCode: HttpStatusCode.InternalServerError);
+
+            var serverNhsDigitalApiException =
+                new ServerNhsDigitalApiException(
+                    message: "NhsDigitalApi server error occurred, please contact support.",
+                    innerException: httpRequestException,
+                    data: httpRequestException.Data);
+
+            var expectedNhsDigitalApiDependencyException =
+                new NhsDigitalApiDependencyException(
+                    message: "NhsDigitalApi dependency error occurred, please contact support.",
+                    innerException: serverNhsDigitalApiException);
+
+            this.nhsDigitalApiBrokerMock.Setup(broker =>
+                broker.BuildLoginUrlAsync(inputCancellationToken))
+                    .ThrowsAsync(httpRequestException);
+
+            // when
+            ValueTask<string> buildLoginUrlTask =
+                this.nhsDigitalApiService.BuildLoginUrlAsync(inputCancellationToken);
+
+            NhsDigitalApiDependencyException actualException =
+                await Assert.ThrowsAsync<NhsDigitalApiDependencyException>(
+                    testCode: buildLoginUrlTask.AsTask);
+
+            // then
+            actualException.Should().BeEquivalentTo(
+                expectedNhsDigitalApiDependencyException);
+
+            this.nhsDigitalApiBrokerMock.Verify(broker =>
+                broker.BuildLoginUrlAsync(inputCancellationToken),
+                Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedNhsDigitalApiDependencyException))),
+                Times.Once);
+
+            this.nhsDigitalApiBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
