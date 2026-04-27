@@ -13,5 +13,10 @@ namespace LondonDataServices.IDecide.Core.Brokers.NhsDigitalApi
         ValueTask<string> SearchPatientPDSAsync(
             SearchCriteria searchCriteria,
             CancellationToken cancellationToken);
+
+        ValueTask<string> BuildLoginUrlAsync(CancellationToken cancellationToken);
+        ValueTask<string> GetAccessTokenAsync(CancellationToken cancellationToken);
+        ValueTask<string> LogoutAsync(CancellationToken cancellationToken);
+        ValueTask<string> GetUserInfoAsync(string code, string state, CancellationToken cancellationToken);
     }
 }

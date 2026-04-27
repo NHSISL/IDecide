@@ -31,5 +31,40 @@ namespace LondonDataServices.IDecide.Core.Brokers.NhsDigitalApi
 
             return jsonResponse;
         }
+
+        public async ValueTask<string> BuildLoginUrlAsync(CancellationToken cancellationToken)
+        {
+            return await this.apiPlatformClient
+                .CareIdentityServiceClient
+                .BuildLoginUrlAsync(cancellationToken);
+        }
+
+        public async ValueTask<string> GetAccessTokenAsync(CancellationToken cancellationToken)
+        {
+            return await this.apiPlatformClient
+                .CareIdentityServiceClient
+                .GetAccessTokenAsync(cancellationToken);
+        }
+
+        public async ValueTask<string> LogoutAsync(CancellationToken cancellationToken)
+        {
+            await this.apiPlatformClient
+                .CareIdentityServiceClient
+                .LogoutAsync(cancellationToken);
+
+            return string.Empty;
+        }
+
+        public async ValueTask<string> GetUserInfoAsync(
+            string code,
+            string state,
+            CancellationToken cancellationToken)
+        {
+            var userInfo = await this.apiPlatformClient
+                .CareIdentityServiceClient
+                .GetUserInfoAsync(code, state, cancellationToken);
+
+            return userInfo?.ToString() ?? string.Empty;
+        }
     }
 }
