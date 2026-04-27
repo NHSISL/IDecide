@@ -5,7 +5,6 @@
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Models.Foundations.NhsDigitalApis.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.NhsDigitalApis.Exceptions;
-using Xeptions;
 
 namespace LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis
 {
@@ -32,6 +31,18 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis
 
                 throw nhsDigitalApiOrchestrationValidationException;
             }
+            catch (NhsDigitalApiValidationException nhsDigitalApiValidationException)
+            {
+                var nhsDigitalApiOrchestrationDependencyValidationException =
+                    new NhsDigitalApiOrchestrationDependencyValidationException(
+                        message: "NhsDigitalApi orchestration dependency validation error occurred, " +
+                            "please fix the errors and try again.",
+                        innerException: nhsDigitalApiValidationException);
+
+                await this.loggingBroker.LogErrorAsync(nhsDigitalApiOrchestrationDependencyValidationException);
+
+                throw nhsDigitalApiOrchestrationDependencyValidationException;
+            }
             catch (NhsDigitalApiDependencyValidationException nhsDigitalApiDependencyValidationException)
             {
                 var nhsDigitalApiOrchestrationDependencyValidationException =
@@ -55,29 +66,17 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis
 
                 throw nhsDigitalApiOrchestrationDependencyException;
             }
-            catch (NhsDigitalApiValidationException nhsDigitalApiValidationException)
+            catch (NhsDigitalApiServiceException nhsDigitalApiServiceException)
             {
-                var nhsDigitalApiOrchestrationDependencyValidationException =
-                    new NhsDigitalApiOrchestrationDependencyValidationException(
-                        message: "NhsDigitalApi orchestration dependency validation error occurred, " +
-                            "please fix the errors and try again.",
-                        innerException: nhsDigitalApiValidationException);
+                var nhsDigitalApiOrchestrationServiceException =
+                    new NhsDigitalApiOrchestrationServiceException(
+                        message: "NhsDigitalApi orchestration service error occurred, please contact support.",
+                        innerException: nhsDigitalApiServiceException);
 
-                await this.loggingBroker.LogErrorAsync(nhsDigitalApiOrchestrationDependencyValidationException);
+                await this.loggingBroker.LogErrorAsync(nhsDigitalApiOrchestrationServiceException);
 
-                throw nhsDigitalApiOrchestrationDependencyValidationException;
-            }
-                    catch (NhsDigitalApiServiceException nhsDigitalApiServiceException)
-                    {
-                        var nhsDigitalApiOrchestrationServiceException =
-                            new NhsDigitalApiOrchestrationServiceException(
-                                message: "NhsDigitalApi orchestration service error occurred, please contact support.",
-                                innerException: nhsDigitalApiServiceException);
-
-                        await this.loggingBroker.LogErrorAsync(nhsDigitalApiOrchestrationServiceException);
-
-                        throw nhsDigitalApiOrchestrationServiceException;
-                    }
-                }
+                throw nhsDigitalApiOrchestrationServiceException;
             }
         }
+    }
+}
