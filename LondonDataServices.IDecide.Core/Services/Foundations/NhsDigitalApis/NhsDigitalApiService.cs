@@ -23,6 +23,9 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.NhsDigitalApis
             this.loggingBroker = loggingBroker;
         }
 
+        public ValueTask<string> BuildLoginUrlAsync(CancellationToken cancellationToken) =>
+            throw new System.NotImplementedException();
+
         public ValueTask<string> SearchPatientPDSAsync(
             SearchCriteria searchCriteria,
             CancellationToken cancellationToken) =>
