@@ -2,7 +2,6 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
@@ -24,9 +23,13 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.NhsDigitalApis
             this.loggingBroker = loggingBroker;
         }
 
-        public ValueTask<string> SearchPatientPDSAsync(
+        public async ValueTask<string> SearchPatientPDSAsync(
             SearchCriteria searchCriteria,
-            CancellationToken cancellationToken) =>
-            throw new NotImplementedException();
+            CancellationToken cancellationToken)
+        {
+            return await this.nhsDigitalApiBroker.SearchPatientPDSAsync(
+                searchCriteria,
+                cancellationToken);
+        }
     }
 }
