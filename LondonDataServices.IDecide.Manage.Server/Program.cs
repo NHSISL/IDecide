@@ -42,6 +42,8 @@ using LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions;
 using LondonDataServices.IDecide.Core.Services.Foundations.Consumers;
 using LondonDataServices.IDecide.Core.Services.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes;
+using LondonDataServices.IDecide.Core.Brokers.NhsDigitalApi;
+using LondonDataServices.IDecide.Core.Services.Foundations.NhsDigitalApis;
 using LondonDataServices.IDecide.Core.Services.Foundations.NhsLogins;
 using LondonDataServices.IDecide.Core.Services.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
@@ -279,6 +281,7 @@ namespace LondonDataServices.IDecide.Manage.Server
             services.AddTransient<INotificationBroker, NotificationBroker>();
             services.AddTransient<IPdsBroker, PdsBroker>();
             services.AddTransient<IAuditBroker, AuditBroker>();
+            services.AddTransient<INhsDigitalApiBroker, NhsDigitalApiBroker>();
         }
 
         private static void AddFoundationServices(IServiceCollection services)
@@ -291,6 +294,7 @@ namespace LondonDataServices.IDecide.Manage.Server
             services.AddTransient<INotificationService, NotificationService>();
             services.AddTransient<IConsumerService, ConsumerService>();
             services.AddTransient<IConsumerAdoptionService, ConsumerAdoptionService>();
+            services.AddTransient<INhsDigitalApiService, NhsDigitalApiService>();
         }
 
         private static void AddProcessingServices(IServiceCollection services)
