@@ -46,7 +46,7 @@ namespace LondonDataServices.IDecide.Core.Brokers.NhsDigitalApi
                 .GetAccessTokenAsync(cancellationToken);
         }
 
-        public async ValueTask<string> LogoutAsync(CancellationToken cancellationToken)
+        public async ValueTask LogoutAsync(CancellationToken cancellationToken)
         {
             await this.apiPlatformClient
                 .CareIdentityServiceClient

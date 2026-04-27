@@ -16,7 +16,7 @@ namespace LondonDataServices.IDecide.Core.Brokers.NhsDigitalApi
 
         ValueTask<string> BuildLoginUrlAsync(CancellationToken cancellationToken);
         ValueTask<string> GetAccessTokenAsync(CancellationToken cancellationToken);
-        ValueTask<string> LogoutAsync(CancellationToken cancellationToken);
+        ValueTask LogoutAsync(CancellationToken cancellationToken);
 
         ValueTask<string> GetUserInfoAsync(
             string code,
