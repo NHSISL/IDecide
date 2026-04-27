@@ -26,8 +26,13 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis
         public ValueTask<string> SearchPatientPDSAsync(
             SearchCriteria searchCriteria,
             CancellationToken cancellationToken) =>
-                this.nhsDigitalApiService.SearchPatientPDSAsync(
-                    searchCriteria,
-                    cancellationToken);
+                TryCatch(async () =>
+                {
+                    ValidateSearchCriteriaIsNotNull(searchCriteria);
+
+                    return await this.nhsDigitalApiService.SearchPatientPDSAsync(
+                        searchCriteria,
+                        cancellationToken);
+                });
     }
 }
