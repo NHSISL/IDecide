@@ -23,15 +23,16 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.NhsDigitalApis
             this.loggingBroker = loggingBroker;
         }
 
-        public async ValueTask<string> SearchPatientPDSAsync(
+        public ValueTask<string> SearchPatientPDSAsync(
             SearchCriteria searchCriteria,
-            CancellationToken cancellationToken)
-        {
-            ValidateSearchCriteriaIsNotNull(searchCriteria);
+            CancellationToken cancellationToken) =>
+            TryCatch(async () =>
+            {
+                ValidateSearchCriteriaIsNotNull(searchCriteria);
 
-            return await this.nhsDigitalApiBroker.SearchPatientPDSAsync(
-                searchCriteria,
-                cancellationToken);
-        }
+                return await this.nhsDigitalApiBroker.SearchPatientPDSAsync(
+                    searchCriteria,
+                    cancellationToken);
+            });
     }
 }
