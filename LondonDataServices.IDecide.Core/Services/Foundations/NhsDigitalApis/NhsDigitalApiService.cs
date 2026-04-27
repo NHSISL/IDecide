@@ -27,6 +27,8 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.NhsDigitalApis
             SearchCriteria searchCriteria,
             CancellationToken cancellationToken)
         {
+            ValidateSearchCriteriaIsNotNull(searchCriteria);
+
             return await this.nhsDigitalApiBroker.SearchPatientPDSAsync(
                 searchCriteria,
                 cancellationToken);
