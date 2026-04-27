@@ -3,6 +3,8 @@
 // ---------------------------------------------------------
 
 using System;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Models.Foundations.NhsDigitalApis.Exceptions;
 using Xeptions;
@@ -22,6 +24,17 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.NhsDigitalApis
             catch (NullNhsDigitalApiSearchCriteriaException nullNhsDigitalApiSearchCriteriaException)
             {
                 throw await CreateAndLogValidationException(nullNhsDigitalApiSearchCriteriaException);
+            }
+            catch (HttpRequestException httpRequestException)
+                when (httpRequestException.StatusCode == HttpStatusCode.BadRequest)
+            {
+                var clientNhsDigitalApiException =
+                    new ClientNhsDigitalApiException(
+                        message: "NhsDigitalApi client error occurred, please fix the errors and try again.",
+                        innerException: httpRequestException,
+                        data: httpRequestException.Data);
+
+                throw await CreateAndLogDependencyValidationException(clientNhsDigitalApiException);
             }
             catch (Exception exception)
             {
@@ -46,6 +59,20 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.NhsDigitalApis
             await this.loggingBroker.LogErrorAsync(nhsDigitalApiValidationException);
 
             return nhsDigitalApiValidationException;
+        }
+
+        private async ValueTask<NhsDigitalApiDependencyValidationException>
+            CreateAndLogDependencyValidationException(Xeption exception)
+        {
+            var nhsDigitalApiDependencyValidationException =
+                new NhsDigitalApiDependencyValidationException(
+                    message: "NhsDigitalApi dependency validation error occurred, " +
+                        "please fix the errors and try again.",
+                    innerException: exception);
+
+            await this.loggingBroker.LogErrorAsync(nhsDigitalApiDependencyValidationException);
+
+            return nhsDigitalApiDependencyValidationException;
         }
 
         private async ValueTask<NhsDigitalApiServiceException> CreateAndLogServiceException(
