@@ -67,6 +67,17 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis
 
                 throw nhsDigitalApiOrchestrationDependencyValidationException;
             }
+                    catch (NhsDigitalApiServiceException nhsDigitalApiServiceException)
+                    {
+                        var nhsDigitalApiOrchestrationServiceException =
+                            new NhsDigitalApiOrchestrationServiceException(
+                                message: "NhsDigitalApi orchestration service error occurred, please contact support.",
+                                innerException: nhsDigitalApiServiceException);
+
+                        await this.loggingBroker.LogErrorAsync(nhsDigitalApiOrchestrationServiceException);
+
+                        throw nhsDigitalApiOrchestrationServiceException;
+                    }
+                }
+            }
         }
-    }
-}

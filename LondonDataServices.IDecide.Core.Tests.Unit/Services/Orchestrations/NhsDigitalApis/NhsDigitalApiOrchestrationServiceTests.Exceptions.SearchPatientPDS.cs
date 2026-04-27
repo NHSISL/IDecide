@@ -176,5 +176,58 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
             this.nhsDigitalApiServiceMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task
+            ShouldThrowServiceExceptionOnSearchPatientPDSWhenServiceExceptionOccursAndLogItAsync()
+        {
+            // given
+            SearchCriteria randomSearchCriteria = CreateRandomSearchCriteria();
+            CancellationToken inputCancellationToken = GetCancellationToken();
+
+            var nhsDigitalApiServiceException =
+                new NhsDigitalApiServiceException(
+                    message: "NhsDigitalApi service error occurred, please contact support.",
+                    innerException: new Xeptions.Xeption());
+
+            var expectedNhsDigitalApiOrchestrationServiceException =
+                new NhsDigitalApiOrchestrationServiceException(
+                    message: "NhsDigitalApi orchestration service error occurred, please contact support.",
+                    innerException: nhsDigitalApiServiceException);
+
+            this.nhsDigitalApiServiceMock.Setup(service =>
+                service.SearchPatientPDSAsync(
+                    randomSearchCriteria,
+                    inputCancellationToken))
+                        .ThrowsAsync(nhsDigitalApiServiceException);
+
+            // when
+            ValueTask<string> searchPatientPDSTask =
+                this.nhsDigitalApiOrchestrationService.SearchPatientPDSAsync(
+                    randomSearchCriteria,
+                    inputCancellationToken);
+
+            NhsDigitalApiOrchestrationServiceException actualException =
+                await Assert.ThrowsAsync<NhsDigitalApiOrchestrationServiceException>(
+                    testCode: searchPatientPDSTask.AsTask);
+
+            // then
+            actualException.Should().BeEquivalentTo(
+                expectedNhsDigitalApiOrchestrationServiceException);
+
+            this.nhsDigitalApiServiceMock.Verify(service =>
+                service.SearchPatientPDSAsync(
+                    randomSearchCriteria,
+                    inputCancellationToken),
+                Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedNhsDigitalApiOrchestrationServiceException))),
+                Times.Once);
+
+            this.nhsDigitalApiServiceMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
