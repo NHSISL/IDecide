@@ -8,7 +8,6 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Models.Foundations.NhsDigitalApis.Exceptions;
 using Xeptions;
-
 namespace LondonDataServices.IDecide.Core.Services.Foundations.NhsDigitalApis
 {
     public partial class NhsDigitalApiService
@@ -25,10 +24,6 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.NhsDigitalApis
             {
                 throw await CreateAndLogValidationException(nullNhsDigitalApiSearchCriteriaException);
             }
-            catch (CancelledNhsDigitalApiBuildLoginUrlException cancelledNhsDigitalApiBuildLoginUrlException)
-            {
-                throw await CreateAndLogValidationException(cancelledNhsDigitalApiBuildLoginUrlException);
-            }
             catch (HttpRequestException httpRequestException)
                 when (httpRequestException.StatusCode == HttpStatusCode.BadRequest)
             {
@@ -37,6 +32,16 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.NhsDigitalApis
                         message: "NhsDigitalApi client error occurred, please fix the errors and try again.",
                         innerException: httpRequestException,
                         data: httpRequestException.Data);
+
+                throw await CreateAndLogDependencyValidationException(clientNhsDigitalApiException);
+            }
+            catch (OperationCanceledException operationCanceledException)
+            {
+                var clientNhsDigitalApiException =
+                    new ClientNhsDigitalApiException(
+                        message: "NhsDigitalApi client error occurred, please fix the errors and try again.",
+                        innerException: operationCanceledException,
+                        data: operationCanceledException.Data);
 
                 throw await CreateAndLogDependencyValidationException(clientNhsDigitalApiException);
             }
