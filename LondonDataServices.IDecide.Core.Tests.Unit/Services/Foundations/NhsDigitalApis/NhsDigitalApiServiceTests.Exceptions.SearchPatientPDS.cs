@@ -130,5 +130,65 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.NhsDig
             this.nhsDigitalApiBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task
+            ShouldThrowDependencyExceptionOnSearchPatientPDSIfServerErrorOccursAndLogItAsync()
+        {
+            // given
+            SearchCriteria randomSearchCriteria = CreateRandomSearchCriteria();
+            CancellationToken inputCancellationToken = GetCancellationToken();
+
+            var httpRequestException =
+                new HttpRequestException(
+                    message: GetRandomString(),
+                    inner: null,
+                    statusCode: HttpStatusCode.InternalServerError);
+
+            var serverNhsDigitalApiException =
+                new ServerNhsDigitalApiException(
+                    message: "NhsDigitalApi server error occurred, please contact support.",
+                    innerException: httpRequestException,
+                    data: httpRequestException.Data);
+
+            var expectedNhsDigitalApiDependencyException =
+                new NhsDigitalApiDependencyException(
+                    message: "NhsDigitalApi dependency error occurred, please contact support.",
+                    innerException: serverNhsDigitalApiException);
+
+            this.nhsDigitalApiBrokerMock.Setup(broker =>
+                broker.SearchPatientPDSAsync(
+                    randomSearchCriteria,
+                    inputCancellationToken))
+                        .ThrowsAsync(httpRequestException);
+
+            // when
+            ValueTask<string> searchPatientPDSTask =
+                this.nhsDigitalApiService.SearchPatientPDSAsync(
+                    randomSearchCriteria,
+                    inputCancellationToken);
+
+            NhsDigitalApiDependencyException actualException =
+                await Assert.ThrowsAsync<NhsDigitalApiDependencyException>(
+                    testCode: searchPatientPDSTask.AsTask);
+
+            // then
+            actualException.Should().BeEquivalentTo(
+                expectedNhsDigitalApiDependencyException);
+
+            this.nhsDigitalApiBrokerMock.Verify(broker =>
+                broker.SearchPatientPDSAsync(
+                    randomSearchCriteria,
+                    inputCancellationToken),
+                Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedNhsDigitalApiDependencyException))),
+                Times.Once);
+
+            this.nhsDigitalApiBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
