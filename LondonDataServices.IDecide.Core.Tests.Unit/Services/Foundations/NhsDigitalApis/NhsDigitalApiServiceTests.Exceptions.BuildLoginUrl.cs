@@ -170,24 +170,11 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.NhsDig
         }
 
         [Fact]
-        public async Task
-            ShouldThrowDependencyValidationExceptionOnBuildLoginUrlIfCancelledAndLogItAsync()
+        public async Task ShouldBubbleCancellationOnBuildLoginUrlIfCancelledAsync()
         {
             // given
             CancellationToken inputCancellationToken = GetCancellationToken();
             var operationCanceledException = new OperationCanceledException();
-
-            var clientNhsDigitalApiException =
-                new ClientNhsDigitalApiException(
-                    message: "NhsDigitalApi client error occurred, please fix the errors and try again.",
-                    innerException: operationCanceledException,
-                    data: operationCanceledException.Data);
-
-            var expectedNhsDigitalApiDependencyValidationException =
-                new NhsDigitalApiDependencyValidationException(
-                    message: "NhsDigitalApi dependency validation error occurred, " +
-                        "please fix the errors and try again.",
-                    innerException: clientNhsDigitalApiException);
 
             this.nhsDigitalApiBrokerMock.Setup(broker =>
                 broker.BuildLoginUrlAsync(inputCancellationToken))
@@ -197,21 +184,15 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.NhsDig
             ValueTask<string> buildLoginUrlTask =
                 this.nhsDigitalApiService.BuildLoginUrlAsync(inputCancellationToken);
 
-            NhsDigitalApiDependencyValidationException actualException =
-                await Assert.ThrowsAsync<NhsDigitalApiDependencyValidationException>(
+            OperationCanceledException actualException =
+                await Assert.ThrowsAsync<OperationCanceledException>(
                     testCode: buildLoginUrlTask.AsTask);
 
             // then
-            actualException.Should().BeEquivalentTo(
-                expectedNhsDigitalApiDependencyValidationException);
+            actualException.Should().BeSameAs(operationCanceledException);
 
             this.nhsDigitalApiBrokerMock.Verify(broker =>
                 broker.BuildLoginUrlAsync(inputCancellationToken),
-                Times.Once);
-
-            this.loggingBrokerMock.Verify(broker =>
-                broker.LogErrorAsync(It.Is(SameExceptionAs(
-                    expectedNhsDigitalApiDependencyValidationException))),
                 Times.Once);
 
             this.nhsDigitalApiBrokerMock.VerifyNoOtherCalls();
