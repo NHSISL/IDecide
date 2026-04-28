@@ -167,5 +167,62 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.NhsDig
             this.nhsDigitalApiBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldBubbleCancellationOnGetAccessTokenIfCancelledAsync()
+        {
+            // given
+            CancellationToken inputCancellationToken = GetCancellationToken();
+            var operationCanceledException = new OperationCanceledException();
+
+            this.nhsDigitalApiBrokerMock.Setup(broker =>
+                broker.GetAccessTokenAsync(inputCancellationToken))
+                    .ThrowsAsync(operationCanceledException);
+
+            // when
+            ValueTask<string> getAccessTokenTask =
+                this.nhsDigitalApiService.GetAccessTokenAsync(inputCancellationToken);
+
+            OperationCanceledException actualException =
+                await Assert.ThrowsAsync<OperationCanceledException>(
+                    testCode: getAccessTokenTask.AsTask);
+
+            // then
+            actualException.Should().BeSameAs(operationCanceledException);
+
+            this.nhsDigitalApiBrokerMock.Verify(broker =>
+                broker.GetAccessTokenAsync(inputCancellationToken),
+                Times.Once);
+
+            this.nhsDigitalApiBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldBubbleCancellationOnGetAccessTokenIfTokenAlreadyCancelledAsync()
+        {
+            // given
+            var cancellationTokenSource = new CancellationTokenSource();
+            cancellationTokenSource.Cancel();
+            CancellationToken inputCancellationToken = cancellationTokenSource.Token;
+
+            // when
+            ValueTask<string> getAccessTokenTask =
+                this.nhsDigitalApiService.GetAccessTokenAsync(inputCancellationToken);
+
+            OperationCanceledException actualException =
+                await Assert.ThrowsAsync<OperationCanceledException>(
+                    testCode: getAccessTokenTask.AsTask);
+
+            // then
+            actualException.Should().BeOfType<OperationCanceledException>();
+
+            this.nhsDigitalApiBrokerMock.Verify(broker =>
+                broker.GetAccessTokenAsync(It.IsAny<CancellationToken>()),
+                Times.Never);
+
+            this.nhsDigitalApiBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
