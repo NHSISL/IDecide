@@ -2,7 +2,6 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
@@ -33,7 +32,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.NhsDigitalApis
         public ValueTask LogoutAsync(CancellationToken cancellationToken) =>
             TryCatch(async () =>
             {
-                ValidateCancellationTokenIsNotCancelled(cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
 
                 await this.nhsDigitalApiBroker.LogoutAsync(cancellationToken);
             });

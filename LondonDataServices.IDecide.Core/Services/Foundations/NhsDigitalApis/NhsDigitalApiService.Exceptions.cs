@@ -68,11 +68,9 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.NhsDigitalApis
             {
                 await returningVoidFunction();
             }
-            catch (CancelledNhsDigitalApiCancellationTokenException
-                cancelledNhsDigitalApiCancellationTokenException)
+            catch (OperationCanceledException)
             {
-                throw await CreateAndLogValidationException(
-                    cancelledNhsDigitalApiCancellationTokenException);
+                throw;
             }
             catch (HttpRequestException httpRequestException)
                 when (httpRequestException.StatusCode == HttpStatusCode.BadRequest)
@@ -82,16 +80,6 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.NhsDigitalApis
                         message: "NhsDigitalApi client error occurred, please fix the errors and try again.",
                         innerException: httpRequestException,
                         data: httpRequestException.Data);
-
-                throw await CreateAndLogDependencyValidationException(clientNhsDigitalApiException);
-            }
-            catch (OperationCanceledException operationCanceledException)
-            {
-                var clientNhsDigitalApiException =
-                    new ClientNhsDigitalApiException(
-                        message: "NhsDigitalApi client error occurred, please fix the errors and try again.",
-                        innerException: operationCanceledException,
-                        data: operationCanceledException.Data);
 
                 throw await CreateAndLogDependencyValidationException(clientNhsDigitalApiException);
             }

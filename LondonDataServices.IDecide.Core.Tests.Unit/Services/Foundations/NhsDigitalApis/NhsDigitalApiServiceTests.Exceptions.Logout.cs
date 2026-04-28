@@ -167,5 +167,62 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.NhsDig
             this.nhsDigitalApiBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldBubbleCancellationOnLogoutIfCancelledAsync()
+        {
+            // given
+            CancellationToken inputCancellationToken = GetCancellationToken();
+            var operationCanceledException = new OperationCanceledException();
+
+            this.nhsDigitalApiBrokerMock.Setup(broker =>
+                broker.LogoutAsync(inputCancellationToken))
+                    .ThrowsAsync(operationCanceledException);
+
+            // when
+            ValueTask logoutTask =
+                this.nhsDigitalApiService.LogoutAsync(inputCancellationToken);
+
+            OperationCanceledException actualException =
+                await Assert.ThrowsAsync<OperationCanceledException>(
+                    testCode: logoutTask.AsTask);
+
+            // then
+            actualException.Should().BeSameAs(operationCanceledException);
+
+            this.nhsDigitalApiBrokerMock.Verify(broker =>
+                broker.LogoutAsync(inputCancellationToken),
+                Times.Once);
+
+            this.nhsDigitalApiBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldBubbleCancellationOnLogoutIfTokenAlreadyCancelledAsync()
+        {
+            // given
+            var cancellationTokenSource = new CancellationTokenSource();
+            cancellationTokenSource.Cancel();
+            CancellationToken inputCancellationToken = cancellationTokenSource.Token;
+
+            // when
+            ValueTask logoutTask =
+                this.nhsDigitalApiService.LogoutAsync(inputCancellationToken);
+
+            OperationCanceledException actualException =
+                await Assert.ThrowsAsync<OperationCanceledException>(
+                    testCode: logoutTask.AsTask);
+
+            // then
+            actualException.Should().BeOfType<OperationCanceledException>();
+
+            this.nhsDigitalApiBrokerMock.Verify(broker =>
+                broker.LogoutAsync(It.IsAny<CancellationToken>()),
+                Times.Never);
+
+            this.nhsDigitalApiBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
