@@ -72,5 +72,64 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.NhsDig
             this.nhsDigitalApiBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task
+            ShouldThrowDependencyValidationExceptionOnGetUserInfoIfClientErrorOccursAndLogItAsync()
+        {
+            // given
+            CancellationToken inputCancellationToken = GetCancellationToken();
+            string inputCode = GetRandomString();
+            string inputState = GetRandomString();
+
+            var httpRequestException =
+                new HttpRequestException(
+                    message: GetRandomString(),
+                    inner: null,
+                    statusCode: HttpStatusCode.BadRequest);
+
+            var clientNhsDigitalApiException =
+                new ClientNhsDigitalApiException(
+                    message: "NhsDigitalApi client error occurred, please fix the errors and try again.",
+                    innerException: httpRequestException,
+                    data: httpRequestException.Data);
+
+            var expectedNhsDigitalApiDependencyValidationException =
+                new NhsDigitalApiDependencyValidationException(
+                    message: "NhsDigitalApi dependency validation error occurred, " +
+                        "please fix the errors and try again.",
+                    innerException: clientNhsDigitalApiException);
+
+            this.nhsDigitalApiBrokerMock.Setup(broker =>
+                broker.GetUserInfoAsync(inputCode, inputState, inputCancellationToken))
+                    .ThrowsAsync(httpRequestException);
+
+            // when
+            ValueTask<string> getUserInfoTask =
+                this.nhsDigitalApiService.GetUserInfoAsync(
+                    inputCode,
+                    inputState,
+                    inputCancellationToken);
+
+            NhsDigitalApiDependencyValidationException actualException =
+                await Assert.ThrowsAsync<NhsDigitalApiDependencyValidationException>(
+                    testCode: getUserInfoTask.AsTask);
+
+            // then
+            actualException.Should().BeEquivalentTo(
+                expectedNhsDigitalApiDependencyValidationException);
+
+            this.nhsDigitalApiBrokerMock.Verify(broker =>
+                broker.GetUserInfoAsync(inputCode, inputState, inputCancellationToken),
+                Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedNhsDigitalApiDependencyValidationException))),
+                Times.Once);
+
+            this.nhsDigitalApiBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
