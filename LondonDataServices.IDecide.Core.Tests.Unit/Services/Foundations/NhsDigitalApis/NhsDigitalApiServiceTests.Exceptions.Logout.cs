@@ -18,6 +18,58 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.NhsDig
     {
         [Fact]
         public async Task
+            ShouldThrowDependencyExceptionOnLogoutIfServerErrorOccursAndLogItAsync()
+        {
+            // given
+            CancellationToken inputCancellationToken = GetCancellationToken();
+
+            var httpRequestException =
+                new HttpRequestException(
+                    message: GetRandomString(),
+                    inner: null,
+                    statusCode: HttpStatusCode.InternalServerError);
+
+            var serverNhsDigitalApiException =
+                new ServerNhsDigitalApiException(
+                    message: "NhsDigitalApi server error occurred, please contact support.",
+                    innerException: httpRequestException,
+                    data: httpRequestException.Data);
+
+            var expectedNhsDigitalApiDependencyException =
+                new NhsDigitalApiDependencyException(
+                    message: "NhsDigitalApi dependency error occurred, please contact support.",
+                    innerException: serverNhsDigitalApiException);
+
+            this.nhsDigitalApiBrokerMock.Setup(broker =>
+                broker.LogoutAsync(inputCancellationToken))
+                    .ThrowsAsync(httpRequestException);
+
+            // when
+            ValueTask logoutTask =
+                this.nhsDigitalApiService.LogoutAsync(inputCancellationToken);
+
+            NhsDigitalApiDependencyException actualException =
+                await Assert.ThrowsAsync<NhsDigitalApiDependencyException>(
+                    testCode: logoutTask.AsTask);
+
+            // then
+            actualException.Should().BeEquivalentTo(expectedNhsDigitalApiDependencyException);
+
+            this.nhsDigitalApiBrokerMock.Verify(broker =>
+                broker.LogoutAsync(inputCancellationToken),
+                Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedNhsDigitalApiDependencyException))),
+                Times.Once);
+
+            this.nhsDigitalApiBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task
             ShouldThrowDependencyValidationExceptionOnLogoutIfClientErrorOccursAndLogItAsync()
         {
             // given
