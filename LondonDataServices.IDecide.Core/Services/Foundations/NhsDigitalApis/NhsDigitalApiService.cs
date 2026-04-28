@@ -51,6 +51,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.NhsDigitalApis
             CancellationToken cancellationToken) =>
             TryCatch(async () =>
             {
+                ValidateGetUserInfoArguments(code, state);
                 cancellationToken.ThrowIfCancellationRequested();
 
                 return await this.nhsDigitalApiBroker.GetUserInfoAsync(code, state, cancellationToken);
