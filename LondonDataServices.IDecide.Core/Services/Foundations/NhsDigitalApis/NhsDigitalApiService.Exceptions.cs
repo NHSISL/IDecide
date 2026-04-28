@@ -13,6 +13,7 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.NhsDigitalApis
     public partial class NhsDigitalApiService
     {
         private delegate ValueTask<string> ReturningStringFunction();
+        private delegate ValueTask ReturningVoidFunction();
 
         private async ValueTask<string> TryCatch(ReturningStringFunction returningStringFunction)
         {
@@ -23,6 +24,61 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.NhsDigitalApis
             catch (NullNhsDigitalApiSearchCriteriaException nullNhsDigitalApiSearchCriteriaException)
             {
                 throw await CreateAndLogValidationException(nullNhsDigitalApiSearchCriteriaException);
+            }
+            catch (CancelledNhsDigitalApiCancellationTokenException
+                cancelledNhsDigitalApiCancellationTokenException)
+            {
+                throw await CreateAndLogValidationException(
+                    cancelledNhsDigitalApiCancellationTokenException);
+            }
+            catch (HttpRequestException httpRequestException)
+                when (httpRequestException.StatusCode == HttpStatusCode.BadRequest)
+            {
+                var clientNhsDigitalApiException =
+                    new ClientNhsDigitalApiException(
+                        message: "NhsDigitalApi client error occurred, please fix the errors and try again.",
+                        innerException: httpRequestException,
+                        data: httpRequestException.Data);
+
+                throw await CreateAndLogDependencyValidationException(clientNhsDigitalApiException);
+            }
+            catch (OperationCanceledException operationCanceledException)
+            {
+                var clientNhsDigitalApiException =
+                    new ClientNhsDigitalApiException(
+                        message: "NhsDigitalApi client error occurred, please fix the errors and try again.",
+                        innerException: operationCanceledException,
+                        data: operationCanceledException.Data);
+
+                throw await CreateAndLogDependencyValidationException(clientNhsDigitalApiException);
+            }
+            catch (HttpRequestException httpRequestException)
+                when (httpRequestException.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                var serverNhsDigitalApiException =
+                    new ServerNhsDigitalApiException(
+                        message: "NhsDigitalApi server error occurred, please contact support.",
+                        innerException: httpRequestException,
+                        data: httpRequestException.Data);
+
+                throw await CreateAndLogDependencyException(serverNhsDigitalApiException);
+            }
+            catch (Exception exception)
+            {
+                var failedNhsDigitalApiServiceException =
+                    new FailedNhsDigitalApiServiceException(
+                        message: "Failed NhsDigitalApi service error occurred, please contact support.",
+                        innerException: exception);
+
+                throw await CreateAndLogServiceException(failedNhsDigitalApiServiceException);
+            }
+        }
+
+        private async ValueTask TryCatch(ReturningVoidFunction returningVoidFunction)
+        {
+            try
+            {
+                await returningVoidFunction();
             }
             catch (CancelledNhsDigitalApiCancellationTokenException
                 cancelledNhsDigitalApiCancellationTokenException)

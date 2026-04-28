@@ -31,7 +31,10 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.NhsDigitalApis
             });
 
         public ValueTask LogoutAsync(CancellationToken cancellationToken) =>
-            ValueTask.FromException(new NotImplementedException());
+            TryCatch(async () =>
+            {
+                await this.nhsDigitalApiBroker.LogoutAsync(cancellationToken);
+            });
 
         public ValueTask<string> GetAccessTokenAsync(CancellationToken cancellationToken) =>
             TryCatch(async () =>
