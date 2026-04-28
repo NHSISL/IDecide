@@ -17,5 +17,6 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.NhsDigitalApis
                     message: "Search criteria is null.");
             }
         }
+
     }
 }
