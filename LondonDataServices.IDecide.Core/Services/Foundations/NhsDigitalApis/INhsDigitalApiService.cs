@@ -15,5 +15,6 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.NhsDigitalApis
             CancellationToken cancellationToken);
 
         ValueTask<string> BuildLoginUrlAsync(CancellationToken cancellationToken);
+        ValueTask<string> GetAccessTokenAsync(CancellationToken cancellationToken);
     }
 }
