@@ -216,5 +216,40 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.NhsDig
             this.nhsDigitalApiBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldBubbleCancellationOnGetUserInfoIfTokenAlreadyCancelledAsync()
+        {
+            // given
+            var cancellationTokenSource = new CancellationTokenSource();
+            cancellationTokenSource.Cancel();
+            CancellationToken inputCancellationToken = cancellationTokenSource.Token;
+            string inputCode = GetRandomString();
+            string inputState = GetRandomString();
+
+            // when
+            ValueTask<string> getUserInfoTask =
+                this.nhsDigitalApiService.GetUserInfoAsync(
+                    inputCode,
+                    inputState,
+                    inputCancellationToken);
+
+            OperationCanceledException actualException =
+                await Assert.ThrowsAsync<OperationCanceledException>(
+                    testCode: getUserInfoTask.AsTask);
+
+            // then
+            actualException.Should().BeOfType<OperationCanceledException>();
+
+            this.nhsDigitalApiBrokerMock.Verify(broker =>
+                broker.GetUserInfoAsync(
+                    It.IsAny<string>(),
+                    It.IsAny<string>(),
+                    It.IsAny<CancellationToken>()),
+                Times.Never);
+
+            this.nhsDigitalApiBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
