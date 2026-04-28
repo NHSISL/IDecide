@@ -131,5 +131,55 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.NhsDig
             this.nhsDigitalApiBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnGetUserInfoIfServiceErrorOccursAndLogItAsync()
+        {
+            // given
+            CancellationToken inputCancellationToken = GetCancellationToken();
+            string inputCode = GetRandomString();
+            string inputState = GetRandomString();
+            var serviceException = new Exception();
+
+            var failedNhsDigitalApiServiceException =
+                new FailedNhsDigitalApiServiceException(
+                    message: "Failed NhsDigitalApi service error occurred, please contact support.",
+                    innerException: serviceException);
+
+            var expectedNhsDigitalApiServiceException =
+                new NhsDigitalApiServiceException(
+                    message: "NhsDigitalApi service error occurred, please contact support.",
+                    innerException: failedNhsDigitalApiServiceException);
+
+            this.nhsDigitalApiBrokerMock.Setup(broker =>
+                broker.GetUserInfoAsync(inputCode, inputState, inputCancellationToken))
+                    .ThrowsAsync(serviceException);
+
+            // when
+            ValueTask<string> getUserInfoTask =
+                this.nhsDigitalApiService.GetUserInfoAsync(
+                    inputCode,
+                    inputState,
+                    inputCancellationToken);
+
+            NhsDigitalApiServiceException actualException =
+                await Assert.ThrowsAsync<NhsDigitalApiServiceException>(
+                    testCode: getUserInfoTask.AsTask);
+
+            // then
+            actualException.Should().BeEquivalentTo(expectedNhsDigitalApiServiceException);
+
+            this.nhsDigitalApiBrokerMock.Verify(broker =>
+                broker.GetUserInfoAsync(inputCode, inputState, inputCancellationToken),
+                Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedNhsDigitalApiServiceException))),
+                Times.Once);
+
+            this.nhsDigitalApiBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
