@@ -18,5 +18,5 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.NhsDigitalApis
             }
         }
 
-            }
-        }
+    }
+}
