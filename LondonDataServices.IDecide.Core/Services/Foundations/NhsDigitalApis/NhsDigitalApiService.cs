@@ -45,6 +45,18 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.NhsDigitalApis
                 return await this.nhsDigitalApiBroker.GetAccessTokenAsync(cancellationToken);
             });
 
+        public ValueTask<string> GetUserInfoAsync(
+            string code,
+            string state,
+            CancellationToken cancellationToken) =>
+            TryCatch(async () =>
+            {
+                ValidateGetUserInfoArguments(code, state);
+                cancellationToken.ThrowIfCancellationRequested();
+
+                return await this.nhsDigitalApiBroker.GetUserInfoAsync(code, state, cancellationToken);
+            });
+
         public ValueTask<string> SearchPatientPDSAsync(
             SearchCriteria searchCriteria,
             CancellationToken cancellationToken) =>
