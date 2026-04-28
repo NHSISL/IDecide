@@ -18,6 +18,58 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.NhsDig
     {
         [Fact]
         public async Task
+            ShouldThrowDependencyExceptionOnGetAccessTokenIfServerErrorOccursAndLogItAsync()
+        {
+            // given
+            CancellationToken inputCancellationToken = GetCancellationToken();
+
+            var httpRequestException =
+                new HttpRequestException(
+                    message: GetRandomString(),
+                    inner: null,
+                    statusCode: HttpStatusCode.InternalServerError);
+
+            var serverNhsDigitalApiException =
+                new ServerNhsDigitalApiException(
+                    message: "NhsDigitalApi server error occurred, please contact support.",
+                    innerException: httpRequestException,
+                    data: httpRequestException.Data);
+
+            var expectedNhsDigitalApiDependencyException =
+                new NhsDigitalApiDependencyException(
+                    message: "NhsDigitalApi dependency error occurred, please contact support.",
+                    innerException: serverNhsDigitalApiException);
+
+            this.nhsDigitalApiBrokerMock.Setup(broker =>
+                broker.GetAccessTokenAsync(inputCancellationToken))
+                    .ThrowsAsync(httpRequestException);
+
+            // when
+            ValueTask<string> getAccessTokenTask =
+                this.nhsDigitalApiService.GetAccessTokenAsync(inputCancellationToken);
+
+            NhsDigitalApiDependencyException actualException =
+                await Assert.ThrowsAsync<NhsDigitalApiDependencyException>(
+                    testCode: getAccessTokenTask.AsTask);
+
+            // then
+            actualException.Should().BeEquivalentTo(expectedNhsDigitalApiDependencyException);
+
+            this.nhsDigitalApiBrokerMock.Verify(broker =>
+                broker.GetAccessTokenAsync(inputCancellationToken),
+                Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedNhsDigitalApiDependencyException))),
+                Times.Once);
+
+            this.nhsDigitalApiBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task
             ShouldThrowDependencyValidationExceptionOnGetAccessTokenIfClientErrorOccursAndLogItAsync()
         {
             // given
