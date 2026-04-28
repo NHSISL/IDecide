@@ -24,6 +24,12 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.NhsDigitalApis
             {
                 throw await CreateAndLogValidationException(nullNhsDigitalApiSearchCriteriaException);
             }
+            catch (CancelledNhsDigitalApiCancellationTokenException
+                cancelledNhsDigitalApiCancellationTokenException)
+            {
+                throw await CreateAndLogValidationException(
+                    cancelledNhsDigitalApiCancellationTokenException);
+            }
             catch (HttpRequestException httpRequestException)
                 when (httpRequestException.StatusCode == HttpStatusCode.BadRequest)
             {

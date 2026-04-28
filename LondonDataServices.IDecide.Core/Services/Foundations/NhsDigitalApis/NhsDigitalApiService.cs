@@ -33,6 +33,8 @@ namespace LondonDataServices.IDecide.Core.Services.Foundations.NhsDigitalApis
         public ValueTask<string> GetAccessTokenAsync(CancellationToken cancellationToken) =>
             TryCatch(async () =>
             {
+                ValidateCancellationTokenIsNotCancelled(cancellationToken);
+
                 return await this.nhsDigitalApiBroker.GetAccessTokenAsync(cancellationToken);
             });
 
