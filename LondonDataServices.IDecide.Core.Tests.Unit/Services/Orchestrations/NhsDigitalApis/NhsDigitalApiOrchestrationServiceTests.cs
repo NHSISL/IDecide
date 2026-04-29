@@ -3,11 +3,14 @@
 // ---------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using KellermanSoftware.CompareNetObjects;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
+using LondonDataServices.IDecide.Core.Models.Foundations.NhsDigitalApis.Exceptions;
+using LondonDataServices.IDecide.Core.Models.Foundations.Users.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Users;
 using LondonDataServices.IDecide.Core.Services.Foundations.NhsDigitalApis;
 using LondonDataServices.IDecide.Core.Services.Foundations.Users;
@@ -77,5 +80,55 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
 
         private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
             actualException => actualException.SameExceptionAs(expectedException);
+
+        public static TheoryData<Xeption> DependencyValidationExceptions()
+        {
+            string randomMessage = GetRandomString();
+            var innerException = new Xeption(randomMessage);
+
+            return new TheoryData<Xeption>
+            {
+                new NhsDigitalApiValidationException(
+                    message: "NhsDigitalApi validation errors occurred, please try again.",
+                    innerException),
+
+                new NhsDigitalApiDependencyValidationException(
+                    message: "NhsDigitalApi dependency validation occurred, please try again.",
+                    innerException),
+
+                new UserValidationException(
+                    message: "User validation errors occurred, please try again.",
+                    innerException),
+
+                new UserDependencyValidationException(
+                    message: "User dependency validation occurred, please try again.",
+                    innerException)
+            };
+        }
+
+        public static TheoryData<Xeption> DependencyExceptions()
+        {
+            string randomMessage = GetRandomString();
+            var innerException = new Xeption(randomMessage);
+
+            return new TheoryData<Xeption>
+            {
+                new NhsDigitalApiDependencyException(
+                    message: "NhsDigitalApi dependency error occurred, please contact support.",
+                    innerException),
+
+                new NhsDigitalApiServiceException(
+                    message: "NhsDigitalApi service error occurred, please contact support.",
+                    innerException),
+
+                new UserDependencyException(
+                    message: "User dependency error occurred, please contact support.",
+                    innerException),
+
+                new UserServiceException(
+                    message: "User service error occurred, please contact support.",
+                    innerException)
+            };
+        }
     }
 }
