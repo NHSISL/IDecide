@@ -60,6 +60,10 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis
             {
                 throw await CreateAndLogDependencyExceptionAsync(userServiceException);
             }
+            catch (System.OperationCanceledException)
+            {
+                throw;
+            }
             catch (System.Exception exception)
             {
                 var failedNhsDigitalApiOrchestrationServiceException =

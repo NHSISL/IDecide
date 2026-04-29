@@ -167,5 +167,43 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
             this.userServiceMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldPropagateCancellationOnProcessCallbackWhenCancelledAsync()
+        {
+            // given
+            string randomCode = GetRandomString();
+            string randomState = GetRandomString();
+            string inputCode = randomCode;
+            string inputState = randomState;
+            var cancellationTokenSource = new CancellationTokenSource();
+            CancellationToken inputCancellationToken = cancellationTokenSource.Token;
+            cancellationTokenSource.Cancel();
+
+            this.nhsDigitalApiServiceMock.Setup(service =>
+                service.GetUserInfoAsync(inputCode, inputState, inputCancellationToken))
+                    .ThrowsAsync(new OperationCanceledException(inputCancellationToken));
+
+            // when
+            ValueTask processCallbackTask =
+                this.nhsDigitalApiOrchestrationService
+                    .ProcessCallbackAsync(inputCode, inputState, inputCancellationToken);
+
+            // then
+            await Assert.ThrowsAnyAsync<OperationCanceledException>(
+                testCode: processCallbackTask.AsTask);
+
+            this.nhsDigitalApiServiceMock.Verify(service =>
+                service.GetUserInfoAsync(inputCode, inputState, inputCancellationToken),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.IsAny<Exception>()),
+                    Times.Never);
+
+            this.nhsDigitalApiServiceMock.VerifyNoOtherCalls();
+            this.userServiceMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
