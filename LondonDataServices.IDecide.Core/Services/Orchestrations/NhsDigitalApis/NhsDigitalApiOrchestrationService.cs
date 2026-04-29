@@ -43,6 +43,8 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis
                 string userInfoJson =
                     await this.nhsDigitalApiService.GetUserInfoAsync(code, state, cancellationToken);
 
+                ValidateUserInfoJson(userInfoJson);
+
                 NhsDigitalUserInfo userInfo =
                     JsonSerializer.Deserialize<NhsDigitalUserInfo>(userInfoJson);
 

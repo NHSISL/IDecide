@@ -21,6 +21,15 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis
                 (Rule: IsInvalid(state), Parameter: nameof(state)));
         }
 
+        private static void ValidateUserInfoJson(string userInfoJson)
+        {
+            Validate(
+                createException: () => new InvalidNhsDigitalApiOrchestrationArgumentException(
+                    message: "Invalid NhsDigitalApi orchestration argument. " +
+                        "Please correct the errors and try again."),
+                (Rule: IsInvalid(userInfoJson), Parameter: nameof(userInfoJson)));
+        }
+
         private static void ValidateUserInfo(NhsDigitalUserInfo userInfo)
         {
             Validate(

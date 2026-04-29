@@ -307,5 +307,64 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
             this.userServiceMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("   ")]
+        public async Task ShouldThrowValidationExceptionOnProcessCallbackWithInvalidUserInfoJsonAsync(
+            string invalidUserInfoJson)
+        {
+            // given
+            string validCode = GetRandomString();
+            string validState = GetRandomString();
+            CancellationToken inputCancellationToken = GetCancellationToken();
+
+            var invalidNhsDigitalApiOrchestrationArgumentException =
+                new InvalidNhsDigitalApiOrchestrationArgumentException(
+                    message: "Invalid NhsDigitalApi orchestration argument. " +
+                        "Please correct the errors and try again.");
+
+            invalidNhsDigitalApiOrchestrationArgumentException.AddData(
+                key: "userInfoJson",
+                values: "Value is required.");
+
+            var expectedNhsDigitalApiOrchestrationValidationException =
+                new NhsDigitalApiOrchestrationValidationException(
+                    message: "NhsDigitalApi orchestration validation error occurred, " +
+                        "please fix the errors and try again.",
+                    innerException: invalidNhsDigitalApiOrchestrationArgumentException);
+
+            this.nhsDigitalApiServiceMock.Setup(service =>
+                service.GetUserInfoAsync(validCode, validState, inputCancellationToken))
+                    .ReturnsAsync(invalidUserInfoJson);
+
+            // when
+            ValueTask processCallbackTask =
+                this.nhsDigitalApiOrchestrationService
+                    .ProcessCallbackAsync(validCode, validState, inputCancellationToken);
+
+            NhsDigitalApiOrchestrationValidationException
+                actualNhsDigitalApiOrchestrationValidationException =
+                    await Assert.ThrowsAsync<NhsDigitalApiOrchestrationValidationException>(
+                        testCode: processCallbackTask.AsTask);
+
+            // then
+            actualNhsDigitalApiOrchestrationValidationException
+                .Should().BeEquivalentTo(expectedNhsDigitalApiOrchestrationValidationException);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedNhsDigitalApiOrchestrationValidationException))),
+                        Times.Once);
+
+            this.nhsDigitalApiServiceMock.Verify(service =>
+                service.GetUserInfoAsync(validCode, validState, inputCancellationToken),
+                    Times.Once);
+
+            this.nhsDigitalApiServiceMock.VerifyNoOtherCalls();
+            this.userServiceMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
