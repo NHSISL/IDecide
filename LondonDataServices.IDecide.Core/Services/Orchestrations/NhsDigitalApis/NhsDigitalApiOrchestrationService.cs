@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using LondonDataServices.IDecide.Core.Brokers.DateTimes;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Models.Foundations.Users;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.NhsDigitalApis;
@@ -19,15 +20,18 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis
     {
         private readonly INhsDigitalApiService nhsDigitalApiService;
         private readonly IUserService userService;
+        private readonly IDateTimeBroker dateTimeBroker;
         private readonly ILoggingBroker loggingBroker;
 
         public NhsDigitalApiOrchestrationService(
             INhsDigitalApiService nhsDigitalApiService,
             IUserService userService,
+            IDateTimeBroker dateTimeBroker,
             ILoggingBroker loggingBroker)
         {
             this.nhsDigitalApiService = nhsDigitalApiService;
             this.userService = userService;
+            this.dateTimeBroker = dateTimeBroker;
             this.loggingBroker = loggingBroker;
         }
 
@@ -52,6 +56,9 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis
 
                 string rawUserInfo = JsonSerializer.Serialize(userInfo);
 
+                DateTimeOffset now =
+                    await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
+
                 IQueryable<User> allUsers = await this.userService.RetrieveAllUsersAsync();
 
                 User maybeUser = allUsers
@@ -65,7 +72,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis
                         Name = userInfo.Name,
                         Sub = userInfo.Sub,
                         RawUserInfo = rawUserInfo,
-                        LastLoginAt = DateTime.UtcNow,
+                        LastLoginAt = now.UtcDateTime,
                         IsAuthorised = false
                     };
 
@@ -74,7 +81,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis
                 }
                 else
                 {
-                    maybeUser.LastLoginAt = DateTime.UtcNow;
+                    maybeUser.LastLoginAt = now.UtcDateTime;
                     maybeUser.RawUserInfo = rawUserInfo;
                     maybeUser = await this.userService.ModifyUserAsync(maybeUser);
                     ValidateUser(maybeUser);

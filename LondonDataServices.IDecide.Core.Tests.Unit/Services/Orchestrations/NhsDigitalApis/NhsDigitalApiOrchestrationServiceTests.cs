@@ -9,6 +9,7 @@ using System.Linq.Expressions;
 using System.Text.Json;
 using System.Threading;
 using KellermanSoftware.CompareNetObjects;
+using LondonDataServices.IDecide.Core.Brokers.DateTimes;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Models.Foundations.NhsDigitalApis.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Users.Exceptions;
@@ -27,6 +28,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
     {
         private readonly Mock<INhsDigitalApiService> nhsDigitalApiServiceMock;
         private readonly Mock<IUserService> userServiceMock;
+        private readonly Mock<IDateTimeBroker> dateTimeBrokerMock;
         private readonly Mock<ILoggingBroker> loggingBrokerMock;
         private readonly NhsDigitalApiOrchestrationService nhsDigitalApiOrchestrationService;
         private readonly ICompareLogic compareLogic;
@@ -35,17 +37,22 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
         {
             this.nhsDigitalApiServiceMock = new Mock<INhsDigitalApiService>();
             this.userServiceMock = new Mock<IUserService>();
+            this.dateTimeBrokerMock = new Mock<IDateTimeBroker>();
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
             this.compareLogic = new CompareLogic();
 
             this.nhsDigitalApiOrchestrationService = new NhsDigitalApiOrchestrationService(
                 nhsDigitalApiService: this.nhsDigitalApiServiceMock.Object,
                 userService: this.userServiceMock.Object,
+                dateTimeBroker: this.dateTimeBrokerMock.Object,
                 loggingBroker: this.loggingBrokerMock.Object);
         }
 
         private static CancellationToken GetCancellationToken() =>
             new CancellationTokenSource().Token;
+
+        private static DateTimeOffset GetCurrentDateTime() =>
+            DateTimeOffset.UtcNow;
 
         private static string GetRandomString() =>
             new MnemonicString().GetValue();

@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -21,6 +22,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
             CancellationToken inputCancellationToken = GetCancellationToken();
             string inputCode = GetRandomString();
             string inputState = GetRandomString();
+            DateTimeOffset now = GetCurrentDateTime();
 
             User randomUser = CreateRandomUser(isAuthorised: true);
             User existingUser = randomUser.DeepClone();
@@ -36,6 +38,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
 
             List<User> randomUsers = new List<User> { existingUser };
             IQueryable<User> returnedUsers = randomUsers.AsQueryable();
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(now);
 
             this.nhsDigitalApiServiceMock.Setup(service =>
                 service.GetUserInfoAsync(inputCode, inputState, inputCancellationToken))
@@ -56,6 +62,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
             // then
             this.nhsDigitalApiServiceMock.Verify(service =>
                 service.GetUserInfoAsync(inputCode, inputState, inputCancellationToken),
+                Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
                 Times.Once);
 
             this.userServiceMock.Verify(service =>
@@ -77,6 +87,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
             this.nhsDigitalApiServiceMock.VerifyNoOtherCalls();
             this.userServiceMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -86,6 +97,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
             CancellationToken inputCancellationToken = GetCancellationToken();
             string inputCode = GetRandomString();
             string inputState = GetRandomString();
+            DateTimeOffset now = GetCurrentDateTime();
 
             User randomUser = CreateRandomUser(isAuthorised: false);
             User existingUser = randomUser.DeepClone();
@@ -101,6 +113,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
 
             List<User> randomUsers = new List<User> { existingUser };
             IQueryable<User> returnedUsers = randomUsers.AsQueryable();
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(now);
 
             this.nhsDigitalApiServiceMock.Setup(service =>
                 service.GetUserInfoAsync(inputCode, inputState, inputCancellationToken))
@@ -123,6 +139,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
                 service.GetUserInfoAsync(inputCode, inputState, inputCancellationToken),
                 Times.Once);
 
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                Times.Once);
+
             this.userServiceMock.Verify(service =>
                 service.RetrieveAllUsersAsync(),
                 Times.Once);
@@ -142,6 +162,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
             this.nhsDigitalApiServiceMock.VerifyNoOtherCalls();
             this.userServiceMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -151,6 +172,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
             CancellationToken inputCancellationToken = GetCancellationToken();
             string inputCode = GetRandomString();
             string inputState = GetRandomString();
+            DateTimeOffset now = GetCurrentDateTime();
 
             User randomUser = CreateRandomUser(isAuthorised: false);
             User addedUser = randomUser.DeepClone();
@@ -164,6 +186,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
             string returnedUserInfoJson = randomUserInfoJson.DeepClone();
 
             IQueryable<User> returnedUsers = new List<User>().AsQueryable();
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffsetAsync())
+                    .ReturnsAsync(now);
 
             this.nhsDigitalApiServiceMock.Setup(service =>
                 service.GetUserInfoAsync(inputCode, inputState, inputCancellationToken))
@@ -186,6 +212,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
                 service.GetUserInfoAsync(inputCode, inputState, inputCancellationToken),
                 Times.Once);
 
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffsetAsync(),
+                Times.Once);
+
             this.userServiceMock.Verify(service =>
                 service.RetrieveAllUsersAsync(),
                 Times.Once);
@@ -205,6 +235,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
             this.nhsDigitalApiServiceMock.VerifyNoOtherCalls();
             this.userServiceMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
