@@ -6,12 +6,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text.Json;
 using System.Threading;
 using KellermanSoftware.CompareNetObjects;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Models.Foundations.NhsDigitalApis.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Users.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Users;
+using LondonDataServices.IDecide.Core.Models.Orchestrations.NhsDigitalApis;
 using LondonDataServices.IDecide.Core.Services.Foundations.NhsDigitalApis;
 using LondonDataServices.IDecide.Core.Services.Foundations.Users;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis;
@@ -52,7 +54,13 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
             new IntRange(min: 2, max: 10).GetValue();
 
         private static string CreateUserInfoJson(string nhsIdUserUid, string name, string sub) =>
-            $"{{\"NhsIdUserUid\":\"{nhsIdUserUid}\",\"Name\":\"{name}\",\"Sub\":\"{sub}\"}}";
+            JsonSerializer.Serialize(
+                new NhsDigitalUserInfo
+                {
+                    NhsIdUserUid = nhsIdUserUid,
+                    Name = name,
+                    Sub = sub
+                });
 
         private static Filler<User> CreateUserFiller(bool isAuthorised = true)
         {
