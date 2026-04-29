@@ -76,8 +76,6 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis
                     maybeUser = await this.userService.ModifyUserAsync(maybeUser);
                 }
 
-                // ValidateUser(maybeUser)
-
                 if (maybeUser.IsAuthorised is false)
                 {
                     await this.nhsDigitalApiService.LogoutAsync(cancellationToken);
