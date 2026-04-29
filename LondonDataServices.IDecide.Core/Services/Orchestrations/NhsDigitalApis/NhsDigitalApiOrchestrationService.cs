@@ -3,9 +3,13 @@
 // ---------------------------------------------------------
 
 using System;
+using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
+using LondonDataServices.IDecide.Core.Models.Foundations.Users;
+using LondonDataServices.IDecide.Core.Models.Orchestrations.NhsDigitalApis;
 using LondonDataServices.IDecide.Core.Services.Foundations.NhsDigitalApis;
 using LondonDataServices.IDecide.Core.Services.Foundations.Users;
 
@@ -27,47 +31,55 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis
             this.loggingBroker = loggingBroker;
         }
 
-        public ValueTask ProcessCallbackAsync(string code, string state, CancellationToken cancellationToken)
+        public async ValueTask ProcessCallbackAsync(
+            string code,
+            string state,
+            CancellationToken cancellationToken)
         {
-            // VALIDATION: ValidateProcessCallbackArguments(code, state)
-            //             - ValidateCodeIsNotNullOrWhiteSpace(code)
-            //             - ValidateStateIsNotNullOrWhiteSpace(state)
+            // ValidateProcessCallbackArguments(code, state)
 
-            // Step 1: Call NhsDigitalApiService.GetUserInfoAsync(code, state, cancellationToken)
-            //         to exchange the authorisation code for user info.
+            string userInfoJson =
+                await this.nhsDigitalApiService.GetUserInfoAsync(code, state, cancellationToken);
 
-            // VALIDATION: ValidateUserInfoIsNotNull(userInfo)
-            //             - ValidateUserInfoNhsIdUserUidIsNotNullOrWhiteSpace(userInfo.NhsIdUserUid)
-            //             - ValidateUserInfoNameIsNotNullOrWhiteSpace(userInfo.Name)
-            //             - ValidateUserInfoSubIsNotNullOrWhiteSpace(userInfo.Sub)
+            NhsDigitalUserInfo userInfo =
+                JsonSerializer.Deserialize<NhsDigitalUserInfo>(userInfoJson);
 
-            // Step 2: Serialise the returned user info to JSON for storage as RawUserInfo.
+            // ValidateUserInfo(userInfo)
 
-            // Step 3: Call UserService.RetrieveAllUsersAsync() and find a User
-            //         where NhsIdUserUid matches userInfo.NhsIdUserUid.
+            string rawUserInfo = JsonSerializer.Serialize(userInfo);
 
-            // Step 4: If no matching user found (new user):
-            //             Create a new User with NhsIdUserUid, Name, Sub, RawUserInfo,
-            //             LastLoginAt = UtcNow, IsAuthorised = false.
-            //             Call UserService.AddUserAsync(user).
+            IQueryable<User> allUsers = await this.userService.RetrieveAllUsersAsync();
 
-            // Step 5: If matching user found (existing user):
-            //             Update user.LastLoginAt = UtcNow and user.RawUserInfo.
-            //             Call UserService.ModifyUserAsync(user).
+            User maybeUser = allUsers
+                .FirstOrDefault(u => u.NhsIdUserUid == userInfo.NhsIdUserUid);
 
-            // VALIDATION: ValidateUserIsNotNull(user)
-            //             - Ensure AddUserAsync / ModifyUserAsync returned a valid User.
+            if (maybeUser is null)
+            {
+                var newUser = new User
+                {
+                    NhsIdUserUid = userInfo.NhsIdUserUid,
+                    Name = userInfo.Name,
+                    Sub = userInfo.Sub,
+                    RawUserInfo = rawUserInfo,
+                    LastLoginAt = DateTime.UtcNow,
+                    IsAuthorised = false
+                };
 
-            // Step 6: If user.IsAuthorised is false:
-            //             Call NhsDigitalApiService.LogoutAsync(cancellationToken).
-            //             Return a result indicating the user is unauthorised
-            //             (controller will clear session, sign out, and redirect to /unauthorised).
+                maybeUser = await this.userService.AddUserAsync(newUser);
+            }
+            else
+            {
+                maybeUser.LastLoginAt = DateTime.UtcNow;
+                maybeUser.RawUserInfo = rawUserInfo;
+                maybeUser = await this.userService.ModifyUserAsync(maybeUser);
+            }
 
-            // Step 7: If user.IsAuthorised is true:
-            //             Return a result containing the user info (Name, NhsIdUserUid, Sub)
-            //             so the controller can build claims, sign in, and redirect to /.
+            // ValidateUser(maybeUser)
 
-            throw new NotImplementedException();
+            if (maybeUser.IsAuthorised is false)
+            {
+                await this.nhsDigitalApiService.LogoutAsync(cancellationToken);
+            }
         }
     }
 }
