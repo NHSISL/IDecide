@@ -47,6 +47,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis
                     JsonSerializer.Deserialize<NhsDigitalUserInfo>(userInfoJson);
 
                 // ValidateUserInfo(userInfo)
+                ValidateUserInfo(userInfo);
 
                 string rawUserInfo = JsonSerializer.Serialize(userInfo);
 
