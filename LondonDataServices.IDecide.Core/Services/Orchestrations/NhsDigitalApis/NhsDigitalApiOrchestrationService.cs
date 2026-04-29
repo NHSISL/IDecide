@@ -68,12 +68,14 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis
                     };
 
                     maybeUser = await this.userService.AddUserAsync(newUser);
+                    ValidateUser(maybeUser);
                 }
                 else
                 {
                     maybeUser.LastLoginAt = DateTime.UtcNow;
                     maybeUser.RawUserInfo = rawUserInfo;
                     maybeUser = await this.userService.ModifyUserAsync(maybeUser);
+                    ValidateUser(maybeUser);
                 }
 
                 if (maybeUser.IsAuthorised is false)

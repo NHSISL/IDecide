@@ -79,132 +79,133 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
             this.userServiceMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
-            [Fact]
-            public async Task ShouldProcessCallbackForExistingUnauthorisedUserAsync()
-            {
-                // given
-                CancellationToken inputCancellationToken = GetCancellationToken();
-                string inputCode = GetRandomString();
-                string inputState = GetRandomString();
 
-                User randomUser = CreateRandomUser(isAuthorised: false);
-                User existingUser = randomUser.DeepClone();
-                User updatedUser = randomUser.DeepClone();
+        [Fact]
+        public async Task ShouldProcessCallbackForExistingUnauthorisedUserAsync()
+        {
+            // given
+            CancellationToken inputCancellationToken = GetCancellationToken();
+            string inputCode = GetRandomString();
+            string inputState = GetRandomString();
 
-                string randomUserInfoJson =
-                    CreateUserInfoJson(
-                        nhsIdUserUid: existingUser.NhsIdUserUid,
-                        name: existingUser.Name,
-                        sub: existingUser.Sub);
+            User randomUser = CreateRandomUser(isAuthorised: false);
+            User existingUser = randomUser.DeepClone();
+            User updatedUser = randomUser.DeepClone();
 
-                string returnedUserInfoJson = randomUserInfoJson.DeepClone();
+            string randomUserInfoJson =
+                CreateUserInfoJson(
+                    nhsIdUserUid: existingUser.NhsIdUserUid,
+                    name: existingUser.Name,
+                    sub: existingUser.Sub);
 
-                List<User> randomUsers = new List<User> { existingUser };
-                IQueryable<User> returnedUsers = randomUsers.AsQueryable();
+            string returnedUserInfoJson = randomUserInfoJson.DeepClone();
 
-                this.nhsDigitalApiServiceMock.Setup(service =>
-                    service.GetUserInfoAsync(inputCode, inputState, inputCancellationToken))
-                        .ReturnsAsync(returnedUserInfoJson);
+            List<User> randomUsers = new List<User> { existingUser };
+            IQueryable<User> returnedUsers = randomUsers.AsQueryable();
 
-                this.userServiceMock.Setup(service =>
-                    service.RetrieveAllUsersAsync())
-                        .ReturnsAsync(returnedUsers);
+            this.nhsDigitalApiServiceMock.Setup(service =>
+                service.GetUserInfoAsync(inputCode, inputState, inputCancellationToken))
+                    .ReturnsAsync(returnedUserInfoJson);
 
-                this.userServiceMock.Setup(service =>
-                    service.ModifyUserAsync(It.Is(SameUserAs(existingUser))))
-                        .ReturnsAsync(updatedUser);
+            this.userServiceMock.Setup(service =>
+                service.RetrieveAllUsersAsync())
+                    .ReturnsAsync(returnedUsers);
 
-                // when
-                await this.nhsDigitalApiOrchestrationService
-                    .ProcessCallbackAsync(inputCode, inputState, inputCancellationToken);
+            this.userServiceMock.Setup(service =>
+                service.ModifyUserAsync(It.Is(SameUserAs(existingUser))))
+                    .ReturnsAsync(updatedUser);
 
-                // then
-                this.nhsDigitalApiServiceMock.Verify(service =>
-                    service.GetUserInfoAsync(inputCode, inputState, inputCancellationToken),
-                    Times.Once);
+            // when
+            await this.nhsDigitalApiOrchestrationService
+                .ProcessCallbackAsync(inputCode, inputState, inputCancellationToken);
 
-                this.userServiceMock.Verify(service =>
-                    service.RetrieveAllUsersAsync(),
-                    Times.Once);
+            // then
+            this.nhsDigitalApiServiceMock.Verify(service =>
+                service.GetUserInfoAsync(inputCode, inputState, inputCancellationToken),
+                Times.Once);
 
-                this.userServiceMock.Verify(service =>
-                    service.ModifyUserAsync(It.Is(SameUserAs(existingUser))),
-                    Times.Once);
+            this.userServiceMock.Verify(service =>
+                service.RetrieveAllUsersAsync(),
+                Times.Once);
 
-                this.userServiceMock.Verify(service =>
-                    service.AddUserAsync(It.IsAny<User>()),
-                    Times.Never);
+            this.userServiceMock.Verify(service =>
+                service.ModifyUserAsync(It.Is(SameUserAs(existingUser))),
+                Times.Once);
 
-                this.nhsDigitalApiServiceMock.Verify(service =>
-                    service.LogoutAsync(inputCancellationToken),
-                    Times.Once);
+            this.userServiceMock.Verify(service =>
+                service.AddUserAsync(It.IsAny<User>()),
+                Times.Never);
 
-                this.nhsDigitalApiServiceMock.VerifyNoOtherCalls();
-                this.userServiceMock.VerifyNoOtherCalls();
-                this.loggingBrokerMock.VerifyNoOtherCalls();
-            }
+            this.nhsDigitalApiServiceMock.Verify(service =>
+                service.LogoutAsync(inputCancellationToken),
+                Times.Once);
 
-            [Fact]
-            public async Task ShouldProcessCallbackForNewUserAsync()
-            {
-                // given
-                CancellationToken inputCancellationToken = GetCancellationToken();
-                string inputCode = GetRandomString();
-                string inputState = GetRandomString();
+            this.nhsDigitalApiServiceMock.VerifyNoOtherCalls();
+            this.userServiceMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
 
-                User randomUser = CreateRandomUser(isAuthorised: false);
-                User addedUser = randomUser.DeepClone();
+        [Fact]
+        public async Task ShouldProcessCallbackForNewUserAsync()
+        {
+            // given
+            CancellationToken inputCancellationToken = GetCancellationToken();
+            string inputCode = GetRandomString();
+            string inputState = GetRandomString();
 
-                string randomUserInfoJson =
-                    CreateUserInfoJson(
-                        nhsIdUserUid: randomUser.NhsIdUserUid,
-                        name: randomUser.Name,
-                        sub: randomUser.Sub);
+            User randomUser = CreateRandomUser(isAuthorised: false);
+            User addedUser = randomUser.DeepClone();
 
-                string returnedUserInfoJson = randomUserInfoJson.DeepClone();
+            string randomUserInfoJson =
+                CreateUserInfoJson(
+                    nhsIdUserUid: randomUser.NhsIdUserUid,
+                    name: randomUser.Name,
+                    sub: randomUser.Sub);
 
-                IQueryable<User> returnedUsers = new List<User>().AsQueryable();
+            string returnedUserInfoJson = randomUserInfoJson.DeepClone();
 
-                this.nhsDigitalApiServiceMock.Setup(service =>
-                    service.GetUserInfoAsync(inputCode, inputState, inputCancellationToken))
-                        .ReturnsAsync(returnedUserInfoJson);
+            IQueryable<User> returnedUsers = new List<User>().AsQueryable();
 
-                this.userServiceMock.Setup(service =>
-                    service.RetrieveAllUsersAsync())
-                        .ReturnsAsync(returnedUsers);
+            this.nhsDigitalApiServiceMock.Setup(service =>
+                service.GetUserInfoAsync(inputCode, inputState, inputCancellationToken))
+                    .ReturnsAsync(returnedUserInfoJson);
 
-                this.userServiceMock.Setup(service =>
-                    service.AddUserAsync(It.IsAny<User>()))
-                        .ReturnsAsync(addedUser);
+            this.userServiceMock.Setup(service =>
+                service.RetrieveAllUsersAsync())
+                    .ReturnsAsync(returnedUsers);
 
-                // when
-                await this.nhsDigitalApiOrchestrationService
-                    .ProcessCallbackAsync(inputCode, inputState, inputCancellationToken);
+            this.userServiceMock.Setup(service =>
+                service.AddUserAsync(It.IsAny<User>()))
+                    .ReturnsAsync(addedUser);
 
-                // then
-                this.nhsDigitalApiServiceMock.Verify(service =>
-                    service.GetUserInfoAsync(inputCode, inputState, inputCancellationToken),
-                    Times.Once);
+            // when
+            await this.nhsDigitalApiOrchestrationService
+                .ProcessCallbackAsync(inputCode, inputState, inputCancellationToken);
 
-                this.userServiceMock.Verify(service =>
-                    service.RetrieveAllUsersAsync(),
-                    Times.Once);
+            // then
+            this.nhsDigitalApiServiceMock.Verify(service =>
+                service.GetUserInfoAsync(inputCode, inputState, inputCancellationToken),
+                Times.Once);
 
-                this.userServiceMock.Verify(service =>
-                    service.AddUserAsync(It.IsAny<User>()),
-                    Times.Once);
+            this.userServiceMock.Verify(service =>
+                service.RetrieveAllUsersAsync(),
+                Times.Once);
 
-                this.userServiceMock.Verify(service =>
-                    service.ModifyUserAsync(It.IsAny<User>()),
-                    Times.Never);
+            this.userServiceMock.Verify(service =>
+                service.AddUserAsync(It.IsAny<User>()),
+                Times.Once);
 
-                this.nhsDigitalApiServiceMock.Verify(service =>
-                    service.LogoutAsync(inputCancellationToken),
-                    Times.Once);
+            this.userServiceMock.Verify(service =>
+                service.ModifyUserAsync(It.IsAny<User>()),
+                Times.Never);
 
-                this.nhsDigitalApiServiceMock.VerifyNoOtherCalls();
-                this.userServiceMock.VerifyNoOtherCalls();
-                this.loggingBrokerMock.VerifyNoOtherCalls();
-            }
+            this.nhsDigitalApiServiceMock.Verify(service =>
+                service.LogoutAsync(inputCancellationToken),
+                Times.Once);
+
+            this.nhsDigitalApiServiceMock.VerifyNoOtherCalls();
+            this.userServiceMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }
+}
