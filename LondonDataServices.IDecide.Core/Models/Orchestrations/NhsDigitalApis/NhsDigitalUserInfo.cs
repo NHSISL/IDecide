@@ -10,8 +10,10 @@ namespace LondonDataServices.IDecide.Core.Models.Orchestrations.NhsDigitalApis
     {
         [JsonPropertyName("nhsid_useruid")]
         public string NhsIdUserUid { get; set; } = default!;
+
         [JsonPropertyName("name")]
         public string Name { get; set; } = default!;
+
         [JsonPropertyName("sub")]
         public string Sub { get; set; } = default!;
     }

@@ -53,7 +53,6 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis
                     JsonSerializer.Deserialize<NhsDigitalUserInfo>(userInfoJson);
 
                 ValidateUserInfo(userInfo);
-
                 string rawUserInfo = JsonSerializer.Serialize(userInfo);
 
                 DateTimeOffset now =

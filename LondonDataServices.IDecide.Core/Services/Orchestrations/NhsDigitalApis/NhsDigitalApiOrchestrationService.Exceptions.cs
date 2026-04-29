@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Models.Foundations.NhsDigitalApis.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Users.Exceptions;
@@ -60,11 +61,11 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis
             {
                 throw await CreateAndLogDependencyExceptionAsync(userServiceException);
             }
-            catch (System.OperationCanceledException)
+            catch (OperationCanceledException)
             {
                 throw;
             }
-            catch (System.Exception exception)
+            catch (Exception exception)
             {
                 var failedNhsDigitalApiOrchestrationServiceException =
                     new FailedNhsDigitalApiOrchestrationServiceException(
