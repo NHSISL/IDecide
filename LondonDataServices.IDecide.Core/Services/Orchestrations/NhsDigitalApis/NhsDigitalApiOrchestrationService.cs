@@ -36,50 +36,53 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis
             string state,
             CancellationToken cancellationToken)
         {
-            // ValidateProcessCallbackArguments(code, state)
-
-            string userInfoJson =
-                await this.nhsDigitalApiService.GetUserInfoAsync(code, state, cancellationToken);
-
-            NhsDigitalUserInfo userInfo =
-                JsonSerializer.Deserialize<NhsDigitalUserInfo>(userInfoJson);
-
-            // ValidateUserInfo(userInfo)
-
-            string rawUserInfo = JsonSerializer.Serialize(userInfo);
-
-            IQueryable<User> allUsers = await this.userService.RetrieveAllUsersAsync();
-
-            User maybeUser = allUsers
-                .FirstOrDefault(u => u.NhsIdUserUid == userInfo.NhsIdUserUid);
-
-            if (maybeUser is null)
+            await TryCatch(async () =>
             {
-                var newUser = new User
+                ValidateProcessCallbackArguments(code, state);
+
+                string userInfoJson =
+                    await this.nhsDigitalApiService.GetUserInfoAsync(code, state, cancellationToken);
+
+                NhsDigitalUserInfo userInfo =
+                    JsonSerializer.Deserialize<NhsDigitalUserInfo>(userInfoJson);
+
+                // ValidateUserInfo(userInfo)
+
+                string rawUserInfo = JsonSerializer.Serialize(userInfo);
+
+                IQueryable<User> allUsers = await this.userService.RetrieveAllUsersAsync();
+
+                User maybeUser = allUsers
+                    .FirstOrDefault(u => u.NhsIdUserUid == userInfo.NhsIdUserUid);
+
+                if (maybeUser is null)
                 {
-                    NhsIdUserUid = userInfo.NhsIdUserUid,
-                    Name = userInfo.Name,
-                    Sub = userInfo.Sub,
-                    RawUserInfo = rawUserInfo,
-                    LastLoginAt = DateTime.UtcNow,
-                    IsAuthorised = false
-                };
+                    var newUser = new User
+                    {
+                        NhsIdUserUid = userInfo.NhsIdUserUid,
+                        Name = userInfo.Name,
+                        Sub = userInfo.Sub,
+                        RawUserInfo = rawUserInfo,
+                        LastLoginAt = DateTime.UtcNow,
+                        IsAuthorised = false
+                    };
 
-                maybeUser = await this.userService.AddUserAsync(newUser);
-            }
-            else
-            {
-                maybeUser.LastLoginAt = DateTime.UtcNow;
-                maybeUser.RawUserInfo = rawUserInfo;
-                maybeUser = await this.userService.ModifyUserAsync(maybeUser);
-            }
+                    maybeUser = await this.userService.AddUserAsync(newUser);
+                }
+                else
+                {
+                    maybeUser.LastLoginAt = DateTime.UtcNow;
+                    maybeUser.RawUserInfo = rawUserInfo;
+                    maybeUser = await this.userService.ModifyUserAsync(maybeUser);
+                }
 
-            // ValidateUser(maybeUser)
+                // ValidateUser(maybeUser)
 
-            if (maybeUser.IsAuthorised is false)
-            {
-                await this.nhsDigitalApiService.LogoutAsync(cancellationToken);
-            }
+                if (maybeUser.IsAuthorised is false)
+                {
+                    await this.nhsDigitalApiService.LogoutAsync(cancellationToken);
+                }
+            });
         }
     }
 }
