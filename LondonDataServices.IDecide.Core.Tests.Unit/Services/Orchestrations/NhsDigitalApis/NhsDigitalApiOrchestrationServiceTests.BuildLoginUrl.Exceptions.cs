@@ -59,6 +59,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
             this.userServiceMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
         [Theory]
         [MemberData(nameof(NhsDigitalApiDependencyExceptions))]
         public async Task ShouldThrowDependencyExceptionOnBuildLoginUrlAndLogItAsync(
