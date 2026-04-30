@@ -99,7 +99,8 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis
                 this.nhsDigitalApiService.LogoutAsync(cancellationToken));
 
         public ValueTask<string> GetAccessTokenAsync(CancellationToken cancellationToken) =>
-            throw new NotImplementedException();
+            TryCatch(async () =>
+                await this.nhsDigitalApiService.GetAccessTokenAsync(cancellationToken));
 
         public ValueTask<string> BuildLoginUrlAsync(CancellationToken cancellationToken) =>
             TryCatch(async () => await
