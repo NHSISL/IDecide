@@ -14,6 +14,54 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis
     public partial class NhsDigitalApiOrchestrationService
     {
         private delegate ValueTask ReturningNothingFunction();
+        private delegate ValueTask<string> ReturningStringFunction();
+
+        private async ValueTask<string> TryCatch(ReturningStringFunction returningStringFunction)
+        {
+            try
+            {
+                return await returningStringFunction();
+            }
+            catch (InvalidNhsDigitalApiOrchestrationArgumentException
+                invalidNhsDigitalApiOrchestrationArgumentException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(
+                    invalidNhsDigitalApiOrchestrationArgumentException);
+            }
+            catch (NhsDigitalApiValidationException nhsDigitalApiValidationException)
+            {
+                throw await CreateAndLogDependencyValidationExceptionAsync(
+                    nhsDigitalApiValidationException);
+            }
+            catch (NhsDigitalApiDependencyValidationException nhsDigitalApiDependencyValidationException)
+            {
+                throw await CreateAndLogDependencyValidationExceptionAsync(
+                    nhsDigitalApiDependencyValidationException);
+            }
+            catch (NhsDigitalApiDependencyException nhsDigitalApiDependencyException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(nhsDigitalApiDependencyException);
+            }
+            catch (NhsDigitalApiServiceException nhsDigitalApiServiceException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(nhsDigitalApiServiceException);
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (Exception exception)
+            {
+                var failedNhsDigitalApiOrchestrationServiceException =
+                    new FailedNhsDigitalApiOrchestrationServiceException(
+                        message: "Failed NhsDigitalApi orchestration service error occurred, " +
+                            "please contact support.",
+                        innerException: exception);
+
+                throw await CreateAndLogServiceExceptionAsync(
+                    failedNhsDigitalApiOrchestrationServiceException);
+            }
+        }
 
         private async ValueTask TryCatch(ReturningNothingFunction returningNothingFunction)
         {
