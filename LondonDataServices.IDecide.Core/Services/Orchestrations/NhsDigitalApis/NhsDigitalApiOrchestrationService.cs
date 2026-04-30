@@ -94,6 +94,9 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis
             });
         }
 
+        public ValueTask LogoutAsync(CancellationToken cancellationToken) =>
+            throw new NotImplementedException();
+
         public ValueTask<string> BuildLoginUrlAsync(CancellationToken cancellationToken) =>
             TryCatch(async () => await this.nhsDigitalApiService.BuildLoginUrlAsync(cancellationToken));
 
