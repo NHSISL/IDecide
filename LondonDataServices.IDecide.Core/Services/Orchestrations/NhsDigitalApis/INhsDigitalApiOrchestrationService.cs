@@ -11,7 +11,6 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis
     public interface INhsDigitalApiOrchestrationService
     {
         ValueTask ProcessCallbackAsync(string code, string state, CancellationToken cancellationToken);
-
         ValueTask<string> BuildLoginUrlAsync(CancellationToken cancellationToken);
 
         ValueTask<string> SearchPatientPDSAsync(
