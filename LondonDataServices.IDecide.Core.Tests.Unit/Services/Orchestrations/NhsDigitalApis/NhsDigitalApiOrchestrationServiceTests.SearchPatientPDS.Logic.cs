@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Force.DeepCloner;
 using Moq;
 using NHSDigital.ApiPlatform.Sdk.Models.Foundations.Pds;
-using Tynamix.ObjectFiller;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.NhsDigitalApis
 {
@@ -45,6 +44,5 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
-
-            }
-        }
+    }
+}
