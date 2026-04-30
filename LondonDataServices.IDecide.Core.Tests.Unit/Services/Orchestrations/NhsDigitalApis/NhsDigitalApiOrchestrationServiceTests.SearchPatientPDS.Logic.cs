@@ -46,11 +46,5 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
 
-        private static SearchCriteria CreateRandomSearchCriteria()
-        {
-            var filler = new Filler<SearchCriteria>();
-
-            return filler.Create();
+            }
         }
-    }
-}

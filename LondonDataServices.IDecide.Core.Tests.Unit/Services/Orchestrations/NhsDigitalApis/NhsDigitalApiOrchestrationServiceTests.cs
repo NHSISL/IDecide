@@ -12,6 +12,7 @@ using KellermanSoftware.CompareNetObjects;
 using LondonDataServices.IDecide.Core.Brokers.DateTimes;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Models.Foundations.NhsDigitalApis.Exceptions;
+using NHSDigital.ApiPlatform.Sdk.Models.Foundations.Pds;
 using LondonDataServices.IDecide.Core.Models.Foundations.Users.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Users;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.NhsDigitalApis;
@@ -89,6 +90,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
 
         private static User CreateRandomUser(bool isAuthorised = true) =>
             CreateUserFiller(isAuthorised).Create();
+
+        private static SearchCriteria CreateRandomSearchCriteria() =>
+            new Filler<SearchCriteria>().Create();
 
         private Expression<Func<User, bool>> SameUserAs(User expectedUser) =>
             actualUser => this.compareLogic.Compare(expectedUser, actualUser).AreEqual;
