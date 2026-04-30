@@ -97,6 +97,6 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis
         public ValueTask<string> SearchPatientPDSAsync(
             SearchCriteria searchCriteria,
             CancellationToken cancellationToken) =>
-            throw new NotImplementedException();
+            this.nhsDigitalApiService.SearchPatientPDSAsync(searchCriteria, cancellationToken);
     }
 }
