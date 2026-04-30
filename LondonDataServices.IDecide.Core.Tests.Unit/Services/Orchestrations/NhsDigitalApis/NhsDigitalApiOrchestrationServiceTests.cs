@@ -100,6 +100,23 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
         private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
             actualException => actualException.SameExceptionAs(expectedException);
 
+        public static TheoryData<Xeption> NhsDigitalApiDependencyValidationExceptions()
+        {
+            string randomMessage = GetRandomString();
+            var innerException = new Xeption(randomMessage);
+
+            return new TheoryData<Xeption>
+            {
+                new NhsDigitalApiValidationException(
+                    message: "NhsDigitalApi validation errors occurred, please try again.",
+                    innerException),
+
+                new NhsDigitalApiDependencyValidationException(
+                    message: "NhsDigitalApi dependency validation occurred, please try again.",
+                    innerException)
+            };
+        }
+
         public static TheoryData<Xeption> DependencyValidationExceptions()
         {
             string randomMessage = GetRandomString();
