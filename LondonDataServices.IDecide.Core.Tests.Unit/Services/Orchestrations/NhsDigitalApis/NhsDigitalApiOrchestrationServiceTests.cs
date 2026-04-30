@@ -117,6 +117,23 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
             };
         }
 
+        public static TheoryData<Xeption> NhsDigitalApiDependencyExceptions()
+        {
+            string randomMessage = GetRandomString();
+            var innerException = new Xeption(randomMessage);
+
+            return new TheoryData<Xeption>
+            {
+                new NhsDigitalApiDependencyException(
+                    message: "NhsDigitalApi dependency error occurred, please contact support.",
+                    innerException),
+
+                new NhsDigitalApiServiceException(
+                    message: "NhsDigitalApi service error occurred, please contact support.",
+                    innerException)
+            };
+        }
+
         public static TheoryData<Xeption> DependencyValidationExceptions()
         {
             string randomMessage = GetRandomString();

@@ -63,6 +63,54 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
 
+        [Theory]
+        [MemberData(nameof(NhsDigitalApiDependencyExceptions))]
+        public async Task ShouldThrowDependencyExceptionOnSearchPatientPDSAndLogItAsync(
+            Xeption dependencyException)
+        {
+            // given
+            SearchCriteria randomSearchCriteria = CreateRandomSearchCriteria();
+            SearchCriteria inputSearchCriteria = randomSearchCriteria;
+            CancellationToken inputCancellationToken = GetCancellationToken();
+
+            this.nhsDigitalApiServiceMock.Setup(service =>
+                service.SearchPatientPDSAsync(inputSearchCriteria, inputCancellationToken))
+                    .ThrowsAsync(dependencyException);
+
+            var expectedNhsDigitalApiOrchestrationDependencyException =
+                new NhsDigitalApiOrchestrationDependencyException(
+                    message: "NhsDigitalApi orchestration dependency error occurred, " +
+                        "please fix the errors and try again.",
+                    innerException: dependencyException);
+
+            // when
+            ValueTask<string> searchPatientPDSTask =
+                this.nhsDigitalApiOrchestrationService
+                    .SearchPatientPDSAsync(inputSearchCriteria, inputCancellationToken);
+
+            NhsDigitalApiOrchestrationDependencyException
+                actualNhsDigitalApiOrchestrationDependencyException =
+                    await Assert.ThrowsAsync<NhsDigitalApiOrchestrationDependencyException>(
+                        testCode: searchPatientPDSTask.AsTask);
+
+            // then
+            actualNhsDigitalApiOrchestrationDependencyException
+                .Should().BeEquivalentTo(expectedNhsDigitalApiOrchestrationDependencyException);
+
+            this.nhsDigitalApiServiceMock.Verify(service =>
+                service.SearchPatientPDSAsync(inputSearchCriteria, inputCancellationToken),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogErrorAsync(It.Is(SameExceptionAs(
+                    expectedNhsDigitalApiOrchestrationDependencyException))),
+                        Times.Once);
+
+            this.nhsDigitalApiServiceMock.VerifyNoOtherCalls();
+            this.userServiceMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
         [Fact]
         public async Task ShouldPropagateCancellationOnSearchPatientPDSWhenCancelledAsync()
         {
