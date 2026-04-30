@@ -13,6 +13,7 @@ using LondonDataServices.IDecide.Core.Models.Foundations.Users;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.NhsDigitalApis;
 using LondonDataServices.IDecide.Core.Services.Foundations.NhsDigitalApis;
 using LondonDataServices.IDecide.Core.Services.Foundations.Users;
+using NHSDigital.ApiPlatform.Sdk.Models.Foundations.Pds;
 
 namespace LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis
 {
@@ -92,5 +93,16 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis
                 }
             });
         }
+
+        public ValueTask<string> SearchPatientPDSAsync(
+            SearchCriteria searchCriteria,
+            CancellationToken cancellationToken) =>
+            TryCatch(async () =>
+            {
+                ValidateSearchPatientPDSArguments(searchCriteria);
+
+                return await this.nhsDigitalApiService
+                    .SearchPatientPDSAsync(searchCriteria, cancellationToken);
+            });
     }
 }
