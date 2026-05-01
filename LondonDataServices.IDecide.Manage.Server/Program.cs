@@ -50,6 +50,7 @@ using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Services.Foundations.Pds;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Consumers;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions;
+using LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -311,6 +312,7 @@ namespace LondonDataServices.IDecide.Manage.Server
             services.AddTransient<IPatientOrchestrationService, PatientOrchestrationService>();
             services.AddTransient<IDecisionOrchestrationService, DecisionOrchestrationService>();
             services.AddTransient<IConsumerOrchestrationService, ConsumerOrchestrationService>();
+            services.AddTransient<INhsDigitalApiOrchestrationService, NhsDigitalApiOrchestrationService>();
         }
 
         private static void AddCoordinationServices(IServiceCollection services, IConfiguration configuration)
