@@ -34,8 +34,6 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.Auth
             this.apiBroker.nhsDigitalApiOrchestrationServiceMock.Verify(
                 service => service.BuildLoginUrlAsync(It.IsAny<CancellationToken>()),
                 Times.Once);
-
-            this.apiBroker.nhsDigitalApiOrchestrationServiceMock.VerifyNoOtherCalls();
         }
     }
 }

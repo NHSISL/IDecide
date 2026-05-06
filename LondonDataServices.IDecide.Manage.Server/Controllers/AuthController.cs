@@ -102,5 +102,35 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
                 return InternalServerError(nhsDigitalApiOrchestrationServiceException);
             }
         }
+
+        [Authorize]
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout(CancellationToken cancellationToken)
+        {
+            try
+            {
+                await this.nhsDigitalApiOrchestrationService
+                    .LogoutAsync(cancellationToken);
+
+                return NoContent();
+            }
+            catch (NhsDigitalApiOrchestrationValidationException nhsDigitalApiOrchestrationValidationException)
+            {
+                return BadRequest(nhsDigitalApiOrchestrationValidationException.InnerException);
+            }
+            catch (NhsDigitalApiOrchestrationDependencyValidationException
+                nhsDigitalApiOrchestrationDependencyValidationException)
+            {
+                return BadRequest(nhsDigitalApiOrchestrationDependencyValidationException.InnerException);
+            }
+            catch (NhsDigitalApiOrchestrationDependencyException nhsDigitalApiOrchestrationDependencyException)
+            {
+                return InternalServerError(nhsDigitalApiOrchestrationDependencyException);
+            }
+            catch (NhsDigitalApiOrchestrationServiceException nhsDigitalApiOrchestrationServiceException)
+            {
+                return InternalServerError(nhsDigitalApiOrchestrationServiceException);
+            }
+        }
     }
 }
