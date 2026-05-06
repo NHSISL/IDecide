@@ -13,5 +13,8 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Integration.Brokers
 
         public async ValueTask<HttpResponseMessage> GetLoginRedirectAsync() =>
             await this.httpClientNoRedirect.GetAsync($"{AuthRelativeUrl}/login");
+
+        public async ValueTask<HttpResponseMessage> GetSessionAsync() =>
+            await this.httpClient.GetAsync($"{AuthRelativeUrl}/session");
     }
 }

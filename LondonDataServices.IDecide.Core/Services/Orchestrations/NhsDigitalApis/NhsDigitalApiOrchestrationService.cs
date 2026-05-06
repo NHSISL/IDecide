@@ -102,6 +102,10 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis
             TryCatch(async () => await
                 this.nhsDigitalApiService.BuildLoginUrlAsync(cancellationToken));
 
+        public ValueTask<string> GetAccessTokenAsync(CancellationToken cancellationToken) =>
+            TryCatch(async () => await
+                this.nhsDigitalApiService.GetAccessTokenAsync(cancellationToken));
+
         public ValueTask<string> SearchPatientPDSAsync(
             SearchCriteria searchCriteria,
             CancellationToken cancellationToken) =>

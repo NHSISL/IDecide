@@ -13,6 +13,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis
         ValueTask ProcessCallbackAsync(string code, string state, CancellationToken cancellationToken);
         ValueTask LogoutAsync(CancellationToken cancellationToken);
         ValueTask<string> BuildLoginUrlAsync(CancellationToken cancellationToken);
+        ValueTask<string> GetAccessTokenAsync(CancellationToken cancellationToken);
 
         ValueTask<string> SearchPatientPDSAsync(
             SearchCriteria searchCriteria,
