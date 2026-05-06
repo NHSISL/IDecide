@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.NhsDigitalApis.Exceptions;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis;
+using LondonDataServices.IDecide.Manage.Server.Models.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -67,11 +68,6 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
         {
             try
             {
-                if (!User.Identity.IsAuthenticated)
-                {
-                    return Unauthorized();
-                }
-
                 string accessToken = await this.nhsDigitalApiOrchestrationService
                     .GetAccessTokenAsync(cancellationToken);
 
@@ -80,12 +76,12 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
                     return Unauthorized();
                 }
 
-                return Ok(new
+                return Ok(new SessionResponse
                 {
-                    sub = User.FindFirstValue(ClaimTypes.NameIdentifier),
-                    upn = User.FindFirstValue(ClaimTypes.Upn),
-                    name = User.FindFirstValue(ClaimTypes.Name),
-                    roles = User.FindAll(ClaimTypes.Role).Select(c => c.Value).ToArray()
+                    Sub = User.FindFirstValue(ClaimTypes.NameIdentifier),
+                    Upn = User.FindFirstValue(ClaimTypes.Upn),
+                    Name = User.FindFirstValue(ClaimTypes.Name),
+                    Roles = User.FindAll(ClaimTypes.Role).Select(c => c.Value).ToArray()
                 });
             }
             catch (NhsDigitalApiOrchestrationValidationException nhsDigitalApiOrchestrationValidationException)

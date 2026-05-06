@@ -7,6 +7,7 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using LondonDataServices.IDecide.Manage.Server.Models.Auth;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -21,11 +22,15 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Auth
             // given
             string randomAccessToken = GetRandomString();
             string outputAccessToken = randomAccessToken;
+            string randomSub = GetRandomString();
+            string randomUpn = GetRandomString();
             string randomName = GetRandomString();
             string randomRole = GetRandomString();
 
             var claims = new List<Claim>
             {
+                new Claim(ClaimTypes.NameIdentifier, randomSub),
+                new Claim(ClaimTypes.Upn, randomUpn),
                 new Claim(ClaimTypes.Name, randomName),
                 new Claim(ClaimTypes.Role, randomRole)
             };
@@ -45,6 +50,14 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Auth
                 .Setup(service => service.GetAccessTokenAsync(It.IsAny<CancellationToken>()))
                 .ReturnsAsync(outputAccessToken);
 
+            var expectedSessionResponse = new SessionResponse
+            {
+                Sub = randomSub,
+                Upn = randomUpn,
+                Name = randomName,
+                Roles = new[] { randomRole }
+            };
+
             // when
             IActionResult actualResult =
                 await this.authController.Session(CancellationToken.None);
@@ -53,6 +66,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Auth
             var okResult = actualResult as OkObjectResult;
             okResult.Should().NotBeNull();
             okResult!.StatusCode.Should().Be(200);
+            okResult.Value.Should().BeEquivalentTo(expectedSessionResponse);
 
             this.nhsDigitalApiOrchestrationServiceMock.Verify(
                 service => service.GetAccessTokenAsync(It.IsAny<CancellationToken>()),
