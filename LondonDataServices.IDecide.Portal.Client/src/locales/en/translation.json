@@ -321,7 +321,7 @@
     }
   },
   "consentDenied": {
-    "consentNotGiven": "You have not agreed to Share your Data.",
+    "consentNotGiven": "You have not agreed to share your data.",
     "consentNotGivenP1": "You have chosen not to allow NHS login to share your data to the London Data Service.  Unfortunately we cannot verify your identity and proceed to recording your data sharing decision without this information.",
     "consentNotGivenP2": "If you wish to use this service please login again and agree to share your NHS login information.",
     "consentNotGivenReturn": "RETURN TO HOME"
