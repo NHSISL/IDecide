@@ -1,42 +1,11 @@
 import { defineConfig, devices } from '@playwright/test';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import dotenv from 'dotenv';
-import { exit } from 'process';
 
 const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
 const __dirname = path.dirname(__filename); // get the name of the directory
 
 const authFile = path.join(__dirname, './playwright/.auth/user.json');
-
-dotenv.config({ path: path.resolve(__dirname, '.env') });
-dotenv.config({ path: path.resolve(__dirname, '.env.local') });
-
-if (!process.env.TEST_USERNAME || !process.env.TEST_PASSWORD) {
-    console.log("\x1b[31m");
-    console.log("Please set TEST_USERNAME and TEST_PASSWORD environment variables.");
-    console.log("\x1b[0m");
-    console.log("Either set in .env.local file.");
-    console.log("or pass as argument:");
-    console.log("BASH: \n 'TEST_USERNAME=me TEST_PASSWORD=secret npx playwright test'");
-    console.log("POWERSHELL:");
-    console.log(" $env:TEST_USERNAME=\"me\"");
-    console.log(" $env:TEST_PASSWORD=\"secret\"");
-    console.log("npx playwright test");
-    console.log("NOTE: passwords must be base64 encoded (btoa()) (to avoid problems with escape character)");
-    console.log("");
-    exit(1);
-}
-
-try {
-    atob(process.env.TEST_PASSWORD);
-} catch (ex) {
-    console.log("\x1b[31m");
-    console.log("TEST_PASSWORD is not base64 encoded. Please encode the password with btoa() before setting the environment variable.");
-    console.log("\x1b[0m");
-    console.log(ex);
-    exit(1);
-}
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -75,12 +44,4 @@ export default defineConfig({
         //    use: { ...devices['Desktop Chrome'], channel: 'chrome' },
         //},
     ],
-
-    /* Run your local dev server before starting the tests */
-    webServer: {
-        command: "dotnet run --project ../LondonDataServices.IDecide.Manage.Server/",
-        url: 'https://localhost:6073/',
-        reuseExistingServer: true,
-        ignoreHTTPSErrors: true,
-    },
 });
