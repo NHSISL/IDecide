@@ -26,7 +26,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.Auth
 
             // then
             response.StatusCode.Should().Be(HttpStatusCode.Redirect);
-            response.Headers.Location?.ToString().Should().Be(@"\");
+            response.Headers.Location?.ToString().Should().Be("/");
         }
     }
 }
