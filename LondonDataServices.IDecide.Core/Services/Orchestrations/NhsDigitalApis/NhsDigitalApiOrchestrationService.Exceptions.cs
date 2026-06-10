@@ -5,6 +5,7 @@
 using System;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Models.Foundations.NhsDigitalApis.Exceptions;
+using LondonDataServices.IDecide.Core.Models.Foundations.Users;
 using LondonDataServices.IDecide.Core.Models.Foundations.Users.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.NhsDigitalApis.Exceptions;
 using Xeptions;
@@ -15,6 +16,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis
     {
         private delegate ValueTask ReturningNothingFunction();
         private delegate ValueTask<string> ReturningStringFunction();
+        private delegate ValueTask<User> ReturningUserFunction();
 
         private async ValueTask<string> TryCatch(ReturningStringFunction returningStringFunction)
         {
@@ -45,6 +47,69 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis
             catch (NhsDigitalApiServiceException nhsDigitalApiServiceException)
             {
                 throw await CreateAndLogDependencyExceptionAsync(nhsDigitalApiServiceException);
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (Exception exception)
+            {
+                var failedNhsDigitalApiOrchestrationServiceException =
+                    new FailedNhsDigitalApiOrchestrationServiceException(
+                        message: "Failed NhsDigitalApi orchestration service error occurred, " +
+                            "please contact support.",
+                        innerException: exception);
+
+                throw await CreateAndLogServiceExceptionAsync(
+                    failedNhsDigitalApiOrchestrationServiceException);
+            }
+        }
+
+        private async ValueTask<User> TryCatch(ReturningUserFunction returningUserFunction)
+        {
+            try
+            {
+                return await returningUserFunction();
+            }
+            catch (InvalidNhsDigitalApiOrchestrationArgumentException
+                invalidNhsDigitalApiOrchestrationArgumentException)
+            {
+                throw await CreateAndLogValidationExceptionAsync(
+                    invalidNhsDigitalApiOrchestrationArgumentException);
+            }
+            catch (NhsDigitalApiValidationException nhsDigitalApiValidationException)
+            {
+                throw await CreateAndLogDependencyValidationExceptionAsync(
+                    nhsDigitalApiValidationException);
+            }
+            catch (NhsDigitalApiDependencyValidationException nhsDigitalApiDependencyValidationException)
+            {
+                throw await CreateAndLogDependencyValidationExceptionAsync(
+                    nhsDigitalApiDependencyValidationException);
+            }
+            catch (UserValidationException userValidationException)
+            {
+                throw await CreateAndLogDependencyValidationExceptionAsync(userValidationException);
+            }
+            catch (UserDependencyValidationException userDependencyValidationException)
+            {
+                throw await CreateAndLogDependencyValidationExceptionAsync(userDependencyValidationException);
+            }
+            catch (NhsDigitalApiDependencyException nhsDigitalApiDependencyException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(nhsDigitalApiDependencyException);
+            }
+            catch (NhsDigitalApiServiceException nhsDigitalApiServiceException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(nhsDigitalApiServiceException);
+            }
+            catch (UserDependencyException userDependencyException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(userDependencyException);
+            }
+            catch (UserServiceException userServiceException)
+            {
+                throw await CreateAndLogDependencyExceptionAsync(userServiceException);
             }
             catch (OperationCanceledException)
             {

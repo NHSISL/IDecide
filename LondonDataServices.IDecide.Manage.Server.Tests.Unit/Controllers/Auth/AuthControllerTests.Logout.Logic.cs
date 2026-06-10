@@ -58,6 +58,13 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Auth
             redirectResult.Should().NotBeNull();
             redirectResult!.Url.Should().Be(expectedUrl);
 
+            mockAuthService.Verify(
+                a => a.SignOutAsync(
+                    It.IsAny<HttpContext>(),
+                    "bff-cookie",
+                    It.IsAny<AuthenticationProperties>()),
+                Times.Once);
+
             this.nhsDigitalApiOrchestrationServiceMock.Verify(
                 service => service.LogoutAsync(It.IsAny<CancellationToken>()),
                 Times.Once);

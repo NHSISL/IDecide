@@ -36,12 +36,11 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis
             this.loggingBroker = loggingBroker;
         }
 
-        public async ValueTask ProcessCallbackAsync(
+        public ValueTask<User> ProcessCallbackAsync(
             string code,
             string state,
-            CancellationToken cancellationToken)
-        {
-            await TryCatch(async () =>
+            CancellationToken cancellationToken) =>
+            TryCatch(async () =>
             {
                 ValidateProcessCallbackArguments(code, state);
 
@@ -91,8 +90,9 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis
                 {
                     await this.nhsDigitalApiService.LogoutAsync(cancellationToken);
                 }
+
+                return maybeUser;
             });
-        }
 
         public ValueTask LogoutAsync(CancellationToken cancellationToken) =>
             TryCatch(async () => await

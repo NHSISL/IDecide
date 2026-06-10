@@ -6,6 +6,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using LondonDataServices.IDecide.Core.Models.Foundations.Users;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.NhsDigitalApis.Exceptions;
 using Moq;
 using Xeptions;
@@ -37,7 +38,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
                     innerException: dependencyValidationException);
 
             // when
-            ValueTask processCallbackTask =
+            ValueTask<User> processCallbackTask =
                 this.nhsDigitalApiOrchestrationService
                     .ProcessCallbackAsync(inputCode, inputState, inputCancellationToken);
 
@@ -87,7 +88,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
                     innerException: dependencyException);
 
             // when
-            ValueTask processCallbackTask =
+            ValueTask<User> processCallbackTask =
                 this.nhsDigitalApiOrchestrationService
                     .ProcessCallbackAsync(inputCode, inputState, inputCancellationToken);
 
@@ -141,7 +142,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
                     innerException: failedNhsDigitalApiOrchestrationServiceException);
 
             // when
-            ValueTask processCallbackTask =
+            ValueTask<User> processCallbackTask =
                 this.nhsDigitalApiOrchestrationService
                     .ProcessCallbackAsync(inputCode, inputState, inputCancellationToken);
 
@@ -185,7 +186,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
                     .ThrowsAsync(new OperationCanceledException(inputCancellationToken));
 
             // when
-            ValueTask processCallbackTask =
+            ValueTask<User> processCallbackTask =
                 this.nhsDigitalApiOrchestrationService
                     .ProcessCallbackAsync(inputCode, inputState, inputCancellationToken);
 

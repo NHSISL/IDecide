@@ -2,10 +2,12 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using LondonDataServices.IDecide.Core.Models.Foundations.Users;
 using Microsoft.AspNetCore.Authentication;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.NhsDigitalApis.Exceptions;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis;
@@ -99,6 +101,62 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
                 return InternalServerError(nhsDigitalApiOrchestrationDependencyException);
             }
             catch (NhsDigitalApiOrchestrationServiceException nhsDigitalApiOrchestrationServiceException)
+            {
+                return InternalServerError(nhsDigitalApiOrchestrationServiceException);
+            }
+        }
+
+        [HttpGet("callback")]
+        public async Task<IActionResult> Callback(
+            [FromQuery] string code,
+            [FromQuery] string state,
+            CancellationToken cancellationToken)
+        {
+            try
+            {
+                User user = await this.nhsDigitalApiOrchestrationService
+                    .ProcessCallbackAsync(code, state, cancellationToken);
+
+                if (!user.IsAuthorised)
+                {
+                    await this.nhsDigitalApiOrchestrationService.LogoutAsync(cancellationToken);
+                    HttpContext.Session.Clear();
+                    await HttpContext.SignOutAsync("bff-cookie");
+
+                    return Redirect("/unauthorised");
+                }
+
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.Sub),
+                    new Claim(ClaimTypes.Name, user.Name),
+                    new Claim(ClaimTypes.Upn, user.NhsIdUserUid),
+                };
+
+                var identity = new ClaimsIdentity(claims, "OAuth");
+                var principal = new ClaimsPrincipal(identity);
+                await HttpContext.SignInAsync("bff-cookie", principal);
+
+                return Redirect("/home");
+            }
+            catch (NhsDigitalApiOrchestrationValidationException
+                nhsDigitalApiOrchestrationValidationException)
+            {
+                return BadRequest(nhsDigitalApiOrchestrationValidationException.InnerException);
+            }
+            catch (NhsDigitalApiOrchestrationDependencyValidationException
+                nhsDigitalApiOrchestrationDependencyValidationException)
+            {
+                return BadRequest(
+                    nhsDigitalApiOrchestrationDependencyValidationException.InnerException);
+            }
+            catch (NhsDigitalApiOrchestrationDependencyException
+                nhsDigitalApiOrchestrationDependencyException)
+            {
+                return InternalServerError(nhsDigitalApiOrchestrationDependencyException);
+            }
+            catch (NhsDigitalApiOrchestrationServiceException
+                nhsDigitalApiOrchestrationServiceException)
             {
                 return InternalServerError(nhsDigitalApiOrchestrationServiceException);
             }
