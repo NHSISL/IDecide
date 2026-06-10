@@ -19,7 +19,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Auth
         public async Task ShouldReturnRedirectOnLogoutAsync()
         {
             // given
-            string expectedUrl = @"\";
+            string expectedUrl = "/";
             var mockSession = new Mock<ISession>();
             var mockAuthService = new Mock<IAuthenticationService>();
 

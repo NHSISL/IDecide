@@ -114,7 +114,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
                 HttpContext.Session.Clear();
                 await HttpContext.SignOutAsync("bff-cookie");
 
-                return Redirect(@"\");
+                return Redirect("/");
             }
             catch (NhsDigitalApiOrchestrationValidationException nhsDigitalApiOrchestrationValidationException)
             {
