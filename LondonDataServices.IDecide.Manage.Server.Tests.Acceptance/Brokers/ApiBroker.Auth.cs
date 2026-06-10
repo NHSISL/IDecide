@@ -16,5 +16,8 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Brokers
 
         public async ValueTask<HttpResponseMessage> GetSessionAsync() =>
             await this.httpClient.GetAsync($"{AuthRelativeUrl}/session");
+
+        public async ValueTask<HttpResponseMessage> PostLogoutAsync() =>
+            await this.httpClientNoRedirect.PostAsync($"{AuthRelativeUrl}/logout", content: null);
     }
 }

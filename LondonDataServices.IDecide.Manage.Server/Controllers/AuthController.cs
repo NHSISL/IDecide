@@ -6,6 +6,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.NhsDigitalApis.Exceptions;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis;
 using LondonDataServices.IDecide.Manage.Server.Models.Auth;
@@ -83,6 +84,37 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
                     Name = User.FindFirstValue(ClaimTypes.Name),
                     Roles = User.FindAll(ClaimTypes.Role).Select(c => c.Value).ToArray()
                 });
+            }
+            catch (NhsDigitalApiOrchestrationValidationException nhsDigitalApiOrchestrationValidationException)
+            {
+                return BadRequest(nhsDigitalApiOrchestrationValidationException.InnerException);
+            }
+            catch (NhsDigitalApiOrchestrationDependencyValidationException
+                nhsDigitalApiOrchestrationDependencyValidationException)
+            {
+                return BadRequest(nhsDigitalApiOrchestrationDependencyValidationException.InnerException);
+            }
+            catch (NhsDigitalApiOrchestrationDependencyException nhsDigitalApiOrchestrationDependencyException)
+            {
+                return InternalServerError(nhsDigitalApiOrchestrationDependencyException);
+            }
+            catch (NhsDigitalApiOrchestrationServiceException nhsDigitalApiOrchestrationServiceException)
+            {
+                return InternalServerError(nhsDigitalApiOrchestrationServiceException);
+            }
+        }
+
+        [Authorize]
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout(CancellationToken cancellationToken)
+        {
+            try
+            {
+                await this.nhsDigitalApiOrchestrationService.LogoutAsync(cancellationToken);
+                HttpContext.Session.Clear();
+                await HttpContext.SignOutAsync("bff-cookie");
+
+                return Redirect("/");
             }
             catch (NhsDigitalApiOrchestrationValidationException nhsDigitalApiOrchestrationValidationException)
             {

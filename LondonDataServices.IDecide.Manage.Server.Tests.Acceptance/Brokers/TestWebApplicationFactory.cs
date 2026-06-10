@@ -14,6 +14,7 @@ using LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis;
 using ISL.Providers.PDS.FakeFHIR.Models;
 using ISL.Providers.PDS.FakeFHIR.Providers.FakeFHIR;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
@@ -85,12 +86,17 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Brokers
             .AddScheme<CustomAuthenticationSchemeOptions, TestAuthHandler>("TestScheme", options =>
             {
                 options.InvisibleApiKey = invisibleApiKey;
-            });
+            })
+            .AddCookie("bff-cookie");
 
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("TestPolicy", policy => policy.RequireAssertion(_ => true));
             });
+
+            services.AddDistributedMemoryCache();
+            services.AddSession();
+            services.AddTransient<IStartupFilter, SessionStartupFilter>();
         }
 
         private static void OverrideFhirProviderForTesting(
@@ -172,5 +178,15 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Brokers
             var mockService = new Mock<INhsDigitalApiService>();
             services.AddTransient<INhsDigitalApiService>(serviceProvider => mockService.Object);
         }
+    }
+
+    internal sealed class SessionStartupFilter : IStartupFilter
+    {
+        public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next) =>
+            app =>
+            {
+                app.UseSession();
+                next(app);
+            };
     }
 }

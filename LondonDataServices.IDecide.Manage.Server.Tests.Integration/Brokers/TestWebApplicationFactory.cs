@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Threading;
 using Attrify.InvisibleApi.Models;
@@ -9,6 +10,7 @@ using LondonDataServices.IDecide.Core.Brokers.NhsDigitalApi;
 using LondonDataServices.IDecide.Core.Services.Foundations.NhsDigitalApis;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
@@ -68,12 +70,17 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Integration.Brokers
                 options.DefaultAuthenticateScheme = "TestScheme";
                 options.DefaultChallengeScheme = "TestScheme";
             })
-            .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("TestScheme", null);
+            .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("TestScheme", null)
+            .AddCookie("bff-cookie");
 
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("TestPolicy", policy => policy.RequireAssertion(_ => true));
             });
+
+            services.AddDistributedMemoryCache();
+            services.AddSession();
+            services.AddTransient<IStartupFilter, SessionStartupFilter>();
         }
 
         private static void OverrideNhsDigitalApiBrokerForTesting(IServiceCollection services)
@@ -124,5 +131,15 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Integration.Brokers
             services.AddTransient<INhsDigitalApiOrchestrationService>(
                 serviceProvider => mockOrchestrationService.Object);
         }
+    }
+
+    internal sealed class SessionStartupFilter : IStartupFilter
+    {
+        public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next) =>
+            app =>
+            {
+                app.UseSession();
+                next(app);
+            };
     }
 }
