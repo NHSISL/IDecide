@@ -13,6 +13,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Integration.Apis.Auth
     {
         [Fact]
         public async Task ShouldRedirectBadRequestOrInternalServerErrorOnCallbackAsync()
+        {
             // given
             string randomCode = "someCode";
             string randomState = "someState";
