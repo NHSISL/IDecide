@@ -5,6 +5,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using LondonDataServices.IDecide.Core.Models.Foundations.Users;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.NhsDigitalApis;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.NhsDigitalApis.Exceptions;
 using Moq;
@@ -40,7 +41,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
                     innerException: invalidNhsDigitalApiOrchestrationArgumentException);
 
             // when
-            ValueTask processCallbackTask =
+            ValueTask<User> processCallbackTask =
                 this.nhsDigitalApiOrchestrationService
                     .ProcessCallbackAsync(invalidCode, validState, inputCancellationToken);
 
@@ -90,7 +91,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
                     innerException: invalidNhsDigitalApiOrchestrationArgumentException);
 
             // when
-            ValueTask processCallbackTask =
+            ValueTask<User> processCallbackTask =
                 this.nhsDigitalApiOrchestrationService
                     .ProcessCallbackAsync(validCode, invalidState, inputCancellationToken);
 
@@ -151,7 +152,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
                     .ReturnsAsync(returnedUserInfoJson);
 
             // when
-            ValueTask processCallbackTask =
+            ValueTask<User> processCallbackTask =
                 this.nhsDigitalApiOrchestrationService
                     .ProcessCallbackAsync(validCode, validState, inputCancellationToken);
 
@@ -216,7 +217,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
                     .ReturnsAsync(returnedUserInfoJson);
 
             // when
-            ValueTask processCallbackTask =
+            ValueTask<User> processCallbackTask =
                 this.nhsDigitalApiOrchestrationService
                     .ProcessCallbackAsync(validCode, validState, inputCancellationToken);
 
@@ -281,7 +282,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
                     .ReturnsAsync(returnedUserInfoJson);
 
             // when
-            ValueTask processCallbackTask =
+            ValueTask<User> processCallbackTask =
                 this.nhsDigitalApiOrchestrationService
                     .ProcessCallbackAsync(validCode, validState, inputCancellationToken);
 
@@ -340,7 +341,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
                     .ReturnsAsync(invalidUserInfoJson);
 
             // when
-            ValueTask processCallbackTask =
+            ValueTask<User> processCallbackTask =
                 this.nhsDigitalApiOrchestrationService
                     .ProcessCallbackAsync(validCode, validState, inputCancellationToken);
 
