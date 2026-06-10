@@ -12,8 +12,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Integration.Apis.Auth
     public partial class AuthApiTests
     {
         [Fact]
-        public async Task ShouldRedirectOrBadRequestOnCallbackAsync()
-        {
+        public async Task ShouldRedirectBadRequestOrInternalServerErrorOnCallbackAsync()
             // given
             string randomCode = "someCode";
             string randomState = "someState";
