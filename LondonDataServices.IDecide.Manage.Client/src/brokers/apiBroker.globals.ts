@@ -1,4 +1,5 @@
 import { MutationCache, QueryCache, QueryClient } from '@tanstack/react-query';
+import axios from 'axios';
 
 export const queryClientGlobalOptions = new QueryClient({
     defaultOptions: {
@@ -7,10 +8,19 @@ export const queryClientGlobalOptions = new QueryClient({
         }
     },
     queryCache: new QueryCache({
-        onError: (error: Error) => {
-            //toastError("An unknown error has occurred, please refresh the page and try again.");
-            console.log("An unknown error has occurred, please refresh the page and try again.");
+        onError: (error: Error, query) => {
+            if (axios.isAxiosError(error) && error.response?.status === 401) {
+                const isSessionQuery = query.queryKey[0] === 'authSession';
 
+                if (!isSessionQuery) {
+                    window.location.href = '/api/auth/login';
+                    return;
+                }
+
+                return;
+            }
+
+            console.log("An unknown error has occurred, please refresh the page and try again.");
             throw error;
         }
     }),
