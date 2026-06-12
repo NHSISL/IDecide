@@ -27,7 +27,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
             this.patientService = patientService;
 
         [HttpPost]
-        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators")]
+        [Authorize]
         public async ValueTask<ActionResult<Patient>> PostPatientAsync([FromBody] Patient patient)
         {
             try
@@ -67,7 +67,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
 #if DEBUG
         [EnableQuery(PageSize = 5000)]
 #endif
-        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,LondonDataServices.IDecide.Manage.Server.Agents")]
+        [Authorize]
         public async ValueTask<ActionResult<IQueryable<Patient>>> Get()
         {
             try
@@ -88,7 +88,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
         }
 
         [HttpGet("{patientId}")]
-        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,LondonDataServices.IDecide.Manage.Server.Agents")]
+        [Authorize]
         public async ValueTask<ActionResult<Patient>> GetPatientByIdAsync(Guid patientId)
         {
             try
@@ -121,7 +121,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
         }
 
         [HttpPut]
-        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators")]
+        [Authorize]
         public async ValueTask<ActionResult<Patient>> PutPatientAsync([FromBody] Patient patient)
         {
             try
@@ -160,7 +160,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
         }
 
         [HttpDelete("{patientId}")]
-        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators")]
+        [Authorize]
         public async ValueTask<ActionResult<Patient>> DeletePatientByIdAsync(Guid patientId)
         {
             try
