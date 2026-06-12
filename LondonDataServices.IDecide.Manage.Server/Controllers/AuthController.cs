@@ -172,14 +172,12 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
         {
             try
             {
-                await this.apiPlatformClient
-                    .CareIdentityServiceClient
-                    .LogoutAsync(cancellationToken);
+                await this.nhsDigitalApiOrchestrationService.LogoutAsync(cancellationToken);
 
                 HttpContext.Session.Clear();
                 await HttpContext.SignOutAsync("bff-cookie");
 
-                return Redirect(@"\");
+                return Redirect("/");
             }
             catch (NhsDigitalApiOrchestrationValidationException nhsDigitalApiOrchestrationValidationException)
             {

@@ -26,7 +26,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
         }
 
         [HttpPost("PatientSearch")]
-        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,LondonDataServices.IDecide.Manage.Server.Agents")]
+        [Authorize]
         public async ValueTask<ActionResult<Patient>> PostPatientSearchAsync([FromBody] PatientLookup patientLookup)
         {
             try
