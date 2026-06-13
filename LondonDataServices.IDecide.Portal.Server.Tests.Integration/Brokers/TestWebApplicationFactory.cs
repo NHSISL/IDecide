@@ -2,10 +2,13 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System;
 using System.Linq;
 using Attrify.InvisibleApi.Models;
 using ISL.Providers.Captcha.Abstractions;
 using ISL.Providers.Captcha.Abstractions.Models;
+using LondonDataServices.IDecide.Core.Models.Foundations.NhsLogins;
+using LondonDataServices.IDecide.Core.Services.Foundations.NhsLogins;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -39,6 +42,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Integration.Brokers
                 if (this.requireAuthentication)
                 {
                     OverrideSecurityForTesting(services);
+                    OverrideNhsLoginServiceForTesting(services);
                 }
                 else
                 {
@@ -62,7 +66,6 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Integration.Brokers
                 }
             }
 
-            // Remove existing authentication and authorization
             var authenticationDescriptor = services
                 .FirstOrDefault(d => d.ServiceType == typeof(IAuthenticationSchemeProvider));
 
@@ -71,21 +74,51 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Integration.Brokers
                 services.Remove(authenticationDescriptor);
             }
 
-            // Override authentication and authorization
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = "TestScheme";
                 options.DefaultChallengeScheme = "TestScheme";
             })
-            .AddScheme<CustomAuthenticationSchemeOptions, TestAuthHandler>("TestScheme", options =>
-            {
-                options.InvisibleApiKey = invisibleApiKey;
-            });
+            .AddScheme<CustomAuthenticationSchemeOptions, TestAuthHandler>(
+                "TestScheme",
+                options =>
+                {
+                    options.InvisibleApiKey = invisibleApiKey;
+                });
 
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("TestPolicy", policy => policy.RequireAssertion(_ => true));
             });
+        }
+
+        private static void OverrideNhsLoginServiceForTesting(IServiceCollection services)
+        {
+            var nhsLoginServiceDescriptor = services
+                .FirstOrDefault(d => d.ServiceType == typeof(INhsLoginService));
+
+            if (nhsLoginServiceDescriptor != null)
+            {
+                services.Remove(nhsLoginServiceDescriptor);
+            }
+
+            var mockNhsLoginService = new Mock<INhsLoginService>();
+
+            var testNhsLoginUserInfo = new NhsLoginUserInfo
+            {
+                Birthdate = new DateTime(1990, 1, 15),
+                FamilyName = "TestFamilyName",
+                GivenName = "TestGivenName",
+                Email = "test@example.com",
+                PhoneNumber = "+447887510886"
+            };
+
+            mockNhsLoginService
+                .Setup(service => service.NhsLoginAsync())
+                .ReturnsAsync(testNhsLoginUserInfo);
+
+            services.AddTransient<INhsLoginService>(
+                serviceProvider => mockNhsLoginService.Object);
         }
 
         private static void OverrideCaptchaForTesting(IServiceCollection services)
