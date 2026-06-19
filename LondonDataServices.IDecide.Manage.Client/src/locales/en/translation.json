@@ -114,6 +114,9 @@
     "back": "Back",
     "myDetails": "My Details",
     "detailsOfPersonRepresenting": "Details of the person you are representing",
+    "firstNameLabel": "Firstname",
+    "firstNameHint": "For example, David or Alex",
+    "firstNameError": "Enter your FirstName",
     "surnameLabel": "Surname",
     "surnameHint": "For example, Smith or O'Neill",
     "surnameError": "Enter your Surname",
@@ -342,6 +345,7 @@
     "500": "A server error occurred. Please try again later.",
     "PatientNotFound": "Patient not found. Please try again.",
     "CatchAll": "An unexpected error occurred. Please try again later.",
-    "InValidNhsNumber": "Please enter a valid 10-digit NHS number."
+    "InValidNhsNumber": "Please enter a valid 10-digit NHS number.",
+    "SearchError": "Cannot determine patient, please provide NHS Number and try again."
   }
 }
