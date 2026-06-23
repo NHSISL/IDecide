@@ -69,6 +69,9 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
 
                 if (string.IsNullOrWhiteSpace(patientLookup.SearchCriteria.NhsNumber))
                 {
+                    bool isAuthenticatedUserWithRequiredRole =
+                        await CheckIfIsAuthenticatedUserWithRequiredRoleAsync();
+
                     PatientLookup responsePatientLookup =
                         await this.pdsService.PatientLookupByDetailsAsync(patientLookup);
 
@@ -81,10 +84,20 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                         return patient;
                     }
 
+                    if (isAuthenticatedUserWithRequiredRole)
+                    {
+                        return patient;
+                    }
+
+                    patient = patient.Redact();
+
                     return patient;
                 }
                 else
                 {
+                    bool isAuthenticatedUserWithRequiredRole =
+                        await CheckIfIsAuthenticatedUserWithRequiredRoleAsync();
+
                     var nhsNumber = patientLookup.SearchCriteria.NhsNumber;
                     ValidatePatientLookupByNhsNumberArguments(nhsNumber);
                     Patient maybePatient = await this.pdsService.PatientLookupByNhsNumberAsync(nhsNumber);
@@ -94,6 +107,13 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                     {
                         return maybePatient;
                     }
+
+                    if (isAuthenticatedUserWithRequiredRole)
+                    {
+                        return maybePatient;
+                    }
+
+                    maybePatient = maybePatient.Redact();
 
                     return maybePatient;
                 }
