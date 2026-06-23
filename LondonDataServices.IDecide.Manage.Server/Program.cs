@@ -161,7 +161,6 @@ namespace LondonDataServices.IDecide.Manage.Server
                 throw new InvalidOperationException("AzureAd configuration is incomplete. Please check appsettings.json.");
             }
 
-            builder.Services.AddSwaggerGen();
             builder.Services.AddSingleton(invisibleApiKey);
             builder.Services.AddAuthorization();
             builder.Services.AddDbContext<StorageBroker>();
@@ -173,7 +172,6 @@ namespace LondonDataServices.IDecide.Manage.Server
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-            builder.Services.AddControllers();
             AddProviders(builder.Services, builder.Configuration);
             AddBrokers(builder.Services, builder.Configuration);
             AddFoundationServices(builder.Services);
