@@ -67,11 +67,11 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             {
                 ValidatePatientLookupIsNotNull(patientLookup);
 
-                bool isAuthenticatedUserWithRole =
-                   await CheckIfIsAuthenticatedUserWithRequiredRoleAsync();
-
                 if (string.IsNullOrWhiteSpace(patientLookup.SearchCriteria.NhsNumber))
                 {
+                    bool isAuthenticatedUserWithRequiredRole =
+                        await CheckIfIsAuthenticatedUserWithRequiredRoleAsync();
+
                     PatientLookup responsePatientLookup =
                         await this.pdsService.PatientLookupByDetailsAsync(patientLookup);
 
@@ -81,21 +81,21 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
 
                     if (patient.IsSensitive)
                     {
-                        if (isAuthenticatedUserWithRole)
-                        {
-                            return patient;
-                        }
-
-                        throw new ExternalOptOutPatientOrchestrationException(
-                            message: "The patient is marked as sensitive.");
+                        return patient;
                     }
 
-                    Patient redactedPatient = patient.Redact();
+                    if (isAuthenticatedUserWithRequiredRole)
+                    {
+                        return patient;
+                    }
 
-                    return redactedPatient;
+                    return patient;
                 }
                 else
                 {
+                    bool isAuthenticatedUserWithRequiredRole =
+                        await CheckIfIsAuthenticatedUserWithRequiredRoleAsync();
+
                     var nhsNumber = patientLookup.SearchCriteria.NhsNumber;
                     ValidatePatientLookupByNhsNumberArguments(nhsNumber);
                     Patient maybePatient = await this.pdsService.PatientLookupByNhsNumberAsync(nhsNumber);
@@ -103,18 +103,17 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
 
                     if (maybePatient.IsSensitive)
                     {
-                        if (isAuthenticatedUserWithRole)
-                        {
-                            return maybePatient;
-                        }
-
-                        throw new ExternalOptOutPatientOrchestrationException(
-                            message: "The patient is marked as sensitive.");
+                        return maybePatient;
                     }
 
-                    Patient redactedPatient = maybePatient.Redact();
+                    if (isAuthenticatedUserWithRequiredRole)
+                    {
+                        return maybePatient;
+                    }
 
-                    return redactedPatient;
+                    maybePatient = maybePatient.Redact();
+
+                    return maybePatient;
                 }
             });
 
@@ -128,7 +127,6 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                     nhsNumber: nhsNumber,
                     notificationPreference: notificationPreference);
 
-                bool isAuthenticatedUserWithRole = await CheckIfIsAuthenticatedUserWithRequiredRoleAsync();
                 IQueryable<Patient> patients = await this.patientService.RetrieveAllPatientsAsync();
                 Patient maybeMatchingPatient = patients.FirstOrDefault(patient => patient.NhsNumber == nhsNumber);
                 Patient patientToRecord = null;
@@ -194,23 +192,6 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                         message:
                             $"Patient with NHS Number {nhsNumber} bypassed code generation as a valid code exists.",
 
-                        fileName: null,
-                        correlationId: correlationId.ToString());
-
-                    return;
-                }
-
-                if (isAuthenticatedUserWithRole)
-                {
-                    patientToRecord = await UpdatePatientAsync(
-                        maybeMatchingPatient, notificationPreferenceType, now, true);
-
-                    await SendValidationCodeNotificationAsync(patientToRecord);
-
-                    await this.auditBroker.LogInformationAsync(
-                        auditType: "Patient",
-                        title: "Patient Recorded",
-                        message: $"Patient with NHS Number {nhsNumber} was updated and new validation code was sent.",
                         fileName: null,
                         correlationId: correlationId.ToString());
 
@@ -314,92 +295,76 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             TryCatch(async () =>
             {
                 ValidateVerifyPatientCodeArguments(nhsNumber: nhsNumber, verificationCode: verificationCode);
-                bool isAuthenticatedUserWithRole = await CheckIfIsAuthenticatedUserWithRequiredRoleAsync();
                 IQueryable<Patient> patients = await this.patientService.RetrieveAllPatientsAsync();
                 Patient maybeMatchingPatient = patients.FirstOrDefault(patient => patient.NhsNumber == nhsNumber);
                 Patient patientToUpdate = maybeMatchingPatient;
                 ValidatePatientExists(maybeMatchingPatient);
                 Guid correlationId = await this.identifierBroker.GetIdentifierAsync();
+                var currentUser = await this.securityBroker.GetCurrentUserAsync();
 
-                if (isAuthenticatedUserWithRole)
+                await this.auditBroker.LogInformationAsync(
+                    auditType: "Patient Code",
+                    title: "Validating Patient Code",
+                    message: $"User {currentUser.UserId} is validating a code for patient {nhsNumber}.",
+                    fileName: null,
+                    correlationId: correlationId.ToString());
+
+                if (maybeMatchingPatient.RetryCount > this.decisionConfigurations.MaxRetryCount)
                 {
-                    var currentUser = await this.securityBroker.GetCurrentUserAsync();
-
                     await this.auditBroker.LogInformationAsync(
                         auditType: "Patient Code",
-                        title: "Validating Patient Code",
-                        message: $"User {currentUser.UserId} is validating a code for patient {nhsNumber}.",
+                        title: "Patient Code Validation Failed",
+
+                        message: $"The maximum retry count of {this.decisionConfigurations.MaxRetryCount} " +
+                           $"exceeded for patient {nhsNumber}",
+
                         fileName: null,
                         correlationId: correlationId.ToString());
+
+                    throw new ExceededMaxRetryCountException(
+                        $"The maximum retry count of {this.decisionConfigurations.MaxRetryCount} exceeded.");
                 }
-                else
+
+                if (maybeMatchingPatient.ValidationCode != verificationCode)
                 {
-                    string ipAddress = await this.securityBroker.GetIpAddressAsync();
+                    patientToUpdate.RetryCount += 1;
+                    await this.patientService.ModifyPatientAsync(patientToUpdate);
 
                     await this.auditBroker.LogInformationAsync(
                         auditType: "Patient Code",
-                        title: "Validating Patient Code",
-                        message: $"Patient with IP address {ipAddress} is validating a code for patient {nhsNumber}.",
+                        title: "Patient Code Validation Failed",
+                        message: "The validation code provided was incorrect.",
                         fileName: null,
                         correlationId: correlationId.ToString());
 
-                    if (maybeMatchingPatient.RetryCount > this.decisionConfigurations.MaxRetryCount)
-                    {
-                        await this.auditBroker.LogInformationAsync(
-                            auditType: "Patient Code",
-                            title: "Patient Code Validation Failed",
+                    throw new IncorrectValidationCodeException("The validation code provided is incorrect.");
+                }
 
-                            message: $"The maximum retry count of {this.decisionConfigurations.MaxRetryCount} " +
-                               $"exceeded for patient {nhsNumber}",
+                DateTimeOffset currentDateTime = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
 
-                            fileName: null,
-                            correlationId: correlationId.ToString());
+                if (maybeMatchingPatient.ValidationCodeExpiresOn < currentDateTime)
+                {
+                    string newValidationCode = await this.patientService.GenerateValidationCodeAsync();
+                    patientToUpdate.ValidationCode = newValidationCode;
+                    patientToUpdate.ValidationCodeMatchedOn = null;
+                    patientToUpdate.RetryCount = 0;
 
-                        throw new ExceededMaxRetryCountException(
-                            $"The maximum retry count of {this.decisionConfigurations.MaxRetryCount} exceeded.");
-                    }
+                    patientToUpdate.ValidationCodeExpiresOn =
+                        currentDateTime.AddMinutes(
+                            this.decisionConfigurations.PatientValidationCodeExpireAfterMinutes);
 
-                    if (maybeMatchingPatient.ValidationCode != verificationCode)
-                    {
-                        patientToUpdate.RetryCount += 1;
-                        await this.patientService.ModifyPatientAsync(patientToUpdate);
+                    await this.patientService.ModifyPatientAsync(patientToUpdate);
 
-                        await this.auditBroker.LogInformationAsync(
-                            auditType: "Patient Code",
-                            title: "Patient Code Validation Failed",
-                            message: "The validation code provided was incorrect.",
-                            fileName: null,
-                            correlationId: correlationId.ToString());
+                    await this.auditBroker.LogInformationAsync(
+                        auditType: "Patient Code",
+                        title: "New Validation Code Generated",
+                        message: "The validation code was expired so a new code was issued.",
+                        fileName: null,
+                        correlationId: correlationId.ToString());
 
-                        throw new IncorrectValidationCodeException("The validation code provided is incorrect.");
-                    }
-
-                    DateTimeOffset currentDateTime = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
-
-                    if (maybeMatchingPatient.ValidationCodeExpiresOn < currentDateTime)
-                    {
-                        string newValidationCode = await this.patientService.GenerateValidationCodeAsync();
-                        patientToUpdate.ValidationCode = newValidationCode;
-                        patientToUpdate.ValidationCodeMatchedOn = null;
-                        patientToUpdate.RetryCount = 0;
-
-                        patientToUpdate.ValidationCodeExpiresOn =
-                            currentDateTime.AddMinutes(
-                                this.decisionConfigurations.PatientValidationCodeExpireAfterMinutes);
-
-                        await this.patientService.ModifyPatientAsync(patientToUpdate);
-
-                        await this.auditBroker.LogInformationAsync(
-                            auditType: "Patient Code",
-                            title: "New Validation Code Generated",
-                            message: "The validation code was expired so a new code was issued.",
-                            fileName: null,
-                            correlationId: correlationId.ToString());
-
-                        throw new RenewedValidationCodeException(
-                            "The validation code has expired, but we have issued a new code that will be sent via " +
-                            "your prefered contact method");
-                    }
+                    throw new RenewedValidationCodeException(
+                        "The validation code has expired, but we have issued a new code that will be sent via " +
+                        "your preferred contact method");
                 }
 
                 patientToUpdate.ValidationCodeMatchedOn = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();

@@ -53,7 +53,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis
                     JsonSerializer.Deserialize<NhsDigitalUserInfo>(userInfoJson);
 
                 ValidateUserInfo(userInfo);
-                string rawUserInfo = JsonSerializer.Serialize(userInfo);
+                string rawUserInfo = userInfoJson;
 
                 DateTimeOffset now =
                     await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
@@ -84,11 +84,6 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis
                     maybeUser.RawUserInfo = rawUserInfo;
                     maybeUser = await this.userService.ModifyUserAsync(maybeUser);
                     ValidateUser(maybeUser);
-                }
-
-                if (maybeUser.IsAuthorised is false)
-                {
-                    await this.nhsDigitalApiService.LogoutAsync(cancellationToken);
                 }
 
                 return maybeUser;

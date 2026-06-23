@@ -6,6 +6,7 @@ using System;
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 using Attrify.Extensions;
 using Attrify.InvisibleApi.Models;
 using ISL.Providers.Captcha.Abstractions;
@@ -24,6 +25,7 @@ using LondonDataServices.IDecide.Core.Brokers.Audits;
 using LondonDataServices.IDecide.Core.Brokers.DateTimes;
 using LondonDataServices.IDecide.Core.Brokers.Identifiers;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
+using LondonDataServices.IDecide.Core.Brokers.NhsDigitalApi;
 using LondonDataServices.IDecide.Core.Brokers.Notifications;
 using LondonDataServices.IDecide.Core.Brokers.Pds;
 using LondonDataServices.IDecide.Core.Brokers.Securities;
@@ -42,18 +44,18 @@ using LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions;
 using LondonDataServices.IDecide.Core.Services.Foundations.Consumers;
 using LondonDataServices.IDecide.Core.Services.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Services.Foundations.DecisionTypes;
-using LondonDataServices.IDecide.Core.Brokers.NhsDigitalApi;
 using LondonDataServices.IDecide.Core.Services.Foundations.NhsDigitalApis;
 using LondonDataServices.IDecide.Core.Services.Foundations.NhsLogins;
 using LondonDataServices.IDecide.Core.Services.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Services.Foundations.Pds;
+using LondonDataServices.IDecide.Core.Services.Foundations.Users;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Consumers;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis;
 using LondonDataServices.IDecide.Core.Services.Orchestrations.Patients;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -62,6 +64,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Identity.Web;
 using Microsoft.OData.Edm;
 using Microsoft.OData.ModelBuilder;
+using NHSDigital.ApiPlatform.Sdk;
+using NHSDigital.ApiPlatform.Sdk.AspNetCore;
+using NHSDigital.ApiPlatform.Sdk.Models.Configurations;
 
 namespace LondonDataServices.IDecide.Manage.Server
 {
@@ -106,8 +111,45 @@ namespace LondonDataServices.IDecide.Manage.Server
             // Add services to the container.
             var azureAdOptions = builder.Configuration.GetSection("AzureAd");
 
-            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            builder.Services.AddAuthentication("bff-cookie")
+                .AddCookie("bff-cookie", options =>
+                {
+                    options.Events.OnRedirectToLogin = context =>
+                    {
+                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                        return Task.CompletedTask;
+                    };
+                    options.LoginPath = "/Login";
+                    options.LogoutPath = "/Logout";
+                    options.ExpireTimeSpan = TimeSpan.FromDays(7);
+                    options.Cookie.HttpOnly = true;
+                    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                    options.Cookie.SameSite = SameSiteMode.Lax;
+                    options.Cookie.Name = "bff-cookie";
+                })
                 .AddMicrosoftIdentityWebApi(azureAdOptions);
+
+            ApiPlatformConfigurations apiPlatformConfigurations = new()
+            {
+                CareIdentity = new CareIdentityConfigurations
+                {
+                    ClientId = builder.Configuration["CIS:ClientId"] ?? string.Empty,
+                    ClientSecret = builder.Configuration["CIS:ClientSecret"] ?? string.Empty,
+                    RedirectUri = builder.Configuration["CIS:RedirectUri"] ?? string.Empty,
+                    AuthEndpoint = builder.Configuration["CIS:AuthEndpoint"] ?? string.Empty,
+                    TokenEndpoint = builder.Configuration["CIS:TokenEndpoint"] ?? string.Empty,
+                    UserInfoEndpoint = builder.Configuration["CIS:UserInfoEndpoint"] ?? string.Empty,
+                    AcrValues = builder.Configuration["CIS:AALLevel"]
+                },
+                PersonalDemographicsService = new PersonalDemographicsServiceConfigurations
+                {
+                    BaseUrl = builder.Configuration["PDS:BaseUrl"]
+                        ?? "https://int.api.service.nhs.uk/personal-demographics/FHIR/R4"
+                }
+            };
+
+            builder.Services.AddApiPlatformSdkCore(apiPlatformConfigurations);
+            builder.Services.AddApiPlatformSdkAspNetCore();
 
 
             var instance = builder.Configuration["AzureAd:Instance"];
@@ -119,16 +161,17 @@ namespace LondonDataServices.IDecide.Manage.Server
                 throw new InvalidOperationException("AzureAd configuration is incomplete. Please check appsettings.json.");
             }
 
-            builder.Services.AddSwaggerGen();
             builder.Services.AddSingleton(invisibleApiKey);
             builder.Services.AddAuthorization();
             builder.Services.AddDbContext<StorageBroker>();
             builder.Services.AddHttpContextAccessor();
+            builder.Services.AddHttpClient();
+            builder.Services.AddDistributedMemoryCache();
+            builder.Services.AddSession();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-            builder.Services.AddControllers();
             AddProviders(builder.Services, builder.Configuration);
             AddBrokers(builder.Services, builder.Configuration);
             AddFoundationServices(builder.Services);
@@ -179,10 +222,11 @@ namespace LondonDataServices.IDecide.Manage.Server
             }
 
             app.UseHttpsRedirection();
+            app.UseSession();
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseInvisibleApiMiddleware(invisibleApiKey);
-            app.MapControllers().WithOpenApi();
+            app.MapControllers();
             app.MapFallbackToFile("/index.html");
         }
 
@@ -296,6 +340,7 @@ namespace LondonDataServices.IDecide.Manage.Server
             services.AddTransient<IConsumerService, ConsumerService>();
             services.AddTransient<IConsumerAdoptionService, ConsumerAdoptionService>();
             services.AddTransient<INhsDigitalApiService, NhsDigitalApiService>();
+            services.AddTransient<IUserService, UserService>();
         }
 
         private static void AddProcessingServices(IServiceCollection services)
