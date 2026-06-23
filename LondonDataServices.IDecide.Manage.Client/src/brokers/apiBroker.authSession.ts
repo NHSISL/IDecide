@@ -14,10 +14,13 @@ class AuthSessionBroker {
     }
 
     async PostLogoutAsync(): Promise<string> {
-        const response = await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
-        const data = await response.json();
+        const response = await fetch('/api/auth/logout', { method: 'POST', credentials: 'include', redirect: 'follow' });
 
-        return data.redirectUrl ?? '/';
+        if (!response.ok) {
+            throw new Error(`Logout failed with status ${response.status}.`);
+        }
+
+        return response.url || '/';
     }
 }
 
