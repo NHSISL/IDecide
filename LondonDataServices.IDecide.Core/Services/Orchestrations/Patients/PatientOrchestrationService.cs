@@ -89,8 +89,6 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                         return patient;
                     }
 
-                    patient = patient.Redact();
-
                     return patient;
                 }
                 else

@@ -29,9 +29,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             updatedPatientLookup.Patients = new List<Patient> { GetRandomPatient(inputSurname) };
             PatientLookup outputPatientLookup = updatedPatientLookup.DeepClone();
             Patient patient = outputPatientLookup.Patients.FirstOrDefault();
-            Patient patientToRedact = patient.DeepClone();
-            Patient redactedPatient = patientToRedact.Redact();
-            Patient expectedPatient = redactedPatient.DeepClone();
+            Patient expectedPatient = patient.DeepClone();
 
             var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
                 this.loggingBrokerMock.Object,
