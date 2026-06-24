@@ -7,7 +7,6 @@ using LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis;
 using LondonDataServices.IDecide.Manage.Server.Controllers;
 using Microsoft.Extensions.Logging;
 using Moq;
-using NHSDigital.ApiPlatform.Sdk.Clients.ApiPlatforms;
 using RESTFulSense.Controllers;
 using Tynamix.ObjectFiller;
 using Xeptions;
@@ -18,7 +17,6 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Auth
     {
         private readonly Mock<INhsDigitalApiOrchestrationService> nhsDigitalApiOrchestrationServiceMock;
         private readonly Mock<ILogger<AuthController>> loggerMock;
-        private readonly Mock<IApiPlatformClient> apiPlatformClientMock;
         private readonly AuthController authController;
 
         public AuthControllerTests()
@@ -27,12 +25,10 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Auth
                 new Mock<INhsDigitalApiOrchestrationService>();
 
             this.loggerMock = new Mock<ILogger<AuthController>>();
-            this.apiPlatformClientMock = new Mock<IApiPlatformClient>();
 
             this.authController = new AuthController(
                 this.nhsDigitalApiOrchestrationServiceMock.Object,
-                this.loggerMock.Object,
-                this.apiPlatformClientMock.Object);
+                this.loggerMock.Object);
         }
 
         public static TheoryData<Xeption> ValidationExceptions()
