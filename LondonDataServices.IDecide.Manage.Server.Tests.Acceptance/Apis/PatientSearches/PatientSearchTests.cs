@@ -51,9 +51,8 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.Patient
                 .Get<List<FakePatient>>();
 
             var fakePatient = patients.Where(patient => patient.Surname == surname).First();
-            var patient = MapFakePatientToPatient(fakePatient);
 
-            return patient;
+            return MapFakePatientToPatient(fakePatient);
         }
 
         private static Patient MapFakePatientToPatient(FakePatient fakePatient)
