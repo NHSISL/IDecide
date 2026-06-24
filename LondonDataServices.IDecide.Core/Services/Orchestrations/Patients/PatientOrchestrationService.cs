@@ -346,7 +346,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
 
                     throw new RenewedValidationCodeException(
                         "The validation code has expired, but we have issued a new code that will be sent via " +
-                        "your prefered contact method");
+                        "your preferred contact method");
                 }
 
                 patientToUpdate.ValidationCodeMatchedOn = await this.dateTimeBroker.GetCurrentDateTimeOffsetAsync();
