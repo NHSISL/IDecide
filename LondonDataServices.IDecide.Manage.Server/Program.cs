@@ -117,6 +117,7 @@ namespace LondonDataServices.IDecide.Manage.Server
                     options.Events.OnRedirectToLogin = context =>
                     {
                         context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+
                         return Task.CompletedTask;
                     };
                     options.LoginPath = "/Login";

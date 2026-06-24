@@ -26,16 +26,13 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
     {
         private readonly INhsDigitalApiOrchestrationService nhsDigitalApiOrchestrationService;
         private readonly ILogger<AuthController> logger;
-        private readonly IApiPlatformClient apiPlatformClient;
 
         public AuthController(
             INhsDigitalApiOrchestrationService nhsDigitalApiOrchestrationService,
-            ILogger<AuthController> logger,
-            IApiPlatformClient apiPlatformClient)
+            ILogger<AuthController> logger)
         {
             this.nhsDigitalApiOrchestrationService = nhsDigitalApiOrchestrationService;
             this.logger = logger;
-            this.apiPlatformClient = apiPlatformClient;
         }
 
         [HttpGet("login")]
