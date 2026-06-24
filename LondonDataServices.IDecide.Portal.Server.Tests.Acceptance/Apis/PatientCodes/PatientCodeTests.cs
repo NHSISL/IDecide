@@ -89,6 +89,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Apis.Patient
                 .OnProperty(patient => patient.Phone).Use(GetRandomStringWithLengthOf(15))
                 .OnProperty(patient => patient.PostCode).Use(GetRandomStringWithLengthOf(8))
                 .OnProperty(patient => patient.ValidationCode).Use(GetRandomStringWithLengthOf(5))
+                .OnProperty(patient => patient.ValidationCodeExpiresOn).Use((DateTimeOffset)now.AddDays(1))
                 .OnProperty(patient => patient.RetryCount).Use(0)
                 .OnProperty(patient => patient.CreatedDate).Use(now)
                 .OnProperty(patient => patient.CreatedBy).Use(user)
