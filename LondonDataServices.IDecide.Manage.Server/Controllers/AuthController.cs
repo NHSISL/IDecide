@@ -15,6 +15,7 @@ using LondonDataServices.IDecide.Manage.Server.Models.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using NHSDigital.ApiPlatform.Sdk.Clients.ApiPlatforms;
 using RESTFulSense.Controllers;
 
 namespace LondonDataServices.IDecide.Manage.Server.Controllers
@@ -65,7 +66,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(AuthenticationSchemes = "bff-cookie")]
         [HttpGet("session")]
         public async Task<IActionResult> Session(CancellationToken cancellationToken)
         {
@@ -162,13 +163,14 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(AuthenticationSchemes = "bff-cookie")]
         [HttpPost("logout")]
         public async Task<IActionResult> Logout(CancellationToken cancellationToken)
         {
             try
             {
                 await this.nhsDigitalApiOrchestrationService.LogoutAsync(cancellationToken);
+
                 HttpContext.Session.Clear();
                 await HttpContext.SignOutAsync("bff-cookie");
 

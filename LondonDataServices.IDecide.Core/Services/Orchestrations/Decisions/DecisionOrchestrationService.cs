@@ -74,24 +74,12 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Decisions
                 ValidatePatientExists(maybeMatchingPatient);
                 decision.PatientId = maybeMatchingPatient.Id;
                 Guid correlationId = await this.identifierBroker.GetIdentifierAsync();
-                bool isAuthenticatedUserWithRole = await CheckIfIsAuthenticatedUserWithRequiredRoleAsync();
-                string verifyingDecisionAuditMessage;
+                var currentUser = await this.securityBroker.GetCurrentUserAsync();
 
-                if (isAuthenticatedUserWithRole)
-                {
-                    var currentUser = await this.securityBroker.GetCurrentUserAsync();
-                    verifyingDecisionAuditMessage = $"User {currentUser.UserId} is verifying the decision for " +
-                        $"patient Nhs Number: {maybeMatchingPatient.NhsNumber}, " +
-                        $"with PatientId {maybeMatchingPatient.Id}";
-                }
-                else
-                {
-                    string ipAddress = await this.securityBroker.GetIpAddressAsync();
-
-                    verifyingDecisionAuditMessage = $"Patient with IP address {ipAddress} is validating a code for " +
-                        $"patient Nhs Number: {maybeMatchingPatient.NhsNumber}, " +
-                        $"with PatientId {maybeMatchingPatient.Id}";
-                }
+                string verifyingDecisionAuditMessage =
+                    $"User {currentUser.UserId} is verifying the decision for " +
+                    $"patient Nhs Number: {maybeMatchingPatient.NhsNumber}, " +
+                    $"with PatientId {maybeMatchingPatient.Id}";
 
                 await this.auditBroker.LogInformationAsync(
                     auditType: "Decision",

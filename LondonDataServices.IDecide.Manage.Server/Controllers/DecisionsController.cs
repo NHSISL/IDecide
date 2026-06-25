@@ -26,7 +26,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
             this.decisionService = decisionService;
 
         [HttpPost]
-        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators")]
+        [Authorize]
         public async ValueTask<ActionResult<Decision>> PostDecisionAsync([FromBody] Decision decision)
         {
             try
@@ -66,7 +66,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
 #if DEBUG
         [EnableQuery(PageSize = 5000)]
 #endif
-        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,LondonDataServices.IDecide.Manage.Server.Agents")]
+        [Authorize]
         public async ValueTask<ActionResult<IQueryable<Decision>>> Get()
         {
             try
@@ -87,7 +87,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
         }
 
         [HttpGet("{decisionId}")]
-        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,LondonDataServices.IDecide.Manage.Server.Agents")]
+        [Authorize]
         public async ValueTask<ActionResult<Decision>> GetDecisionByIdAsync(Guid decisionId)
         {
             try
@@ -120,7 +120,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
         }
 
         [HttpPut]
-        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators")]
+        [Authorize]
         public async ValueTask<ActionResult<Decision>> PutDecisionAsync([FromBody] Decision decision)
         {
             try
@@ -159,7 +159,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
         }
 
         [HttpDelete("{decisionId}")]
-        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators")]
+        [Authorize]
         public async ValueTask<ActionResult<Decision>> DeleteDecisionByIdAsync(Guid decisionId)
         {
             try

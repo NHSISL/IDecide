@@ -12,6 +12,7 @@ import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
 
 export const SearchByDetails = () => {
     const { t: translate } = useTranslation();
+    const [firstName, setFirstName] = useState("");
     const [surname, setSurname] = useState("");
     const [postcode, setPostcode] = useState("");
     const [dobDay, setDobDay] = useState("");
@@ -120,6 +121,7 @@ export const SearchByDetails = () => {
         const newErrors: { [key: string]: string } = {};
 
         // Standard validation
+        if (!firstName) newErrors.firstName = translate("SearchByDetails.firstNameError");
         if (!surname) newErrors.surname = translate("SearchByDetails.surnameError");
         if (!postcode) newErrors.postcode = translate("SearchByDetails.postcodeError");
         if (!dobDay || !dobMonth || !dobYear) {
@@ -145,7 +147,8 @@ export const SearchByDetails = () => {
             const searchCriteria = new SearchCriteria({
                 surname: surname,
                 postcode: postcode,
-                dateOfBirth: dateOfBirth.toString()
+                dateOfBirth: dateOfBirth.toString(),
+                firstName: firstName
             });
 
             const patientLookup = new PatientLookup(searchCriteria, []);
@@ -222,7 +225,7 @@ export const SearchByDetails = () => {
                             return;
                         }
 
-                        setError(errorTitle || translate("errors.CatchAll"));
+                        setError(translate("errors.SearchError"));
                         setLoading(false);
                     }
                 }
@@ -241,8 +244,7 @@ export const SearchByDetails = () => {
                                     type="checkbox"
                                     checked={isPowerOfAttorney}
                                     onChange={handleCheckboxChange}
-                                    style={{ marginRight: "0.5rem" }}
-                                />
+                                    style={{ marginRight: "0.5rem" }} />
                                 Requesting an Opt-out on someone else's behalf.
                             </label>
                         </div>
@@ -250,11 +252,39 @@ export const SearchByDetails = () => {
                             <Card.Content>
                                 <Card.Heading>{translate("SearchByDetails.myDetails")}</Card.Heading>
 
+                                <div className={`nhsuk-form-group${errors.firstName ? " nhsuk-form-group--error" : ""}`}>
+                                    <label className="nhsuk-label" htmlFor="firstName">
+                                        {translate("SearchByDetails.firstNameLabel")}
+                                    </label>
+                                    <span className="nhsuk-hint" id="firstName-hint" style={{ fontSize: "13px" }}>
+                                        {translate("SearchByDetails.firstNameHint")}
+                                    </span>
+                                    {errors.firstName && (
+                                        <span className="nhsuk-error-message" id="firstName-error">
+                                            <strong>{translate("SearchByDetails.errorPrefix")}</strong> {errors.firstName}
+                                        </span>
+                                    )}
+                                    <input
+                                        className={`nhsuk-input${errors.firstName ? " nhsuk-input--error" : ""}`}
+                                        id="firstName"
+                                        name="firstName"
+                                        type="text"
+                                        autoComplete="given-name"
+                                        aria-describedby="firstName-hint"
+                                        value={firstName}
+                                        onChange={e => {
+                                            setFirstName(e.target.value);
+                                            handleFieldChange("firstName");
+                                        }}
+                                        style={{ maxWidth: "400px" }}
+                                    />
+                                </div>
+
                                 <div className={`nhsuk-form-group${errors.surname ? " nhsuk-form-group--error" : ""}`}>
                                     <label className="nhsuk-label" htmlFor="surname">
                                         {translate("SearchByDetails.surnameLabel")}
                                     </label>
-                                    <span className="nhsuk-hint" id="surname-hint">
+                                    <span className="nhsuk-hint" id="surname-hint" style={{ fontSize: "13px" }}>
                                         {translate("SearchByDetails.surnameHint")}
                                     </span>
                                     {errors.surname && (
@@ -274,7 +304,7 @@ export const SearchByDetails = () => {
                                             setSurname(e.target.value);
                                             handleFieldChange("surname");
                                         }}
-                                        style={{ marginBottom: "1rem", maxWidth: "400px" }}
+                                        style={{ maxWidth: "400px" }}
                                     />
                                 </div>
 
@@ -282,7 +312,7 @@ export const SearchByDetails = () => {
                                     <label className="nhsuk-label" htmlFor="postcode">
                                         {translate("SearchByDetails.postcodeLabel")}
                                     </label>
-                                    <span className="nhsuk-hint" id="postcode-hint">
+                                    <span className="nhsuk-hint" id="postcode-hint" style={{ fontSize: "13px" }}>
                                         {translate("SearchByDetails.postcodeHint")}
                                     </span>
                                     {errors.postcode && (

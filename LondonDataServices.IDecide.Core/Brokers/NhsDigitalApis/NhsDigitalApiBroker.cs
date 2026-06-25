@@ -2,6 +2,7 @@
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using NHSDigital.ApiPlatform.Sdk.Clients.ApiPlatforms;
@@ -62,7 +63,9 @@ namespace LondonDataServices.IDecide.Core.Brokers.NhsDigitalApi
                 .CareIdentityServiceClient
                 .GetUserInfoAsync(code, state, cancellationToken);
 
-            return userInfo?.ToString() ?? string.Empty;
+            return userInfo is not null
+                ? JsonSerializer.Serialize(userInfo)
+                : string.Empty;
         }
     }
 }
