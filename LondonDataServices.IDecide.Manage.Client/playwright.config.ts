@@ -1,11 +1,4 @@
 import { defineConfig, devices } from '@playwright/test';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
-const __dirname = path.dirname(__filename); // get the name of the directory
-
-const authFile = path.join(__dirname, './playwright/.auth/user.json');
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -24,10 +17,8 @@ export default defineConfig({
     reporter: 'html',
     /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
     use: {
-        /* Base URL to use in actions like `await page.goto('/')`. */
-        // baseURL: 'http://127.0.0.1:3000',
-
-        /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
+        baseURL: 'https://localhost:5174',
+        ignoreHTTPSErrors: true,
         trace: 'on-first-retry',
     },
 
@@ -35,13 +26,8 @@ export default defineConfig({
     projects: [
         { name: 'setup', testMatch: /.*\.setup\.ts/ },
         {
-            name: 'Microsoft Edge',
-            use: { ...devices['Desktop Edge'], channel: 'msedge', storageState: authFile, },
-            dependencies: ['setup']
+            name: 'Google Chrome',
+            use: { ...devices['Desktop Chrome'], channel: 'chrome' },
         }
-        //{
-        //    name: 'Google Chrome',
-        //    use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-        //},
     ],
 });
