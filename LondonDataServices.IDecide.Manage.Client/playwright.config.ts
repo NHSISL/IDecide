@@ -1,33 +1,53 @@
 import { defineConfig, devices } from '@playwright/test';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-/**
- * See https://playwright.dev/docs/test-configuration.
- */
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const authFile = path.join(__dirname, './playwright/.auth/user.json');
+
+const webServerCommand =
+    'dotnet run --project ../LondonDataServices.IDecide.Manage.Server/' +
+    (process.env.CI ? ' --launch-profile CI' : '');
+
 export default defineConfig({
     testDir: './tests',
-    /* Run tests in files in parallel */
     fullyParallel: true,
-    /* Fail the build on CI if you accidentally left test.only in the source code. */
     forbidOnly: !!process.env.CI,
-    /* Retry on CI only */
     retries: process.env.CI ? 2 : 0,
-    /* Opt out of parallel tests on CI. */
     workers: process.env.CI ? 1 : undefined,
-    /* Reporter to use. See https://playwright.dev/docs/test-reporters */
     reporter: 'html',
-    /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
     use: {
         baseURL: 'https://localhost:5174',
         ignoreHTTPSErrors: true,
+        headless: true,
+        screenshot: 'off',
+        video: 'off',
         trace: 'on-first-retry',
+        actionTimeout: 10000,
+        navigationTimeout: 20000,
     },
 
-    /* Configure projects for major browsers */
     projects: [
         { name: 'setup', testMatch: /.*\.setup\.ts/ },
         {
             name: 'Google Chrome',
-            use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-        }
+            use: {
+                ...devices['Desktop Chrome'],
+                channel: 'chrome',
+                headless: true,
+            },
+            dependencies: ['setup'],
+        },
     ],
+
+    webServer: {
+        command: webServerCommand,
+        url: 'https://localhost:5174',
+        reuseExistingServer: !process.env.CI,
+        timeout: 120 * 1000,
+        ignoreHTTPSErrors: true,
+        stdout: 'pipe',
+    },
 });
