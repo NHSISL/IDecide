@@ -1,8 +1,10 @@
 import { defineConfig, devices } from '@playwright/test';
 
-const webServerCommand =
-    'dotnet run --project ../LondonDataServices.IDecide.Manage.Server/' +
-    (process.env.CI ? ' --launch-profile CI' : '');
+const webServerUrl = process.env.CI ? 'https://localhost:7043' : 'https://localhost:5174';
+
+const webServerCommand = process.env.CI
+    ? 'npm run build && dotnet run --project ../LondonDataServices.IDecide.Manage.Server/ --launch-profile CI'
+    : 'dotnet run --project ../LondonDataServices.IDecide.Manage.Server/';
 
 export default defineConfig({
     testDir: './tests',
@@ -12,7 +14,7 @@ export default defineConfig({
     workers: process.env.CI ? 1 : undefined,
     reporter: 'html',
     use: {
-        baseURL: 'https://localhost:5174',
+        baseURL: webServerUrl,
         ignoreHTTPSErrors: true,
         headless: true,
         screenshot: 'off',
@@ -37,9 +39,9 @@ export default defineConfig({
 
     webServer: {
         command: webServerCommand,
-        url: 'https://localhost:5174',
+        url: webServerUrl,
         reuseExistingServer: !process.env.CI,
-        timeout: 120 * 1000,
+        timeout: 5 * 60 * 1000,
         ignoreHTTPSErrors: true,
         stdout: 'pipe',
     },
