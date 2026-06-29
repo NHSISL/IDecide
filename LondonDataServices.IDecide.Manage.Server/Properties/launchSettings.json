@@ -26,8 +26,7 @@
       "launchBrowser": false,
       "applicationUrl": "https://localhost:7043;http://localhost:6034",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "ContinuousIntegration",
-        "ASPNETCORE_HOSTINGSTARTUPASSEMBLIES": "Microsoft.AspNetCore.SpaProxy"
+        "ASPNETCORE_ENVIRONMENT": "ContinuousIntegration"
       }
     },
     "IIS Express": {
