@@ -12,7 +12,7 @@ const baseFolder =
         ? `${env.APPDATA}/ASP.NET/https`
         : `${env.HOME}/.aspnet/https`;
 
-const certificateName = "aspnetapp";
+const certificateName = "LondonDataServices.IDecide.Manages.client";
 const certFilePath = path.join(baseFolder, `${certificateName}.pem`);
 const keyFilePath = path.join(baseFolder, `${certificateName}.key`);
 
@@ -56,26 +56,6 @@ export default defineConfig({
                 secure: false
             },
             '^/api/*': {
-                target,
-                secure: false
-            },
-            '^/login': {
-                target,
-                secure: false
-            },
-            '^/signin-oidc': {
-                target,
-                secure: false
-            },
-            '^/token': {
-                target,
-                secure: false
-            },
-            '^/logout': {
-                target,
-                secure: false
-            },
-            '^/patientinfo': {
                 target,
                 secure: false
             }
