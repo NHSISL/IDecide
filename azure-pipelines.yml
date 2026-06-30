@@ -155,9 +155,23 @@ steps:
       workingDir: 'LondonDataServices.IDecide.Portal.Client'
 
   - task: Npm@1
+    displayName: 'Build client (patient portal)'
+    inputs:
+      command: 'custom'
+      customCommand: 'run build'
+      workingDir: 'LondonDataServices.IDecide.Portal.Client'
+
+  - task: Npm@1
     displayName: 'Install client dependencies (back office portal)'
     inputs:
       command: 'install'
+      workingDir: 'LondonDataServices.IDecide.Manage.Client'
+
+  - task: Npm@1
+    displayName: 'Build client (back office portal)'
+    inputs:
+      command: 'custom'
+      customCommand: 'run build'
       workingDir: 'LondonDataServices.IDecide.Manage.Client'
 
   - task: DotNetCoreCLI@2
