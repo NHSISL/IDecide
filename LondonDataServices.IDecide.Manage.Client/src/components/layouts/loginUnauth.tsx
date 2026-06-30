@@ -20,7 +20,9 @@ export const LoginUnAuthorisedComponent = () => {
                                 <p>Welcome to the One London Local Data Opt-Out Management Portal.</p>
                                 <p>Please sign in to continue.</p>
                             </Card.Text>
-                            <Button href="/api/auth/login" className="me-3">Sign in</Button>
+                            <Button className="me-3" onClick={() => { window.location.href = '/api/auth/login'; }}>
+                                Sign in
+                            </Button>
                         </Card.Body>
                     </Card>
                 </Col>
