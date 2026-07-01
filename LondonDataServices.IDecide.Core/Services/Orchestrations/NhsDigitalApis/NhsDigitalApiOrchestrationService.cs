@@ -67,6 +67,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis
                 {
                     var newUser = new User
                     {
+                        Id = Guid.NewGuid(),
                         NhsIdUserUid = userInfo.NhsIdUserUid,
                         Name = userInfo.Name,
                         Sub = userInfo.Sub,
