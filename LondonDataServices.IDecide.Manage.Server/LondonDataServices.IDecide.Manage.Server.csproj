@@ -7,9 +7,9 @@
 		<SpaRoot>..\LondonDataServices.IDecide.Manage.Client</SpaRoot>
 		<SpaProxyLaunchCommand>npm run dev</SpaProxyLaunchCommand>
 		<SpaProxyServerUrl>https://localhost:5174</SpaProxyServerUrl>
-		<Version>1.0.0.2</Version>
-		<AssemblyVersion>1.0.0.2</AssemblyVersion>
-		<FileVersion>1.0.0.2</FileVersion>
+		<Version>1.0.0.3</Version>
+		<AssemblyVersion>1.0.0.3</AssemblyVersion>
+		<FileVersion>1.0.0.3</FileVersion>
 		<PackageReleaseNotes>
 			Initial release of the London Data Service IDecide Management Website.
 		</PackageReleaseNotes>

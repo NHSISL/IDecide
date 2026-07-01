@@ -7,7 +7,7 @@ export const UnauthorisedPage = () => {
             style={{ height: '100vh' }}>
             <Row>
                 <Col>
-                    <Card className="text-center" style={{ maxWidth: '400px', margin: 'auto' }}>
+                    <Card className="text-center" style={{ maxWidth: '600px', margin: 'auto' }}>
                         <Card.Body>
                             <Card.Title className="mb-4">
                                 <img
@@ -18,14 +18,18 @@ export const UnauthorisedPage = () => {
                                 <br />
                                 <span style={{ marginLeft: "10px" }}>
                                     London Data Service <br />
-                                    <strong className="hero-text"> Local Data Opt-Out</strong>
+                                    <strong className="hero-text"> Local Data Opt-Out Management Portal</strong>
                                 </span>
+                                <br /><br />
+                                <p>Healthcare Worker Login</p>
                             </Card.Title>
                             <Card.Text className="mb-4 align-items-left">
-                                <p><strong>Access Denied</strong></p>
+                                <p className="text-danger"><strong>Access Denied</strong></p>
                                 <p>
-                                    Your account is not authorised to access this service.
-                                    Please contact your administrator if you believe this is an error.
+                                   
+                                        Your account is  <strong>not authorised</strong> to access this service. <br /> <br />
+                                        Please contact your administrator if you believe this is an error.
+                                    
                                 </p>
                             </Card.Text>
                             <Button href="/api/auth/login" variant="primary" className="me-3">
