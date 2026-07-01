@@ -8,6 +8,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using LondonDataServices.IDecide.Core.Brokers.DateTimes;
+using LondonDataServices.IDecide.Core.Brokers.Identifiers;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Models.Foundations.Users;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.NhsDigitalApis;
@@ -21,17 +22,20 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis
     {
         private readonly INhsDigitalApiService nhsDigitalApiService;
         private readonly IUserService userService;
+        private readonly IIdentifierBroker identifierBroker;
         private readonly IDateTimeBroker dateTimeBroker;
         private readonly ILoggingBroker loggingBroker;
 
         public NhsDigitalApiOrchestrationService(
             INhsDigitalApiService nhsDigitalApiService,
             IUserService userService,
+            IIdentifierBroker identifierBroker,
             IDateTimeBroker dateTimeBroker,
             ILoggingBroker loggingBroker)
         {
             this.nhsDigitalApiService = nhsDigitalApiService;
             this.userService = userService;
+            this.identifierBroker = identifierBroker;
             this.dateTimeBroker = dateTimeBroker;
             this.loggingBroker = loggingBroker;
         }
@@ -65,8 +69,11 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.NhsDigitalApis
 
                 if (maybeUser is null)
                 {
+                    Guid newUserId = await this.identifierBroker.GetIdentifierAsync();
+
                     var newUser = new User
                     {
+                        Id = newUserId,
                         NhsIdUserUid = userInfo.NhsIdUserUid,
                         Name = userInfo.Name,
                         Sub = userInfo.Sub,
