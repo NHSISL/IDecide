@@ -5,7 +5,6 @@ import { useTranslation } from "react-i18next";
 import { patientViewService } from "../../services/views/patientViewService";
 import { Row, Col, Alert, Button, Spinner } from "react-bootstrap";
 import { PatientCodeRequest } from "../../models/patients/patientCodeRequest";
-import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
 import { isApiErrorResponse } from "../../helpers/isApiErrorResponse";
 import { PowerOfAttourney } from "../../models/powerOfAttourneys/powerOfAttourney";
 
