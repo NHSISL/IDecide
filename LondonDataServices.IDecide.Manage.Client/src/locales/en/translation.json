@@ -289,7 +289,7 @@
     "helpEmail": "Email - a message will be sent to your registered email address",
     "helpLetter": "Letter - a letter will be sent to your home address (please allow up to 3 days for delivery)",
     "helpChangePrefs": "Check with them that they are happy with that choice as it will affect how the patient’s data will be shared for secondary uses within The London Data Service.",
-    "helpChangePrefs2": "They can log a new request at any time to change your notification preferences.",
+    "helpChangePrefs2": "They can log a new request at any time to change their notification preferences.",
     "helpChangePrefs3": "A confirmation message will be sent to let them know we have recorded their request. This will be sent by the same method we used to send their verification code.",
     "needHelpTitle": "Need help?",
     "needHelpDesc": "If you have any questions or need assistance, please contact our helpdesk."
