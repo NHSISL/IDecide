@@ -32,11 +32,11 @@ export const SearchByDetails = () => {
 
     // PoA handlers
     const handlePoaFirstnameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setPoaFirstname(e.target.value);
+        setPoaFirstname(e.target.value.replace(/\d/g, ""));
         handleFieldChange("poaFirstname");
     };
     const handlePoaSurnameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setPoaSurname(e.target.value);
+        setPoaSurname(e.target.value.replace(/\d/g, ""));
         handleFieldChange("poaSurname");
     };
     const handlePoaRelationshipChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -273,7 +273,7 @@ export const SearchByDetails = () => {
                                         aria-describedby="firstName-hint"
                                         value={firstName}
                                         onChange={e => {
-                                            setFirstName(e.target.value);
+                                            setFirstName(e.target.value.replace(/\d/g, ""));
                                             handleFieldChange("firstName");
                                         }}
                                         style={{ maxWidth: "400px" }}
@@ -301,7 +301,7 @@ export const SearchByDetails = () => {
                                         aria-describedby="surname-hint"
                                         value={surname}
                                         onChange={e => {
-                                            setSurname(e.target.value);
+                                            setSurname(e.target.value.replace(/\d/g, ""));
                                             handleFieldChange("surname");
                                         }}
                                         style={{ maxWidth: "400px" }}

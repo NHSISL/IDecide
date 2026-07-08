@@ -1,13 +1,15 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Row, Col, Alert } from "react-bootstrap";
+import { Row, Col, Alert, Button } from "react-bootstrap";
 import { Patient } from "../../models/patients/patient";
 import { PatientCodeRequest } from "../../models/patients/patientCodeRequest";
 import { isApiErrorResponse } from "../../helpers/isApiErrorResponse";
 import { patientViewService } from "../../services/views/patientViewService";
 import { PowerOfAttourney } from "../../models/powerOfAttourneys/powerOfAttourney";
 import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
+import { faArrowLeftLong } from "@fortawesome/free-solid-svg-icons/faArrowLeftLong";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const VALID_CODE_MESSAGE =
     "A valid code already exists for this patient, please go to the enter code screen.";
@@ -114,7 +116,7 @@ const PositiveConfirmation = ({ createdPatient, powerOfAttorney }: ConfirmDetail
                             <div>
                                 <div style={{ fontSize: "1rem", marginBottom: "0.25rem", color: "#6c757d", fontWeight: 500 }}>
                                     {translate("PositiveConfirmation.poaDetailsTitle")}
-                                </div>
+                                </div>No patients found. To search PDS and add patient, 
                                 <dl className="mb-0" style={{ fontSize: "0.95rem", color: "#6c757d" }}>
                                     <div>
                                         <dt style={{ display: "inline", fontWeight: 500 }}>{translate("PositiveConfirmation.poaNameLabel")}</dt>
@@ -132,6 +134,13 @@ const PositiveConfirmation = ({ createdPatient, powerOfAttorney }: ConfirmDetail
                             </div>
                         </Alert>
                     )}
+
+                    <Button
+                        variant="link"
+                        onClick={() => navigate(-1)}
+                    >
+                        <FontAwesomeIcon icon={faArrowLeftLong} /> Back
+                    </Button>
 
                     <h2>{translate("PositiveConfirmation.confirmationRequiredTitle")}</h2>
                     <p>{translate("PositiveConfirmation.confirmationRequiredDescription")}</p>
