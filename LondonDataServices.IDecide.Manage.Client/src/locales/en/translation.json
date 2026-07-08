@@ -105,9 +105,9 @@
     },
     "helpGuidanceEligibilityText": "If you do not meet one of these criteria, you cannot opt someone else out.",
     "helpGuidancePoaNhsNumberHeading": "Entering NHS Number",
-    "helpGuidancePoaNhsNumberText1": "Its easiest if the requestor provides the patient’s NHS Number. Tell them they can find it on medical cards, prescriptions, GP letters, hospital correspondence, or the NHS app.",
-    "helpGuidancePoaNhsNumberText2": "If they do not know the NHS number click I Don't know their NHS Number to continue. You will need to tick the Requesting an Opt-out on someone else's behalf box on the next page.",
-    "helpGuidancePoaNhsNumberText3": "Put the details of the person making the request in the Firstname, Surname and Relationship fields.",
+    "helpGuidancePoaNhsNumberText1": "It’s easiest if the requester provides the patient’s NHS Number. Tell them they can find it on medical cards, prescriptions, GP letters, hospital correspondence, or the NHS app.",
+    "helpGuidancePoaNhsNumberText2": "If they do not know the NHS Number, click \"I Don't know their NHS Number\" to continue. You will need to tick the \"Requesting an Opt-out on someone else's behalf\" box on the next page.",
+    "helpGuidancePoaNhsNumberText3": "Enter the details of the person making the request in the first name, surname and relationship fields.",
     "errorNoAccess": "Current user doesn't have access to perform this function. Please contact helpdesk to request Agent access."
   },
   "SearchByDetails": {
