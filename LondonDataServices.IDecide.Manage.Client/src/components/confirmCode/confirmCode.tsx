@@ -19,7 +19,6 @@ export const ConfirmCode = ({ createdPatient, powerOfAttorney }: ConfirmDetailsP
     const navigate = useNavigate();
     const [code, setCode] = useState("");
     const [error, setError] = useState("");
-    const { configuration } = useFrontendConfiguration();
     const confirmCodeMutation = patientViewService.useConfirmCode();
 
     const {

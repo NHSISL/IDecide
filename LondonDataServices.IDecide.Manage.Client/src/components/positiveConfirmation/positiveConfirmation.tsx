@@ -116,7 +116,7 @@ const PositiveConfirmation = ({ createdPatient, powerOfAttorney }: ConfirmDetail
                             <div>
                                 <div style={{ fontSize: "1rem", marginBottom: "0.25rem", color: "#6c757d", fontWeight: 500 }}>
                                     {translate("PositiveConfirmation.poaDetailsTitle")}
-                                </div>No patients found. To search PDS and add patient, 
+                                </div>
                                 <dl className="mb-0" style={{ fontSize: "0.95rem", color: "#6c757d" }}>
                                     <div>
                                         <dt style={{ display: "inline", fontWeight: 500 }}>{translate("PositiveConfirmation.poaNameLabel")}</dt>
