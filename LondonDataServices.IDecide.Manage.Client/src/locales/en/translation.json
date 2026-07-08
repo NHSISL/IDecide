@@ -94,8 +94,8 @@
     "helpGuidanceTitle": "Help and Guidance",
     "helpGuidanceNhsNumberHeading": "Entering Your NHS Number",
     "helpGuidanceNhsNumberText1": "Enter the patient's NHS Number. Tell them they can find it on a medical card, prescription, GP letter, hospital correspondence, or the NHS app.",
-    "helpGuidanceNhsNumberText2": "Searching with NHS Number help us to securely find the patient’s details. This helps ensure we match them to the correct record and keeps their information safe.",
-    "helpGuidanceNhsNumberText3": "If the patient does not know their NHS Number, you can still continue by clicking 'I Don't know their NHS Number'', this will direct you to search by name, dob & postcode.",
+    "helpGuidanceNhsNumberText2": "Searching with an NHS Number helps us securely find the patient’s details. This helps ensure we match them to the correct record and keep their information safe.",
+    "helpGuidanceNhsNumberText3": "If the patient does not know their NHS Number, you can still continue by clicking \"I Don't know their NHS Number\" below. This will direct you to search by name, date of birth, and postcode.",
     "helpGuidanceNhsNumberText4": "Their NHS Number will only be used to look up patient details and will not be shared outside the NHS.",
     "helpGuidanceEligibilityHeading": "You can only opt someone else out if:",
     "helpGuidanceEligibilityList": {
