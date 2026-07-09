@@ -259,20 +259,6 @@ const PositiveConfirmation = ({ createdPatient, powerOfAttorney }: ConfirmDetail
                     </p>
                     <p>
                         {translate("PositiveConfirmation.helpReceivingCodeDescription3")}
-                        &nbsp;
-                        <a
-                            href={`tel:${configuration.helpdeskContactNumber}`}
-                            style={{ textDecoration: "underline" }}
-                        >
-                            {configuration.helpdeskContactNumber}
-                        </a> or email us at&nbsp;
-
-                        <a
-                            href={`mailto:${configuration.helpdeskContactEmail}`}
-                            style={{ textDecoration: "underline" }}
-                        >
-                            {configuration.helpdeskContactEmail}
-                        </a>.
                     </p>
                     <p>
                         {translate("PositiveConfirmation.helpReceivingCodeDescription4")}
