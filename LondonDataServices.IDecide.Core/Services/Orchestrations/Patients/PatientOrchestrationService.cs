@@ -81,7 +81,9 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                         return patient;
                     }
 
-                    return patient;
+                    Patient redactedPatient = patient.Redact();
+
+                    return redactedPatient;
                 }
                 else
                 {
@@ -95,7 +97,9 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                         return maybePatient;
                     }
 
-                    return maybePatient;
+                    Patient redactedPatient = maybePatient.Redact();
+
+                    return redactedPatient;
                 }
             });
 

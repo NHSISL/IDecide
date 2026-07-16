@@ -121,7 +121,16 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
     const handlePoaNhsNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value.replace(/\D/g, "").slice(0, 10);
         setPoaNhsNumberInput(value);
-        setPoaNhsNumberError("");
+
+        if (value.length === 10) {
+            if (!validate(value)) {
+                setPoaNhsNumberError(translate("errors.InValidNhsNumber"));
+            } else {
+                setPoaNhsNumberError("");
+            }
+        } else {
+            setPoaNhsNumberError("");
+        }
     };
     const handlePoaRelationshipChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setPoaRelationship(e.target.value);
@@ -130,8 +139,8 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
 
     const validatePoaFields = () => {
         let valid = true;
-        if (poaNhsNumberInput.length !== 10) {
-            setPoaNhsNumberError(translate("SearchByNHSNumber.errorNhsNumber"));
+        if (poaNhsNumberInput.length !== 10 || !validate(poaNhsNumberInput)) {
+            setPoaNhsNumberError(translate("errors.InValidNhsNumber"));
             valid = false;
         }
         if (!poaRelationship) {
@@ -376,7 +385,8 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
                                     (powerOfAttorney
                                         ? !poaNhsNumberInput ||
                                         !poaRelationship ||
-                                        poaNhsNumberInput.length !== 10
+                                        poaNhsNumberInput.length !== 10 ||
+                                        !validate(poaNhsNumberInput)
                                         : nhsNumberInput.length !== 10 || !nhsValid)
                                 }
                             >
@@ -389,6 +399,12 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
                     {apiError && (
                         <Alert variant="danger">
                             {apiError}
+                        </Alert>
+                    )}
+
+                    {error && powerOfAttorney && (
+                        <Alert variant="danger">
+                            {error}
                         </Alert>
                     )}
                 </Col>
