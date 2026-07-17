@@ -81,6 +81,11 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                         return patient;
                     }
 
+                    if (this.decisionConfigurations.IsRedacted is false)
+                    {
+                        return patient;
+                    }
+
                     Patient redactedPatient = patient.Redact();
 
                     return redactedPatient;
@@ -93,6 +98,11 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                     ValidatePatientIsNotNull(maybePatient);
 
                     if (maybePatient.IsSensitive)
+                    {
+                        return maybePatient;
+                    }
+
+                    if (this.decisionConfigurations.IsRedacted is false)
                     {
                         return maybePatient;
                     }

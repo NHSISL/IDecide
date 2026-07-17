@@ -33,6 +33,8 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
     const [poaNhsNumberError, setPoaNhsNumberError] = useState("");
     const [poaRelationshipError, setPoaRelationshipError] = useState("");
     const [loading, setLoading] = useState(false);
+    const [sensitivePatientError, setSensitivePatientError] = useState(false);
+    const [sensitivePatientName, setSensitivePatientName] = useState("");
     const [recaptchaReady, setRecaptchaReady] = useState(false);
     const [recaptchaSiteKey, setRecaptchaSiteKey] = useState<string | undefined>(undefined);
     const [nhsValid, setNhsValid] = useState(false);
@@ -154,6 +156,8 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
         e.preventDefault();
         setError("");
         setApiError("");
+        setSensitivePatientError(false);
+        setSensitivePatientName("");
         setPoaNhsNumberError("");
         setPoaRelationshipError("");
 
@@ -191,6 +195,20 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
                     {
                         headers: { "X-Recaptcha-Token": token },
                         onSuccess: (createdPatient: Patient) => {
+                            const isSensitive =
+                                !!createdPatient.givenName &&
+                                !!createdPatient.surname &&
+                                !createdPatient.email &&
+                                !createdPatient.phone &&
+                                !createdPatient.address;
+
+                            if (powerOfAttorney && isSensitive) {
+                                setSensitivePatientError(true);
+                                setSensitivePatientName(
+                                    `${createdPatient.givenName} ${createdPatient.surname}`);
+                                setLoading(false);
+                                return;
+                            }
                             setCreatedPatient(createdPatient);
                             nextStep(undefined, nhsNumberToUse, createdPatient, poaModel);
                             setLoading(false);
@@ -405,6 +423,14 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
                     {error && powerOfAttorney && (
                         <Alert variant="danger">
                             {error}
+                        </Alert>
+                    )}
+
+                    {sensitivePatientError && (
+                        <Alert variant="danger">
+                            <p><strong>{sensitivePatientName}</strong></p>
+                            <p>{translate("SearchByNHSNumber.sensitivePatientMessage1")}</p>
+                            <p>{translate("SearchByNHSNumber.sensitivePatientMessage2")}</p>
                         </Alert>
                     )}
                 </Col>
