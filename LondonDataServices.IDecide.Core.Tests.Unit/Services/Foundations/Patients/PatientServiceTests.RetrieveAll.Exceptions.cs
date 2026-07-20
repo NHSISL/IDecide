@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Xeptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients.Exceptions;
 using Microsoft.Data.SqlClient;
@@ -44,8 +45,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                     retrieveAllPatientsTask.AsTask);
 
             // then
-            actualPatientDependencyException.Should()
-                .BeEquivalentTo(expectedPatientDependencyException);
+            actualPatientDependencyException
+                .SameExceptionAs(expectedPatientDependencyException)
+                .Should().BeTrue();
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectAllPatientsAsync(),
@@ -91,8 +93,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                 await Assert.ThrowsAsync<PatientServiceException>(retrieveAllPatientsTask.AsTask);
 
             // then
-            actualPatientServiceException.Should()
-                .BeEquivalentTo(expectedPatientServiceException);
+            actualPatientServiceException
+                .SameExceptionAs(expectedPatientServiceException)
+                .Should().BeTrue();
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectAllPatientsAsync(),

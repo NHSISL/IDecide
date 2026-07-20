@@ -82,7 +82,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
 
                 return Ok(new SessionResponse
                 {
-                    Sub = User.FindFirstValue(ClaimTypes.NameIdentifier),
+                    Sub = User.FindFirstValue("sub"),
                     Upn = User.FindFirstValue(ClaimTypes.Upn),
                     Name = User.FindFirstValue(ClaimTypes.Name),
                     Roles = User.FindAll(ClaimTypes.Role).Select(c => c.Value).ToArray()
@@ -129,9 +129,10 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
 
                 var claims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.NameIdentifier, user.Sub),
+                    new Claim(ClaimTypes.NameIdentifier, $"{user.Name} ({user.Sub})"),
                     new Claim(ClaimTypes.Name, user.Name),
                     new Claim(ClaimTypes.Upn, user.NhsIdUserUid),
+                    new Claim("sub", user.Sub),
                 };
 
                 var identity = new ClaimsIdentity(claims, "OAuth");

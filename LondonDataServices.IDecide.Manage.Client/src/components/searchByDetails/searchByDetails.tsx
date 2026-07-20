@@ -121,7 +121,7 @@ export const SearchByDetails = () => {
         const newErrors: { [key: string]: string } = {};
 
         // Standard validation
-        //if (!firstName) newErrors.firstName = translate("SearchByDetails.firstNameError");
+        if (!firstName) newErrors.firstName = translate("SearchByDetails.firstNameError");
         if (!surname) newErrors.surname = translate("SearchByDetails.surnameError");
         if (!postcode) newErrors.postcode = translate("SearchByDetails.postcodeError");
         if (!dobDay || !dobMonth || !dobYear) {
@@ -133,7 +133,7 @@ export const SearchByDetails = () => {
 
         // PoA validation
         if (isPowerOfAttorney) {
-            //if (!poaFirstname.trim()) newErrors.poaFirstname = translate("SearchByDetails.poaFirstnameError");
+            if (!poaFirstname.trim()) newErrors.poaFirstname = translate("SearchByDetails.poaFirstnameError");
             if (!poaSurname.trim()) newErrors.poaSurname = translate("SearchByDetails.poaSurnameError");
             if (!poaRelationship) newErrors.poaRelationship = translate("SearchByDetails.poaRelationshipError");
         }
@@ -147,7 +147,8 @@ export const SearchByDetails = () => {
             const searchCriteria = new SearchCriteria({
                 surname: surname,
                 postcode: postcode,
-                dateOfBirth: dateOfBirth.toString()
+                dateOfBirth: dateOfBirth.toString(),
+                firstName: firstName
             });
 
             const patientLookup = new PatientLookup(searchCriteria, []);
@@ -263,7 +264,20 @@ export const SearchByDetails = () => {
                                             <strong>{translate("SearchByDetails.errorPrefix")}</strong> {errors.firstName}
                                         </span>
                                     )}
-                                    
+                                    <input
+                                        className={`nhsuk-input${errors.firstName ? " nhsuk-input--error" : ""}`}
+                                        id="firstName"
+                                        name="firstName"
+                                        type="text"
+                                        autoComplete="given-name"
+                                        aria-describedby="firstName-hint"
+                                        value={firstName}
+                                        onChange={e => {
+                                            setFirstName(e.target.value.replace(/\d/g, ""));
+                                            handleFieldChange("firstName");
+                                        }}
+                                        style={{ maxWidth: "400px" }}
+                                    />
                                 </div>
 
                                 <div className={`nhsuk-form-group${errors.surname ? " nhsuk-form-group--error" : ""}`}>

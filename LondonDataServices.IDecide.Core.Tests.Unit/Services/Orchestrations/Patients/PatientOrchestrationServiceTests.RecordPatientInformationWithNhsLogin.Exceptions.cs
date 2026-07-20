@@ -1,4 +1,4 @@
-﻿// ---------------------------------------------------------
+// ---------------------------------------------------------
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
@@ -37,6 +37,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
                 this.loggingBrokerMock.Object,
                 this.securityBrokerMock.Object,
+                this.securityAuditBrokerMock.Object,
                 this.dateTimeBrokerMock.Object,
                 this.auditBrokerMock.Object,
                 this.identifierBrokerMock.Object,
@@ -63,7 +64,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             // then
             actualPatientOrchestrationDependencyValidationException
-                .Should().BeEquivalentTo(expectedPatientOrchestrationDependencyValidationException);
+                .SameExceptionAs(expectedPatientOrchestrationDependencyValidationException)
+                .Should().BeTrue();
 
             patientServiceMock.Verify(service =>
                 service.RetrieveAllPatientsAsync(),
@@ -103,6 +105,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
                 this.loggingBrokerMock.Object,
                 this.securityBrokerMock.Object,
+                this.securityAuditBrokerMock.Object,
                 this.dateTimeBrokerMock.Object,
                 this.auditBrokerMock.Object,
                 this.identifierBrokerMock.Object,
@@ -129,7 +132,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             // then
             actualPatientOrchestrationDependencyException
-                .Should().BeEquivalentTo(expectedPatientOrchestrationDependencyException);
+                .SameExceptionAs(expectedPatientOrchestrationDependencyException)
+                .Should().BeTrue();
 
             patientServiceMock.Verify(broker =>
                 broker.RetrieveAllPatientsAsync(),
@@ -173,6 +177,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
                 this.loggingBrokerMock.Object,
                 this.securityBrokerMock.Object,
+                this.securityAuditBrokerMock.Object,
                 this.dateTimeBrokerMock.Object,
                 this.auditBrokerMock.Object,
                 this.identifierBrokerMock.Object,
@@ -197,8 +202,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                         testCode: recordPatientInformationTask.AsTask);
 
             // then
-            actualPatientOrchestrationValidationException.Should().BeEquivalentTo(
-                expectedPatientOrchestrationServiceException);
+            actualPatientOrchestrationValidationException
+                .SameExceptionAs(expectedPatientOrchestrationServiceException)
+                .Should().BeTrue();
 
             patientServiceMock.Verify(broker =>
                  broker.RetrieveAllPatientsAsync(),

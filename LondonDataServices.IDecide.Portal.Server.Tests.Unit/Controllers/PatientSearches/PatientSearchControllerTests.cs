@@ -3,6 +3,8 @@
 // ---------------------------------------------------------
 
 using System;
+using LondonDataServices.IDecide.Core.Brokers.Loggings;
+using LondonDataServices.IDecide.Core.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
@@ -19,14 +21,25 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Unit.Controllers.Patien
     public partial class PatientSearchControllerTests : RESTFulController
     {
         private readonly Mock<IPatientOrchestrationService> patientOrchestrationServiceMock;
+        private readonly Mock<ISecurityAuditBroker> securityAuditBrokerMock;
+        private readonly Mock<ILoggingBroker> loggingBrokerMock;
         private readonly PatientSearchController patientSearchController;
 
         public PatientSearchControllerTests()
         {
             this.patientOrchestrationServiceMock = new Mock<IPatientOrchestrationService>();
+            this.securityAuditBrokerMock = new Mock<ISecurityAuditBroker>();
+            this.loggingBrokerMock = new Mock<ILoggingBroker>();
+
+            this.securityAuditBrokerMock
+                .Setup(broker => broker.GetCurrentUserIdAsync())
+                .ReturnsAsync("test-user");
 
             this.patientSearchController =
-                new PatientSearchController(this.patientOrchestrationServiceMock.Object);
+                new PatientSearchController(
+                    this.patientOrchestrationServiceMock.Object,
+                    this.securityAuditBrokerMock.Object,
+                    this.loggingBrokerMock.Object);
         }
 
         public static TheoryData<Xeption> ValidationExceptions()

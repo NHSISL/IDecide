@@ -1,4 +1,4 @@
-﻿// ---------------------------------------------------------
+// ---------------------------------------------------------
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
@@ -50,7 +50,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
 
             // then
             actualDecisionOrchestrationDependencyValidationException
-                .Should().BeEquivalentTo(expectedDecisionOrchestrationDependencyValidationException);
+                .SameExceptionAs(expectedDecisionOrchestrationDependencyValidationException)
+                .Should().BeTrue();
 
             this.patientServiceMock.Verify(service =>
                 service.RetrieveAllPatientsAsync(),
@@ -104,7 +105,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
 
             // then
             actualDecisionOrchestrationDependencyException
-                .Should().BeEquivalentTo(expectedDecisionOrchestrationDependencyException);
+                .SameExceptionAs(expectedDecisionOrchestrationDependencyException)
+                .Should().BeTrue();
 
             this.patientServiceMock.Verify(service =>
                 service.RetrieveAllPatientsAsync(),
@@ -160,8 +162,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                         testCode: verifyAndRecordDecisionTask.AsTask);
 
             // then
-            actualDecisionOrchestrationValidationException.Should().BeEquivalentTo(
-                expectedDecisionOrchestrationServiceException);
+            actualDecisionOrchestrationValidationException
+                .SameExceptionAs(expectedDecisionOrchestrationServiceException)
+                .Should().BeTrue();
 
             this.patientServiceMock.Verify(service =>
                service.RetrieveAllPatientsAsync(),

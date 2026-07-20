@@ -5,6 +5,7 @@
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Xeptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Users.Exceptions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -43,8 +44,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Users
                 await Assert.ThrowsAsync<UserDependencyException>(removeUserByIdTask.AsTask);
 
             // then
-            actualUserDependencyException.Should()
-                .BeEquivalentTo(expectedUserDependencyException);
+            actualUserDependencyException
+                .SameExceptionAs(expectedUserDependencyException)
+                .Should().BeTrue();
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectUserByIdAsync(someUserId),
@@ -92,8 +94,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Users
                 await Assert.ThrowsAsync<UserDependencyValidationException>(removeUserByIdTask.AsTask);
 
             // then
-            actualUserDependencyValidationException.Should()
-                .BeEquivalentTo(expectedUserDependencyValidationException);
+            actualUserDependencyValidationException
+                .SameExceptionAs(expectedUserDependencyValidationException)
+                .Should().BeTrue();
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectUserByIdAsync(someUserId),
@@ -142,8 +145,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Users
                 await Assert.ThrowsAsync<UserDependencyException>(removeUserByIdTask.AsTask);
 
             // then
-            actualUserDependencyException.Should()
-                .BeEquivalentTo(expectedUserDependencyException);
+            actualUserDependencyException
+                .SameExceptionAs(expectedUserDependencyException)
+                .Should().BeTrue();
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectUserByIdAsync(someUserId),
@@ -191,8 +195,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Users
                 await Assert.ThrowsAsync<UserServiceException>(removeUserByIdTask.AsTask);
 
             // then
-            actualUserServiceException.Should()
-                .BeEquivalentTo(expectedUserServiceException);
+            actualUserServiceException
+                .SameExceptionAs(expectedUserServiceException)
+                .Should().BeTrue();
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectUserByIdAsync(someUserId),

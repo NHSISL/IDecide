@@ -5,6 +5,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Xeptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.NhsDigitalApis.Exceptions;
 using Moq;
 using NHSDigital.ApiPlatform.Sdk.Models.Foundations.Pds;
@@ -42,8 +43,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.NhsDig
                     testCode: searchPatientPDSTask.AsTask);
 
             // then
-            actualNhsDigitalApiValidationException.Should().BeEquivalentTo(
-                expectedNhsDigitalApiValidationException);
+            actualNhsDigitalApiValidationException
+                .SameExceptionAs(expectedNhsDigitalApiValidationException)
+                .Should().BeTrue();
 
             this.nhsDigitalApiBrokerMock.Verify(broker =>
                 broker.SearchPatientPDSAsync(

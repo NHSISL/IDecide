@@ -1,10 +1,11 @@
-﻿// ---------------------------------------------------------
+// ---------------------------------------------------------
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Xeptions;
 using ISL.Providers.Captcha.Abstractions.Models;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions.Exceptions;
 using Moq;
@@ -96,7 +97,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
 
             //then
             actualUnauthorizedDecisionOrchestrationServiceException
-                .Should().BeEquivalentTo(expectedUnauthorizedDecisionOrchestrationServiceException);
+                .SameExceptionAs(expectedUnauthorizedDecisionOrchestrationServiceException)
+                .Should().BeTrue();
 
             this.securityBrokerMock.Verify(broker =>
                 broker.IsCurrentUserAuthenticatedAsync(),
@@ -156,7 +158,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
 
             //then
             actualInvalidCaptchaDecisionOrchestrationServiceException
-                .Should().BeEquivalentTo(invalidCaptchaDecisionOrchestrationServiceException);
+                .SameExceptionAs(invalidCaptchaDecisionOrchestrationServiceException)
+                .Should().BeTrue();
 
             this.securityBrokerMock.Verify(broker =>
                 broker.IsCurrentUserAuthenticatedAsync(),
@@ -209,7 +212,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
 
             //then
             actualReCaptchaLowConfidenceException
-                .Should().BeEquivalentTo(reCaptchaLowConfidenceException);
+                .SameExceptionAs(reCaptchaLowConfidenceException)
+                .Should().BeTrue();
 
             this.securityBrokerMock.Verify(broker =>
                 broker.IsCurrentUserAuthenticatedAsync(),

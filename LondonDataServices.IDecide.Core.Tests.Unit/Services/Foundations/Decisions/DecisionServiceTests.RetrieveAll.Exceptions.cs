@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Xeptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions.Exceptions;
 using Microsoft.Data.SqlClient;
@@ -44,8 +45,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                     retrieveAllDecisionsTask.AsTask);
 
             // then
-            actualDecisionDependencyException.Should()
-                .BeEquivalentTo(expectedDecisionDependencyException);
+            actualDecisionDependencyException
+                .SameExceptionAs(expectedDecisionDependencyException)
+                .Should().BeTrue();
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectAllDecisionsAsync(),
@@ -91,8 +93,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                 await Assert.ThrowsAsync<DecisionServiceException>(retrieveAllDecisionsTask.AsTask);
 
             // then
-            actualDecisionServiceException.Should()
-                .BeEquivalentTo(expectedDecisionServiceException);
+            actualDecisionServiceException
+                .SameExceptionAs(expectedDecisionServiceException)
+                .Should().BeTrue();
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectAllDecisionsAsync(),

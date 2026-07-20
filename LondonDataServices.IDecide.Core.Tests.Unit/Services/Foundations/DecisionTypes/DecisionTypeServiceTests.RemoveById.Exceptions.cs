@@ -5,6 +5,7 @@
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Xeptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
 using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes.Exceptions;
 using Microsoft.Data.SqlClient;
@@ -45,8 +46,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                     addDecisionTypeTask.AsTask);
 
             // then
-            actualDecisionTypeDependencyException.Should()
-                .BeEquivalentTo(expectedDecisionTypeDependencyException);
+            actualDecisionTypeDependencyException
+                .SameExceptionAs(expectedDecisionTypeDependencyException)
+                .Should().BeTrue();
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectDecisionTypeByIdAsync(randomDecisionType.Id),
@@ -103,8 +105,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                     removeDecisionTypeByIdTask.AsTask);
 
             // then
-            actualDecisionTypeDependencyValidationException.Should()
-                .BeEquivalentTo(expectedDecisionTypeDependencyValidationException);
+            actualDecisionTypeDependencyValidationException
+                .SameExceptionAs(expectedDecisionTypeDependencyValidationException)
+                .Should().BeTrue();
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectDecisionTypeByIdAsync(It.IsAny<Guid>()),
@@ -155,8 +158,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                     deleteDecisionTypeTask.AsTask);
 
             // then
-            actualDecisionTypeDependencyException.Should()
-                .BeEquivalentTo(expectedDecisionTypeDependencyException);
+            actualDecisionTypeDependencyException
+                .SameExceptionAs(expectedDecisionTypeDependencyException)
+                .Should().BeTrue();
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectDecisionTypeByIdAsync(It.IsAny<Guid>()),
@@ -203,8 +207,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                     removeDecisionTypeByIdTask.AsTask);
 
             // then
-            actualDecisionTypeServiceException.Should()
-                .BeEquivalentTo(expectedDecisionTypeServiceException);
+            actualDecisionTypeServiceException
+                .SameExceptionAs(expectedDecisionTypeServiceException)
+                .Should().BeTrue();
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectDecisionTypeByIdAsync(It.IsAny<Guid>()),

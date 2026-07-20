@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Xeptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Audits;
 using LondonDataServices.IDecide.Core.Models.Foundations.Audits.Exceptions;
 using LondonDataServices.IDecide.Core.Services.Foundations.Audits;
@@ -55,8 +56,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
                     bulkAddAuditTask.AsTask);
 
             // then
-            actualAuditServiceException.Should()
-                .BeEquivalentTo(expectedAuditServiceException);
+            actualAuditServiceException
+                .SameExceptionAs(expectedAuditServiceException)
+                .Should().BeTrue();
 
             auditServiceMock.Verify(service =>
                 service.BatchBulkAddAuditsAsync(It.IsAny<List<Audit>>(), It.IsAny<int>()),

@@ -36,6 +36,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
     {
         private readonly Mock<ILoggingBroker> loggingBrokerMock = new Mock<ILoggingBroker>();
         private readonly Mock<ISecurityBroker> securityBrokerMock = new Mock<ISecurityBroker>();
+        private readonly Mock<ISecurityAuditBroker> securityAuditBrokerMock = new Mock<ISecurityAuditBroker>();
         private readonly Mock<IDateTimeBroker> dateTimeBrokerMock = new Mock<IDateTimeBroker>();
         private readonly Mock<IAuditBroker> auditBrokerMock = new Mock<IAuditBroker>();
         private readonly Mock<IIdentifierBroker> identifierBrokerMock = new Mock<IIdentifierBroker>();
@@ -55,6 +56,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
         {
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
             this.securityBrokerMock = new Mock<ISecurityBroker>();
+            this.securityAuditBrokerMock = new Mock<ISecurityAuditBroker>();
             this.dateTimeBrokerMock = new Mock<IDateTimeBroker>();
             this.auditBrokerMock = new Mock<IAuditBroker>();
             this.identifierBrokerMock = new Mock<IIdentifierBroker>();
@@ -80,6 +82,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             this.patientOrchestrationService = new PatientOrchestrationService(
                 loggingBroker: this.loggingBrokerMock.Object,
                 securityBroker: this.securityBrokerMock.Object,
+                securityAuditBroker: this.securityAuditBrokerMock.Object,
                 dateTimeBroker: this.dateTimeBrokerMock.Object,
                 auditBroker: this.auditBrokerMock.Object,
                 identifierBroker: this.identifierBrokerMock.Object,

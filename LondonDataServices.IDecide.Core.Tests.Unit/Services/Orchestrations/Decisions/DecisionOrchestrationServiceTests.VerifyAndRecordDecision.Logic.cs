@@ -1,4 +1,4 @@
-﻿// ---------------------------------------------------------
+// ---------------------------------------------------------
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Xeptions;
 using Force.DeepCloner;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
@@ -27,7 +28,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             string randomValidationCode = GetRandomStringWithLengthOf(5);
             DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
             Guid randomGuid = Guid.NewGuid();
-            string randomIpAddress = GetRandomString();
+            User randomUser = CreateRandomUser();
             Patient randomPatient = GetRandomPatient(randomDateTime, randomNhsNumber, randomValidationCode);
             Patient outputPatient = randomPatient.DeepClone();
             List<Patient> randomPatients = GetRandomPatients(randomDateTime);
@@ -59,13 +60,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 broker.GetIdentifierAsync())
                     .ReturnsAsync(randomGuid);
 
-            decisionOrchestrationServiceMock.Setup(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
-                    .ReturnsAsync(false);
-
             this.securityBrokerMock.Setup(broker =>
-                broker.GetIpAddressAsync())
-                    .ReturnsAsync(randomIpAddress);
+                broker.GetCurrentUserAsync())
+                    .ReturnsAsync(randomUser);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
@@ -91,12 +88,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 broker.GetIdentifierAsync(),
                     Times.Once);
 
-            decisionOrchestrationServiceMock.Verify(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
-                    Times.Once);
-
             this.securityBrokerMock.Verify(broker =>
-                broker.GetIpAddressAsync(),
+                broker.GetCurrentUserAsync(),
                     Times.Once);
 
             this.auditBrokerMock.Verify(broker =>
@@ -104,7 +97,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                     "Decision",
                     "Verifying Decision",
 
-                    $"Patient with IP address {randomIpAddress} is validating a code for " +
+                    $"User {randomUser.UserId} is verifying the decision for " +
                         $"patient Nhs Number: {randomPatient.NhsNumber}, with PatientId {randomPatient.Id}",
 
                     null,
@@ -184,10 +177,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 broker.GetIdentifierAsync())
                     .ReturnsAsync(randomGuid);
 
-            decisionOrchestrationServiceMock.Setup(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
-                    .ReturnsAsync(true);
-
             this.securityBrokerMock.Setup(broker =>
                 broker.GetCurrentUserAsync())
                     .ReturnsAsync(randomUser);
@@ -214,10 +203,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
 
             this.identifierBrokerMock.Verify(broker =>
                 broker.GetIdentifierAsync(),
-                    Times.Once);
-
-            decisionOrchestrationServiceMock.Verify(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
                     Times.Once);
 
             this.securityBrokerMock.Verify(broker =>
@@ -307,10 +292,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 broker.GetIdentifierAsync())
                     .ReturnsAsync(randomGuid);
 
-            decisionOrchestrationServiceMock.Setup(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
-                    .ReturnsAsync(true);
-
             this.securityBrokerMock.Setup(broker =>
                 broker.GetCurrentUserAsync())
                     .ReturnsAsync(randomUser);
@@ -335,7 +316,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
 
             //then
             actualDecisionOrchestrationValidationException
-                .Should().BeEquivalentTo(expectedDecisionOrchestrationValidationException);
+                .SameExceptionAs(expectedDecisionOrchestrationValidationException)
+                .Should().BeTrue();
 
             this.patientServiceMock.Verify(service =>
                 service.RetrieveAllPatientsAsync(),
@@ -343,10 +325,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
 
             this.identifierBrokerMock.Verify(broker =>
                 broker.GetIdentifierAsync(),
-                    Times.Once);
-
-            decisionOrchestrationServiceMock.Verify(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
                     Times.Once);
 
             this.securityBrokerMock.Verify(broker =>
@@ -433,10 +411,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 broker.GetIdentifierAsync())
                     .ReturnsAsync(randomGuid);
 
-            decisionOrchestrationServiceMock.Setup(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
-                    .ReturnsAsync(true);
-
             this.securityBrokerMock.Setup(broker =>
                 broker.GetCurrentUserAsync())
                     .ReturnsAsync(randomUser);
@@ -466,7 +440,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
 
             //then
             actualDecisionOrchestrationValidationException
-                .Should().BeEquivalentTo(expectedDecisionOrchestrationValidationException);
+                .SameExceptionAs(expectedDecisionOrchestrationValidationException)
+                .Should().BeTrue();
 
             this.patientServiceMock.Verify(service =>
                 service.RetrieveAllPatientsAsync(),
@@ -474,10 +449,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
 
             this.identifierBrokerMock.Verify(broker =>
                 broker.GetIdentifierAsync(),
-                    Times.Once);
-
-            decisionOrchestrationServiceMock.Verify(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
                     Times.Once);
 
             this.securityBrokerMock.Verify(broker =>
@@ -534,7 +505,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             string randomValidationCode = GetRandomStringWithLengthOf(5);
             DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
             Guid randomGuid = Guid.NewGuid();
-            string randomIpAddress = GetRandomString();
+            User randomUser = CreateRandomUser();
             Patient randomPatient = GetRandomPatient(randomDateTime, randomNhsNumber, randomValidationCode);
             randomPatient.ValidationCodeMatchedOn = null;
             List<Patient> randomPatients = GetRandomPatients(randomDateTime);
@@ -564,13 +535,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 broker.GetIdentifierAsync())
                     .ReturnsAsync(randomGuid);
 
-            decisionOrchestrationServiceMock.Setup(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
-                    .ReturnsAsync(false);
-
             this.securityBrokerMock.Setup(broker =>
-                broker.GetIpAddressAsync())
-                    .ReturnsAsync(randomIpAddress);
+                broker.GetCurrentUserAsync())
+                    .ReturnsAsync(randomUser);
 
             var validationCodeNotMatchedException =
                new ValidationCodeNotMatchedException(
@@ -592,7 +559,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
 
             //then
             actualDecisionOrchestrationValidationException
-                .Should().BeEquivalentTo(expectedDecisionOrchestrationValidationException);
+                .SameExceptionAs(expectedDecisionOrchestrationValidationException)
+                .Should().BeTrue();
 
             this.patientServiceMock.Verify(service =>
                 service.RetrieveAllPatientsAsync(),
@@ -602,12 +570,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 broker.GetIdentifierAsync(),
                     Times.Once);
 
-            decisionOrchestrationServiceMock.Verify(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
-                    Times.Once);
-
             this.securityBrokerMock.Verify(broker =>
-                broker.GetIpAddressAsync(),
+                broker.GetCurrentUserAsync(),
                     Times.Once);
 
             this.auditBrokerMock.Verify(broker =>
@@ -615,7 +579,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                     "Decision",
                     "Verifying Decision",
 
-                    $"Patient with IP address {randomIpAddress} is validating a code for " +
+                    $"User {randomUser.UserId} is verifying the decision for " +
                         $"patient Nhs Number: {randomPatient.NhsNumber}, with PatientId {randomPatient.Id}",
 
                     null,
@@ -661,7 +625,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 randomDateTime.AddMinutes((-1 * this.decisionConfigurations.ValidatedCodeValidForMinutes) - 1);
 
             Guid randomGuid = Guid.NewGuid();
-            string randomIpAddress = GetRandomString();
+            User randomUser = CreateRandomUser();
             Patient randomPatient = GetRandomPatient(randomDateTime, randomNhsNumber, randomValidationCode);
             randomPatient.ValidationCodeMatchedOn = expiredMatchedOn;
             List<Patient> randomPatients = GetRandomPatients(randomDateTime);
@@ -691,13 +655,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 broker.GetIdentifierAsync())
                     .ReturnsAsync(randomGuid);
 
-            decisionOrchestrationServiceMock.Setup(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
-                    .ReturnsAsync(false);
-
             this.securityBrokerMock.Setup(broker =>
-                broker.GetIpAddressAsync())
-                    .ReturnsAsync(randomIpAddress);
+                broker.GetCurrentUserAsync())
+                    .ReturnsAsync(randomUser);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
@@ -724,7 +684,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
 
             //then
             actualDecisionOrchestrationValidationException
-                .Should().BeEquivalentTo(expectedDecisionOrchestrationValidationException);
+                .SameExceptionAs(expectedDecisionOrchestrationValidationException)
+                .Should().BeTrue();
 
             this.patientServiceMock.Verify(service =>
                 service.RetrieveAllPatientsAsync(),
@@ -734,12 +695,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                 broker.GetIdentifierAsync(),
                     Times.Once);
 
-            decisionOrchestrationServiceMock.Verify(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
-                    Times.Once);
-
             this.securityBrokerMock.Verify(broker =>
-                broker.GetIpAddressAsync(),
+                broker.GetCurrentUserAsync(),
                     Times.Once);
 
             this.dateTimeBrokerMock.Verify(broker =>
@@ -751,7 +708,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                     "Decision",
                     "Verifying Decision",
 
-                    $"Patient with IP address {randomIpAddress} is validating a code for " +
+                    $"User {randomUser.UserId} is verifying the decision for " +
                         $"patient Nhs Number: {randomPatient.NhsNumber}, with PatientId {randomPatient.Id}",
 
                     null,
