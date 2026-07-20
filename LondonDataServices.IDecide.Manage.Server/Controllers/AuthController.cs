@@ -82,7 +82,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
 
                 return Ok(new SessionResponse
                 {
-                    Sub = User.FindFirstValue("sub"),
+                    Sub = User.FindFirstValue("sub") ?? User.FindFirstValue(ClaimTypes.NameIdentifier),
                     Upn = User.FindFirstValue(ClaimTypes.Upn),
                     Name = User.FindFirstValue(ClaimTypes.Name),
                     Roles = User.FindAll(ClaimTypes.Role).Select(c => c.Value).ToArray()

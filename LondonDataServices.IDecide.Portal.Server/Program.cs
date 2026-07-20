@@ -261,7 +261,12 @@ namespace LondonDataServices.IDecide.Portal.Server
                                 && existingNameIdentifier is not null)
                             {
                                 string subValue = existingNameIdentifier.Value;
-                                identity.AddClaim(new Claim("sub", subValue));
+
+                                if (identity.FindFirst("sub") is null)
+                                {
+                                    identity.AddClaim(new Claim("sub", subValue));
+                                }
+
                                 identity.RemoveClaim(existingNameIdentifier);
                                 identity.AddClaim(
                                     new Claim(
