@@ -5,6 +5,7 @@
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Xeptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Users.Exceptions;
 using Moq;
 using User = LondonDataServices.IDecide.Core.Models.Foundations.Users.User;
@@ -38,8 +39,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Users
                 await Assert.ThrowsAsync<UserValidationException>(() => modifyUserTask.AsTask());
 
             // then
-            actualUserValidationException.Should()
-                .BeEquivalentTo(expectedUserValidationException);
+            actualUserValidationException
+                .SameExceptionAs(expectedUserValidationException)
+                .Should().BeTrue();
 
             this.securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyModifyAuditValuesAsync(nullUser),
@@ -135,8 +137,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Users
                 await Assert.ThrowsAsync<UserValidationException>(() => modifyUserTask.AsTask());
 
             // then
-            actualUserValidationException.Should()
-                .BeEquivalentTo(expectedUserValidationException);
+            actualUserValidationException
+                .SameExceptionAs(expectedUserValidationException)
+                .Should().BeTrue();
 
             this.securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyModifyAuditValuesAsync(It.IsAny<User>()),
@@ -207,8 +210,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Users
                 await Assert.ThrowsAsync<UserValidationException>(() => modifyUserTask.AsTask());
 
             // then
-            actualUserValidationException.Should()
-                .BeEquivalentTo(expectedUserValidationException);
+            actualUserValidationException
+                .SameExceptionAs(expectedUserValidationException)
+                .Should().BeTrue();
 
             this.securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyModifyAuditValuesAsync(inputUser),

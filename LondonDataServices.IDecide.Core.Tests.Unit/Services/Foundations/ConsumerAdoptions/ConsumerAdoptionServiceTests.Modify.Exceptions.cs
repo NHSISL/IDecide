@@ -1,4 +1,4 @@
-﻿// ---------------------------------------------------------
+// ---------------------------------------------------------
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
@@ -6,6 +6,7 @@ using System;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using FluentAssertions;
+using Xeptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerAdoptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerAdoptions.Exceptions;
 using Microsoft.Data.SqlClient;
@@ -46,8 +47,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                     modifyConsumerAdoptionTask.AsTask);
 
             // then
-            actualConsumerAdoptionDependencyException.Should()
-                .BeEquivalentTo(expectedConsumerAdoptionDependencyException);
+            actualConsumerAdoptionDependencyException
+                .SameExceptionAs(expectedConsumerAdoptionDependencyException)
+                .Should().BeTrue();
 
             this.securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyModifyAuditValuesAsync(It.IsAny<ConsumerAdoption>()),
@@ -121,8 +123,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                     modifyConsumerAdoptionTask.AsTask);
 
             // then
-            actualConsumerAdoptionDependencyValidationException.Should()
-                .BeEquivalentTo(expectedConsumerAdoptionDependencyValidationException);
+            actualConsumerAdoptionDependencyValidationException
+                .SameExceptionAs(expectedConsumerAdoptionDependencyValidationException)
+                .Should().BeTrue();
 
             this.securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyModifyAuditValuesAsync(It.IsAny<ConsumerAdoption>()),
@@ -192,8 +195,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                     modifyConsumerAdoptionTask.AsTask);
 
             // then
-            actualConsumerAdoptionDependencyException.Should()
-                .BeEquivalentTo(expectedConsumerAdoptionDependencyException);
+            actualConsumerAdoptionDependencyException
+                .SameExceptionAs(expectedConsumerAdoptionDependencyException)
+                .Should().BeTrue();
 
             this.securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyModifyAuditValuesAsync(It.IsAny<ConsumerAdoption>()),
@@ -263,8 +267,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                     modifyConsumerAdoptionTask.AsTask);
 
             // then
-            actualConsumerAdoptionDependencyValidationException.Should()
-                .BeEquivalentTo(expectedConsumerAdoptionDependencyValidationException);
+            actualConsumerAdoptionDependencyValidationException
+                .SameExceptionAs(expectedConsumerAdoptionDependencyValidationException)
+                .Should().BeTrue();
 
             this.securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyModifyAuditValuesAsync(It.IsAny<ConsumerAdoption>()),
@@ -334,8 +339,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                     modifyConsumerAdoptionTask.AsTask);
 
             // then
-            actualConsumerAdoptionServiceException.Should()
-                .BeEquivalentTo(expectedConsumerAdoptionServiceException);
+            actualConsumerAdoptionServiceException
+                .SameExceptionAs(expectedConsumerAdoptionServiceException)
+                .Should().BeTrue();
 
             this.securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyModifyAuditValuesAsync(It.IsAny<ConsumerAdoption>()),

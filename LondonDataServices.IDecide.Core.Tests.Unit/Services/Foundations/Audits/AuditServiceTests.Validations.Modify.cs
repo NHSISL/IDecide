@@ -5,6 +5,7 @@
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Xeptions;
 using Force.DeepCloner;
 using LondonDataServices.IDecide.Core.Models.Foundations.Audits;
 using LondonDataServices.IDecide.Core.Models.Foundations.Audits.Exceptions;
@@ -39,8 +40,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
                     modifyAuditTask.AsTask);
 
             // then
-            actualAuditValidationException.Should()
-                .BeEquivalentTo(expectedAuditValidationException);
+            actualAuditValidationException
+                .SameExceptionAs(expectedAuditValidationException)
+                .Should().BeTrue();
 
             securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyModifyAuditValuesAsync(nullAudit),
@@ -152,8 +154,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
                     modifyAuditTask.AsTask);
 
             //then
-            actualAuditValidationException.Should()
-                .BeEquivalentTo(expectedAuditValidationException);
+            actualAuditValidationException
+                .SameExceptionAs(expectedAuditValidationException)
+                .Should().BeTrue();
 
             securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyModifyAuditValuesAsync(invalidAudit),
@@ -226,8 +229,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
                     modifyAuditTask.AsTask);
 
             // then
-            actualAuditValidationException.Should()
-                .BeEquivalentTo(expectedAuditValidationException);
+            actualAuditValidationException
+                .SameExceptionAs(expectedAuditValidationException)
+                .Should().BeTrue();
 
             securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyModifyAuditValuesAsync(invalidAudit),
@@ -305,8 +309,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
                     modifyAuditTask.AsTask);
 
             // then
-            actualAuditValidationException.Should()
-                .BeEquivalentTo(expectedAuditValidationException);
+            actualAuditValidationException
+                .SameExceptionAs(expectedAuditValidationException)
+                .Should().BeTrue();
 
             securityAuditBrokerMock.Verify(service =>
                 service.ApplyModifyAuditValuesAsync(invalidAudit),
@@ -372,8 +377,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
                     modifyAuditTask.AsTask);
 
             // then
-            actualAuditValidationException.Should()
-                .BeEquivalentTo(expectedAuditValidationException);
+            actualAuditValidationException
+                .SameExceptionAs(expectedAuditValidationException)
+                .Should().BeTrue();
 
             securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyModifyAuditValuesAsync(invalidAudit),
@@ -454,8 +460,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
                     modifyAuditTask.AsTask);
 
             // then
-            actualAuditValidationException.Should()
-                .BeEquivalentTo(expectedAuditValidationException);
+            actualAuditValidationException
+                .SameExceptionAs(expectedAuditValidationException)
+                .Should().BeTrue();
 
             securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyModifyAuditValuesAsync(invalidAudit),
@@ -534,7 +541,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
                     modifyAuditTask.AsTask);
 
             // then
-            actualAuditValidationException.Should().BeEquivalentTo(expectedAuditValidationException);
+            actualAuditValidationException.SameExceptionAs(expectedAuditValidationException).Should().BeTrue();
 
             securityAuditBrokerMock.Verify(service =>
                 service.ApplyModifyAuditValuesAsync(invalidAudit),

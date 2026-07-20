@@ -5,6 +5,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Xeptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Users;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.NhsDigitalApis;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.NhsDigitalApis.Exceptions;
@@ -52,7 +53,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
 
             // then
             actualNhsDigitalApiOrchestrationValidationException
-                .Should().BeEquivalentTo(expectedNhsDigitalApiOrchestrationValidationException);
+                .SameExceptionAs(expectedNhsDigitalApiOrchestrationValidationException)
+                .Should().BeTrue();
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
@@ -102,7 +104,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
 
             // then
             actualNhsDigitalApiOrchestrationValidationException
-                .Should().BeEquivalentTo(expectedNhsDigitalApiOrchestrationValidationException);
+                .SameExceptionAs(expectedNhsDigitalApiOrchestrationValidationException)
+                .Should().BeTrue();
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
@@ -163,7 +166,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
 
             // then
             actualNhsDigitalApiOrchestrationValidationException
-                .Should().BeEquivalentTo(expectedNhsDigitalApiOrchestrationValidationException);
+                .SameExceptionAs(expectedNhsDigitalApiOrchestrationValidationException)
+                .Should().BeTrue();
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
@@ -228,7 +232,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
 
             // then
             actualNhsDigitalApiOrchestrationValidationException
-                .Should().BeEquivalentTo(expectedNhsDigitalApiOrchestrationValidationException);
+                .SameExceptionAs(expectedNhsDigitalApiOrchestrationValidationException)
+                .Should().BeTrue();
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
@@ -293,7 +298,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
 
             // then
             actualNhsDigitalApiOrchestrationValidationException
-                .Should().BeEquivalentTo(expectedNhsDigitalApiOrchestrationValidationException);
+                .SameExceptionAs(expectedNhsDigitalApiOrchestrationValidationException)
+                .Should().BeTrue();
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
@@ -352,7 +358,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
 
             // then
             actualNhsDigitalApiOrchestrationValidationException
-                .Should().BeEquivalentTo(expectedNhsDigitalApiOrchestrationValidationException);
+                .SameExceptionAs(expectedNhsDigitalApiOrchestrationValidationException)
+                .Should().BeTrue();
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(

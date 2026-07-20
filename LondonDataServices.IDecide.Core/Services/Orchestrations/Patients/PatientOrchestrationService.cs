@@ -19,6 +19,7 @@ using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
+using LondonDataServices.IDecide.Core.Models.Securities;
 using LondonDataServices.IDecide.Core.Services.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Services.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Services.Foundations.Pds;
@@ -29,6 +30,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
     {
         private readonly ILoggingBroker loggingBroker;
         private readonly ISecurityBroker securityBroker;
+        private readonly ISecurityAuditBroker securityAuditBroker;
         private readonly IDateTimeBroker dateTimeBroker;
         private readonly IAuditBroker auditBroker;
         private readonly IIdentifierBroker identifierBroker;
@@ -41,6 +43,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
         public PatientOrchestrationService(
             ILoggingBroker loggingBroker,
             ISecurityBroker securityBroker,
+            ISecurityAuditBroker securityAuditBroker,
             IDateTimeBroker dateTimeBroker,
             IAuditBroker auditBroker,
             IIdentifierBroker identifierBroker,
@@ -52,6 +55,7 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
         {
             this.loggingBroker = loggingBroker;
             this.securityBroker = securityBroker;
+            this.securityAuditBroker = securityAuditBroker;
             this.dateTimeBroker = dateTimeBroker;
             this.auditBroker = auditBroker;
             this.identifierBroker = identifierBroker;
@@ -66,9 +70,18 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
             TryCatch(async () =>
             {
                 ValidatePatientLookupIsNotNull(patientLookup);
+                Guid correlationId = await this.identifierBroker.GetIdentifierAsync();
+                string currentUserId = await this.securityAuditBroker.GetCurrentUserIdAsync();
 
                 if (string.IsNullOrWhiteSpace(patientLookup.SearchCriteria.NhsNumber))
                 {
+                    await this.auditBroker.LogInformationAsync(
+                        auditType: "Patient",
+                        title: "Search Patient",
+                        message: $"User {currentUserId} searched for a patient by demographic details.",
+                        fileName: null,
+                        correlationId: correlationId.ToString());
+
                     PatientLookup responsePatientLookup =
                         await this.pdsService.PatientLookupByDetailsAsync(patientLookup);
 
@@ -81,12 +94,27 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                         return patient;
                     }
 
-                    return patient;
+                    if (this.decisionConfigurations.IsRedacted is false)
+                    {
+                        return patient;
+                    }
+
+                    Patient redactedPatient = patient.Redact();
+
+                    return redactedPatient;
                 }
                 else
                 {
                     var nhsNumber = patientLookup.SearchCriteria.NhsNumber;
                     ValidatePatientLookupByNhsNumberArguments(nhsNumber);
+
+                    await this.auditBroker.LogInformationAsync(
+                        auditType: "Patient",
+                        title: "Search Patient",
+                        message: $"User {currentUserId} searched for a patient with NHS Number {nhsNumber}.",
+                        fileName: null,
+                        correlationId: correlationId.ToString());
+
                     Patient maybePatient = await this.pdsService.PatientLookupByNhsNumberAsync(nhsNumber);
                     ValidatePatientIsNotNull(maybePatient);
 
@@ -95,7 +123,14 @@ namespace LondonDataServices.IDecide.Core.Services.Orchestrations.Patients
                         return maybePatient;
                     }
 
-                    return maybePatient;
+                    if (this.decisionConfigurations.IsRedacted is false)
+                    {
+                        return maybePatient;
+                    }
+
+                    Patient redactedPatient = maybePatient.Redact();
+
+                    return redactedPatient;
                 }
             });
 

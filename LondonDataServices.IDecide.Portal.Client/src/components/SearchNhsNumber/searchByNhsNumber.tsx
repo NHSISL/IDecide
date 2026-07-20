@@ -33,6 +33,8 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
     const [poaNhsNumberError, setPoaNhsNumberError] = useState("");
     const [poaRelationshipError, setPoaRelationshipError] = useState("");
     const [loading, setLoading] = useState(false);
+    const [sensitivePatientError, setSensitivePatientError] = useState(false);
+    const [sensitivePatientName, setSensitivePatientName] = useState("");
     const [recaptchaReady, setRecaptchaReady] = useState(false);
     const [recaptchaSiteKey, setRecaptchaSiteKey] = useState<string | undefined>(undefined);
     const [nhsValid, setNhsValid] = useState(false);
@@ -121,7 +123,16 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
     const handlePoaNhsNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value.replace(/\D/g, "").slice(0, 10);
         setPoaNhsNumberInput(value);
-        setPoaNhsNumberError("");
+
+        if (value.length === 10) {
+            if (!validate(value)) {
+                setPoaNhsNumberError(translate("errors.InValidNhsNumber"));
+            } else {
+                setPoaNhsNumberError("");
+            }
+        } else {
+            setPoaNhsNumberError("");
+        }
     };
     const handlePoaRelationshipChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setPoaRelationship(e.target.value);
@@ -130,8 +141,8 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
 
     const validatePoaFields = () => {
         let valid = true;
-        if (poaNhsNumberInput.length !== 10) {
-            setPoaNhsNumberError(translate("SearchByNHSNumber.errorNhsNumber"));
+        if (poaNhsNumberInput.length !== 10 || !validate(poaNhsNumberInput)) {
+            setPoaNhsNumberError(translate("errors.InValidNhsNumber"));
             valid = false;
         }
         if (!poaRelationship) {
@@ -145,6 +156,8 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
         e.preventDefault();
         setError("");
         setApiError("");
+        setSensitivePatientError(false);
+        setSensitivePatientName("");
         setPoaNhsNumberError("");
         setPoaRelationshipError("");
 
@@ -182,6 +195,20 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
                     {
                         headers: { "X-Recaptcha-Token": token },
                         onSuccess: (createdPatient: Patient) => {
+                            const isSensitive =
+                                !!createdPatient.givenName &&
+                                !!createdPatient.surname &&
+                                !createdPatient.email &&
+                                !createdPatient.phone &&
+                                !createdPatient.address;
+
+                            if (powerOfAttorney && isSensitive) {
+                                setSensitivePatientError(true);
+                                setSensitivePatientName(
+                                    `${createdPatient.givenName} ${createdPatient.surname}`);
+                                setLoading(false);
+                                return;
+                            }
                             setCreatedPatient(createdPatient);
                             nextStep(undefined, nhsNumberToUse, createdPatient, poaModel);
                             setLoading(false);
@@ -376,7 +403,8 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
                                     (powerOfAttorney
                                         ? !poaNhsNumberInput ||
                                         !poaRelationship ||
-                                        poaNhsNumberInput.length !== 10
+                                        poaNhsNumberInput.length !== 10 ||
+                                        !validate(poaNhsNumberInput)
                                         : nhsNumberInput.length !== 10 || !nhsValid)
                                 }
                             >
@@ -389,6 +417,20 @@ export const SearchByNhsNumber = ({ onIDontKnow, powerOfAttorney = false }: {
                     {apiError && (
                         <Alert variant="danger">
                             {apiError}
+                        </Alert>
+                    )}
+
+                    {error && powerOfAttorney && (
+                        <Alert variant="danger">
+                            {error}
+                        </Alert>
+                    )}
+
+                    {sensitivePatientError && (
+                        <Alert variant="danger">
+                            <p><strong>{sensitivePatientName}</strong></p>
+                            <p>{translate("SearchByNHSNumber.sensitivePatientMessage1")}</p>
+                            <p>{translate("SearchByNHSNumber.sensitivePatientMessage2")}</p>
                         </Alert>
                     )}
                 </Col>

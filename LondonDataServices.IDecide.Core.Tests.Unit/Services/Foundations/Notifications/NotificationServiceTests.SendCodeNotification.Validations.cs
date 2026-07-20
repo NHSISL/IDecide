@@ -1,9 +1,10 @@
-﻿// ---------------------------------------------------------
+// ---------------------------------------------------------
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
 using System.Threading.Tasks;
 using FluentAssertions;
+using Xeptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
@@ -38,7 +39,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                     () => sendCodeNotificationTask.AsTask());
 
             // then
-            actualNotificationValidationException.Should().BeEquivalentTo(expectedNotificationValidationException);
+            actualNotificationValidationException.SameExceptionAs(expectedNotificationValidationException).Should().BeTrue();
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
@@ -142,7 +143,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                     () => sendCodeNotificationTask.AsTask());
 
             // then
-            actualNotificationValidationException.Should().BeEquivalentTo(expectedNotificationValidationException);
+            actualNotificationValidationException.SameExceptionAs(expectedNotificationValidationException).Should().BeTrue();
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
@@ -188,7 +189,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                     () => sendCodeNotificationTask.AsTask());
 
             // then
-            actualNotificationValidationException.Should().BeEquivalentTo(expectedNotificationValidationException);
+            actualNotificationValidationException.SameExceptionAs(expectedNotificationValidationException).Should().BeTrue();
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
@@ -234,7 +235,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                     () => sendCodeNotificationTask.AsTask());
 
             // then
-            actualNotificationValidationException.Should().BeEquivalentTo(expectedNotificationValidationException);
+            actualNotificationValidationException.SameExceptionAs(expectedNotificationValidationException).Should().BeTrue();
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
@@ -281,7 +282,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                     () => sendCodeNotificationTask.AsTask());
 
             // then
-            actualNotificationValidationException.Should().BeEquivalentTo(expectedNotificationValidationException);
+            actualNotificationValidationException.SameExceptionAs(expectedNotificationValidationException).Should().BeTrue();
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
@@ -327,7 +328,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                     () => sendCodeNotificationTask.AsTask());
 
             // then
-            actualNotificationValidationException.Should().BeEquivalentTo(expectedNotificationValidationException);
+            actualNotificationValidationException.SameExceptionAs(expectedNotificationValidationException).Should().BeTrue();
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
@@ -373,7 +374,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                     () => sendCodeNotificationTask.AsTask());
 
             // then
-            actualNotificationValidationException.Should().BeEquivalentTo(expectedNotificationValidationException);
+            actualNotificationValidationException.SameExceptionAs(expectedNotificationValidationException).Should().BeTrue();
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
@@ -419,7 +420,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                     () => sendCodeNotificationTask.AsTask());
 
             // then
-            actualNotificationValidationException.Should().BeEquivalentTo(expectedNotificationValidationException);
+            actualNotificationValidationException.SameExceptionAs(expectedNotificationValidationException).Should().BeTrue();
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(

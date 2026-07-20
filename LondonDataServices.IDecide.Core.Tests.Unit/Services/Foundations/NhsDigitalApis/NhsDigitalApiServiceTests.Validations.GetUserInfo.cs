@@ -5,6 +5,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Xeptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.NhsDigitalApis.Exceptions;
 using Moq;
 using Task = System.Threading.Tasks.Task;
@@ -51,7 +52,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.NhsDig
                     testCode: getUserInfoTask.AsTask);
 
             // then
-            actualException.Should().BeEquivalentTo(expectedNhsDigitalApiValidationException);
+            actualException.SameExceptionAs(expectedNhsDigitalApiValidationException).Should().BeTrue();
 
             this.nhsDigitalApiBrokerMock.Verify(broker =>
                 broker.GetUserInfoAsync(
@@ -107,7 +108,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.NhsDig
                     testCode: getUserInfoTask.AsTask);
 
             // then
-            actualException.Should().BeEquivalentTo(expectedNhsDigitalApiValidationException);
+            actualException.SameExceptionAs(expectedNhsDigitalApiValidationException).Should().BeTrue();
 
             this.nhsDigitalApiBrokerMock.Verify(broker =>
                 broker.GetUserInfoAsync(

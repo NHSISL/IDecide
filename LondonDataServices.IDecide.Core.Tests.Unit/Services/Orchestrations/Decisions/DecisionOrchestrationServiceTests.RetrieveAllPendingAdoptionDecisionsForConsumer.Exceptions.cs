@@ -1,4 +1,4 @@
-﻿// ---------------------------------------------------------
+// ---------------------------------------------------------
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
@@ -56,8 +56,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                         testCode: retrieveAllPendingAdoptionDecisionsForConsumerTask.AsTask);
 
             // then
-            actualDecisionOrchestrationServiceException.Should()
-                .BeEquivalentTo(expectedDecisionOrchestrationServiceException);
+            actualDecisionOrchestrationServiceException
+                .SameExceptionAs(expectedDecisionOrchestrationServiceException)
+                .Should().BeTrue();
 
             this.securityBrokerMock.Verify(broker =>
                 broker.GetCurrentUserAsync(),
@@ -109,7 +110,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
 
             // then
             actualDecisionOrchestrationDependencyValidationException
-                .Should().BeEquivalentTo(expectedDecisionOrchestrationDependencyValidationException);
+                .SameExceptionAs(expectedDecisionOrchestrationDependencyValidationException)
+                .Should().BeTrue();
 
             this.securityBrokerMock.Verify(broker =>
                 broker.GetCurrentUserAsync(),
@@ -157,7 +159,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
 
             // then
             actualDecisionOrchestrationDependencyException
-                .Should().BeEquivalentTo(expectedDecisionOrchestrationDependencyException);
+                .SameExceptionAs(expectedDecisionOrchestrationDependencyException)
+                .Should().BeTrue();
 
             this.securityBrokerMock.Verify(broker =>
                 broker.GetCurrentUserAsync(),
@@ -208,7 +211,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
 
             // then
             actualDecisionOrchestrationServiceException
-                .Should().BeEquivalentTo(expectedDecisionOrchestrationServiceException);
+                .SameExceptionAs(expectedDecisionOrchestrationServiceException)
+                .Should().BeTrue();
 
             this.securityBrokerMock.Verify(broker =>
                 broker.GetCurrentUserAsync(),

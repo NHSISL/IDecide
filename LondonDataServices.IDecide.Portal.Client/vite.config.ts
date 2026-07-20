@@ -58,6 +58,22 @@ export default defineConfig({
             '^/api/*': {
                 target,
                 secure: false
+            },
+            '^/login$': {
+                target,
+                secure: false
+            },
+            '^/logout$': {
+                target,
+                secure: false
+            },
+            '^/signin-oidc': {
+                target,
+                secure: false
+            },
+            '^/signout-callback-oidc': {
+                target,
+                secure: false
             }
         },
         port: 5173,

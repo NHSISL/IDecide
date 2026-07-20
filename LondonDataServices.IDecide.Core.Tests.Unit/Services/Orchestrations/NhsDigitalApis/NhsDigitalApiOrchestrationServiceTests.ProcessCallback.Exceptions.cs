@@ -49,7 +49,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
 
             // then
             actualNhsDigitalApiOrchestrationDependencyValidationException
-                .Should().BeEquivalentTo(expectedNhsDigitalApiOrchestrationDependencyValidationException);
+                .SameExceptionAs(expectedNhsDigitalApiOrchestrationDependencyValidationException)
+                .Should().BeTrue();
 
             this.nhsDigitalApiServiceMock.Verify(service =>
                 service.GetUserInfoAsync(inputCode, inputState, inputCancellationToken),
@@ -99,7 +100,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
 
             // then
             actualNhsDigitalApiOrchestrationDependencyException
-                .Should().BeEquivalentTo(expectedNhsDigitalApiOrchestrationDependencyException);
+                .SameExceptionAs(expectedNhsDigitalApiOrchestrationDependencyException)
+                .Should().BeTrue();
 
             this.nhsDigitalApiServiceMock.Verify(service =>
                 service.GetUserInfoAsync(inputCode, inputState, inputCancellationToken),
@@ -153,7 +155,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
 
             // then
             actualNhsDigitalApiOrchestrationServiceException
-                .Should().BeEquivalentTo(expectedNhsDigitalApiOrchestrationServiceException);
+                .SameExceptionAs(expectedNhsDigitalApiOrchestrationServiceException)
+                .Should().BeTrue();
 
             this.nhsDigitalApiServiceMock.Verify(service =>
                 service.GetUserInfoAsync(inputCode, inputState, inputCancellationToken),

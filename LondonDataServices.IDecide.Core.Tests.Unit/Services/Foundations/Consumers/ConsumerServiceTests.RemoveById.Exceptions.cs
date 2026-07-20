@@ -1,10 +1,11 @@
-﻿// ---------------------------------------------------------
+// ---------------------------------------------------------
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Xeptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Consumers;
 using LondonDataServices.IDecide.Core.Models.Foundations.Consumers.Exceptions;
 using Microsoft.Data.SqlClient;
@@ -45,8 +46,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                     addConsumerTask.AsTask);
 
             // then
-            actualConsumerDependencyException.Should()
-                .BeEquivalentTo(expectedConsumerDependencyException);
+            actualConsumerDependencyException
+                .SameExceptionAs(expectedConsumerDependencyException)
+                .Should().BeTrue();
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectConsumerByIdAsync(randomConsumer.Id),
@@ -103,8 +105,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                     removeConsumerByIdTask.AsTask);
 
             // then
-            actualConsumerDependencyValidationException.Should()
-                .BeEquivalentTo(expectedConsumerDependencyValidationException);
+            actualConsumerDependencyValidationException
+                .SameExceptionAs(expectedConsumerDependencyValidationException)
+                .Should().BeTrue();
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectConsumerByIdAsync(It.IsAny<Guid>()),
@@ -155,8 +158,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                     deleteConsumerTask.AsTask);
 
             // then
-            actualConsumerDependencyException.Should()
-                .BeEquivalentTo(expectedConsumerDependencyException);
+            actualConsumerDependencyException
+                .SameExceptionAs(expectedConsumerDependencyException)
+                .Should().BeTrue();
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectConsumerByIdAsync(It.IsAny<Guid>()),
@@ -203,8 +207,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                     removeConsumerByIdTask.AsTask);
 
             // then
-            actualConsumerServiceException.Should()
-                .BeEquivalentTo(expectedConsumerServiceException);
+            actualConsumerServiceException
+                .SameExceptionAs(expectedConsumerServiceException)
+                .Should().BeTrue();
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectConsumerByIdAsync(It.IsAny<Guid>()),

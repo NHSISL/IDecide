@@ -158,7 +158,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
 
             this.nhsDigitalApiServiceMock.Verify(service =>
                 service.LogoutAsync(inputCancellationToken),
-                Times.Once);
+                Times.Never);
 
             this.nhsDigitalApiServiceMock.VerifyNoOtherCalls();
             this.userServiceMock.VerifyNoOtherCalls();
@@ -236,7 +236,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
 
             this.nhsDigitalApiServiceMock.Verify(service =>
                 service.LogoutAsync(inputCancellationToken),
-                Times.Once);
+                Times.Never);
 
             this.identifierBrokerMock.Verify(broker =>
                 broker.GetIdentifierAsync(),

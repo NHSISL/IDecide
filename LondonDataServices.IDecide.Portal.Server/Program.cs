@@ -231,6 +231,52 @@ namespace LondonDataServices.IDecide.Portal.Server
 
                 options.Events = new OpenIdConnectEvents
                 {
+                    OnTicketReceived = ctx =>
+                    {
+                        var identity = ctx.Principal?.Identity as ClaimsIdentity;
+
+                        if (identity is not null)
+                        {
+                            string givenName = identity.FindFirst("given_name")?.Value
+                                ?? identity.FindFirst(ClaimTypes.GivenName)?.Value
+                                ?? string.Empty;
+
+                            string familyName = identity.FindFirst("family_name")?.Value
+                                ?? identity.FindFirst(ClaimTypes.Surname)?.Value
+                                ?? string.Empty;
+
+                            string displayName = $"{givenName} {familyName}".Trim();
+
+                            if (string.IsNullOrWhiteSpace(displayName))
+                            {
+                                displayName = identity.FindFirst("name")?.Value
+                                    ?? identity.FindFirst(ClaimTypes.Name)?.Value
+                                    ?? string.Empty;
+                            }
+
+                            var existingNameIdentifier =
+                                identity.FindFirst(ClaimTypes.NameIdentifier);
+
+                            if (!string.IsNullOrWhiteSpace(displayName)
+                                && existingNameIdentifier is not null)
+                            {
+                                string subValue = existingNameIdentifier.Value;
+
+                                if (identity.FindFirst("sub") is null)
+                                {
+                                    identity.AddClaim(new Claim("sub", subValue));
+                                }
+
+                                identity.RemoveClaim(existingNameIdentifier);
+                                identity.AddClaim(
+                                    new Claim(
+                                        ClaimTypes.NameIdentifier,
+                                        $"{displayName} ({subValue})"));
+                            }
+                        }
+
+                        return Task.CompletedTask;
+                    },
                     OnRedirectToIdentityProvider = context =>
                     {
                         // Set vtr parameter to request P9

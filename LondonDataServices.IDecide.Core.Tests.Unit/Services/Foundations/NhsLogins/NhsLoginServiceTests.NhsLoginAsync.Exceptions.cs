@@ -1,4 +1,4 @@
-﻿// ---------------------------------------------------------
+// ---------------------------------------------------------
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
@@ -45,7 +45,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.NhsLog
                     nhsLoginTask.AsTask);
 
             // then
-            actualException.Should().BeEquivalentTo(expectedDependencyValidationException);
+            actualException.SameExceptionAs(expectedDependencyValidationException).Should().BeTrue();
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
@@ -88,7 +88,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.NhsLog
                     nhsLoginTask.AsTask);
 
             // then
-            actualException.Should().BeEquivalentTo(expectedNhsLoginServiceDependencyException);
+            actualException.SameExceptionAs(expectedNhsLoginServiceDependencyException).Should().BeTrue();
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
@@ -133,8 +133,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.NhsLog
                     nhsLoginTask.AsTask);
 
             // then
-            actualNhsLoginServiceServiceException.Should().BeEquivalentTo(
-                expectedNhsLoginServiceServiceException);
+            actualNhsLoginServiceServiceException
+                .SameExceptionAs(expectedNhsLoginServiceServiceException)
+                .Should().BeTrue();
 
             this.securityBrokerMock.Verify(broker =>
                 broker.GetAccessTokenAsync(),

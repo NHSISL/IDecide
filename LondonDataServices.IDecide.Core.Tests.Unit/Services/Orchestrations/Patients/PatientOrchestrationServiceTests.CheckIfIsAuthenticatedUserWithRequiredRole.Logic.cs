@@ -1,10 +1,11 @@
-﻿// ---------------------------------------------------------
+// ---------------------------------------------------------
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Xeptions;
 using ISL.Providers.Captcha.Abstractions.Models;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
@@ -95,7 +96,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             //then
             actualUnauthorizedPatientOrchestrationServiceException
-                .Should().BeEquivalentTo(expectedUnauthorizedPatientOrchestrationServiceException);
+                .SameExceptionAs(expectedUnauthorizedPatientOrchestrationServiceException)
+                .Should().BeTrue();
 
             this.securityBrokerMock.Verify(broker =>
                 broker.IsCurrentUserAuthenticatedAsync(),
@@ -156,7 +158,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             //then
             actualInvalidCaptchaPatientOrchestrationServiceException
-                .Should().BeEquivalentTo(invalidCaptchaPatientOrchestrationServiceException);
+                .SameExceptionAs(invalidCaptchaPatientOrchestrationServiceException)
+                .Should().BeTrue();
 
             this.securityBrokerMock.Verify(broker =>
                 broker.IsCurrentUserAuthenticatedAsync(),
@@ -210,7 +213,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             //then
             actualReCaptchaLowConfidenceException
-                .Should().BeEquivalentTo(reCaptchaLowConfidenceException);
+                .SameExceptionAs(reCaptchaLowConfidenceException)
+                .Should().BeTrue();
 
             this.securityBrokerMock.Verify(broker =>
                 broker.IsCurrentUserAuthenticatedAsync(),

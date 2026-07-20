@@ -5,6 +5,7 @@
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Xeptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Audits;
 using LondonDataServices.IDecide.Core.Models.Foundations.Audits.Exceptions;
 using Microsoft.Data.SqlClient;
@@ -44,8 +45,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
                     retrieveAuditByIdTask.AsTask);
 
             // then
-            actualAuditDependencyException.Should()
-                .BeEquivalentTo(expectedAuditDependencyException);
+            actualAuditDependencyException
+                .SameExceptionAs(expectedAuditDependencyException)
+                .Should().BeTrue();
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectAuditByIdAsync(It.IsAny<Guid>()),
@@ -92,8 +94,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
                     retrieveAuditByIdTask.AsTask);
 
             // then
-            actualAuditServiceException.Should()
-                .BeEquivalentTo(expectedAuditServiceException);
+            actualAuditServiceException
+                .SameExceptionAs(expectedAuditServiceException)
+                .Should().BeTrue();
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectAuditByIdAsync(It.IsAny<Guid>()),

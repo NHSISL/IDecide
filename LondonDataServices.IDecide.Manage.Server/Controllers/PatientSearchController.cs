@@ -3,6 +3,8 @@
 // ---------------------------------------------------------
 
 using System.Threading.Tasks;
+using LondonDataServices.IDecide.Core.Brokers.Loggings;
+using LondonDataServices.IDecide.Core.Brokers.Securities;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
@@ -19,10 +21,17 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
     public class PatientSearchController : RESTFulController
     {
         private readonly IPatientOrchestrationService patientOrchestrationService;
+        private readonly ISecurityAuditBroker securityAuditBroker;
+        private readonly ILoggingBroker loggingBroker;
 
-        public PatientSearchController(IPatientOrchestrationService patientOrchestrationService)
+        public PatientSearchController(
+            IPatientOrchestrationService patientOrchestrationService,
+            ISecurityAuditBroker securityAuditBroker,
+            ILoggingBroker loggingBroker)
         {
             this.patientOrchestrationService = patientOrchestrationService;
+            this.securityAuditBroker = securityAuditBroker;
+            this.loggingBroker = loggingBroker;
         }
 
         [HttpPost("PatientSearch")]
@@ -31,7 +40,19 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
         {
             try
             {
+                string userId = await this.securityAuditBroker.GetCurrentUserIdAsync();
+
+                string searchTerm = !string.IsNullOrWhiteSpace(patientLookup.SearchCriteria?.NhsNumber)
+                    ? $"NhsNumber={patientLookup.SearchCriteria.NhsNumber}"
+                    : "SearchByDetails";
+
+                await this.loggingBroker.LogInformationAsync(
+                    $"[Audit] Patient lookup initiated | User: {userId} | Search: {searchTerm}");
+
                 Patient patient = await this.patientOrchestrationService.PatientLookupAsync(patientLookup);
+
+                await this.loggingBroker.LogInformationAsync(
+                    $"[Audit] Patient lookup succeeded | User: {userId} | Search: {searchTerm}");
 
                 return Ok(patient);
             }

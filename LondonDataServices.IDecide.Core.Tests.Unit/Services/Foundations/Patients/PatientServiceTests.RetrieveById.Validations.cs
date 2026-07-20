@@ -5,6 +5,7 @@
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Xeptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients.Exceptions;
 using Moq;
@@ -41,8 +42,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                     retrievePatientByIdTask.AsTask);
 
             // then
-            actualPatientValidationException.Should()
-                .BeEquivalentTo(expectedPatientValidationException);
+            actualPatientValidationException
+                .SameExceptionAs(expectedPatientValidationException)
+                .Should().BeTrue();
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
@@ -87,7 +89,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                     retrievePatientByIdTask.AsTask);
 
             //then
-            actualPatientValidationException.Should().BeEquivalentTo(expectedPatientValidationException);
+            actualPatientValidationException.SameExceptionAs(expectedPatientValidationException).Should().BeTrue();
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectPatientByIdAsync(It.IsAny<Guid>()),
