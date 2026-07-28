@@ -338,7 +338,7 @@ export const SearchByNhsNumber = () => {
                             <h2 className="mb-3" style={{ color: "#005eb8" }}>{translate("SearchByNHSNumber.helpGuidanceTitle")}</h2>
 
                             <div style={{ marginBottom: "1.5rem" }}>
-                                <h3 style={{ color: "#005eb8" }}>{translate("SearchByNHSNumber.helpGuidanceEligibilityHeading")}</h3>
+                                <p>{translate("SearchByNHSNumber.helpGuidanceEligibilityHeading")}</p>
                                 <ul>
                                     <li>{translate("SearchByNHSNumber.helpGuidanceEligibilityList.parent")}</li>
                                     <li>{translate("SearchByNHSNumber.helpGuidanceEligibilityList.guardian")}</li>

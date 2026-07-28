@@ -1,4 +1,4 @@
-﻿// ---------------------------------------------------------
+// ---------------------------------------------------------
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
@@ -37,6 +37,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
                 this.loggingBrokerMock.Object,
                 this.securityBrokerMock.Object,
+                this.securityAuditBrokerMock.Object,
                 this.dateTimeBrokerMock.Object,
                 this.auditBrokerMock.Object,
                 this.identifierBrokerMock.Object,
@@ -47,8 +48,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 this.securityBrokerConfigurations)
             { CallBase = true };
 
-            patientOrchestrationServiceMock.Setup(broker =>
-                broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
+            this.patientServiceMock.Setup(service =>
+                service.RetrieveAllPatientsAsync())
                     .ThrowsAsync(dependencyValidationException);
 
             // when
@@ -65,10 +66,11 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             // then
             actualPatientOrchestrationDependencyValidationException
-                .Should().BeEquivalentTo(expectedPatientOrchestrationDependencyValidationException);
+                .SameExceptionAs(expectedPatientOrchestrationDependencyValidationException)
+                .Should().BeTrue();
 
-            patientOrchestrationServiceMock.Verify(broker =>
-                broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
+            this.patientServiceMock.Verify(service =>
+                service.RetrieveAllPatientsAsync(),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
@@ -107,6 +109,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
                 this.loggingBrokerMock.Object,
                 this.securityBrokerMock.Object,
+                this.securityAuditBrokerMock.Object,
                 this.dateTimeBrokerMock.Object,
                 this.auditBrokerMock.Object,
                 this.identifierBrokerMock.Object,
@@ -117,8 +120,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 this.securityBrokerConfigurations)
             { CallBase = true };
 
-            patientOrchestrationServiceMock.Setup(broker =>
-                broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
+            this.patientServiceMock.Setup(service =>
+                service.RetrieveAllPatientsAsync())
                     .ThrowsAsync(dependencyException);
 
             // when
@@ -135,10 +138,11 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             // then
             actualPatientOrchestrationDependencyException
-                .Should().BeEquivalentTo(expectedPatientOrchestrationDependencyException);
+                .SameExceptionAs(expectedPatientOrchestrationDependencyException)
+                .Should().BeTrue();
 
-            patientOrchestrationServiceMock.Verify(broker =>
-                broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
+            this.patientServiceMock.Verify(service =>
+                service.RetrieveAllPatientsAsync(),
                     Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
@@ -180,6 +184,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
                 this.loggingBrokerMock.Object,
                 this.securityBrokerMock.Object,
+                this.securityAuditBrokerMock.Object,
                 this.dateTimeBrokerMock.Object,
                 this.auditBrokerMock.Object,
                 this.identifierBrokerMock.Object,
@@ -190,8 +195,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 this.securityBrokerConfigurations)
             { CallBase = true };
 
-            patientOrchestrationServiceMock.Setup(broker =>
-                broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
+            this.patientServiceMock.Setup(service =>
+                service.RetrieveAllPatientsAsync())
                     .ThrowsAsync(serviceException);
 
             // when
@@ -207,11 +212,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                         testCode: recordPatientInformationTask.AsTask);
 
             // then
-            actualPatientOrchestrationValidationException.Should().BeEquivalentTo(
-                expectedPatientOrchestrationServiceException);
+            actualPatientOrchestrationValidationException
+                .SameExceptionAs(expectedPatientOrchestrationServiceException)
+                .Should().BeTrue();
 
-            patientOrchestrationServiceMock.Verify(broker =>
-                 broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
+            this.patientServiceMock.Verify(service =>
+                 service.RetrieveAllPatientsAsync(),
                      Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>

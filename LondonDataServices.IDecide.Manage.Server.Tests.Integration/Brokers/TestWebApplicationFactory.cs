@@ -70,8 +70,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Integration.Brokers
                 options.DefaultAuthenticateScheme = "TestScheme";
                 options.DefaultChallengeScheme = "TestScheme";
             })
-            .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("TestScheme", null)
-            .AddCookie("bff-cookie");
+            .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("TestScheme", null);
 
             services.AddAuthorization(options =>
             {

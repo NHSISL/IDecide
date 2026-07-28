@@ -1,4 +1,4 @@
-﻿// ---------------------------------------------------------
+// ---------------------------------------------------------
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Xeptions;
 using Force.DeepCloner;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
@@ -25,7 +26,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             Guid randomGuid = Guid.NewGuid();
             string randomNhsNumber = GenerateRandom10DigitNumber();
             string randomValidationCode = GetRandomStringWithLengthOf(5);
-            string randomIpAddress = GetRandomString();
+            User randomUser = CreateRandomUser();
             DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
 
             Patient randomPatient = GetRandomPatient(
@@ -42,6 +43,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
                 this.loggingBrokerMock.Object,
                 this.securityBrokerMock.Object,
+                this.securityAuditBrokerMock.Object,
                 this.dateTimeBrokerMock.Object,
                 this.auditBrokerMock.Object,
                 this.identifierBrokerMock.Object,
@@ -52,10 +54,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 this.securityBrokerConfigurations)
             { CallBase = true };
 
-            patientOrchestrationServiceMock.Setup(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
-                    .ReturnsAsync(false);
-
             this.patientServiceMock.Setup(service =>
                 service.RetrieveAllPatientsAsync())
                     .ReturnsAsync(outputPatients.AsQueryable);
@@ -65,8 +63,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     .ReturnsAsync(randomGuid);
 
             this.securityBrokerMock.Setup(broker =>
-                broker.GetIpAddressAsync())
-                    .ReturnsAsync(randomIpAddress);
+                broker.GetCurrentUserAsync())
+                    .ReturnsAsync(randomUser);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
@@ -76,10 +74,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             await patientOrchestrationServiceMock.Object.VerifyPatientCodeAsync(randomNhsNumber, randomValidationCode);
 
             //then
-            patientOrchestrationServiceMock.Verify(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
-                    Times.Once);
-
             this.patientServiceMock.Verify(service =>
                 service.RetrieveAllPatientsAsync(),
                     Times.Once);
@@ -89,14 +83,14 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     Times.Once);
 
             this.securityBrokerMock.Verify(broker =>
-                broker.GetIpAddressAsync(),
+                broker.GetCurrentUserAsync(),
                     Times.Once);
 
             this.auditBrokerMock.Verify(broker =>
                 broker.LogInformationAsync(
                     "Patient Code",
                     "Validating Patient Code",
-                    $"Patient with IP address {randomIpAddress} is validating a code for patient {randomNhsNumber}.",
+                    $"User {randomUser.UserId} is validating a code for patient {randomNhsNumber}.",
                     null,
                     randomGuid.ToString()),
                         Times.Once);
@@ -135,7 +129,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             Guid randomGuid = Guid.NewGuid();
             string randomNhsNumber = GenerateRandom10DigitNumber();
             string randomValidationCode = GetRandomStringWithLengthOf(5);
-            string randomIpAddress = GetRandomString();
             User randomUser = CreateRandomUser();
             DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
 
@@ -153,6 +146,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
                 this.loggingBrokerMock.Object,
                 this.securityBrokerMock.Object,
+                this.securityAuditBrokerMock.Object,
                 this.dateTimeBrokerMock.Object,
                 this.auditBrokerMock.Object,
                 this.identifierBrokerMock.Object,
@@ -162,10 +156,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 this.decisionConfigurations,
                 this.securityBrokerConfigurations)
             { CallBase = true };
-
-            patientOrchestrationServiceMock.Setup(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
-                    .ReturnsAsync(true);
 
             this.patientServiceMock.Setup(service =>
                 service.RetrieveAllPatientsAsync())
@@ -187,10 +177,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             await patientOrchestrationServiceMock.Object.VerifyPatientCodeAsync(randomNhsNumber, randomValidationCode);
 
             //then
-            patientOrchestrationServiceMock.Verify(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
-                    Times.Once);
-
             this.patientServiceMock.Verify(service =>
                 service.RetrieveAllPatientsAsync(),
                     Times.Once);
@@ -214,7 +200,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffsetAsync(),
-                    Times.Once);
+                    Times.Exactly(2));
 
             this.patientServiceMock.Verify(service =>
                 service.ModifyPatientAsync(It.Is(SamePatientAs(patientToUpdate))),
@@ -246,7 +232,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             Guid randomGuid = Guid.NewGuid();
             string randomNhsNumber = GenerateRandom10DigitNumber();
             string randomValidationCode = GetRandomStringWithLengthOf(5);
-            string randomIpAddress = GetRandomString();
+            User randomUser = CreateRandomUser();
             DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
             int exceedMaxRetryCount = this.decisionConfigurations.MaxRetryCount + 1;
 
@@ -263,6 +249,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
                 this.loggingBrokerMock.Object,
                 this.securityBrokerMock.Object,
+                this.securityAuditBrokerMock.Object,
                 this.dateTimeBrokerMock.Object,
                 this.auditBrokerMock.Object,
                 this.identifierBrokerMock.Object,
@@ -273,10 +260,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 this.securityBrokerConfigurations)
             { CallBase = true };
 
-            patientOrchestrationServiceMock.Setup(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
-                    .ReturnsAsync(false);
-
             this.patientServiceMock.Setup(service =>
                 service.RetrieveAllPatientsAsync())
                     .ReturnsAsync(outputPatients.AsQueryable);
@@ -286,8 +269,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     .ReturnsAsync(randomGuid);
 
             this.securityBrokerMock.Setup(broker =>
-                broker.GetIpAddressAsync())
-                    .ReturnsAsync(randomIpAddress);
+                broker.GetCurrentUserAsync())
+                    .ReturnsAsync(randomUser);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
@@ -313,11 +296,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             //then
             actualPatientOrchestrationValidationException
-                .Should().BeEquivalentTo(expectedPatientOrchestrationValidationException);
-
-            patientOrchestrationServiceMock.Verify(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
-                    Times.Once);
+                .SameExceptionAs(expectedPatientOrchestrationValidationException)
+                .Should().BeTrue();
 
             this.patientServiceMock.Verify(service =>
                 service.RetrieveAllPatientsAsync(),
@@ -328,14 +308,14 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     Times.Once);
 
             this.securityBrokerMock.Verify(broker =>
-                broker.GetIpAddressAsync(),
+                broker.GetCurrentUserAsync(),
                     Times.Once);
 
             this.auditBrokerMock.Verify(broker =>
                 broker.LogInformationAsync(
                     "Patient Code",
                     "Validating Patient Code",
-                    $"Patient with IP address {randomIpAddress} is validating a code for patient {randomNhsNumber}.",
+                    $"User {randomUser.UserId} is validating a code for patient {randomNhsNumber}.",
                     null,
                     randomGuid.ToString()),
                         Times.Once);
@@ -375,7 +355,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             string randomNhsNumber = GenerateRandom10DigitNumber();
             string randomValidationCode = GetRandomStringWithLengthOf(5);
             string inputValidationCode = GetRandomStringWithLengthOf(5);
-            string randomIpAddress = GetRandomString();
+            User randomUser = CreateRandomUser();
             DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
 
             Patient randomPatient = GetRandomPatient(
@@ -392,6 +372,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
                 this.loggingBrokerMock.Object,
                 this.securityBrokerMock.Object,
+                this.securityAuditBrokerMock.Object,
                 this.dateTimeBrokerMock.Object,
                 this.auditBrokerMock.Object,
                 this.identifierBrokerMock.Object,
@@ -402,10 +383,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 this.securityBrokerConfigurations)
             { CallBase = true };
 
-            patientOrchestrationServiceMock.Setup(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
-                    .ReturnsAsync(false);
-
             this.patientServiceMock.Setup(service =>
                 service.RetrieveAllPatientsAsync())
                     .ReturnsAsync(outputPatients.AsQueryable);
@@ -415,8 +392,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     .ReturnsAsync(randomGuid);
 
             this.securityBrokerMock.Setup(broker =>
-                broker.GetIpAddressAsync())
-                    .ReturnsAsync(randomIpAddress);
+                broker.GetCurrentUserAsync())
+                    .ReturnsAsync(randomUser);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
@@ -441,11 +418,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             //then
             actualPatientOrchestrationValidationException
-                .Should().BeEquivalentTo(expectedPatientOrchestrationValidationException);
-
-            patientOrchestrationServiceMock.Verify(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
-                    Times.Once);
+                .SameExceptionAs(expectedPatientOrchestrationValidationException)
+                .Should().BeTrue();
 
             this.patientServiceMock.Verify(service =>
                 service.RetrieveAllPatientsAsync(),
@@ -456,14 +430,14 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     Times.Once);
 
             this.securityBrokerMock.Verify(broker =>
-                broker.GetIpAddressAsync(),
+                broker.GetCurrentUserAsync(),
                     Times.Once);
 
             this.auditBrokerMock.Verify(broker =>
                 broker.LogInformationAsync(
                     "Patient Code",
                     "Validating Patient Code",
-                    $"Patient with IP address {randomIpAddress} is validating a code for patient {randomNhsNumber}.",
+                    $"User {randomUser.UserId} is validating a code for patient {randomNhsNumber}.",
                     null,
                     randomGuid.ToString()),
                         Times.Once);
@@ -504,7 +478,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             string randomNhsNumber = GenerateRandom10DigitNumber();
             string randomValidationCode = GetRandomStringWithLengthOf(5);
             string newValidationCode = GetRandomStringWithLengthOf(5);
-            string randomIpAddress = GetRandomString();
+            User randomUser = CreateRandomUser();
             DateTimeOffset randomDateTime = GetRandomDateTimeOffset();
             DateTimeOffset expiredDateTime = randomDateTime.AddDays(-1);
 
@@ -527,6 +501,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
                 this.loggingBrokerMock.Object,
                 this.securityBrokerMock.Object,
+                this.securityAuditBrokerMock.Object,
                 this.dateTimeBrokerMock.Object,
                 this.auditBrokerMock.Object,
                 this.identifierBrokerMock.Object,
@@ -537,10 +512,6 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 this.securityBrokerConfigurations)
             { CallBase = true };
 
-            patientOrchestrationServiceMock.Setup(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
-                    .ReturnsAsync(false);
-
             this.patientServiceMock.Setup(service =>
                 service.RetrieveAllPatientsAsync())
                     .ReturnsAsync(outputPatients.AsQueryable);
@@ -550,8 +521,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     .ReturnsAsync(randomGuid);
 
             this.securityBrokerMock.Setup(broker =>
-                broker.GetIpAddressAsync())
-                    .ReturnsAsync(randomIpAddress);
+                broker.GetCurrentUserAsync())
+                    .ReturnsAsync(randomUser);
 
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
@@ -564,7 +535,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             var renewedValidationCodeException =
                new RenewedValidationCodeException(
                    "The validation code has expired, but we have issued a new code that will be sent via " +
-                        "your prefered contact method");
+                        "your preferred contact method");
 
             var expectedPatientOrchestrationValidationException =
                 new PatientOrchestrationValidationException(
@@ -582,11 +553,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             //then
             actualPatientOrchestrationValidationException
-                .Should().BeEquivalentTo(expectedPatientOrchestrationValidationException);
+                .SameExceptionAs(expectedPatientOrchestrationValidationException)
+                .Should().BeTrue();
 
-            patientOrchestrationServiceMock.Verify(service =>
-                service.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
-                    Times.Once);
+            patientOrchestrationServiceMock.VerifyNoOtherCalls();
 
             this.patientServiceMock.Verify(service =>
                 service.RetrieveAllPatientsAsync(),
@@ -597,7 +567,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     Times.Once);
 
             this.securityBrokerMock.Verify(broker =>
-                broker.GetIpAddressAsync(),
+                broker.GetCurrentUserAsync(),
                     Times.Once);
 
             this.dateTimeBrokerMock.Verify(broker =>
@@ -608,7 +578,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 broker.LogInformationAsync(
                     "Patient Code",
                     "Validating Patient Code",
-                    $"Patient with IP address {randomIpAddress} is validating a code for patient {randomNhsNumber}.",
+                    $"User {randomUser.UserId} is validating a code for patient {randomNhsNumber}.",
                     null,
                     randomGuid.ToString()),
                         Times.Once);

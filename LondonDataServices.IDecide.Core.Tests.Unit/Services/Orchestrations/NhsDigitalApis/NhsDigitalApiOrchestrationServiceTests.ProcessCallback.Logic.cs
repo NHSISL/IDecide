@@ -88,6 +88,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
             this.userServiceMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.identifierBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -157,12 +158,13 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
 
             this.nhsDigitalApiServiceMock.Verify(service =>
                 service.LogoutAsync(inputCancellationToken),
-                Times.Once);
+                Times.Never);
 
             this.nhsDigitalApiServiceMock.VerifyNoOtherCalls();
             this.userServiceMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.identifierBrokerMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -190,6 +192,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
             this.dateTimeBrokerMock.Setup(broker =>
                 broker.GetCurrentDateTimeOffsetAsync())
                     .ReturnsAsync(now);
+
+            this.identifierBrokerMock.Setup(broker =>
+                broker.GetIdentifierAsync())
+                    .ReturnsAsync(randomUser.Id);
 
             this.nhsDigitalApiServiceMock.Setup(service =>
                 service.GetUserInfoAsync(inputCode, inputState, inputCancellationToken))
@@ -230,12 +236,17 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
 
             this.nhsDigitalApiServiceMock.Verify(service =>
                 service.LogoutAsync(inputCancellationToken),
+                Times.Never);
+
+            this.identifierBrokerMock.Verify(broker =>
+                broker.GetIdentifierAsync(),
                 Times.Once);
 
             this.nhsDigitalApiServiceMock.VerifyNoOtherCalls();
             this.userServiceMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.identifierBrokerMock.VerifyNoOtherCalls();
         }
     }
 }

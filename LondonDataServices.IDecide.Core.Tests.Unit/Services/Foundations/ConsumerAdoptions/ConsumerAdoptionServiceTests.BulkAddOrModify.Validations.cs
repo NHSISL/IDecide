@@ -1,10 +1,11 @@
-﻿// ---------------------------------------------------------
+// ---------------------------------------------------------
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Xeptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerAdoptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerAdoptions.Exceptions;
 using Moq;
@@ -41,8 +42,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                 await Assert.ThrowsAsync<ConsumerAdoptionValidationException>(bulkAddConsumerAdoptionTask.AsTask);
 
             // then
-            actualConsumerAdoptionValidationException.Should()
-                .BeEquivalentTo(expectedConsumerAdoptionValidationException);
+            actualConsumerAdoptionValidationException
+                .SameExceptionAs(expectedConsumerAdoptionValidationException)
+                .Should().BeTrue();
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(

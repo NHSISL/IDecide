@@ -25,7 +25,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
             this.decisionOrchestrationService = decisionOrchestrationService;
 
         [HttpPost("PatientDecision")]
-        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,LondonDataServices.IDecide.Manage.Server.Agents")]
+        [Authorize]
         public async ValueTask<ActionResult> PostPatientDecisionAsync([FromBody] Decision decision)
         {
             try
@@ -54,7 +54,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
         }
 
         [HttpGet("PatientDecision")]
-        [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators,LondonDataServices.IDecide.Manage.Server.Agents,LondonDataServices.IDecide.Manage.Server.Consumers")]
+        [Authorize]
         public async ValueTask<ActionResult<List<Decision>>> GetPatientDecisionsAsync(
             [FromQuery] DateTimeOffset? from = null,
             [FromQuery] string decisionType = null)

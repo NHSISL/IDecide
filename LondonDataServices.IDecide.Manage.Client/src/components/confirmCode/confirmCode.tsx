@@ -5,7 +5,6 @@ import { useTranslation } from "react-i18next";
 import { patientViewService } from "../../services/views/patientViewService";
 import { Row, Col, Alert, Button, Spinner } from "react-bootstrap";
 import { PatientCodeRequest } from "../../models/patients/patientCodeRequest";
-import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
 import { isApiErrorResponse } from "../../helpers/isApiErrorResponse";
 import { PowerOfAttourney } from "../../models/powerOfAttourneys/powerOfAttourney";
 
@@ -19,7 +18,6 @@ export const ConfirmCode = ({ createdPatient, powerOfAttorney }: ConfirmDetailsP
     const navigate = useNavigate();
     const [code, setCode] = useState("");
     const [error, setError] = useState("");
-    const { configuration } = useFrontendConfiguration();
     const confirmCodeMutation = patientViewService.useConfirmCode();
 
     const {
@@ -192,22 +190,7 @@ export const ConfirmCode = ({ createdPatient, powerOfAttorney }: ConfirmDetailsP
                                 {error}
                                 {error === "The maximum retry count of 3 exceeded." && (
                                     <div style={{ marginTop: "0.5rem", fontWeight: "normal" }}>
-                                        You have entered the code wrong 3 times, please call our helpdesk
-                                        on{" "}
-                                        <a
-                                            href={`tel:${configuration.helpdeskContactNumber}`}
-                                            style={{ textDecoration: "underline" }}
-                                        >
-                                            {configuration.helpdeskContactNumber}
-                                        </a>{" "}
-                                        to complete your opt-in or opt-out request,
-                                        or alternatively email us at{" "}
-                                        <a
-                                            href={`mailto:${configuration.helpdeskContactEmail}`}
-                                            style={{ textDecoration: "underline" }}
-                                        >
-                                            {configuration.helpdeskContactEmail}
-                                        </a>
+                                        You must start a new search for the patient and then send a new verification code by Email, SMS or Post.
                                     </div>
                                 )}
                             </div>
@@ -305,7 +288,28 @@ export const ConfirmCode = ({ createdPatient, powerOfAttorney }: ConfirmDetailsP
                         <p>
                             {translate("ConfirmCode.helpHowGetCodeText3")}
                         </p>
-                        <h3>{translate("ConfirmCode.helpWrongCodeTitle")}</h3>
+
+                        <ul>
+                            <li>
+                                <strong>
+                                    {translate("ConfirmCode.helpHowGetCodeText3Bullet1")}
+                                </strong>
+                            </li>
+                            <li>
+                                <strong>
+                                    {translate("ConfirmCode.helpHowGetCodeText3Bullet2")}
+                                </strong>
+                            </li>
+                            <li>
+                                <strong>
+                                    {translate("ConfirmCode.helpHowGetCodeText3Bullet3")}
+                                </strong>
+                            </li>
+                        </ul>
+
+                        <h2 className="mb-3" style={{ color: "#005eb8" }}>
+                            {translate("ConfirmCode.helpWrongCodeTitle")}
+                        </h2>
                         <p>
                             {translate("ConfirmCode.helpWrongCodeText")}
                         </p>

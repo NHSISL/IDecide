@@ -6,6 +6,7 @@ using System;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using FluentAssertions;
+using Xeptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Users.Exceptions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -44,8 +45,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Users
                 await Assert.ThrowsAsync<UserDependencyException>(addUserTask.AsTask);
 
             // then
-            actualUserDependencyException.Should()
-                .BeEquivalentTo(expectedUserDependencyException);
+            actualUserDependencyException
+                .SameExceptionAs(expectedUserDependencyException)
+                .Should().BeTrue();
 
             this.securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyAddAuditValuesAsync(It.IsAny<User>()),
@@ -95,8 +97,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Users
                 await Assert.ThrowsAsync<UserDependencyValidationException>(addUserTask.AsTask);
 
             // then
-            actualUserDependencyValidationException.Should()
-                .BeEquivalentTo(expectedUserDependencyValidationException);
+            actualUserDependencyValidationException
+                .SameExceptionAs(expectedUserDependencyValidationException)
+                .Should().BeTrue();
 
             this.securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyAddAuditValuesAsync(It.IsAny<User>()),
@@ -146,8 +149,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Users
                 await Assert.ThrowsAsync<UserDependencyValidationException>(addUserTask.AsTask);
 
             // then
-            actualUserDependencyValidationException.Should()
-                .BeEquivalentTo(expectedUserDependencyValidationException);
+            actualUserDependencyValidationException
+                .SameExceptionAs(expectedUserDependencyValidationException)
+                .Should().BeTrue();
 
             this.securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyAddAuditValuesAsync(It.IsAny<User>()),
@@ -196,8 +200,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Users
                 await Assert.ThrowsAsync<UserDependencyException>(addUserTask.AsTask);
 
             // then
-            actualUserDependencyException.Should()
-                .BeEquivalentTo(expectedUserDependencyException);
+            actualUserDependencyException
+                .SameExceptionAs(expectedUserDependencyException)
+                .Should().BeTrue();
 
             this.securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyAddAuditValuesAsync(It.IsAny<User>()),
@@ -245,8 +250,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Users
                 await Assert.ThrowsAsync<UserServiceException>(addUserTask.AsTask);
 
             // then
-            actualUserServiceException.Should()
-                .BeEquivalentTo(expectedUserServiceException);
+            actualUserServiceException
+                .SameExceptionAs(expectedUserServiceException)
+                .Should().BeTrue();
 
             this.securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyAddAuditValuesAsync(It.IsAny<User>()),

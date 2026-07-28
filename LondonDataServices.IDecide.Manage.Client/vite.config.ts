@@ -16,21 +16,25 @@ const certificateName = "LondonDataServices.IDecide.Manages.client";
 const certFilePath = path.join(baseFolder, `${certificateName}.pem`);
 const keyFilePath = path.join(baseFolder, `${certificateName}.key`);
 
-if (!fs.existsSync(baseFolder)) {
-    fs.mkdirSync(baseFolder, { recursive: true });
-}
+const isCi = !!process.env.CI;
 
-if (!fs.existsSync(certFilePath) || !fs.existsSync(keyFilePath)) {
-    if (0 !== child_process.spawnSync('dotnet', [
-        'dev-certs',
-        'https',
-        '--export-path',
-        certFilePath,
-        '--format',
-        'Pem',
-        '--no-password',
-    ], { stdio: 'inherit', }).status) {
-        throw new Error("Could not create certificate.");
+if (!isCi) {
+    if (!fs.existsSync(baseFolder)) {
+        fs.mkdirSync(baseFolder, { recursive: true });
+    }
+
+    if (!fs.existsSync(certFilePath) || !fs.existsSync(keyFilePath)) {
+        if (0 !== child_process.spawnSync('dotnet', [
+            'dev-certs',
+            'https',
+            '--export-path',
+            certFilePath,
+            '--format',
+            'Pem',
+            '--no-password',
+        ], { stdio: 'inherit', }).status) {
+            throw new Error("Could not create certificate.");
+        }
     }
 }
 
@@ -45,21 +49,32 @@ export default defineConfig({
             '@': fileURLToPath(new URL('./src', import.meta.url))
         }
     },
+    build: {
+        outDir: '../LondonDataServices.IDecide.Manage.Server/wwwroot',
+        emptyOutDir: true,
+    },
     server: {
         proxy: {
             '^/odata/*': {
                 target,
                 secure: false
             },
+            '^/auth/': {
+                target,
+                secure: false,
+                rewrite: (path) => path.replace(/^\/auth\//, '/api/auth/')
+            },
             '^/api/*': {
                 target,
                 secure: false
             }
         },
-        port: 6073,
-        https: {
-            key: fs.readFileSync(keyFilePath),
-            cert: fs.readFileSync(certFilePath),
-        }
+        port: 5174,
+        ...(isCi ? {} : {
+            https: {
+                key: fs.readFileSync(keyFilePath),
+                cert: fs.readFileSync(certFilePath),
+            }
+        })
     }
 })

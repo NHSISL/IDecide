@@ -1,4 +1,4 @@
-﻿// ---------------------------------------------------------
+// ---------------------------------------------------------
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
@@ -44,7 +44,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
 
             // then
             actualConsumerOrchestrationDependencyValidationException
-                .Should().BeEquivalentTo(expectedConsumerOrchestrationDependencyValidationException);
+                .SameExceptionAs(expectedConsumerOrchestrationDependencyValidationException)
+                .Should().BeTrue();
 
             this.securityBrokerMock.Verify(broker =>
                 broker.GetCurrentUserAsync(),
@@ -88,7 +89,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
 
             // then
             actualConsumerOrchestrationDependencyException
-                .Should().BeEquivalentTo(expectedConsumerOrchestrationDependencyException);
+                .SameExceptionAs(expectedConsumerOrchestrationDependencyException)
+                .Should().BeTrue();
 
             this.securityBrokerMock.Verify(broker =>
                 broker.GetCurrentUserAsync(),
@@ -137,7 +139,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
 
             // then
             actualConsumerOrchestrationServiceException
-                .Should().BeEquivalentTo(expectedDecisionOrchestrationServiceException);
+                .SameExceptionAs(expectedDecisionOrchestrationServiceException)
+                .Should().BeTrue();
 
             this.securityBrokerMock.Verify(broker =>
                 broker.GetCurrentUserAsync(),

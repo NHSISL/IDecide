@@ -16,8 +16,13 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Integration.Apis.Patien
         {
             // given
             Patient randomPatient = await PostRandomPatientAsync();
-            PatientCodeRequest randomPatientCodeRequest = CreateRandomPatientCodeRequest(randomPatient.NhsNumber);
-            PatientCodeRequest inputPatientCodeRequest = randomPatientCodeRequest.DeepClone();
+
+            PatientCodeRequest inputPatientCodeRequest = new PatientCodeRequest
+            {
+                NhsNumber = randomPatient.NhsNumber,
+                VerificationCode = randomPatient.ValidationCode,
+                GenerateNewCode = false
+            };
 
             // when
             await this.apiBroker.VerifyPatientCodeAsync(inputPatientCodeRequest);

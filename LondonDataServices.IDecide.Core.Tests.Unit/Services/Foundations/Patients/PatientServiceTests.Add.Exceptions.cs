@@ -6,6 +6,7 @@ using System;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using FluentAssertions;
+using Xeptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients.Exceptions;
 using Microsoft.Data.SqlClient;
@@ -46,8 +47,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                     addPatientTask.AsTask);
 
             // then
-            actualPatientDependencyException.Should()
-                .BeEquivalentTo(expectedPatientDependencyException);
+            actualPatientDependencyException
+                .SameExceptionAs(expectedPatientDependencyException)
+                .Should().BeTrue();
 
             this.securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyAddAuditValuesAsync(It.IsAny<Patient>()),
@@ -110,8 +112,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                 await Assert.ThrowsAsync<PatientDependencyValidationException>(
                     addPatientTask.AsTask);
 
-            actualPatientDependencyValidationException.Should()
-                .BeEquivalentTo(expectedPatientDependencyValidationException);
+            actualPatientDependencyValidationException
+                .SameExceptionAs(expectedPatientDependencyValidationException)
+                .Should().BeTrue();
 
             this.securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyAddAuditValuesAsync(It.IsAny<Patient>()),
@@ -174,8 +177,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                 await Assert.ThrowsAsync<PatientDependencyValidationException>(
                     addPatientTask.AsTask);
 
-            actualPatientDependencyValidationException.Should()
-                .BeEquivalentTo(expectedPatientValidationException);
+            actualPatientDependencyValidationException
+                .SameExceptionAs(expectedPatientValidationException)
+                .Should().BeTrue();
 
             this.securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyAddAuditValuesAsync(It.IsAny<Patient>()),
@@ -236,8 +240,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                     addPatientTask.AsTask);
 
             // then
-            actualPatientDependencyException.Should()
-                .BeEquivalentTo(expectedPatientDependencyException);
+            actualPatientDependencyException
+                .SameExceptionAs(expectedPatientDependencyException)
+                .Should().BeTrue();
 
             this.securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyAddAuditValuesAsync(It.IsAny<Patient>()),
@@ -284,8 +289,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Patien
                     addPatientTask.AsTask);
 
             // then
-            actualPatientServiceException.Should()
-                .BeEquivalentTo(expectedPatientServiceException);
+            actualPatientServiceException
+                .SameExceptionAs(expectedPatientServiceException)
+                .Should().BeTrue();
 
             this.securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyAddAuditValuesAsync(It.IsAny<Patient>()),

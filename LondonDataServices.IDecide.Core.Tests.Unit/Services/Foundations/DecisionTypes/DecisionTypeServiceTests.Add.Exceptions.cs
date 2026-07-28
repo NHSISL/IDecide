@@ -6,6 +6,7 @@ using System;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using FluentAssertions;
+using Xeptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
 using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes.Exceptions;
 using Microsoft.Data.SqlClient;
@@ -46,8 +47,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                     addDecisionTypeTask.AsTask);
 
             // then
-            actualDecisionTypeDependencyException.Should()
-                .BeEquivalentTo(expectedDecisionTypeDependencyException);
+            actualDecisionTypeDependencyException
+                .SameExceptionAs(expectedDecisionTypeDependencyException)
+                .Should().BeTrue();
 
             this.securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyAddAuditValuesAsync(It.IsAny<DecisionType>()),
@@ -111,8 +113,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                 await Assert.ThrowsAsync<DecisionTypeDependencyValidationException>(
                     addDecisionTypeTask.AsTask);
 
-            actualDecisionTypeDependencyValidationException.Should()
-                .BeEquivalentTo(expectedDecisionTypeDependencyValidationException);
+            actualDecisionTypeDependencyValidationException
+                .SameExceptionAs(expectedDecisionTypeDependencyValidationException)
+                .Should().BeTrue();
 
             this.securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyAddAuditValuesAsync(It.IsAny<DecisionType>()),
@@ -176,8 +179,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                 await Assert.ThrowsAsync<DecisionTypeDependencyValidationException>(
                     addDecisionTypeTask.AsTask);
 
-            actualDecisionTypeDependencyValidationException.Should()
-                .BeEquivalentTo(expectedDecisionTypeValidationException);
+            actualDecisionTypeDependencyValidationException
+                .SameExceptionAs(expectedDecisionTypeValidationException)
+                .Should().BeTrue();
 
             this.securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyAddAuditValuesAsync(It.IsAny<DecisionType>()),
@@ -239,8 +243,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                     addDecisionTypeTask.AsTask);
 
             // then
-            actualDecisionTypeDependencyException.Should()
-                .BeEquivalentTo(expectedDecisionTypeDependencyException);
+            actualDecisionTypeDependencyException
+                .SameExceptionAs(expectedDecisionTypeDependencyException)
+                .Should().BeTrue();
 
             this.securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyAddAuditValuesAsync(It.IsAny<DecisionType>()),
@@ -288,8 +293,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                     addDecisionTypeTask.AsTask);
 
             // then
-            actualDecisionTypeServiceException.Should()
-                .BeEquivalentTo(expectedDecisionTypeServiceException);
+            actualDecisionTypeServiceException
+                .SameExceptionAs(expectedDecisionTypeServiceException)
+                .Should().BeTrue();
 
             this.securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyAddAuditValuesAsync(It.IsAny<DecisionType>()),

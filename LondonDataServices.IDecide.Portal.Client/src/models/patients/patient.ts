@@ -14,6 +14,7 @@ export class Patient {
     public validationCodeExpiresOn?: Date;
     public notificationPreference?: number;
     public retryCount?: number;
+    public isSensitive?: boolean;
     public createdBy?: string;
     public createdDate?: Date;
     public updatedBy?: string;
@@ -36,6 +37,7 @@ export class Patient {
             this.validationCodeExpiresOn = patient.validationCodeExpiresOn ? new Date(patient.validationCodeExpiresOn) : undefined;
             this.notificationPreference = patient.notificationPreference;
             this.retryCount = patient.retryCount;
+            this.isSensitive = patient.isSensitive;
             this.createdBy = patient.createdBy;
             this.createdDate = patient.createdDate ? new Date(patient.createdDate) : undefined;
             this.updatedBy = patient.updatedBy;

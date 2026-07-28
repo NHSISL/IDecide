@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Row, Col, Alert } from "react-bootstrap";
+import { Row, Col, Alert, Button } from "react-bootstrap";
 import { Patient } from "../../models/patients/patient";
 import { PatientCodeRequest } from "../../models/patients/patientCodeRequest";
 import { isApiErrorResponse } from "../../helpers/isApiErrorResponse";
 import { patientViewService } from "../../services/views/patientViewService";
 import { PowerOfAttourney } from "../../models/powerOfAttourneys/powerOfAttourney";
-import { useFrontendConfiguration } from '../../hooks/useFrontendConfiguration';
+import { faArrowLeftLong } from "@fortawesome/free-solid-svg-icons/faArrowLeftLong";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const VALID_CODE_MESSAGE =
     "A valid code already exists for this patient, please go to the enter code screen.";
@@ -25,7 +26,6 @@ const PositiveConfirmation = ({ createdPatient, powerOfAttorney }: ConfirmDetail
     const [hideButtons, setHideButtons] = useState(false);
     const [resend, setResend] = useState(false);
     const [showResendMessage, setShowResendMessage] = useState(false);
-    const { configuration } = useFrontendConfiguration();
     const updatePatient = patientViewService.useAddPatientAndGenerateCode();
 
     const handleSubmit = (method: "Email" | "Sms" | "Letter", resendFlag = false) => {
@@ -132,6 +132,13 @@ const PositiveConfirmation = ({ createdPatient, powerOfAttorney }: ConfirmDetail
                             </div>
                         </Alert>
                     )}
+
+                    <Button
+                        variant="link"
+                        onClick={() => navigate(-1)}
+                    >
+                        <FontAwesomeIcon icon={faArrowLeftLong} /> Back
+                    </Button>
 
                     <h2>{translate("PositiveConfirmation.confirmationRequiredTitle")}</h2>
                     <p>{translate("PositiveConfirmation.confirmationRequiredDescription")}</p>
@@ -250,20 +257,6 @@ const PositiveConfirmation = ({ createdPatient, powerOfAttorney }: ConfirmDetail
                     </p>
                     <p>
                         {translate("PositiveConfirmation.helpReceivingCodeDescription3")}
-                        &nbsp;
-                        <a
-                            href={`tel:${configuration.helpdeskContactNumber}`}
-                            style={{ textDecoration: "underline" }}
-                        >
-                            {configuration.helpdeskContactNumber}
-                        </a> or email us at&nbsp;
-
-                        <a
-                            href={`mailto:${configuration.helpdeskContactEmail}`}
-                            style={{ textDecoration: "underline" }}
-                        >
-                            {configuration.helpdeskContactEmail}
-                        </a>.
                     </p>
                     <p>
                         {translate("PositiveConfirmation.helpReceivingCodeDescription4")}

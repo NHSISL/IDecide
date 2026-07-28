@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using LondonDataServices.IDecide.Manage.Server.Tests.Integration.Models.ConsumerAdoptions;
@@ -27,6 +28,20 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Integration.Apis.Consum
             string userId = TestAuthHandler.TestUserId;
             DateTimeOffset now = DateTimeOffset.Now;
 
+            List<Consumer> existingConsumers = await this.apiBroker.GetAllConsumersAsync();
+            List<ConsumerAdoption> existingAdoptions = await this.apiBroker.GetAllConsumerAdoptionsAsync();
+
+            foreach (Consumer staleConsumer in existingConsumers.Where(c => c.EntraId == userId))
+            {
+                foreach (ConsumerAdoption staleAdoption in existingAdoptions
+                    .Where(a => a.ConsumerId == staleConsumer.Id))
+                {
+                    await this.apiBroker.DeleteConsumerAdoptionByIdAsync(staleAdoption.Id);
+                }
+
+                await this.apiBroker.DeleteConsumerByIdAsync(staleConsumer.Id);
+            }
+
             Consumer randomConsumerWithMatchingEntraId =
                 await PostRandomConsumerWithMatchingEntraIdEntryAsync(userId);
 
@@ -34,8 +49,12 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Integration.Apis.Consum
             await this.apiBroker.AdoptPatientDecisionsAsync(inputDecisions);
 
             // then
-            List<ConsumerAdoption> consumerAdoptions =
+            List<ConsumerAdoption> allConsumerAdoptions =
                 await this.apiBroker.GetAllConsumerAdoptionsAsync();
+
+            List<ConsumerAdoption> consumerAdoptions = allConsumerAdoptions
+                .Where(ca => inputDecisions.Any(d => d.Id == ca.DecisionId))
+                .ToList();
 
             foreach (var consumerAdoption in consumerAdoptions)
             {

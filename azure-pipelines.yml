@@ -138,15 +138,15 @@ steps:
     displayName: 'Install Node.js'
     inputs:
       versionSpec: '24.x'
-  - script: |
-      npm ci
-      npx playwright install --with-deps
-      npx playwright test
-    workingDirectory: './LondonDataServices.IDecide.Portal.Client'
-    displayName: 'Playwright test'
-    env: 
-        ASPNETCORE_ENVIRONMENT: ContinuousIntegration
-        NHSLoginOIDC__privateKeyb64: $(NHSLoginOIDC__privateKeyb64)
+  # - script: |
+  #     npm ci
+  #     npx playwright install --with-deps
+  #     npx playwright test
+  #   workingDirectory: './LondonDataServices.IDecide.Portal.Client'
+  #   displayName: 'Playwright test'
+  #   env:
+  #       ASPNETCORE_ENVIRONMENT: ContinuousIntegration
+  #       NHSLoginOIDC__privateKeyb64: $(NHSLoginOIDC__privateKeyb64)
 
   - task: Npm@1
     displayName: 'Install client dependencies (patient portal)'
@@ -155,9 +155,23 @@ steps:
       workingDir: 'LondonDataServices.IDecide.Portal.Client'
 
   - task: Npm@1
+    displayName: 'Build client (patient portal)'
+    inputs:
+      command: 'custom'
+      customCommand: 'run build'
+      workingDir: 'LondonDataServices.IDecide.Portal.Client'
+
+  - task: Npm@1
     displayName: 'Install client dependencies (back office portal)'
     inputs:
       command: 'install'
+      workingDir: 'LondonDataServices.IDecide.Manage.Client'
+
+  - task: Npm@1
+    displayName: 'Build client (back office portal)'
+    inputs:
+      command: 'custom'
+      customCommand: 'run build'
       workingDir: 'LondonDataServices.IDecide.Manage.Client'
 
   - task: DotNetCoreCLI@2

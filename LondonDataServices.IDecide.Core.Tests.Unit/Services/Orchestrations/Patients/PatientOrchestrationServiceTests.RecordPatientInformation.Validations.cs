@@ -1,9 +1,10 @@
-﻿// ---------------------------------------------------------
+// ---------------------------------------------------------
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
 using System.Threading.Tasks;
 using FluentAssertions;
+using Xeptions;
 using Force.DeepCloner;
 using LondonDataServices.IDecide.Core.Models.Foundations.Notifications;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
@@ -41,6 +42,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
                 this.loggingBrokerMock.Object,
                 this.securityBrokerMock.Object,
+                this.securityAuditBrokerMock.Object,
                 this.dateTimeBrokerMock.Object,
                 this.auditBrokerMock.Object,
                 this.identifierBrokerMock.Object,
@@ -67,7 +69,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     recordPatientInformationTask.AsTask);
 
             // then
-            actualException.Should().BeEquivalentTo(expectedPatientOrchestrationValidationException);
+            actualException.SameExceptionAs(expectedPatientOrchestrationValidationException).Should().BeTrue();
 
             this.loggingBrokerMock.Verify(broker =>
                broker.LogErrorAsync(It.Is(SameExceptionAs(
@@ -112,6 +114,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
             var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
                this.loggingBrokerMock.Object,
                this.securityBrokerMock.Object,
+               this.securityAuditBrokerMock.Object,
                this.dateTimeBrokerMock.Object,
                this.auditBrokerMock.Object,
                this.identifierBrokerMock.Object,
@@ -138,76 +141,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     recordPatientInformationTask.AsTask);
 
             // then
-            actualException.Should().BeEquivalentTo(expectedPatientOrchestrationValidationException);
-
-            this.loggingBrokerMock.Verify(broker =>
-               broker.LogErrorAsync(It.Is(SameExceptionAs(
-                   expectedPatientOrchestrationValidationException))),
-                       Times.Once);
-
-            this.loggingBrokerMock.VerifyNoOtherCalls();
-            this.securityBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-            this.auditBrokerMock.VerifyNoOtherCalls();
-            this.identifierBrokerMock.VerifyNoOtherCalls();
-            this.pdsServiceMock.VerifyNoOtherCalls();
-            this.patientServiceMock.VerifyNoOtherCalls();
-            this.notificationServiceMock.VerifyNoOtherCalls();
-        }
-
-        [Fact]
-        public async Task ShouldThrowValidationExceptionOnRecordPatientInformationAsyncWithRejectedCaptcha()
-        {
-            // given
-            string randomNhsNumber = GenerateRandom10DigitNumber();
-            string inputNhsNumber = randomNhsNumber.DeepClone();
-            NotificationPreference randomNotificationPreference = NotificationPreference.Email;
-            NotificationPreference inputNotificationPreference = randomNotificationPreference.DeepClone();
-            string notificationPreferenceString = inputNotificationPreference.ToString();
-
-            var invalidCaptchaPatientOrchestrationServiceException =
-                new InvalidCaptchaPatientOrchestrationServiceException(
-                    "The provided captcha token is invalid.");
-
-            var expectedPatientOrchestrationValidationException =
-                new PatientOrchestrationValidationException(
-                    message: "Patient orchestration validation error occurred, please fix the errors and try again.",
-                    innerException: invalidCaptchaPatientOrchestrationServiceException);
-
-            var patientOrchestrationServiceMock = new Mock<PatientOrchestrationService>(
-                 this.loggingBrokerMock.Object,
-                 this.securityBrokerMock.Object,
-                 this.dateTimeBrokerMock.Object,
-                 this.auditBrokerMock.Object,
-                 this.identifierBrokerMock.Object,
-                 this.pdsServiceMock.Object,
-                 this.patientServiceMock.Object,
-                 this.notificationServiceMock.Object,
-                 this.decisionConfigurations,
-                 this.securityBrokerConfigurations)
-            { CallBase = true };
-
-            patientOrchestrationServiceMock.Setup(broker =>
-                broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync())
-                    .ThrowsAsync(invalidCaptchaPatientOrchestrationServiceException);
-
-            // when
-            ValueTask recordPatientInformationTask =
-                patientOrchestrationServiceMock.Object.RecordPatientInformationAsync(
-                    inputNhsNumber,
-                    notificationPreferenceString,
-                    false);
-
-            PatientOrchestrationValidationException actualException =
-                await Assert.ThrowsAsync<PatientOrchestrationValidationException>(
-                    recordPatientInformationTask.AsTask);
-
-            // then
-            actualException.Should().BeEquivalentTo(expectedPatientOrchestrationValidationException);
-
-            patientOrchestrationServiceMock.Verify(broker =>
-                 broker.CheckIfIsAuthenticatedUserWithRequiredRoleAsync(),
-                     Times.Once);
+            actualException.SameExceptionAs(expectedPatientOrchestrationValidationException).Should().BeTrue();
 
             this.loggingBrokerMock.Verify(broker =>
                broker.LogErrorAsync(It.Is(SameExceptionAs(

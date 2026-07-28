@@ -5,6 +5,7 @@
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Xeptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Audits;
 using LondonDataServices.IDecide.Core.Models.Foundations.Audits.Exceptions;
 using Moq;
@@ -73,8 +74,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
                 await Assert.ThrowsAsync<AuditValidationException>(addAuditTask.AsTask);
 
             // then
-            actualAuditValidationException.Should()
-                .BeEquivalentTo(expectedAuditValidationException);
+            actualAuditValidationException
+                .SameExceptionAs(expectedAuditValidationException)
+                .Should().BeTrue();
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffsetAsync(),

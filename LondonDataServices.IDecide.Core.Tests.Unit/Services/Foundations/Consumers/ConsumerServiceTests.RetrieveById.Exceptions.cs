@@ -1,10 +1,11 @@
-﻿// ---------------------------------------------------------
+// ---------------------------------------------------------
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Xeptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Consumers;
 using LondonDataServices.IDecide.Core.Models.Foundations.Consumers.Exceptions;
 using Microsoft.Data.SqlClient;
@@ -44,8 +45,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                     retrieveConsumerByIdTask.AsTask);
 
             // then
-            actualConsumerDependencyException.Should()
-                .BeEquivalentTo(expectedConsumerDependencyException);
+            actualConsumerDependencyException
+                .SameExceptionAs(expectedConsumerDependencyException)
+                .Should().BeTrue();
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectConsumerByIdAsync(It.IsAny<Guid>()),
@@ -92,8 +94,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                     retrieveConsumerByIdTask.AsTask);
 
             // then
-            actualConsumerServiceException.Should()
-                .BeEquivalentTo(expectedConsumerServiceException);
+            actualConsumerServiceException
+                .SameExceptionAs(expectedConsumerServiceException)
+                .Should().BeTrue();
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectConsumerByIdAsync(It.IsAny<Guid>()),

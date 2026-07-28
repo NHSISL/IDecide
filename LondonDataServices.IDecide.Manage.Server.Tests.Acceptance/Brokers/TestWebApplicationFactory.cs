@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Moq;
 
 namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Brokers
@@ -77,6 +78,15 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Brokers
                 services.Remove(authenticationDescriptor);
             }
 
+            var configureAuthOptions = services
+                .Where(d => d.ServiceType == typeof(IConfigureOptions<AuthenticationOptions>))
+                .ToList();
+
+            foreach (var descriptor in configureAuthOptions)
+            {
+                services.Remove(descriptor);
+            }
+
             // Override authentication and authorization
             services.AddAuthentication(options =>
             {
@@ -87,7 +97,10 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Brokers
             {
                 options.InvisibleApiKey = invisibleApiKey;
             })
-            .AddCookie("bff-cookie");
+            .AddCookie("bff-cookie", options =>
+            {
+                options.ForwardAuthenticate = "TestScheme";
+            });
 
             services.AddAuthorization(options =>
             {

@@ -1,10 +1,11 @@
-﻿// ---------------------------------------------------------
+// ---------------------------------------------------------
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Xeptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Consumers;
 using LondonDataServices.IDecide.Core.Models.Foundations.Consumers.Exceptions;
 using Moq;
@@ -41,8 +42,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                     retrieveConsumerByIdTask.AsTask);
 
             // then
-            actualConsumerValidationException.Should()
-                .BeEquivalentTo(expectedConsumerValidationException);
+            actualConsumerValidationException
+                .SameExceptionAs(expectedConsumerValidationException)
+                .Should().BeTrue();
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(expectedConsumerValidationException))),
@@ -86,7 +88,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                     retrieveConsumerByIdTask.AsTask);
 
             //then
-            actualConsumerValidationException.Should().BeEquivalentTo(expectedConsumerValidationException);
+            actualConsumerValidationException.SameExceptionAs(expectedConsumerValidationException).Should().BeTrue();
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectConsumerByIdAsync(It.IsAny<Guid>()),

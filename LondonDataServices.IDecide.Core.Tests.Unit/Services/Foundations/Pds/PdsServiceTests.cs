@@ -162,14 +162,13 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
             var nameFiller = new Filler<HumanName>();
 
             nameFiller.Setup()
+                .OnType<object>().IgnoreIt()
                 .OnProperty(name => name.Family).Use(surname)
                 .OnType<string>().Use(withWhiteSpace ? " " : GetRandomString())
                 .OnProperty(name => name.Use).Use(HumanName.NameUse.Usual)
-                .OnProperty(name => name.Children).IgnoreIt()
                 .OnProperty(name => name.Extension).IgnoreIt()
                 .OnProperty(name => name.FamilyElement).IgnoreIt()
                 .OnProperty(name => name.GivenElement).IgnoreIt()
-                .OnProperty(name => name.NamedChildren).IgnoreIt()
                 .OnProperty(name => name.Period).IgnoreIt()
                 .OnProperty(name => name.PrefixElement).IgnoreIt()
                 .OnProperty(name => name.SuffixElement).IgnoreIt()
@@ -184,15 +183,14 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
             var addressFiller = new Filler<Address>();
 
             addressFiller.Setup()
+                .OnType<object>().IgnoreIt()
                 .OnType<string>().Use(withWhiteSpace ? " " : GetRandomString())
                 .OnProperty(address => address.Use).Use(Address.AddressUse.Home)
-                .OnProperty(address => address.Children).IgnoreIt()
                 .OnProperty(address => address.CityElement).IgnoreIt()
                 .OnProperty(address => address.CountryElement).IgnoreIt()
                 .OnProperty(address => address.DistrictElement).IgnoreIt()
                 .OnProperty(address => address.Extension).IgnoreIt()
                 .OnProperty(address => address.LineElement).IgnoreIt()
-                .OnProperty(address => address.NamedChildren).IgnoreIt()
                 .OnProperty(address => address.Period).IgnoreIt()
                 .OnProperty(address => address.PostalCodeElement).IgnoreIt()
                 .OnProperty(address => address.StateElement).IgnoreIt()
@@ -211,15 +209,14 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
             var isPhoneContactPoint = contactPointSystem == ContactPoint.ContactPointSystem.Phone;
 
             contactPointFiller.Setup()
+                .OnType<object>().IgnoreIt()
                 .OnType<string>().Use(withWhiteSpace ? " " : GetRandomString())
                 .OnProperty(contact => contact.System).Use(contactPointSystem)
 
                 .OnProperty(contact => contact.Use).Use(isPhoneContactPoint ? ContactPoint.ContactPointUse.Mobile
                     : ContactPoint.ContactPointUse.Home)
 
-                .OnProperty(contact => contact.Children).IgnoreIt()
                 .OnProperty(contact => contact.Extension).IgnoreIt()
-                .OnProperty(contact => contact.NamedChildren).IgnoreIt()
                 .OnProperty(contact => contact.Period).IgnoreIt()
                 .OnProperty(contact => contact.RankElement).IgnoreIt()
                 .OnProperty(contact => contact.SystemElement).IgnoreIt()

@@ -29,7 +29,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Auth
 
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, randomSub),
+                new Claim("sub", randomSub),
                 new Claim(ClaimTypes.Upn, randomUpn),
                 new Claim(ClaimTypes.Name, randomName),
                 new Claim(ClaimTypes.Role, randomRole)

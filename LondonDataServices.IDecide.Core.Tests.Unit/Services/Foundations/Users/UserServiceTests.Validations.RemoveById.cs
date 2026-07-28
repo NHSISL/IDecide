@@ -5,6 +5,7 @@
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Xeptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Users.Exceptions;
 using Moq;
 using User = LondonDataServices.IDecide.Core.Models.Foundations.Users.User;
@@ -39,8 +40,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Users
                 await Assert.ThrowsAsync<UserValidationException>(() => removeUserByIdTask.AsTask());
 
             // then
-            actualUserValidationException.Should()
-                .BeEquivalentTo(expectedUserValidationException);
+            actualUserValidationException
+                .SameExceptionAs(expectedUserValidationException)
+                .Should().BeTrue();
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(expectedUserValidationException))),
@@ -83,8 +85,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Users
                 await Assert.ThrowsAsync<UserValidationException>(() => removeUserByIdTask.AsTask());
 
             // then
-            actualUserValidationException.Should()
-                .BeEquivalentTo(expectedUserValidationException);
+            actualUserValidationException
+                .SameExceptionAs(expectedUserValidationException)
+                .Should().BeTrue();
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectUserByIdAsync(someUserId),

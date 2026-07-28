@@ -15,6 +15,7 @@ using LondonDataServices.IDecide.Manage.Server.Models.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using NHSDigital.ApiPlatform.Sdk.Clients.ApiPlatforms;
 using RESTFulSense.Controllers;
 
 namespace LondonDataServices.IDecide.Manage.Server.Controllers
@@ -65,7 +66,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(AuthenticationSchemes = "bff-cookie")]
         [HttpGet("session")]
         public async Task<IActionResult> Session(CancellationToken cancellationToken)
         {
@@ -81,7 +82,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
 
                 return Ok(new SessionResponse
                 {
-                    Sub = User.FindFirstValue(ClaimTypes.NameIdentifier),
+                    Sub = User.FindFirstValue("sub") ?? User.FindFirstValue(ClaimTypes.NameIdentifier),
                     Upn = User.FindFirstValue(ClaimTypes.Upn),
                     Name = User.FindFirstValue(ClaimTypes.Name),
                     Roles = User.FindAll(ClaimTypes.Role).Select(c => c.Value).ToArray()
@@ -128,9 +129,10 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
 
                 var claims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.NameIdentifier, user.Sub),
+                    new Claim(ClaimTypes.NameIdentifier, $"{user.Name} ({user.Sub})"),
                     new Claim(ClaimTypes.Name, user.Name),
                     new Claim(ClaimTypes.Upn, user.NhsIdUserUid),
+                    new Claim("sub", user.Sub),
                 };
 
                 var identity = new ClaimsIdentity(claims, "OAuth");
@@ -162,13 +164,14 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(AuthenticationSchemes = "bff-cookie")]
         [HttpPost("logout")]
         public async Task<IActionResult> Logout(CancellationToken cancellationToken)
         {
             try
             {
                 await this.nhsDigitalApiOrchestrationService.LogoutAsync(cancellationToken);
+
                 HttpContext.Session.Clear();
                 await HttpContext.SignOutAsync("bff-cookie");
 

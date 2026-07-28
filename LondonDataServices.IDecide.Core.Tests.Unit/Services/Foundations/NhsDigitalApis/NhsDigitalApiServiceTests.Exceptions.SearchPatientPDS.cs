@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Xeptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.NhsDigitalApis.Exceptions;
 using Moq;
 using NHSDigital.ApiPlatform.Sdk.Models.Foundations.Pds;
@@ -52,8 +53,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.NhsDig
                     testCode: searchPatientPDSTask.AsTask);
 
             // then
-            actualNhsDigitalApiServiceException.Should().BeEquivalentTo(
-                expectedNhsDigitalApiServiceException);
+            actualNhsDigitalApiServiceException
+                .SameExceptionAs(expectedNhsDigitalApiServiceException)
+                .Should().BeTrue();
 
             this.nhsDigitalApiBrokerMock.Verify(broker =>
                 broker.SearchPatientPDSAsync(
@@ -113,8 +115,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.NhsDig
                     testCode: searchPatientPDSTask.AsTask);
 
             // then
-            actualException.Should().BeEquivalentTo(
-                expectedNhsDigitalApiDependencyValidationException);
+            actualException
+                .SameExceptionAs(expectedNhsDigitalApiDependencyValidationException)
+                .Should().BeTrue();
 
             this.nhsDigitalApiBrokerMock.Verify(broker =>
                 broker.SearchPatientPDSAsync(
@@ -173,8 +176,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.NhsDig
                     testCode: searchPatientPDSTask.AsTask);
 
             // then
-            actualException.Should().BeEquivalentTo(
-                expectedNhsDigitalApiDependencyException);
+            actualException
+                .SameExceptionAs(expectedNhsDigitalApiDependencyException)
+                .Should().BeTrue();
 
             this.nhsDigitalApiBrokerMock.Verify(broker =>
                 broker.SearchPatientPDSAsync(

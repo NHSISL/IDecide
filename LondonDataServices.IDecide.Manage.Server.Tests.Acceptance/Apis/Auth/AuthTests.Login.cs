@@ -17,6 +17,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Acceptance.Apis.Auth
         public async Task ShouldRedirectToLoginUrlAsync()
         {
             // given
+            this.apiBroker.nhsDigitalApiOrchestrationServiceMock.Invocations.Clear();
             string randomUrl = "https://cis2.example.com/authorize?" + GetRandomString();
             string expectedUrl = randomUrl;
 

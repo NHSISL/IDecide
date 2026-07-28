@@ -3,7 +3,6 @@
 // ---------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Attrify.Attributes;
 using FluentAssertions;
@@ -15,20 +14,12 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Patien
     public partial class PatientDecisionControllerTests
     {
         [Fact]
-        public void GetShouldHaveRoleAttributeWithRoles()
+        public void GetShouldHaveAuthorizeAttribute()
         {
             // given
             var controllerType = typeof(PatientDecisionController);
             var methodInfo = controllerType.GetMethod("GetPatientDecisionsAsync");
             Type attributeType = typeof(AuthorizeAttribute);
-            string attributeProperty = "Roles";
-
-            List<string> expectedAttributeValues = new List<string>
-            {
-                "LondonDataServices.IDecide.Manage.Server.Administrators",
-                "LondonDataServices.IDecide.Manage.Server.Agents",
-                "LondonDataServices.IDecide.Manage.Server.Consumers"
-            };
 
             // when
             var methodAttribute = methodInfo?
@@ -43,18 +34,6 @@ namespace LondonDataServices.IDecide.Manage.Server.Tests.Unit.Controllers.Patien
 
             // then
             attribute.Should().NotBeNull();
-
-            var actualAttributeValue = attributeType
-                .GetProperty(attributeProperty)?
-                .GetValue(attribute) as string ?? string.Empty;
-
-            var actualAttributeValues = actualAttributeValue?
-                .Split(',')
-                .Select(role => role.Trim())
-                .Where(role => !string.IsNullOrEmpty(role))
-                .ToList();
-
-            actualAttributeValues.Should().BeEquivalentTo(expectedAttributeValues);
         }
 
         [Fact]

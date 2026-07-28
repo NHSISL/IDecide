@@ -5,6 +5,7 @@
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Xeptions;
 using Force.DeepCloner;
 using LondonDataServices.IDecide.Core.Models.Foundations.Users.Exceptions;
 using Moq;
@@ -39,8 +40,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Users
                 await Assert.ThrowsAsync<UserValidationException>(() => addUserTask.AsTask());
 
             // then
-            actualUserValidationException.Should()
-                .BeEquivalentTo(expectedUserValidationException);
+            actualUserValidationException
+                .SameExceptionAs(expectedUserValidationException)
+                .Should().BeTrue();
 
             this.securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyAddAuditValuesAsync(nullUser),
@@ -135,8 +137,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Users
                 await Assert.ThrowsAsync<UserValidationException>(() => addUserTask.AsTask());
 
             // then
-            actualUserValidationException.Should()
-                .BeEquivalentTo(expectedUserValidationException);
+            actualUserValidationException
+                .SameExceptionAs(expectedUserValidationException)
+                .Should().BeTrue();
 
             this.securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyAddAuditValuesAsync(It.IsAny<User>()),
@@ -211,8 +214,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Users
                 await Assert.ThrowsAsync<UserValidationException>(() => addUserTask.AsTask());
 
             // then
-            actualUserValidationException.Should()
-                .BeEquivalentTo(expectedUserValidationException);
+            actualUserValidationException
+                .SameExceptionAs(expectedUserValidationException)
+                .Should().BeTrue();
 
             this.securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyAddAuditValuesAsync(It.IsAny<User>()),

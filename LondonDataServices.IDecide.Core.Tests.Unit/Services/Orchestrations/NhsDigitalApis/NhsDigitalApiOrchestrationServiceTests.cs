@@ -10,6 +10,7 @@ using System.Text.Json;
 using System.Threading;
 using KellermanSoftware.CompareNetObjects;
 using LondonDataServices.IDecide.Core.Brokers.DateTimes;
+using LondonDataServices.IDecide.Core.Brokers.Identifiers;
 using LondonDataServices.IDecide.Core.Brokers.Loggings;
 using LondonDataServices.IDecide.Core.Models.Foundations.NhsDigitalApis.Exceptions;
 using NHSDigital.ApiPlatform.Sdk.Models.Foundations.Pds;
@@ -29,6 +30,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
     {
         private readonly Mock<INhsDigitalApiService> nhsDigitalApiServiceMock;
         private readonly Mock<IUserService> userServiceMock;
+        private readonly Mock<IIdentifierBroker> identifierBrokerMock;
         private readonly Mock<IDateTimeBroker> dateTimeBrokerMock;
         private readonly Mock<ILoggingBroker> loggingBrokerMock;
         private readonly NhsDigitalApiOrchestrationService nhsDigitalApiOrchestrationService;
@@ -38,6 +40,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
         {
             this.nhsDigitalApiServiceMock = new Mock<INhsDigitalApiService>();
             this.userServiceMock = new Mock<IUserService>();
+            this.identifierBrokerMock = new Mock<IIdentifierBroker>();
             this.dateTimeBrokerMock = new Mock<IDateTimeBroker>();
             this.loggingBrokerMock = new Mock<ILoggingBroker>();
             this.compareLogic = new CompareLogic();
@@ -45,6 +48,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Nhs
             this.nhsDigitalApiOrchestrationService = new NhsDigitalApiOrchestrationService(
                 nhsDigitalApiService: this.nhsDigitalApiServiceMock.Object,
                 userService: this.userServiceMock.Object,
+                identifierBroker: this.identifierBrokerMock.Object,
                 dateTimeBroker: this.dateTimeBrokerMock.Object,
                 loggingBroker: this.loggingBrokerMock.Object);
         }

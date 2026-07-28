@@ -6,6 +6,7 @@ using System;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using FluentAssertions;
+using Xeptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Audits;
 using LondonDataServices.IDecide.Core.Models.Foundations.Audits.Exceptions;
 using Microsoft.Data.SqlClient;
@@ -46,8 +47,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
                     addAuditTask.AsTask);
 
             // then
-            actualAuditDependencyException.Should()
-                .BeEquivalentTo(expectedAuditDependencyException);
+            actualAuditDependencyException
+                .SameExceptionAs(expectedAuditDependencyException)
+                .Should().BeTrue();
 
             this.securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyAddAuditValuesAsync(It.IsAny<Audit>()),
@@ -101,8 +103,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
                 await Assert.ThrowsAsync<AuditDependencyValidationException>(
                     addAuditTask.AsTask);
 
-            actualAuditDependencyValidationException.Should()
-                .BeEquivalentTo(expectedAuditDependencyValidationException);
+            actualAuditDependencyValidationException
+                .SameExceptionAs(expectedAuditDependencyValidationException)
+                .Should().BeTrue();
 
             this.securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyAddAuditValuesAsync(It.IsAny<Audit>()),
@@ -157,8 +160,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
                 await Assert.ThrowsAsync<AuditDependencyValidationException>(
                     addAuditTask.AsTask);
 
-            actualAuditDependencyValidationException.Should()
-                .BeEquivalentTo(expectedAuditValidationException);
+            actualAuditDependencyValidationException
+                .SameExceptionAs(expectedAuditValidationException)
+                .Should().BeTrue();
 
             this.securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyAddAuditValuesAsync(It.IsAny<Audit>()),
@@ -211,8 +215,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
                     addAuditTask.AsTask);
 
             // then
-            actualAuditDependencyException.Should()
-                .BeEquivalentTo(expectedAuditDependencyException);
+            actualAuditDependencyException
+                .SameExceptionAs(expectedAuditDependencyException)
+                .Should().BeTrue();
 
             this.securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyAddAuditValuesAsync(It.IsAny<Audit>()),
@@ -263,8 +268,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
                     addAuditTask.AsTask);
 
             // then
-            actualAuditServiceException.Should()
-                .BeEquivalentTo(expectedAuditServiceException);
+            actualAuditServiceException
+                .SameExceptionAs(expectedAuditServiceException)
+                .Should().BeTrue();
 
             this.securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyAddAuditValuesAsync(It.IsAny<Audit>()),

@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Xeptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.NhsDigitalApis.Exceptions;
 using Moq;
 using Task = System.Threading.Tasks.Task;
@@ -58,7 +59,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.NhsDig
                     testCode: getUserInfoTask.AsTask);
 
             // then
-            actualException.Should().BeEquivalentTo(expectedNhsDigitalApiDependencyException);
+            actualException.SameExceptionAs(expectedNhsDigitalApiDependencyException).Should().BeTrue();
 
             this.nhsDigitalApiBrokerMock.Verify(broker =>
                 broker.GetUserInfoAsync(inputCode, inputState, inputCancellationToken),
@@ -116,8 +117,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.NhsDig
                     testCode: getUserInfoTask.AsTask);
 
             // then
-            actualException.Should().BeEquivalentTo(
-                expectedNhsDigitalApiDependencyValidationException);
+            actualException
+                .SameExceptionAs(expectedNhsDigitalApiDependencyValidationException)
+                .Should().BeTrue();
 
             this.nhsDigitalApiBrokerMock.Verify(broker =>
                 broker.GetUserInfoAsync(inputCode, inputState, inputCancellationToken),
@@ -167,7 +169,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.NhsDig
                     testCode: getUserInfoTask.AsTask);
 
             // then
-            actualException.Should().BeEquivalentTo(expectedNhsDigitalApiServiceException);
+            actualException.SameExceptionAs(expectedNhsDigitalApiServiceException).Should().BeTrue();
 
             this.nhsDigitalApiBrokerMock.Verify(broker =>
                 broker.GetUserInfoAsync(inputCode, inputState, inputCancellationToken),
@@ -207,7 +209,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.NhsDig
                     testCode: getUserInfoTask.AsTask);
 
             // then
-            actualException.Should().BeSameAs(operationCanceledException);
+            ((object)actualException).Should().BeSameAs(operationCanceledException);
 
             this.nhsDigitalApiBrokerMock.Verify(broker =>
                 broker.GetUserInfoAsync(inputCode, inputState, inputCancellationToken),
@@ -239,7 +241,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.NhsDig
                     testCode: getUserInfoTask.AsTask);
 
             // then
-            actualException.Should().BeOfType<OperationCanceledException>();
+            ((object)actualException).Should().BeOfType<OperationCanceledException>();
 
             this.nhsDigitalApiBrokerMock.Verify(broker =>
                 broker.GetUserInfoAsync(

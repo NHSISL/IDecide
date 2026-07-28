@@ -5,6 +5,7 @@
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Xeptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Audits;
 using LondonDataServices.IDecide.Core.Models.Foundations.Audits.Exceptions;
 using Microsoft.Data.SqlClient;
@@ -45,8 +46,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
                     addAuditTask.AsTask);
 
             // then
-            actualAuditDependencyException.Should()
-                .BeEquivalentTo(expectedAuditDependencyException);
+            actualAuditDependencyException
+                .SameExceptionAs(expectedAuditDependencyException)
+                .Should().BeTrue();
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectAuditByIdAsync(randomAudit.Id),
@@ -103,8 +105,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
                     removeAuditByIdTask.AsTask);
 
             // then
-            actualAuditDependencyValidationException.Should()
-                .BeEquivalentTo(expectedAuditDependencyValidationException);
+            actualAuditDependencyValidationException
+                .SameExceptionAs(expectedAuditDependencyValidationException)
+                .Should().BeTrue();
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectAuditByIdAsync(It.IsAny<Guid>()),
@@ -155,8 +158,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
                     deleteAuditTask.AsTask);
 
             // then
-            actualAuditDependencyException.Should()
-                .BeEquivalentTo(expectedAuditDependencyException);
+            actualAuditDependencyException
+                .SameExceptionAs(expectedAuditDependencyException)
+                .Should().BeTrue();
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectAuditByIdAsync(It.IsAny<Guid>()),
@@ -203,8 +207,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Audits
                     removeAuditByIdTask.AsTask);
 
             // then
-            actualAuditServiceException.Should()
-                .BeEquivalentTo(expectedAuditServiceException);
+            actualAuditServiceException
+                .SameExceptionAs(expectedAuditServiceException)
+                .Should().BeTrue();
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectAuditByIdAsync(It.IsAny<Guid>()),

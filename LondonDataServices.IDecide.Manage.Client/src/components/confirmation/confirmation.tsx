@@ -214,10 +214,14 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
                         <p>
                             {translate("ConfirmAndSave.helpChangePrefs")}
                         </p>
-                        <h3 data-testid="need-help-heading">{translate("ConfirmAndSave.needHelpTitle")}</h3>
                         <p>
-                            {translate("ConfirmAndSave.needHelpDesc")}
+                            {translate("ConfirmAndSave.helpChangePrefs2")}
                         </p>
+
+                        <p>
+                            {translate("ConfirmAndSave.helpChangePrefs3")}
+                        </p>
+                       
                     </div>
                 </Col>
             </Row>

@@ -64,7 +64,7 @@ namespace LondonDataServices.IDecide.Manage.Server.Controllers
         [EnableQuery(PageSize = 50)]
 #endif
 #if DEBUG
-        [EnableQuery(PageSize = 20)]
+        [EnableQuery(PageSize = 5000)]
 #endif
         [Authorize(Roles = "LondonDataServices.IDecide.Manage.Server.Administrators")]
         public async ValueTask<ActionResult<IQueryable<Consumer>>> Get()
