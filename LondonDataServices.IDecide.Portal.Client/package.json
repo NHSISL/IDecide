@@ -20,7 +20,7 @@
     "axios": "^1.7.7",
     "bootstrap": "^5.3.3",
     "i18next": "^25.3.4",
-    "lodash": "^4.17.21",
+    "lodash": "^4.18.1",
     "LondonDataServices.IDecide.frontend.client": "file:",
     "LondonDataServices.IDecide.portal.client": "file:",
     "moment": "2.30.1",
