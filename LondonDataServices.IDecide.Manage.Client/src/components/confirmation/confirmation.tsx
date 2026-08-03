@@ -98,7 +98,7 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
 
                     <div className="nhsuk-card nhsuk-card--summary">
                         <div className="nhsuk-card__content">
-                            <h3 className="nhsuk-card__heading">Your Data Sharing Choice</h3>
+                            <h3 className="nhsuk-card__heading">{translate("ConfirmAndSave.yourDataSharingChoice", "Data Sharing Choice")}</h3>
 
                             <dl className="nhsuk-summary-list">
                                 <div className="nhsuk-summary-list__row">
@@ -214,10 +214,14 @@ export const Confirmation: React.FC<ConfirmationProps> = ({
                         <p>
                             {translate("ConfirmAndSave.helpChangePrefs")}
                         </p>
-                        <h3 data-testid="need-help-heading">{translate("ConfirmAndSave.needHelpTitle")}</h3>
                         <p>
-                            {translate("ConfirmAndSave.needHelpDesc")}
+                            {translate("ConfirmAndSave.helpChangePrefs2")}
                         </p>
+
+                        <p>
+                            {translate("ConfirmAndSave.helpChangePrefs3")}
+                        </p>
+                       
                     </div>
                 </Col>
             </Row>

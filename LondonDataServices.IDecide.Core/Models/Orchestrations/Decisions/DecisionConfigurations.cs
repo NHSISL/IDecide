@@ -13,5 +13,6 @@ namespace LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions
         public int ValidatedCodeValidForMinutes { get; set; }
         public List<string> DecisionWorkflowRoles { get; set; }
         public int NotificationRequestCountdownSeconds { get; set; }
+        public bool IsRedacted { get; set; }
     }
 }

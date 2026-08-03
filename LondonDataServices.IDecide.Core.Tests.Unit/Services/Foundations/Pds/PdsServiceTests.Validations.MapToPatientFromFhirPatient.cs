@@ -1,8 +1,9 @@
-﻿// ---------------------------------------------------------
+// ---------------------------------------------------------
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
 using FluentAssertions;
+using Xeptions;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
 
 namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
@@ -24,8 +25,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
                     pdsService.MapToPatientFromFhirPatient(nullFhirPatient));
 
             // then
-            actualNullFhirPatientException.Should().BeEquivalentTo(
-                expectedNullFhirPatientException);
+            actualNullFhirPatientException
+                .SameExceptionAs(expectedNullFhirPatientException)
+                .Should().BeTrue();
 
             this.pdsBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();

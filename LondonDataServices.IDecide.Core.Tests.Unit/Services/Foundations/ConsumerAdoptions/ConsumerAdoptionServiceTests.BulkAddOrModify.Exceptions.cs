@@ -1,4 +1,4 @@
-﻿// ---------------------------------------------------------
+// ---------------------------------------------------------
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Xeptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerAdoptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerAdoptions.Exceptions;
 using LondonDataServices.IDecide.Core.Services.Foundations.ConsumerAdoptions;
@@ -56,8 +57,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                     bulkAddOrModifyTask.AsTask);
 
             // then
-            actualConsumerAdoptionServiceException.Should()
-                .BeEquivalentTo(expectedConsumerAdoptionServiceException);
+            actualConsumerAdoptionServiceException
+                .SameExceptionAs(expectedConsumerAdoptionServiceException)
+                .Should().BeTrue();
 
             consumerAdoptionServiceMock.Verify(service =>
                 service.BulkAddOrModifyBatchAsync(inputConsumerAdoptions, batchSize),

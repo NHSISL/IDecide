@@ -113,3 +113,18 @@ footer .nhsuk-width-container {
     margin-bottom: 1rem;
     color: #005eb8;
 }
+
+.header-link,
+.header-link:visited {
+    color: #fff;
+    text-decoration: none !important;
+    background: none;
+    box-shadow: none;
+    transition: text-decoration 0.2s;
+}
+
+.header-link:hover,
+.header-link:focus {
+    text-decoration: underline !important;
+    color: #fff !important;
+}

@@ -65,6 +65,19 @@
     .custom-col-spacing{padding-left: 0px !important;}
 
     .nhsuk-button{margin-left:0 !important;}
+    
+    .login-decision-card {
+        margin-top:10px;
+        margin-right:10px !important;
+    }
+
+    .nhsuk-header__transactional-service-name--link {
+        font-size: 14px !important;
+    }
+
+    .logout-header {
+        font-size: 14px !important;
+    }
 }
 
 /* IPAD/TABLET: max-width: 900px, 768px, 767.98px */
@@ -130,6 +143,19 @@
     .header-padding-top {
         padding-top: 30px;
     }
+    .login-decision-card {
+        margin-top: 10px;
+        margin-right: 10px !important;
+    }
+
+    .nhsuk-header__transactional-service-name--link {
+        font-size: 14px !important;
+    }
+
+    .logout-header {
+        font-size: 14px !important;
+    }
+
 }
 
 /* DESKTOP: min-width: 768px */
@@ -141,6 +167,11 @@
     .nhs-logo {
         margin-left: 50px;
     }
+    .login-decision-card {
+        margin-top: 10px;
+        margin-right: 10px !important;
+    }
+
 }
 
 

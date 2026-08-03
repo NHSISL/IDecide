@@ -1,10 +1,11 @@
-﻿// ---------------------------------------------------------
+// ---------------------------------------------------------
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Xeptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Consumers.Exceptions;
 using Moq;
@@ -35,8 +36,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Con
                     adoptPatientDecisionsTask.AsTask());
 
             // then
-            actualConsumerOrchestrationValidationException.Should()
-                .BeEquivalentTo(expectedConsumerOrchestrationValidationException);
+            actualConsumerOrchestrationValidationException
+                .SameExceptionAs(expectedConsumerOrchestrationValidationException)
+                .Should().BeTrue();
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(

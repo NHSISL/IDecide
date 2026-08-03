@@ -1,4 +1,4 @@
-﻿// ---------------------------------------------------------
+// ---------------------------------------------------------
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Xeptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerAdoptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.ConsumerAdoptions.Exceptions;
 using Microsoft.Data.SqlClient;
@@ -44,8 +45,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                     retrieveAllConsumerAdoptionsTask.AsTask);
 
             // then
-            actualConsumerAdoptionDependencyException.Should()
-                .BeEquivalentTo(expectedConsumerAdoptionDependencyException);
+            actualConsumerAdoptionDependencyException
+                .SameExceptionAs(expectedConsumerAdoptionDependencyException)
+                .Should().BeTrue();
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectAllConsumerAdoptionsAsync(),
@@ -91,8 +93,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                 await Assert.ThrowsAsync<ConsumerAdoptionServiceException>(retrieveAllConsumerAdoptionsTask.AsTask);
 
             // then
-            actualConsumerAdoptionServiceException.Should()
-                .BeEquivalentTo(expectedConsumerAdoptionServiceException);
+            actualConsumerAdoptionServiceException
+                .SameExceptionAs(expectedConsumerAdoptionServiceException)
+                .Should().BeTrue();
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectAllConsumerAdoptionsAsync(),

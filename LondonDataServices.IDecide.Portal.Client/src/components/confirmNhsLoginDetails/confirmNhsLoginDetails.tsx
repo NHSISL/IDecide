@@ -7,8 +7,10 @@ import { useFrontendConfiguration } from "../../hooks/useFrontendConfiguration";
 import { isApiErrorResponse } from "../../helpers/isApiErrorResponse";
 import { useApiErrorHandlerChecks } from "../../hooks/useApiErrorHandlerChecks";
 import { patientViewService } from "../../services/views/patientViewService";
-import { faArrowRight, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { SpinnerBase } from "../bases/spinner/SpinnerBase";
+import { useLogout } from "../../hooks/useLogout";
 
 export const ConfirmNhsLoginDetails: React.FC = () => {
     const { t: translate } = useTranslation();
@@ -17,7 +19,15 @@ export const ConfirmNhsLoginDetails: React.FC = () => {
     const updatePatient = patientViewService.useAddPatientNhsLogin();
     const [apiError, setApiError] = useState<string | JSX.Element>("");
     const [info, setInfo] = useState<string | JSX.Element>("");
-    const { data: nhsLoginPatient, isSuccess } = patientViewService.useRetrievePatientInfoNhsLogin();
+
+    const {
+        data: nhsLoginPatient,
+        isSuccess,
+        isLoading,
+        isError
+    } = patientViewService.useRetrievePatientInfoNhsLogin();
+
+    const logout = useLogout();
 
     const handleApiError = useApiErrorHandlerChecks({
         setApiError,
@@ -95,11 +105,39 @@ export const ConfirmNhsLoginDetails: React.FC = () => {
     };
 
     const handleYesClick = () => {
-        handleSubmit()
+        handleSubmit();
     };
 
+    if (isLoading) {
+        return <SpinnerBase />;
+    }
+
+    if (isError) {
+        return (
+            <Row className="custom-col-spacing">
+                <Col xs={12} md={6} lg={6}>
+                    <Alert variant="danger">
+                        <div id="code-error">
+                            {translate("ConfirmDetails.noPatientDetails", "Unable to retrieve your details. Please try again later.")}
+                        </div>
+                    </Alert>
+                </Col>
+            </Row>
+        );
+    }
+
     if (!createdPatient) {
-        return <div>{translate("ConfirmDetails.noPatientDetails")}</div>;
+        return (
+            <Row className="custom-col-spacing">
+                <Col xs={12} md={6} lg={6}>
+                    <Alert variant="danger">
+                        <div id="code-error">
+                            {translate("ConfirmDetails.noPatientDetails", "Unable to retrieve your details. Please try again later.")}
+                        </div>
+                    </Alert>
+                </Col>
+            </Row>
+        );
     }
 
     return (
@@ -132,41 +170,36 @@ export const ConfirmNhsLoginDetails: React.FC = () => {
                             onClick={handleYesClick}
                         >
                             {translate("ConfirmDetails.Continue", "Next")}&nbsp;&nbsp;
-                            <FontAwesomeIcon icon={faArrowRight} ></FontAwesomeIcon>
+                            <FontAwesomeIcon icon={faArrowRight}></FontAwesomeIcon>
                         </button>
-
-                        
                     </div>
                     <Alert variant="info" style={{ marginTop: "0.5rem" }}>
                         <p>
-                            <span style={{ marginRight: "0.5rem" }}>
-                                <FontAwesomeIcon icon={faInfoCircle} ></FontAwesomeIcon>
-                            </span>
-
-                            If these details are incorrect, you'll need to update your details at your GP practice. You can do this by contacting your GP directly.</p>
-                        <p>
-                            Once your details are updated, you'll be able to make your choice online.
+                            {translate("ConfirmDetails.nhsLoginParagraph1")}
                         </p>
-
                         <p>
-                            If you do not know your GP's contact details or are not registered with one,
-                            try using the <a href="https://www.nhs.uk/service-search/find-a-gp" target="_blank" rel="noopener noreferrer">
-                                find a GP</a> service.
-                        </p>
+                            {translate("ConfirmDetails.nhsLoginParagraph2")}&nbsp;
 
+                            {configuration?.manageNhsDetailsUri && (
+                                <a
+                                    href={configuration.manageNhsDetailsUri}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{ color: "#005eb8", textDecoration: "underline" }}
+                                >
+                                    {translate("ConfirmDetails.nhsLoginManageNhsDetailsClick", "here")}
+                                </a>
+                            )}
+                        </p>
+                        <p>
+                            {translate("ConfirmDetails.nhsLoginParagraph3")}
+                        </p>
                         <p>
                             Click{' '}
                             <a
                                 href="#"
                                 style={{ padding: 0, border: "none", background: "none", color: "#005eb8", textDecoration: "underline" }}
-                                onClick={e => {
-                                    e.preventDefault();
-                                    fetch('/logout', { method: 'POST' }).then(d => {
-                                        if (d.ok) {
-                                            window.location.href = '/';
-                                        }
-                                    });
-                                }}
+                                onClick={logout}
                             >
                                 here
                             </a>{' '}
@@ -174,13 +207,11 @@ export const ConfirmNhsLoginDetails: React.FC = () => {
                         </p>
                     </Alert>
                 </div>
-
                 {apiError && (
                     <Alert variant="danger">
                         <div id="code-error">{apiError}</div>
                     </Alert>
                 )}
-
                 {info && (
                     <Alert variant="info">
                         <div id="code-info">{info}</div>

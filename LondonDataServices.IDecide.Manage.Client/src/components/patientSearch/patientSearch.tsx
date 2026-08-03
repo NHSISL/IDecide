@@ -247,7 +247,7 @@ export const PatientSearch = () => {
                             ) : (
                                 <>
                                     {patientsRetrieved && patientsRetrieved.length === 0 && lastSubmittedMode === "nhs" && (
-                                        <div>
+                                        <Alert variant="info">
                                             No patients found.{" "}
                                             <a
                                                 href="#"
@@ -258,10 +258,10 @@ export const PatientSearch = () => {
                                             >
                                                 To search PDS and add patient, click this link here.
                                             </a>
-                                        </div>
+                                        </Alert>
                                     )}
                                     {patientsRetrieved && patientsRetrieved.length === 0 && lastSubmittedMode === "details" && (
-                                        <div>
+                                        <Alert variant="info">
                                             No patients found.{" "}
                                             <a
                                                 href="#"
@@ -272,14 +272,21 @@ export const PatientSearch = () => {
                                             >
                                                 To search PDS and add patient, click this link here.
                                             </a>
-                                        </div>
+                                        </Alert>
                                     )}
                                 </>
                             )
                         )}
 
 
-                        {isLoadingDecision ? (
+                        {!isLoading && !firstPatientId ? (
+                            <>
+                                <br />
+                                <Alert variant="info">
+                                    No Decisions found.
+                                </Alert>
+                            </>
+                        ) : firstPatientId && (isLoadingDecision ? (
                             <Spinner animation="border" />
                         ) : (
                             decisionsByPatientId && decisionsByPatientId.length > 0 ? (
@@ -332,7 +339,7 @@ export const PatientSearch = () => {
                                     </Alert>
                                 </>
                             )
-                        )}
+                        ))}
                     </Col>
                 </Row>
             ) : null}

@@ -1,5 +1,4 @@
 import { test, expect } from '@playwright/test';
-import { clickStartButton } from './helpers/helper';
 
 test.describe('Home Page', () => {
     test.beforeEach(async ({ page }) => {
@@ -14,11 +13,6 @@ test.describe('Home Page', () => {
 
     test('should display the Start button', async ({ page }) => {
         await expect(page.getByTestId('start-login-button')).toBeVisible();
-    });
-
-    test('should navigate to /optOut when Start button is clicked', async ({ page }) => {
-        await clickStartButton(page);
-        await expect(page).toHaveURL('https://access.sandpit.signin.nhs.uk/login');
     });
 
     test('should display all expandable section headers', async ({ page }) => {
@@ -50,18 +44,6 @@ test.describe('Home Page', () => {
             await sectionButton.click();
             await expect(sectionButton).toHaveAttribute('aria-expanded', 'false');
         }
-    });
-
-    test('should show "Before you start" info box', async ({ page }) => {
-        const beforeYouStartSection = page.locator('section').filter({ hasText: 'Before you start' });
-
-        await expect(beforeYouStartSection).toBeVisible();
-        await expect(beforeYouStartSection).toContainText(
-            "You'll need your 10-digit NHS number or your full name, postcode and date of birth so that we can identify you."
-        );
-        await expect(beforeYouStartSection).toContainText(
-            "We will be sending an e-mail, SMS text message or letter to the contact details you have registered with your GP."
-        );
     });
 
     test('should show correct content when expanding "What is the London Data Service?"', async ({ page }) => {

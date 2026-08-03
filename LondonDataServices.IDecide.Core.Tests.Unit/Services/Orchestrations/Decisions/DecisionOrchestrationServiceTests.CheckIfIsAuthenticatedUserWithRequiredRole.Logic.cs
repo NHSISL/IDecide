@@ -1,10 +1,11 @@
-﻿// ---------------------------------------------------------
+// ---------------------------------------------------------
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Xeptions;
 using ISL.Providers.Captcha.Abstractions.Models;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions.Exceptions;
 using Moq;
@@ -24,8 +25,12 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                     .ReturnsAsync(true);
 
             this.securityBrokerMock.Setup(broker =>
-                broker.IsInRoleAsync(this.decisionConfigurations.DecisionWorkflowRoles.First()))
+                broker.IsInRoleAsync("HealthCareWorker"))
                     .ReturnsAsync(true);
+
+            this.securityBrokerMock.Setup(broker =>
+               broker.IsInRoleAsync(this.decisionConfigurations.DecisionWorkflowRoles.First()))
+                   .ReturnsAsync(true);
 
             // when
             bool actualResult =
@@ -39,8 +44,15 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
                     Times.Once);
 
             this.securityBrokerMock.Verify(broker =>
-                broker.IsInRoleAsync(this.decisionConfigurations.DecisionWorkflowRoles.First()),
+                broker.IsInRoleAsync("HealthCareWorker"),
                     Times.Once);
+
+            foreach (string role in this.decisionConfigurations.DecisionWorkflowRoles)
+            {
+                this.securityBrokerMock.Verify(broker =>
+                    broker.IsInRoleAsync(role),
+                        Times.Once);
+            }
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
@@ -58,6 +70,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
             this.securityBrokerMock.Setup(broker =>
                 broker.IsCurrentUserAuthenticatedAsync())
                     .ReturnsAsync(true);
+
+            this.securityBrokerMock.Setup(broker =>
+               broker.IsInRoleAsync("HealthCareWorker"))
+                   .ReturnsAsync(true);
 
             foreach (string role in this.decisionConfigurations.DecisionWorkflowRoles)
             {
@@ -81,10 +97,15 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
 
             //then
             actualUnauthorizedDecisionOrchestrationServiceException
-                .Should().BeEquivalentTo(expectedUnauthorizedDecisionOrchestrationServiceException);
+                .SameExceptionAs(expectedUnauthorizedDecisionOrchestrationServiceException)
+                .Should().BeTrue();
 
             this.securityBrokerMock.Verify(broker =>
                 broker.IsCurrentUserAuthenticatedAsync(),
+                    Times.Once);
+
+            this.securityBrokerMock.Verify(broker =>
+                broker.IsInRoleAsync("HealthCareWorker"),
                     Times.Once);
 
             foreach (string role in this.decisionConfigurations.DecisionWorkflowRoles)
@@ -137,7 +158,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
 
             //then
             actualInvalidCaptchaDecisionOrchestrationServiceException
-                .Should().BeEquivalentTo(invalidCaptchaDecisionOrchestrationServiceException);
+                .SameExceptionAs(invalidCaptchaDecisionOrchestrationServiceException)
+                .Should().BeTrue();
 
             this.securityBrokerMock.Verify(broker =>
                 broker.IsCurrentUserAuthenticatedAsync(),
@@ -190,7 +212,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Dec
 
             //then
             actualReCaptchaLowConfidenceException
-                .Should().BeEquivalentTo(reCaptchaLowConfidenceException);
+                .SameExceptionAs(reCaptchaLowConfidenceException)
+                .Should().BeTrue();
 
             this.securityBrokerMock.Verify(broker =>
                 broker.IsCurrentUserAuthenticatedAsync(),

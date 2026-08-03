@@ -33,7 +33,10 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance
             new Claim(ClaimTypes.Name, "TestUser"),
             new Claim(ClaimTypes.Role, "Administrator"),
             new Claim(ClaimTypes.Role, "LondonDataServices.IDecide.Portal.Server.Administrators"),
-            new Claim(ClaimTypes.Role, "LondonDataServices.IDecide.Portal.Server.Users")
+            new Claim(ClaimTypes.Role, "LondonDataServices.IDecide.Portal.Server.Users"),
+            new Claim(ClaimTypes.Role, "HealthCareWorker"),
+            new Claim("given_name", givenName),
+            new Claim("surname", surname)
         };
 
         public TestAuthHandler(

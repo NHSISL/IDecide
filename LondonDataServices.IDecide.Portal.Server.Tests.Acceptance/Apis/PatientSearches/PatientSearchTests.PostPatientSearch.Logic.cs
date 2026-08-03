@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Force.DeepCloner;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds;
+using LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Extensions.Patients;
 using LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Models.Patients;
 
 namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Apis.PatientSearches
@@ -19,7 +20,7 @@ namespace LondonDataServices.IDecide.Portal.Server.Tests.Acceptance.Apis.Patient
             string inputSurname = "Smith";
             PatientLookup randomPatientLookup = GetRandomSearchPatientLookup(inputSurname);
             PatientLookup inputPatientLookup = randomPatientLookup.DeepClone();
-            Patient expectedPatient = GetPatient(inputSurname);
+            Patient expectedPatient = GetPatient(inputSurname).Redact();
 
             // when
             Patient actualPatient =

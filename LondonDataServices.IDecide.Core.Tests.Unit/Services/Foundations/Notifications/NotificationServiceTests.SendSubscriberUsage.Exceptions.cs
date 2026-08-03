@@ -1,4 +1,4 @@
-﻿// ---------------------------------------------------------
+// ---------------------------------------------------------
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
@@ -52,7 +52,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                     sendSubscriberUsageNotificationTask.AsTask);
 
             // then
-            actualException.Should().BeEquivalentTo(expectedNotificationDependencyValidationException);
+            actualException.SameExceptionAs(expectedNotificationDependencyValidationException).Should().BeTrue();
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
@@ -105,7 +105,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                     sendSubscriberUsageNotificationTask.AsTask);
 
             // then
-            actualException.Should().BeEquivalentTo(expectedNotificationDependencyException);
+            actualException.SameExceptionAs(expectedNotificationDependencyException).Should().BeTrue();
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(
@@ -159,7 +159,7 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Notifi
                     sendSubscriberUsageNotificationTask.AsTask);
 
             // then
-            actualException.Should().BeEquivalentTo(expectedNotificationServiceException);
+            actualException.SameExceptionAs(expectedNotificationServiceException).Should().BeTrue();
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(

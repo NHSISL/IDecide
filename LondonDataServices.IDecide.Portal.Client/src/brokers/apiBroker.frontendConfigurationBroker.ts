@@ -12,7 +12,8 @@ export type FrontendConfigurationResponse = {
     helpdeskContactEmail: string,
     helpdeskContactNumber: string,
     decisionTypeId: string,
-    notificationRequestCountdown: number
+    notificationRequestCountdown: number,
+    manageNhsDetailsUri: string
 }
 
 export type FrontendConfiguration = {
@@ -27,7 +28,8 @@ export type FrontendConfiguration = {
     helpdeskContactEmail: string
     helpdeskContactNumber: string,
     decisionTypeId: string,
-    notificationRequestCountdown: number
+    notificationRequestCountdown: number,
+    manageNhsDetailsUri: string
 }
 
 class FrontendConfigurationBroker {
@@ -76,7 +78,12 @@ class FrontendConfigurationBroker {
                 throw new Error("notification Request Count down not provided in config");
             }
 
+            if (!result.manageNhsDetailsUri?.length) {
+                throw new Error("manageNhsDetailsUri not provided in config");
+            }
+
             return result;
+
         } catch (error) {
             console.error("Error fetching configuration", error);
             throw error;

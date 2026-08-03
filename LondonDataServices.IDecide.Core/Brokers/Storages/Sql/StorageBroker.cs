@@ -15,6 +15,7 @@ using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using STX.EFCore.Client.Clients;
+using LondonDataServices.IDecide.Core.Models.Foundations.Users;
 
 namespace LondonDataServices.IDecide.Core.Brokers.Storages.Sql
 {
@@ -53,6 +54,7 @@ namespace LondonDataServices.IDecide.Core.Brokers.Storages.Sql
             AddDecisionTypeConfigurations(modelBuilder.Entity<DecisionType>());
             AddDecisionConfigurations(modelBuilder.Entity<Decision>());
             AddPatientConfigurations(modelBuilder.Entity<Patient>());
+            AddUserConfigurations(modelBuilder.Entity<User>());
         }
 
         private async ValueTask<T> InsertAsync<T>(T @object) where T : class =>

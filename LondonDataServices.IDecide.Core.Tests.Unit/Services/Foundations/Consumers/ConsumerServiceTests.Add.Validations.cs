@@ -1,10 +1,11 @@
-﻿// ---------------------------------------------------------
+// ---------------------------------------------------------
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Xeptions;
 using Force.DeepCloner;
 using LondonDataServices.IDecide.Core.Models.Foundations.Consumers;
 using LondonDataServices.IDecide.Core.Models.Foundations.Consumers.Exceptions;
@@ -41,8 +42,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                     addConsumerTask.AsTask());
 
             // then
-            actualConsumerValidationException.Should()
-                .BeEquivalentTo(expectedConsumerValidationException);
+            actualConsumerValidationException
+                .SameExceptionAs(expectedConsumerValidationException)
+                .Should().BeTrue();
 
             this.securityAuditBrokerMock.Verify(broker =>
                     broker.ApplyAddAuditValuesAsync(nullConsumer),
@@ -131,8 +133,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                     addConsumerTask.AsTask());
 
             // then
-            actualConsumerValidationException.Should()
-                .BeEquivalentTo(expectedConsumerValidationException);
+            actualConsumerValidationException
+                .SameExceptionAs(expectedConsumerValidationException)
+                .Should().BeTrue();
 
             this.securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyAddAuditValuesAsync(invalidConsumer),
@@ -204,8 +207,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                     addConsumerTask.AsTask);
 
             // then
-            actualConsumerValidationException.Should()
-                .BeEquivalentTo(expectedConsumerValidationException);
+            actualConsumerValidationException
+                .SameExceptionAs(expectedConsumerValidationException)
+                .Should().BeTrue();
 
             this.securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyAddAuditValuesAsync(invalidConsumer),
@@ -281,8 +285,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                     addConsumerTask.AsTask());
 
             // then
-            actualConsumerValidationException.Should()
-                .BeEquivalentTo(expectedConsumerValidationException);
+            actualConsumerValidationException
+                .SameExceptionAs(expectedConsumerValidationException)
+                .Should().BeTrue();
 
             this.securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyAddAuditValuesAsync(invalidConsumer),
@@ -355,8 +360,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                     addConsumerTask.AsTask());
 
             // then
-            actualConsumerValidationException.Should()
-                .BeEquivalentTo(expectedConsumerValidationException);
+            actualConsumerValidationException
+                .SameExceptionAs(expectedConsumerValidationException)
+                .Should().BeTrue();
 
             this.securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyAddAuditValuesAsync(invalidConsumer),
@@ -438,8 +444,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Consum
                     addConsumerTask.AsTask());
 
             // then
-            actualConsumerValidationException.Should()
-                .BeEquivalentTo(expectedConsumerValidationException);
+            actualConsumerValidationException
+                .SameExceptionAs(expectedConsumerValidationException)
+                .Should().BeTrue();
 
             this.securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyAddAuditValuesAsync(invalidConsumer),

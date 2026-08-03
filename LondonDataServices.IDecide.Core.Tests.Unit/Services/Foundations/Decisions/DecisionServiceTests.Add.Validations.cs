@@ -5,6 +5,7 @@
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Xeptions;
 using Force.DeepCloner;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Decisions.Exceptions;
@@ -41,8 +42,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                     addDecisionTask.AsTask());
 
             // then
-            actualDecisionValidationException.Should()
-                .BeEquivalentTo(expectedDecisionValidationException);
+            actualDecisionValidationException
+                .SameExceptionAs(expectedDecisionValidationException)
+                .Should().BeTrue();
 
             this.securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyAddAuditValuesAsync(nullDecision),
@@ -127,8 +129,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                     addDecisionTask.AsTask());
 
             // then
-            actualDecisionValidationException.Should()
-                .BeEquivalentTo(expectedDecisionValidationException);
+            actualDecisionValidationException
+                .SameExceptionAs(expectedDecisionValidationException)
+                .Should().BeTrue();
 
             this.securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyAddAuditValuesAsync(invalidDecision),
@@ -206,8 +209,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                     addDecisionTask.AsTask);
 
             // then
-            actualDecisionValidationException.Should()
-                .BeEquivalentTo(expectedDecisionValidationException);
+            actualDecisionValidationException
+                .SameExceptionAs(expectedDecisionValidationException)
+                .Should().BeTrue();
 
             this.securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyAddAuditValuesAsync(invalidDecision),
@@ -283,8 +287,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                     addDecisionTask.AsTask());
 
             // then
-            actualDecisionValidationException.Should()
-                .BeEquivalentTo(expectedDecisionValidationException);
+            actualDecisionValidationException
+                .SameExceptionAs(expectedDecisionValidationException)
+                .Should().BeTrue();
 
             this.securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyAddAuditValuesAsync(invalidDecision),
@@ -357,8 +362,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                     addDecisionTask.AsTask());
 
             // then
-            actualDecisionValidationException.Should()
-                .BeEquivalentTo(expectedDecisionValidationException);
+            actualDecisionValidationException
+                .SameExceptionAs(expectedDecisionValidationException)
+                .Should().BeTrue();
 
             this.securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyAddAuditValuesAsync(invalidDecision),
@@ -440,8 +446,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                     addDecisionTask.AsTask());
 
             // then
-            actualDecisionValidationException.Should()
-                .BeEquivalentTo(expectedDecisionValidationException);
+            actualDecisionValidationException
+                .SameExceptionAs(expectedDecisionValidationException)
+                .Should().BeTrue();
 
             this.securityAuditBrokerMock.Verify(broker =>
                 broker.ApplyAddAuditValuesAsync(invalidDecision),

@@ -5,6 +5,7 @@
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Xeptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes;
 using LondonDataServices.IDecide.Core.Models.Foundations.DecisionTypes.Exceptions;
 using Moq;
@@ -41,8 +42,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Decisi
                     removeDecisionTypeByIdTask.AsTask);
 
             // then
-            actualDecisionTypeValidationException.Should()
-                .BeEquivalentTo(expectedDecisionTypeValidationException);
+            actualDecisionTypeValidationException
+                .SameExceptionAs(expectedDecisionTypeValidationException)
+                .Should().BeTrue();
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogErrorAsync(It.Is(SameExceptionAs(

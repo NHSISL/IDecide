@@ -1,10 +1,11 @@
-﻿// ---------------------------------------------------------
+// ---------------------------------------------------------
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Xeptions;
 using LondonDataServices.IDecide.Core.Models.Foundations.Patients;
 using LondonDataServices.IDecide.Core.Models.Foundations.Pds.Exceptions;
 using Moq;
@@ -45,8 +46,9 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Foundations.Pds
                      testCode: patientLookupByNhsNumberTask.AsTask);
 
             // then
-            actualPdsServiceException.Should().BeEquivalentTo(
-                expectedpdsServiceException);
+            actualPdsServiceException
+                .SameExceptionAs(expectedpdsServiceException)
+                .Should().BeTrue();
 
             pdsBrokerMock.Verify(broker =>
                 broker.PatientLookupByNhsNumberAsync(inputNhsNumber),

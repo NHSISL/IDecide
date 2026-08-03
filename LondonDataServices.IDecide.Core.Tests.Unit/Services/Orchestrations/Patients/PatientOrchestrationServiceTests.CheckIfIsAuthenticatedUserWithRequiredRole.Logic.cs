@@ -1,10 +1,11 @@
-﻿// ---------------------------------------------------------
+// ---------------------------------------------------------
 // Copyright (c) North East London ICB. All rights reserved.
 // ---------------------------------------------------------
 
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Xeptions;
 using ISL.Providers.Captcha.Abstractions.Models;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Decisions.Exceptions;
 using LondonDataServices.IDecide.Core.Models.Orchestrations.Patients.Exceptions;
@@ -25,6 +26,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                     .ReturnsAsync(true);
 
             this.securityBrokerMock.Setup(broker =>
+                broker.IsInRoleAsync("HealthCareWorker"))
+                    .ReturnsAsync(true);
+
+            this.securityBrokerMock.Setup(broker =>
                 broker.IsInRoleAsync(this.decisionConfigurations.DecisionWorkflowRoles.First()))
                     .ReturnsAsync(true);
 
@@ -37,6 +42,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             this.securityBrokerMock.Verify(broker =>
                 broker.IsCurrentUserAuthenticatedAsync(),
+                    Times.Once);
+
+            this.securityBrokerMock.Verify(broker =>
+                broker.IsInRoleAsync("HealthCareWorker"),
                     Times.Once);
 
             this.securityBrokerMock.Verify(broker =>
@@ -61,6 +70,10 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
                 broker.IsCurrentUserAuthenticatedAsync())
                     .ReturnsAsync(true);
 
+            this.securityBrokerMock.Setup(broker =>
+               broker.IsInRoleAsync("HealthCareWorker"))
+                   .ReturnsAsync(true);
+
             foreach (string role in this.decisionConfigurations.DecisionWorkflowRoles)
             {
                 this.securityBrokerMock.Setup(broker =>
@@ -83,10 +96,15 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             //then
             actualUnauthorizedPatientOrchestrationServiceException
-                .Should().BeEquivalentTo(expectedUnauthorizedPatientOrchestrationServiceException);
+                .SameExceptionAs(expectedUnauthorizedPatientOrchestrationServiceException)
+                .Should().BeTrue();
 
             this.securityBrokerMock.Verify(broker =>
                 broker.IsCurrentUserAuthenticatedAsync(),
+                    Times.Once);
+
+            this.securityBrokerMock.Verify(broker =>
+                broker.IsInRoleAsync("HealthCareWorker"),
                     Times.Once);
 
             foreach (string role in this.decisionConfigurations.DecisionWorkflowRoles)
@@ -140,7 +158,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             //then
             actualInvalidCaptchaPatientOrchestrationServiceException
-                .Should().BeEquivalentTo(invalidCaptchaPatientOrchestrationServiceException);
+                .SameExceptionAs(invalidCaptchaPatientOrchestrationServiceException)
+                .Should().BeTrue();
 
             this.securityBrokerMock.Verify(broker =>
                 broker.IsCurrentUserAuthenticatedAsync(),
@@ -194,7 +213,8 @@ namespace LondonDataServices.IDecide.Core.Tests.Unit.Services.Orchestrations.Pat
 
             //then
             actualReCaptchaLowConfidenceException
-                .Should().BeEquivalentTo(reCaptchaLowConfidenceException);
+                .SameExceptionAs(reCaptchaLowConfidenceException)
+                .Should().BeTrue();
 
             this.securityBrokerMock.Verify(broker =>
                 broker.IsCurrentUserAuthenticatedAsync(),
